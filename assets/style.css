@@ -1,5 +1,4 @@
 :root{
-  /* Luderbein – Urban/Industrial Palette (aus deinem Quad abgeleitet) */
   --bg:#0E060B;
   --surface:#1A1A1F;
   --surface2:#2A2D33;
@@ -43,7 +42,6 @@ a:hover{opacity:.92}
   border-radius: 12px;
 }
 
-/* Header / Nav */
 header{
   position:sticky; top:0; z-index:50;
   backdrop-filter: blur(10px);
@@ -78,7 +76,6 @@ header{
   max-width: 52vw;
 }
 
-/* Desktop menu */
 .menu{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
 .menu a{
   text-decoration:none;
@@ -98,7 +95,6 @@ header{
   border-color: rgba(64,62,65,.40);
 }
 
-/* Mobile nav button */
 .navbtn{
   display:none;
   width:44px; height:44px;
@@ -121,7 +117,6 @@ header{
 .navicon span{top:5px}
 .navicon::after{bottom:0}
 
-/* Main */
 main{padding:28px 0 60px}
 
 .hero{
@@ -134,33 +129,25 @@ main{padding:28px 0 60px}
   overflow:hidden;
 }
 
-/* Filigran + bröselig: dünne Tape-Lines + Staub + Micro-Scratches */
 .hero::before{
   content:"";
   position:absolute;
   inset:0;
   pointer-events:none;
   opacity:.9;
-
   background:
-    /* dünne diagonale tape-line (rot) */
     linear-gradient(135deg,
       transparent 0 58%,
       rgba(219,16,33,.10) 58% 59.2%,
       transparent 59.2% 100%),
-
-    /* zweite dünne line als schatten (dunkelrot) */
     linear-gradient(155deg,
       transparent 0 70%,
       rgba(70,18,22,.10) 70% 71.1%,
       transparent 71.1% 100%),
-
-    /* unregelmäßiger „Schmutzschatten“ (sehr weich) */
     radial-gradient(closest-side at 78% 18%, rgba(219,16,33,.10), transparent 72%),
     radial-gradient(closest-side at 64% 42%, rgba(70,18,22,.08), transparent 74%);
 }
 
-/* bröselige Partikel + feine Kratzer */
 .hero::after{
   content:"";
   position:absolute;
@@ -168,15 +155,12 @@ main{padding:28px 0 60px}
   pointer-events:none;
   opacity:.22;
   background:
-    /* Partikel (unregelmäßig verteilt) */
     radial-gradient(circle at 72% 18%, rgba(219,16,33,.40) 0 1px, transparent 2px),
     radial-gradient(circle at 78% 26%, rgba(219,16,33,.25) 0 1px, transparent 2px),
     radial-gradient(circle at 84% 34%, rgba(70,18,22,.35) 0 1px, transparent 2px),
     radial-gradient(circle at 69% 40%, rgba(219,16,33,.22) 0 1px, transparent 2px),
     radial-gradient(circle at 88% 52%, rgba(219,16,33,.18) 0 1px, transparent 2px),
     radial-gradient(circle at 62% 30%, rgba(255,8,13,.20) 0 1px, transparent 2px),
-
-    /* Micro-scratches (sehr fein, kaum sichtbar, aber gibt „Material“) */
     linear-gradient(12deg, transparent 0 49.5%, rgba(210,207,206,.10) 49.5% 49.7%, transparent 49.7% 100%),
     linear-gradient(-8deg, transparent 0 63.2%, rgba(210,207,206,.08) 63.2% 63.35%, transparent 63.35% 100%),
     linear-gradient(18deg, transparent 0 78.6%, rgba(210,207,206,.07) 78.6% 78.75%, transparent 78.75% 100%);
@@ -208,7 +192,6 @@ h1{
   max-width: 70ch
 }
 
-/* Buttons */
 .cta{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
 .btn{
   display:inline-flex; align-items:center; justify-content:center;
@@ -231,7 +214,66 @@ h1{
 }
 .btn:active{transform: translateY(0px)}
 
-/* Cards */
+/* NEW: Signature highlight strip */
+.signature{
+  margin-top:14px;
+  border:1px solid rgba(64,62,65,.55);
+  border-radius: var(--radius);
+  background: rgba(26,26,31,.52);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+  position:relative;
+}
+.sigline{
+  height:10px;
+  background:
+    linear-gradient(90deg,
+      transparent 0%,
+      rgba(219,16,33,.55) 18%,
+      rgba(219,16,33,.12) 48%,
+      rgba(255,8,13,.22) 62%,
+      transparent 100%);
+  filter: blur(.2px);
+  opacity:.75;
+}
+.sigrow{
+  display:flex;
+  gap:10px;
+  padding:12px;
+  flex-wrap:wrap;
+}
+.sigchip{
+  flex: 1 1 220px;
+  border:1px solid rgba(64,62,65,.55);
+  border-radius: 16px;
+  background: rgba(42,45,51,.18);
+  padding:10px 12px;
+  position:relative;
+  overflow:hidden;
+}
+.sigchip::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.22;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 18% 40%, rgba(219,16,33,.28) 0 1px, transparent 2px),
+    radial-gradient(circle at 76% 28%, rgba(70,18,22,.28) 0 1px, transparent 2px),
+    linear-gradient(14deg, transparent 0 68%, rgba(210,207,206,.08) 68% 68.2%, transparent 68.2% 100%);
+}
+.sigk{
+  display:block;
+  font-size:.72rem;
+  letter-spacing:.18em;
+  color: rgba(210,207,206,.75);
+}
+.sigv{
+  display:block;
+  margin-top:2px;
+  color: var(--muted);
+}
+
 .grid{
   display:grid;
   grid-template-columns: repeat(12, 1fr);
@@ -248,7 +290,6 @@ h1{
   position:relative;
   overflow:hidden;
 }
-/* filigraner Fleck */
 .card::before{
   content:"";
   position:absolute;
@@ -283,7 +324,6 @@ h1{
   border:1px solid rgba(64,62,65,.45);
 }
 
-/* Products */
 .products{
   display:grid;
   grid-template-columns: repeat(12, 1fr);
@@ -322,7 +362,6 @@ h1{
   .product{grid-column: span 12}
 }
 
-/* Footer */
 footer{
   border-top: 1px solid rgba(64,62,65,.55);
   padding: 18px 0 28px;
@@ -336,7 +375,6 @@ footer a:hover{color:var(--text)}
 }
 .small{font-size:.92rem}
 
-/* --- Mobile polish --- */
 @media (max-width: 560px){
   .wrap{padding:0 14px}
   .nav{padding:10px 0}
@@ -370,4 +408,8 @@ footer a:hover{color:var(--text)}
     background: rgba(42,45,51,.18);
   }
   .menu[data-open="1"]{display:flex}
+
+  /* Signature strip: tighter on mobile */
+  .sigrow{padding:10px}
+  .sigchip{flex-basis: 100%}
 }
