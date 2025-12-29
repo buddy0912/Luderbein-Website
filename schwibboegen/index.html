@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Schwibbögen – Luderbein</title>
-  <meta name="description" content="Schwibbögen von Luderbein: Kernsortiment & Sonderwünsche. Anfrage/Bestellung unkompliziert." />
+  <meta name="description" content="Schwibbögen von Luderbein: Kernsortiment, Varianten und Anfrage-Flow." />
   <link rel="stylesheet" href="/assets/style.css" />
 </head>
 <body>
@@ -24,7 +24,7 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-        <a href="/schwibboegen/">Schwibbögen</a>
+        <a href="/schwibboegen/" aria-current="page">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
         <a href="/rechtliches/impressum.html">Impressum</a>
@@ -34,59 +34,116 @@
 
   <main class="wrap">
     <section class="hero">
-      <span class="badge"><i></i> Shop – V0</span>
+      <span class="badge"><i></i> Kernsortiment + Custom – alles per Anfrage</span>
       <h1>Schwibbögen</h1>
       <p class="lead">
-        Hier kommt dein Kernsortiment rein. Aktuell sind das Platzhalter-Karten – wir ersetzen die,
-        sobald wir die 5–6 Motive final festzurren.
+        Hier ist der aktuelle Stand: klare Varianten, klare Optionen, keine Shop-Hürde.
+        Wenn du willst, gehen wir direkt über WhatsApp oder Mail.
       </p>
       <div class="cta">
-        <a class="btn primary" href="/kontakt/">Wunschmotiv anfragen</a>
-        <a class="btn" href="/">Zurück zur Startseite</a>
+        <a class="btn primary" href="/kontakt/">Anfragen</a>
+        <a class="btn" href="#kernsortiment">Zum Kernsortiment</a>
       </div>
     </section>
 
-    <div class="section">
-      <h2>Kernsortiment (Platzhalter)</h2>
+    <section class="section" id="kernsortiment">
+      <div class="section-head">
+        <h2>Kernsortiment</h2>
+        <p class="small muted">Platzhalterbilder aktuell als “Material-Thumb”. Später ersetzen wir sie durch echte Fotos/Mockups.</p>
+      </div>
 
       <div class="products">
-        <article class="product">
-          <h3>Erzgebirge Dorf-Silhouette</h3>
-          <div class="meta"><span class="price">ab 69,95 €</span> <span>• personalisierbar</span></div>
-          <p class="kicker">Ortsname/Jahr/Details – klassisch, aber nicht kitschig.</p>
+        <article class="productcard" id="classic">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="meta">
+            <span class="price">ab 69,95 €</span><span>•</span><span>400 mm</span><span>•</span><span>Layer-Look</span>
+          </div>
+          <h3>Classic – Erzgebirge modern</h3>
+          <p class="kicker">
+            Cleanes Motiv, sauberer Aufbau, ideal als Einstieg. Personalisierung (Name/Ort/Jahr) ist Standard.
+          </p>
+          <ul class="bullets">
+            <li>Personalisierung: Name/Ort/Jahr</li>
+            <li>Optionen: Motiv-Variante, Extra-Layer, Schriftstil</li>
+            <li>Liefer-Flow: Entwurf → Freigabe → Build</li>
+          </ul>
           <div class="actions">
             <a class="btn primary" href="/kontakt/">Anfragen</a>
+            <a class="btn" href="#faq">Fragen</a>
           </div>
         </article>
 
-        <article class="product">
-          <h3>Wald & Wild (Hirsch)</h3>
-          <div class="meta"><span class="price">ab 69,95 €</span> <span>• zeitlos</span></div>
-          <p class="kicker">Nicht nur Weihnachten. Sieht das ganze Jahr gut aus.</p>
+        <article class="productcard" id="led">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="meta">
+            <span class="price">ab 89,95 €</span><span>•</span><span>LED optional</span><span>•</span><span>mehr Tiefe</span>
+          </div>
+          <h3>LED – Mehr Tiefe, mehr Kante</h3>
+          <p class="kicker">
+            Licht macht’s: Schatten, Kontrast, Layer wirken “dreidimensional”. Ideal als Blickfang.
+          </p>
+          <ul class="bullets">
+            <li>LED: warm/neutral (je nach Verfügbarkeit)</li>
+            <li>Optionen: Diffusor, Kabel/USB-Variante</li>
+            <li>Hinweis: LED setzt kurze Abstimmung voraus</li>
+          </ul>
           <div class="actions">
             <a class="btn primary" href="/kontakt/">Anfragen</a>
+            <a class="btn" href="#faq">FAQ</a>
           </div>
         </article>
 
-        <article class="product">
-          <h3>Familie / Paar / Hund – Silhouette</h3>
-          <div class="meta"><span class="price">ab 79,95 €</span> <span>• dein Motiv</span></div>
-          <p class="kicker">Aus Foto → Silhouette. Das ist dein Signature-Move.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/">Anfragen</a>
+        <article class="productcard" id="signature">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="meta">
+            <span class="price">ab 99,95 €</span><span>•</span><span>Custom Motiv</span><span>•</span><span>Silhouette</span>
           </div>
-        </article>
-
-        <article class="product">
-          <h3>Modern: Bergmann & Engel</h3>
-          <div class="meta"><span class="price">ab 69,95 €</span> <span>• minimal</span></div>
-          <p class="kicker">Regional ja. Aber mit klarer Linie.</p>
+          <h3>Signature – Dein Motiv als Silhouette</h3>
+          <p class="kicker">
+            Foto/Idee → saubere Silhouette → Layer. Für Leute, die keine Lust auf Katalog haben.
+          </p>
+          <ul class="bullets">
+            <li>Vorlage: Foto oder Beschreibung</li>
+            <li>Optionen: Silhouette + Hintergrund-Layer, Text minimal oder gar nicht</li>
+            <li>Wichtig: Freigabe vor Produktion</li>
+          </ul>
           <div class="actions">
             <a class="btn primary" href="/kontakt/">Anfragen</a>
+            <a class="btn" href="#faq">Ablauf</a>
           </div>
         </article>
       </div>
-    </div>
+    </section>
+
+    <section class="section" id="faq">
+      <h2>FAQ (kurz & ehrlich)</h2>
+      <div class="notice">
+        <strong style="color:var(--text)">Wie läuft’s ab?</strong><br>
+        Du schreibst (WhatsApp/Mail) → ich mache einen Entwurf/Plan → du gibst frei → ich baue → fertig.
+      </div>
+      <div class="hr"></div>
+      <div class="grid">
+        <div class="card">
+          <h3>Wie schnell?</h3>
+          <p>Kommt auf Motiv & Auslastung an. Sobald du anfragst, bekommst du einen realistischen Slot.</p>
+        </div>
+        <div class="card">
+          <h3>Was brauche ich für “Signature”?</h3>
+          <p>Ein Foto oder eine klare Idee. Lieber 1 gutes Foto als 12 schlechte.</p>
+        </div>
+        <div class="card">
+          <h3>Versand/Abholung?</h3>
+          <p>Klärt man im Gespräch. Stabil verpackt ist Pflicht — soll ja heil ankommen.</p>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="cta">
+          <a class="btn primary" href="/kontakt/">Jetzt anfragen</a>
+          <a class="btn" href="/">Zur Startseite</a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
