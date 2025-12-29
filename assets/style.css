@@ -37,6 +37,13 @@ a:hover{opacity:.92}
 
 .wrap{max-width:var(--max); margin:0 auto; padding:0 18px}
 
+/* Better keyboard focus (pro, accessible) */
+:focus-visible{
+  outline: 2px solid rgba(219,16,33,.75);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
 /* Header / Nav */
 header{
   position:sticky; top:0; z-index:50;
@@ -76,6 +83,24 @@ header{
 .menu{
   display:flex; gap:8px; align-items:center; flex-wrap:wrap;
 }
+.menu a{
+  text-decoration:none;
+  padding:8px 10px;
+  border-radius: 12px;
+  border:1px solid transparent;
+  color:var(--muted);
+}
+.menu a[aria-current="page"]{
+  color:var(--text);
+  background: rgba(42,45,51,.55);
+  border-color: rgba(64,62,65,.55);
+}
+.menu a:hover{
+  color:var(--text);
+  background: rgba(42,45,51,.35);
+  border-color: rgba(64,62,65,.40);
+}
+
 /* Mobile nav button */
 .navbtn{
   display:none;
@@ -102,23 +127,6 @@ header{
 .navicon::before{top:0}
 .navicon span{top:5px}
 .navicon::after{bottom:0}
-.menu a{
-  text-decoration:none;
-  padding:8px 10px;
-  border-radius: 12px;
-  border:1px solid transparent;
-  color:var(--muted);
-}
-.menu a[aria-current="page"]{
-  color:var(--text);
-  background: rgba(42,45,51,.55);
-  border-color: rgba(64,62,65,.55);
-}
-.menu a:hover{
-  color:var(--text);
-  background: rgba(42,45,51,.35);
-  border-color: rgba(64,62,65,.40);
-}
 
 /* Main */
 main{padding:28px 0 60px}
@@ -134,15 +142,34 @@ main{padding:28px 0 60px}
   overflow:hidden;
 }
 
-/* subtiler "lackiger" roter Akzent oben rechts */
+/* Clean minimal "lacquer edge" accents */
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius: calc(var(--radius) + 2px);
+  pointer-events:none;
+  /* super subtle inner glow */
+  background: radial-gradient(900px 240px at 20% -20%, rgba(219,16,33,.16), transparent 55%);
+  opacity:.75;
+  mix-blend-mode: screen;
+}
 .hero::after{
   content:"";
   position:absolute;
-  inset:-40px -40px auto auto;
-  width:220px; height:220px;
-  background: radial-gradient(circle at 30% 30%, rgba(219,16,33,.20), transparent 60%);
-  transform: rotate(12deg);
+  top:-80px;
+  right:-120px;
+  width:360px;
+  height:220px;
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg,
+      rgba(219,16,33,.26) 0%,
+      rgba(219,16,33,.10) 35%,
+      transparent 70%);
+  transform: rotate(18deg);
   pointer-events:none;
+  filter: blur(0.2px);
 }
 
 .badge{
@@ -150,14 +177,25 @@ main{padding:28px 0 60px}
   font-size:.9rem;
   padding:6px 10px;
   border-radius: 999px;
-  border:1px solid rgba(64,62,65,.65);
-  background: rgba(42,45,51,.35);
+  border:1px solid rgba(64,62,65,.70);
+  background: rgba(42,45,51,.28);
   color: var(--muted);
+  position:relative;
 }
 .badge i{
   width:10px; height:10px; border-radius:50%;
   background: var(--accent);
   box-shadow: 0 0 0 4px rgba(219,16,33,.14);
+}
+/* tiny "stamp cut" feel */
+.badge::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius: 999px;
+  border:1px dashed rgba(64,62,65,.45);
+  pointer-events:none;
+  opacity:.65;
 }
 
 h1{
@@ -181,12 +219,17 @@ h1{
   text-decoration:none;
   color:var(--text);
   background: rgba(42,45,51,.22);
+  transition: transform .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
 }
 .btn.primary{
-  border-color: rgba(219,16,33,.55);
-  background: linear-gradient(180deg, rgba(219,16,33,.18), rgba(70,18,22,.16));
+  border-color: rgba(219,16,33,.62);
+  background: linear-gradient(180deg, rgba(219,16,33,.20), rgba(70,18,22,.18));
+  box-shadow: 0 12px 26px rgba(219,16,33,.12);
 }
-.btn:hover{transform: translateY(-1px)}
+.btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(219,16,33,.55);
+}
 .btn:active{transform: translateY(0px)}
 
 /* Cards */
@@ -203,6 +246,18 @@ h1{
   background: rgba(26,26,31,.72);
   box-shadow: var(--shadow);
   padding:16px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  top:-60px; right:-80px;
+  width:220px; height:160px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(219,16,33,.08), transparent 62%);
+  pointer-events:none;
+  opacity:.55;
 }
 .card h3{margin:0 0 6px; font-size:1.05rem}
 .card p{margin:0; color:var(--muted)}
@@ -219,7 +274,7 @@ h1{
 
 .notice{
   border-left: 4px solid rgba(219,16,33,.70);
-  background: rgba(70,18,22,.16);
+  background: rgba(70,18,22,.14);
   padding: 12px 14px;
   border-radius: 14px;
   color: var(--muted);
@@ -239,6 +294,18 @@ h1{
   background: rgba(26,26,31,.72);
   box-shadow: var(--shadow);
   padding:16px;
+  position:relative;
+  overflow:hidden;
+}
+.product::before{
+  content:"";
+  position:absolute;
+  left:-120px; top:-110px;
+  width:260px; height:220px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 60% 60%, rgba(219,16,33,.06), transparent 70%);
+  pointer-events:none;
+  opacity:.6;
 }
 .product .meta{
   display:flex; gap:10px; flex-wrap:wrap;
@@ -265,12 +332,18 @@ footer a:hover{color:var(--text)}
 }
 .small{font-size:.92rem}
 
-/* --- Mobile polish: fixes "meh" feeling --- */
+/* --- Mobile polish --- */
 @media (max-width: 560px){
   .wrap{padding:0 14px}
   .nav{padding:10px 0}
   .brand span{max-width: 62vw}
-    /* show burger, hide inline menu */
+  main{padding:18px 0 46px}
+  .hero{padding:18px}
+  .lead{font-size:1.0rem}
+  .cta{flex-direction:column}
+  .btn{width:100%}
+
+  /* show burger, hide inline menu */
   .navbtn{display:inline-flex}
   .menu{
     display:none;
@@ -296,9 +369,4 @@ footer a:hover{color:var(--text)}
 
   /* open state via JS: data-open="1" */
   .menu[data-open="1"]{display:flex}
-  main{padding:18px 0 46px}
-  .hero{padding:18px}
-  .lead{font-size:1.0rem}
-  .cta{flex-direction:column}
-  .btn{width:100%}
 }
