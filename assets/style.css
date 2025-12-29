@@ -356,6 +356,23 @@ h1{
     radial-gradient(closest-side at 70% 60%, rgba(70,18,22,.10), transparent 72%),
     linear-gradient(180deg, rgba(42,45,51,.35), rgba(26,26,31,.35));
   margin-bottom:12px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: 10px;
+}
+
+.thumblabel{
+  font-size: .78rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(210,207,206,.72);
+  background: rgba(14,6,11,.40);
+  border: 1px solid rgba(64,62,65,.55);
+  border-radius: 999px;
+  padding: 6px 10px;
 }
 
 .productcard .meta{
