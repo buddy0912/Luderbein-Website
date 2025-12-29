@@ -134,80 +134,52 @@ main{padding:28px 0 60px}
   overflow:hidden;
 }
 
-/* Kantig-wild: Schrägen + “Tape line” + Bruchkante */
+/* Filigran + bröselig: dünne Tape-Lines + Staub + Micro-Scratches */
 .hero::before{
   content:"";
   position:absolute;
   inset:0;
   pointer-events:none;
+  opacity:.9;
 
-  /* Layer 1: harte Schräge (wie abgeklebter Lack) */
   background:
+    /* dünne diagonale tape-line (rot) */
     linear-gradient(135deg,
-      transparent 0 56%,
-      rgba(219,16,33,.14) 56% 62%,
-      transparent 62% 100%),
+      transparent 0 58%,
+      rgba(219,16,33,.10) 58% 59.2%,
+      transparent 59.2% 100%),
 
-    /* Layer 2: zweite Schräge (dunkler Schattenrot) */
-    linear-gradient(160deg,
-      transparent 0 68%,
-      rgba(70,18,22,.16) 68% 74%,
-      transparent 74% 100%),
+    /* zweite dünne line als schatten (dunkelrot) */
+    linear-gradient(155deg,
+      transparent 0 70%,
+      rgba(70,18,22,.10) 70% 71.1%,
+      transparent 71.1% 100%),
 
-    /* Layer 3: “gebrochener” Fleck (kantig durch clip-path via polygon look) */
-    linear-gradient(115deg,
-      rgba(219,16,33,.10) 0 26%,
-      transparent 26% 100%);
-
-  opacity:.95;
+    /* unregelmäßiger „Schmutzschatten“ (sehr weich) */
+    radial-gradient(closest-side at 78% 18%, rgba(219,16,33,.10), transparent 72%),
+    radial-gradient(closest-side at 64% 42%, rgba(70,18,22,.08), transparent 74%);
 }
 
-/* Kantige Masken (polygon) über ::after */
+/* bröselige Partikel + feine Kratzer */
 .hero::after{
   content:"";
   position:absolute;
-  top:-90px;
-  right:-140px;
-  width:520px;
-  height:420px;
-  pointer-events:none;
-  opacity:.9;
-
-  /* harter Kanten-Glow, aber unregelmäßig */
-  background:
-    linear-gradient(120deg,
-      rgba(219,16,33,.22),
-      rgba(219,16,33,.06) 55%,
-      transparent 75%);
-
-  /* die Kante kommt durch die Form */
-  clip-path: polygon(
-    18% 14%,
-    74% 6%,
-    92% 24%,
-    84% 52%,
-    66% 66%,
-    40% 78%,
-    22% 62%,
-    10% 38%
-  );
-}
-
-/* kleine, unregelmäßige “Staub”-Punkte (sehr dezent) */
-.hero .badge{
-  position:relative;
-}
-.hero .badge::after{
-  content:"";
-  position:absolute;
-  inset:-10px -14px;
+  inset:0;
   pointer-events:none;
   opacity:.22;
   background:
-    radial-gradient(circle at 12% 32%, rgba(219,16,33,.35) 0 1px, transparent 2px),
-    radial-gradient(circle at 28% 72%, rgba(70,18,22,.32) 0 1px, transparent 2px),
-    radial-gradient(circle at 62% 26%, rgba(255,8,13,.20) 0 1px, transparent 2px),
-    radial-gradient(circle at 84% 64%, rgba(219,16,33,.22) 0 1px, transparent 2px);
+    /* Partikel (unregelmäßig verteilt) */
+    radial-gradient(circle at 72% 18%, rgba(219,16,33,.40) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 26%, rgba(219,16,33,.25) 0 1px, transparent 2px),
+    radial-gradient(circle at 84% 34%, rgba(70,18,22,.35) 0 1px, transparent 2px),
+    radial-gradient(circle at 69% 40%, rgba(219,16,33,.22) 0 1px, transparent 2px),
+    radial-gradient(circle at 88% 52%, rgba(219,16,33,.18) 0 1px, transparent 2px),
+    radial-gradient(circle at 62% 30%, rgba(255,8,13,.20) 0 1px, transparent 2px),
+
+    /* Micro-scratches (sehr fein, kaum sichtbar, aber gibt „Material“) */
+    linear-gradient(12deg, transparent 0 49.5%, rgba(210,207,206,.10) 49.5% 49.7%, transparent 49.7% 100%),
+    linear-gradient(-8deg, transparent 0 63.2%, rgba(210,207,206,.08) 63.2% 63.35%, transparent 63.35% 100%),
+    linear-gradient(18deg, transparent 0 78.6%, rgba(210,207,206,.07) 78.6% 78.75%, transparent 78.75% 100%);
 }
 
 .badge{
@@ -276,16 +248,18 @@ h1{
   position:relative;
   overflow:hidden;
 }
-/* kantiger Fleck statt Wolke */
+/* filigraner Fleck */
 .card::before{
   content:"";
   position:absolute;
-  top:-80px; right:-120px;
-  width:340px; height:240px;
+  top:-120px; right:-160px;
+  width:420px; height:320px;
   pointer-events:none;
-  opacity:.65;
-  background: linear-gradient(130deg, rgba(219,16,33,.12), transparent 65%);
-  clip-path: polygon(14% 18%, 86% 10%, 92% 36%, 68% 78%, 22% 84%, 8% 52%);
+  opacity:.55;
+  background:
+    radial-gradient(closest-side at 45% 55%, rgba(219,16,33,.07), transparent 74%),
+    radial-gradient(closest-side at 62% 40%, rgba(70,18,22,.06), transparent 76%),
+    linear-gradient(135deg, transparent 0 66%, rgba(219,16,33,.06) 66% 67%, transparent 67% 100%);
 }
 .card h3{margin:0 0 6px; font-size:1.05rem}
 .card p{margin:0; color:var(--muted)}
@@ -328,12 +302,14 @@ h1{
 .product::before{
   content:"";
   position:absolute;
-  left:-120px; top:-120px;
-  width:420px; height:320px;
+  left:-160px; top:-160px;
+  width:520px; height:420px;
   pointer-events:none;
-  opacity:.75;
-  background: linear-gradient(140deg, rgba(219,16,33,.10), transparent 65%);
-  clip-path: polygon(12% 22%, 72% 10%, 92% 28%, 78% 62%, 46% 84%, 18% 76%, 6% 48%);
+  opacity:.55;
+  background:
+    radial-gradient(closest-side at 65% 65%, rgba(219,16,33,.06), transparent 76%),
+    radial-gradient(closest-side at 40% 40%, rgba(70,18,22,.05), transparent 78%),
+    linear-gradient(145deg, transparent 0 72%, rgba(219,16,33,.05) 72% 73%, transparent 73% 100%);
 }
 .product .meta{
   display:flex; gap:10px; flex-wrap:wrap;
