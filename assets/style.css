@@ -53,7 +53,6 @@ main a:not(.btn):not(.brand):not(.menu a):not(.sigchip):hover{
   color: rgba(255,8,13,.95);
 }
 
-/* Header / Nav */
 header{
   position:sticky; top:0; z-index:50;
   backdrop-filter: blur(10px);
@@ -86,7 +85,6 @@ header{
   max-width: 52vw;
 }
 
-/* Desktop menu */
 .menu{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
 .menu a{
   text-decoration:none;
@@ -106,7 +104,6 @@ header{
   border-color: rgba(64,62,65,.40);
 }
 
-/* Mobile nav button */
 .navbtn{
   display:none;
   width:44px; height:44px;
@@ -129,7 +126,6 @@ header{
 .navicon span{top:5px}
 .navicon::after{bottom:0}
 
-/* Main */
 main{padding:28px 0 60px}
 
 .hero{
@@ -142,7 +138,6 @@ main{padding:28px 0 60px}
   overflow:hidden;
 }
 
-/* Filigran + bröselig */
 .hero::before{
   content:"";
   position:absolute;
@@ -205,7 +200,6 @@ h1{
   max-width: 70ch
 }
 
-/* Buttons */
 .cta{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
 .btn{
   display:inline-flex; align-items:center; justify-content:center;
@@ -225,7 +219,7 @@ h1{
 .btn:hover{transform: translateY(-1px); border-color: rgba(219,16,33,.55)}
 .btn:active{transform: translateY(0px)}
 
-/* Signature highlight strip */
+/* Signature */
 .signature{
   margin-top:14px;
   border:1px solid rgba(64,62,65,.55);
@@ -246,8 +240,6 @@ h1{
   opacity:.75;
 }
 .sigrow{display:flex; gap:10px; padding:12px; flex-wrap:wrap}
-
-/* chips */
 .sigchip{
   flex: 1 1 220px;
   border:1px solid rgba(64,62,65,.45);
@@ -268,8 +260,6 @@ h1{
   margin-top:2px;
   color: var(--muted);
 }
-
-/* Clickable chips: Desktop = Hover reicht, ohne Chevron */
 .sigchip.is-link{
   text-decoration:none;
   cursor:pointer;
@@ -284,7 +274,23 @@ h1{
   background: rgba(42,45,51,.22);
 }
 
-/* Cards */
+/* Sections */
+.section{margin-top:22px}
+.section h2{font-size:1.25rem; margin:0 0 10px}
+.section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.muted{color:var(--muted)}
+.hr{height:1px; background: rgba(64,62,65,.50); margin:22px 0}
+
+.notice{
+  border-left: 4px solid rgba(219,16,33,.70);
+  background: rgba(70,18,22,.14);
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: var(--muted);
+  border:1px solid rgba(64,62,65,.45);
+}
+
+/* Grid cards */
 .grid{
   display:grid;
   grid-template-columns: repeat(12, 1fr);
@@ -318,26 +324,15 @@ h1{
 @media (max-width: 860px){ .card{grid-column: span 6} }
 @media (max-width: 560px){ .card{grid-column: span 12} }
 
-.section{margin-top:22px}
-.section h2{font-size:1.25rem; margin:0 0 10px}
-.hr{height:1px; background: rgba(64,62,65,.50); margin:22px 0}
-
-.notice{
-  border-left: 4px solid rgba(219,16,33,.70);
-  background: rgba(70,18,22,.14);
-  padding: 12px 14px;
-  border-radius: 14px;
-  color: var(--muted);
-  border:1px solid rgba(64,62,65,.45);
-}
-
+/* Products */
 .products{
   display:grid;
   grid-template-columns: repeat(12, 1fr);
   gap:14px;
 }
-.product{
-  grid-column: span 6;
+
+.productcard{
+  grid-column: span 4;
   border-radius: var(--radius);
   border:1px solid rgba(64,62,65,.55);
   background: rgba(26,26,31,.72);
@@ -346,24 +341,51 @@ h1{
   position:relative;
   overflow:hidden;
 }
-.product::before{
-  content:"";
-  position:absolute;
-  left:-160px; top:-160px;
-  width:520px; height:420px;
-  pointer-events:none;
-  opacity:.55;
-  background:
-    radial-gradient(closest-side at 65% 65%, rgba(219,16,33,.06), transparent 76%),
-    radial-gradient(closest-side at 40% 40%, rgba(70,18,22,.05), transparent 78%),
-    linear-gradient(145deg, transparent 0 72%, rgba(219,16,33,.05) 72% 73%, transparent 73% 100%);
+
+.productcard:hover{
+  border-color: rgba(219,16,33,.45);
+  box-shadow: 0 18px 52px rgba(219,16,33,.07), var(--shadow);
 }
-.product .meta{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:.95rem}
+
+.thumb{
+  height:120px;
+  border-radius: 16px;
+  border:1px solid rgba(64,62,65,.55);
+  background:
+    radial-gradient(closest-side at 30% 30%, rgba(219,16,33,.10), transparent 70%),
+    radial-gradient(closest-side at 70% 60%, rgba(70,18,22,.10), transparent 72%),
+    linear-gradient(180deg, rgba(42,45,51,.35), rgba(26,26,31,.35));
+  margin-bottom:12px;
+}
+
+.productcard .meta{
+  display:flex; gap:10px; flex-wrap:wrap;
+  color:var(--muted); font-size:.95rem;
+  margin-bottom:8px;
+}
 .price{color:var(--text); font-weight:700}
 .kicker{color:var(--muted); margin:8px 0 0}
-.product .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
-@media (max-width: 760px){ .product{grid-column: span 12} }
 
+.bullets{
+  margin:10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+.bullets li{margin:6px 0}
+
+.productcard .actions{
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:12px
+}
+.productcard .actions .btn{flex: 1 1 auto; text-align:center}
+
+@media (max-width: 860px){
+  .productcard{grid-column: span 6}
+}
+@media (max-width: 560px){
+  .productcard{grid-column: span 12}
+}
+
+/* Footer */
 footer{
   border-top: 1px solid rgba(64,62,65,.55);
   padding: 18px 0 28px;
@@ -411,8 +433,6 @@ footer a:hover{color:var(--text)}
 
   .sigrow{padding:10px}
   .sigchip{flex-basis: 100%}
-
-  /* Mobile: Chevron nur hier */
   .sigchip.is-link::before{
     content:"›";
     position:absolute;
