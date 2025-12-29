@@ -76,6 +76,32 @@ header{
 .menu{
   display:flex; gap:8px; align-items:center; flex-wrap:wrap;
 }
+/* Mobile nav button */
+.navbtn{
+  display:none;
+  width:44px; height:44px;
+  border-radius: 14px;
+  border:1px solid rgba(64,62,65,.65);
+  background: rgba(42,45,51,.22);
+  color: var(--text);
+  align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.navbtn:active{transform: translateY(1px)}
+.navicon{
+  width:18px; height:12px; position:relative; display:block;
+}
+.navicon::before,
+.navicon::after,
+.navicon span{
+  content:"";
+  position:absolute; left:0; right:0;
+  height:2px; border-radius:2px;
+  background: rgba(210,207,206,.9);
+}
+.navicon::before{top:0}
+.navicon span{top:5px}
+.navicon::after{bottom:0}
 .menu a{
   text-decoration:none;
   padding:8px 10px;
@@ -244,8 +270,32 @@ footer a:hover{color:var(--text)}
   .wrap{padding:0 14px}
   .nav{padding:10px 0}
   .brand span{max-width: 62vw}
-  .menu{gap:6px}
-  .menu a{padding:8px 9px}
+    /* show burger, hide inline menu */
+  .navbtn{display:inline-flex}
+  .menu{
+    display:none;
+    position:absolute;
+    top:64px;
+    left:14px;
+    right:14px;
+    padding:10px;
+    border-radius: 18px;
+    border:1px solid rgba(64,62,65,.70);
+    background: rgba(26,26,31,.92);
+    box-shadow: var(--shadow);
+    flex-direction:column;
+    gap:6px;
+  }
+  header .wrap.nav{position:relative}
+  .menu a{
+    padding:12px 12px;
+    border-radius: 14px;
+    border:1px solid rgba(64,62,65,.45);
+    background: rgba(42,45,51,.18);
+  }
+
+  /* open state via JS: data-open="1" */
+  .menu[data-open="1"]{display:flex}
   main{padding:18px 0 46px}
   .hero{padding:18px}
   .lead{font-size:1.0rem}
