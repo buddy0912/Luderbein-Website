@@ -39,7 +39,7 @@ body{
   border-radius: 12px;
 }
 
-/* Base links: neutral by default (components decide) */
+/* Base links */
 a{color:inherit}
 
 /* Fließtext-Links in main: sichtbar als Link */
@@ -60,13 +60,11 @@ header{
   background: rgba(14,6,11,.78);
   border-bottom: 1px solid rgba(64,62,65,.45);
 }
-
 .nav{
   display:flex; align-items:center; justify-content:space-between;
   padding:12px 0;
   gap:14px;
 }
-
 .brand{
   display:flex; align-items:center; gap:10px;
   text-decoration:none;
@@ -249,7 +247,7 @@ h1{
 }
 .sigrow{display:flex; gap:10px; padding:12px; flex-wrap:wrap}
 
-/* Non-clickable chips (fallback) */
+/* chips */
 .sigchip{
   flex: 1 1 220px;
   border:1px solid rgba(64,62,65,.45);
@@ -271,21 +269,13 @@ h1{
   color: var(--muted);
 }
 
-/* Clickable chips: eindeutig als Link */
+/* Clickable chips: Desktop = Hover reicht, ohne Chevron */
 .sigchip.is-link{
   text-decoration:none;
   cursor:pointer;
   border-color: rgba(219,16,33,.35);
   background: rgba(42,45,51,.18);
   transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease, background .12s ease;
-}
-.sigchip.is-link::before{
-  content:"›";
-  position:absolute;
-  top:10px;
-  right:12px;
-  color: rgba(210,207,206,.75);
-  font-size: 1.15rem;
 }
 .sigchip.is-link:hover{
   transform: translateY(-1px);
@@ -341,7 +331,6 @@ h1{
   border:1px solid rgba(64,62,65,.45);
 }
 
-/* Products */
 .products{
   display:grid;
   grid-template-columns: repeat(12, 1fr);
@@ -375,7 +364,6 @@ h1{
 .product .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
 @media (max-width: 760px){ .product{grid-column: span 12} }
 
-/* Footer */
 footer{
   border-top: 1px solid rgba(64,62,65,.55);
   padding: 18px 0 28px;
@@ -423,4 +411,14 @@ footer a:hover{color:var(--text)}
 
   .sigrow{padding:10px}
   .sigchip{flex-basis: 100%}
+
+  /* Mobile: Chevron nur hier */
+  .sigchip.is-link::before{
+    content:"›";
+    position:absolute;
+    top:10px;
+    right:12px;
+    color: rgba(210,207,206,.75);
+    font-size: 1.15rem;
+  }
 }
