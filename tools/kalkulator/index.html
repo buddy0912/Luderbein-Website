@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kalkulator – Luderbein</title>
+  <meta name="description" content="V0 Kalkulator: grobe Preisindikation, dann direkt mit den Angaben anfragen." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    .formgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+    .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .field input,.field select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,10,10,.35);
+      color:var(--text);
+      outline:none;
+    }
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:700px){ .row2{grid-template-columns:1fr} }
+
+    .result{
+      border-radius:14px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,10,10,.25);
+      margin-top:14px;
+    }
+    .result strong{color:var(--text)}
+    .range{
+      font-size:22px;
+      font-weight:800;
+      margin:6px 0 8px;
+      letter-spacing:.2px;
+    }
+    .mini{font-size:12px;color:var(--muted)}
+    .pill{
+      display:inline-block;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.35);
+      color:rgba(255,255,255,.9);
+      margin:6px 6px 0 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+        <a href="/">Start</a>
+        <a href="/leistungen/">Leistungen</a>
+        <a href="/schwibboegen/">Schwibbögen</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge"><i></i> Tool – V0</span>
+      <h1>Kalkulator (Preis-Upgrade)</h1>
+      <p class="lead">
+        Grobe Preisindikation – damit du und ich beide sofort wissen, in welcher Liga wir spielen.
+        Danach: mit einem Klick anfragen (die Angaben sind schon drin).
+      </p>
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Allgemeine%20Anfrage&note=Ich%20nutze%20gerade%20den%20Kalkulator%20und%20habe%20eine%20Frage">Frage stellen</a>
+        <a class="btn" href="/leistungen/">Zurück zu Leistungen</a>
+      </div>
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Hinweis:</strong>
+        V0 = bewusst simpel. Werte werden von mir laufend nach echten Jobs/Fotos nachgeschärft.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>1) Wähle dein Ding</h2>
+
+      <div class="formgrid">
+        <div class="field">
+          <label for="prod">Produkt</label>
+          <select id="prod">
+            <option value="schiefer">Schiefer-Fotogravur</option>
+            <option value="sw_classic">Schwibbogen Classic</option>
+            <option value="sw_led">Schwibbogen LED</option>
+            <option value="sw_signature">Schwibbogen Signature (Silhouette)</option>
+          </select>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="size">Größe / Format</label>
+            <select id="size">
+              <!-- dynamisch via JS -->
+            </select>
+          </div>
+          <div class="field">
+            <label for="optText">Text/Personalisierung</label>
+            <select id="optText">
+              <option value="no">Nein (clean)</option>
+              <option value="yes">Ja (dezent)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="optRush">Tempo</label>
+            <select id="optRush">
+              <option value="normal">Normal</option>
+              <option value="rush">Express (wenn möglich)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="note">Notiz (optional)</label>
+            <input id="note" type="text" placeholder="z. B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …">
+          </div>
+        </div>
+      </div>
+
+      <div class="result" id="result">
+        <strong>Indikation (V0):</strong>
+        <div class="range" id="range">—</div>
+        <div id="chips"></div>
+        <p class="mini" id="disclaimer">
+          Das ist eine grobe Range, kein verbindliches Angebot. Final hängt’s am Motiv/Foto, Aufwand und Slot.
+        </p>
+
+        <div class="cta" style="margin-top:12px">
+          <a class="btn primary" id="btnAsk" href="/kontakt/">Mit diesen Angaben anfragen</a>
+          <a class="btn" id="btnWA" href="#" rel="noopener">WhatsApp (mit Text)</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // ----------- V0 PREIS-LOGIK (easy später anpassen) -----------
+    const CFG = {
+      schiefer: {
+        name: "Schiefer-Fotogravur",
+        sizes: [
+          { key: "20cm", label: "20 cm rund", baseMin: 29, baseMax: 49 },
+          { key: "25x25", label: "25×25 cm", baseMin: 34, baseMax: 59 },
+          { key: "30x30", label: "30×30 cm", baseMin: 39, baseMax: 69 }
+        ],
+        textAdd: { min: 0, max: 5 },
+        rushAdd: { min: 0, max: 15 }
+      },
+      sw_classic: {
+        name: "Schwibbogen Classic",
+        sizes: [
+          { key: "300mm", label: "300 mm", baseMin: 59, baseMax: 79 },
+          { key: "400mm", label: "400 mm", baseMin: 69, baseMax: 99 },
+          { key: "600mm", label: "600 mm", baseMin: 109, baseMax: 159 }
+        ],
+        textAdd: { min: 0, max: 10 },
+        rushAdd: { min: 0, max: 25 }
+      },
+      sw_led: {
+        name: "Schwibbogen LED",
+        sizes: [
+          { key: "300mm", label: "300 mm", baseMin: 79, baseMax: 109 },
+          { key: "400mm", label: "400 mm", baseMin: 89, baseMax: 129 },
+          { key: "600mm", label: "600 mm", baseMin: 139, baseMax: 199 }
+        ],
+        textAdd: { min: 0, max: 10 },
+        rushAdd: { min: 0, max: 30 }
+      },
+      sw_signature: {
+        name: "Schwibbogen Signature (Silhouette)",
+        sizes: [
+          { key: "300mm", label: "300 mm", baseMin: 89, baseMax: 129 },
+          { key: "400mm", label: "400 mm", baseMin: 99, baseMax: 159 },
+          { key: "600mm", label: "600 mm", baseMin: 159, baseMax: 239 }
+        ],
+        textAdd: { min: 0, max: 10 },
+        rushAdd: { min: 0, max: 35 }
+      }
+    };
+
+    // ----------- UI -----------
+    const elProd = document.getElementById('prod');
+    const elSize = document.getElementById('size');
+    const elText = document.getElementById('optText');
+    const elRush = document.getElementById('optRush');
+    const elNote = document.getElementById('note');
+
+    const elRange = document.getElementById('range');
+    const elChips = document.getElementById('chips');
+
+    const btnAsk = document.getElementById('btnAsk');
+    const btnWA = document.getElementById('btnWA');
+
+    function euro(n){
+      // Keine Cents in V0 – wir runden bewusst
+      return `${Math.round(n)},– €`.replace('.', ',');
+    }
+
+    function setSizes(prodKey){
+      const sizes = CFG[prodKey].sizes;
+      elSize.innerHTML = '';
+      for(const s of sizes){
+        const opt = document.createElement('option');
+        opt.value = s.key;
+        opt.textContent = s.label;
+        elSize.appendChild(opt);
+      }
+    }
+
+    function calc(){
+      const pk = elProd.value;
+      const cfg = CFG[pk];
+      const sk = elSize.value;
+      const sizeObj = cfg.sizes.find(s => s.key === sk) || cfg.sizes[0];
+
+      let min = sizeObj.baseMin;
+      let max = sizeObj.baseMax;
+
+      const chips = [];
+
+      chips.push(`${cfg.name}`);
+      chips.push(`${sizeObj.label}`);
+
+      if(elText.value === 'yes'){
+        min += cfg.textAdd.min;
+        max += cfg.textAdd.max;
+        chips.push('Text: ja');
+      } else {
+        chips.push('Text: nein');
+      }
+
+      if(elRush.value === 'rush'){
+        min += cfg.rushAdd.min;
+        max += cfg.rushAdd.max;
+        chips.push('Express: wenn möglich');
+      } else {
+        chips.push('Tempo: normal');
+      }
+
+      elRange.textContent = `${euro(min)} – ${euro(max)}`;
+
+      elChips.innerHTML = chips.map(c => `<span class="pill">${c}</span>`).join('');
+
+      // Prefill Kontakt-Link
+      const p = cfg.name;
+      const sizeText = sizeObj.label;
+      const note = [
+        `Kalkulator V0: ${euro(min)} – ${euro(max)}`,
+        elText.value === 'yes' ? 'Text/Personalisierung: ja' : 'Text/Personalisierung: nein',
+        elRush.value === 'rush' ? 'Tempo: Express (wenn möglich)' : 'Tempo: normal',
+        elNote.value.trim() ? `Notiz: ${elNote.value.trim()}` : ''
+      ].filter(Boolean).join(' | ');
+
+      const askHref = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(sizeText)}&note=${encodeURIComponent(note)}`;
+      btnAsk.href = askHref;
+
+      // Optional zusätzlich: WhatsApp direkt mit dem Text (für Schnellschießer)
+      const waBody = [
+        'Hi Luderbein,',
+        '',
+        `Ich komme aus dem Kalkulator:`,
+        `Produkt: ${p}`,
+        `Größe: ${sizeText}`,
+        `Indikation: ${euro(min)} – ${euro(max)}`,
+        elText.value === 'yes' ? 'Text/Personalisierung: ja' : 'Text/Personalisierung: nein',
+        elRush.value === 'rush' ? 'Tempo: Express (wenn möglich)' : 'Tempo: normal',
+        elNote.value.trim() ? `Notiz: ${elNote.value.trim()}` : '',
+        '',
+        'Ich schicke bei Bedarf Foto/Details direkt mit.'
+      ].filter(Boolean).join('\n');
+
+      btnWA.href = `https://wa.me/491725925858?text=${encodeURIComponent(waBody)}`;
+    }
+
+    elProd.addEventListener('change', () => { setSizes(elProd.value); calc(); });
+    [elSize, elText, elRush, elNote].forEach(el => el.addEventListener('input', calc));
+
+    // init
+    setSizes(elProd.value);
+    calc();
+  </script>
+</body>
+</html>
