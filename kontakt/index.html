@@ -42,12 +42,17 @@
         Schreib kurz – ich melde mich flott.
       </p>
 
+      <div class="notice" id="contextBox" style="display:none;margin-top:14px">
+        <strong style="color:var(--text)">Anfrage zu:</strong>
+        <span id="contextText"></span>
+      </div>
+
       <div class="cta">
-        <a class="btn primary" href="mailto:luderbein_gravur@icloud.com?subject=Anfrage%20Schwibbogen%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0AIch%20m%C3%B6chte%20einen%20Schwibbogen%20anfragen.%0A-%20Motiv%2FStil%3A%20%0A-%20Gr%C3%B6%C3%9Fe%20(z.%20B.%20400mm)%3A%20%0A-%20Personalisierung%20(Name%2FOrt%2FJahr)%3A%20%0A-%20LED%20ja%2Fnein%3A%20%0A-%20Sonstiges%3A%20%0A%0ADanke!">
+        <a class="btn primary" id="btnMail" href="#">
           E-Mail schreiben
         </a>
 
-        <a class="btn" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20einen%20Schwibbogen%20anfragen.%20%F0%9F%94%A5" rel="noopener">
+        <a class="btn" id="btnWA" href="#" rel="noopener">
           WhatsApp
         </a>
 
@@ -59,7 +64,7 @@
       <div class="section" style="margin-top:16px">
         <div class="notice">
           <strong style="color:var(--text)">Tipp:</strong>
-          Je genauer du bist (Motiv, Größe, Text, LED ja/nein), desto schneller bekommst du Preis + Zeitplan.
+          Je genauer du bist (Produkt/Größe/Text/Foto), desto schneller bekommst du Preis + Zeitplan.
         </div>
       </div>
     </section>
@@ -85,6 +90,57 @@
   </footer>
 
   <script src="/assets/site.js"></script>
-  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const p = (params.get('p') || '').trim();     // Produkt/Variante
+      const size = (params.get('size') || '').trim(); // optional
+      const note = (params.get('note') || '').trim(); // optional
+
+      const contextBox = document.getElementById('contextBox');
+      const contextText = document.getElementById('contextText');
+
+      const productLine = [p, size].filter(Boolean).join(' – ');
+
+      if(productLine){
+        contextBox.style.display = '';
+        contextText.textContent = productLine;
+      }
+
+      const subject = productLine
+        ? `Anfrage – ${productLine} – Luderbein`
+        : `Anfrage – Luderbein`;
+
+      const bodyLines = [
+        'Hi Luderbein,',
+        '',
+        productLine ? `Ich möchte anfragen: ${productLine}` : 'Ich möchte etwas anfragen:',
+        '',
+        '- Größe/Format:',
+        '- Personalisierung/Text (optional):',
+        '- Material/Look (wenn relevant):',
+        '- Foto (falls relevant):',
+        '- Sonstiges:',
+        '',
+        note ? `Notiz: ${note}` : '',
+        '',
+        'Danke!'
+      ].filter(line => line !== '');
+
+      const body = bodyLines.join('\n');
+
+      const mailHref =
+        `mailto:luderbein_gravur@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      const waText = bodyLines.join('\n');
+      const waHref =
+        `https://wa.me/491725925858?text=${encodeURIComponent(waText)}`;
+
+      document.getElementById('btnMail').setAttribute('href', mailHref);
+      document.getElementById('btnWA').setAttribute('href', waHref);
+    })();
+  </script>
 </body>
 </html>
