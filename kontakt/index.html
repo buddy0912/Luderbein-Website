@@ -87,27 +87,85 @@
 
     (function(){
       const params = new URLSearchParams(location.search);
-      const p = (params.get('p') || '').trim();       // Produkt/Variante
-      const size = (params.get('size') || '').trim(); // optional
-      const note = (params.get('note') || '').trim(); // optional
 
-      const contextBox = document.getElementById('contextBox');
+      // p = Produkt-Key (kurz), size/note optional
+      const pRaw  = (params.get('p') || '').trim();
+      const size  = (params.get('size') || '').trim();
+      const note  = (params.get('note') || '').trim();
+
+      // Key normalisieren (damit "Schiefer-Foto" auch klappt)
+      const p = pRaw.toLowerCase().replace(/\s+/g,'-');
+
+      // Mapping: kurze Keys -> hübsche Labels + passende Body-Vorlage
+      const PRODUCTS = {
+        'schiefer-foto': {
+          label: 'Schiefer – Fotogravur (Portrait/Haustier)',
+          hints: [
+            '- Foto (als Anhang oder Link):',
+            '- Motivzuschnitt (Kopf/Brust/…):',
+            '- Kontrast/Wunschlook (dezent/kräftig):',
+            '- Signatur/Widmung (optional):'
+          ]
+        },
+        'schiefer-text': {
+          label: 'Schiefer – Text / Symbole',
+          hints: [
+            '- Text (genau so wie er drauf soll):',
+            '- Schriftstil (clean/kantig/klassisch):',
+            '- Symbol/Icon (optional):',
+            '- Layout (zentriert/oben/unten):'
+          ]
+        },
+        'holz': {
+          label: 'Holz – Schwibbögen / Schilder / Deko',
+          hints: [
+            '- Motiv/Stil (kurz beschreiben oder Foto):',
+            '- Personalisierung (Name/Ort/Jahr):',
+            '- LED ja/nein (falls Schwibbogen):',
+            '- Schriftstil (optional):'
+          ]
+        },
+        'metall': {
+          label: 'Metall – Tags / Plaketten / Schmuck',
+          hints: [
+            '- Produkt (Tag/Plakette/Schmuck):',
+            '- Material (Edelstahl/Alu/… wenn bekannt):',
+            '- Motiv/Logo/Text:',
+            '- Größe/Lochung (falls Tag):'
+          ]
+        },
+        'custom': {
+          label: 'Custom – Sonderwunsch',
+          hints: [
+            '- Idee kurz erklären:',
+            '- Material (wenn klar):',
+            '- Maße/Größe:',
+            '- Deadline (wenn’s eilig ist):'
+          ]
+        }
+      };
+
+      const ctx = PRODUCTS[p] || (pRaw ? { label: pRaw, hints: [] } : null);
+
+      const contextBox  = document.getElementById('contextBox');
       const contextText = document.getElementById('contextText');
 
       const btnMail = document.getElementById('btnMail');
-      const btnWA = document.getElementById('btnWA');
+      const btnWA   = document.getElementById('btnWA');
 
-      const productLine = [p, size].filter(Boolean).join(' – ');
+      const productLine = [
+        ctx ? ctx.label : '',
+        size
+      ].filter(Boolean).join(' – ');
 
       if(productLine){
         contextBox.style.display = '';
         contextText.textContent = productLine;
 
-        // Wenn Produkt-Kontext da ist: WhatsApp wird Primary, Mail Secondary
+        // Wenn Kontext da ist: WhatsApp wird Primary (schnell), Mail secondary
         btnWA.classList.add('primary');
         btnMail.classList.remove('primary');
       } else {
-        // Ohne Kontext: Mail bleibt Primary (neutral)
         btnMail.classList.add('primary');
         btnWA.classList.remove('primary');
       }
@@ -116,30 +174,34 @@
         ? `Anfrage – ${productLine} – Luderbein`
         : `Anfrage – Luderbein`;
 
-      const bodyLines = [
+      const baseLines = [
         'Hi Luderbein,',
         '',
         productLine ? `Ich möchte anfragen: ${productLine}` : 'Ich möchte etwas anfragen:',
         '',
         '- Größe/Format:',
         '- Personalisierung/Text (optional):',
-        '- Material/Look (wenn relevant):',
         '- Foto (falls relevant):',
         '- Sonstiges:',
+      ];
+
+      const hintLines = (ctx && ctx.hints && ctx.hints.length) ? ['','Details:'].concat(ctx.hints) : [];
+
+      const tailLines = [
         '',
         note ? `Notiz: ${note}` : '',
         '',
         'Danke!'
       ].filter(line => line !== '');
 
+      const bodyLines = baseLines.concat(hintLines).concat(tailLines);
       const body = bodyLines.join('\n');
 
       const mailHref =
         `mailto:luderbein_gravur@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-      const waText = bodyLines.join('\n');
       const waHref =
-        `https://wa.me/491725925858?text=${encodeURIComponent(waText)}`;
+        `https://wa.me/491725925858?text=${encodeURIComponent(body)}`;
 
       btnMail.setAttribute('href', mailHref);
       btnWA.setAttribute('href', waHref);
