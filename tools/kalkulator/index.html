@@ -1,50 +1,369 @@
-<script>
-  (function () {
-    // wartet bis DOM da ist (falls Script im <head> oder async geladen wird)
-    function ready(fn){ if(document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kalkulator – Luderbein</title>
+  <meta name="description" content="Kalkulator V0: Schiefer-Fotogravur (Fixpreise) und Metall (auf Anfrage) – mit sauberem Übergang zum Kontakt." />
+  <link rel="stylesheet" href="/assets/style.css?v=1" />
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
 
-    ready(function(){
-      const params = new URLSearchParams(location.search);
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
 
-      // wir akzeptieren mehrere Parameter-Namen, damit du flexibel bist:
-      // /tools/kalkulator/?topic=metall
-      // /tools/kalkulator/?p=metall
-      // /tools/kalkulator/?service=metall
-      const raw =
-        (params.get('topic') || params.get('p') || params.get('service') || '').trim().toLowerCase();
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+        <a href="/">Start</a>
+        <a href="/leistungen/">Leistungen</a>
+        <a href="/schwibboegen/">Schwibbögen</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
 
-      if(!raw) return;
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge"><i></i> Tool – V0</span>
+      <h1>Kalkulator</h1>
+      <p class="lead">
+        Für Schiefer gibt’s Fixpreise (inkl. Fotoaufbereitung + Gravur + Klarlack).<br>
+        Metall ist aktuell V0: klare Preislogik + Anfrage mit Kontext.
+      </p>
 
-      // robustes Mapping
-      const map = {
-        'metall': 'metall',
-        'metal': 'metall',
-        'metallgravur': 'metall',
-        'metall-gravur': 'metall',
-        'schiefer': 'schiefer',
-        'slate': 'schiefer'
-      };
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Kleinunternehmer (§19 UStG):</strong> keine MwSt. ausgewiesen.
+      </div>
+    </section>
 
-      const want = map[raw] || raw;
+    <section class="section">
+      <div class="section-head">
+        <h2>1) Wähle dein Ding</h2>
+        <p class="small muted">Wenn du von Metall kommst, wird Metall automatisch vorgewählt.</p>
+      </div>
 
-      // möglichst tolerant das Dropdown finden
-      const sel =
-        document.querySelector('select#topic') ||
-        document.querySelector('select[name="topic"]') ||
-        document.querySelector('select[data-topic]') ||
-        document.querySelector('select');
+      <div class="card" style="padding:16px">
+        <label class="small" for="kind" style="display:block;margin-bottom:8px;color:var(--muted)">Was willst du?</label>
+        <select id="kind" class="input" style="width:100%">
+          <option value="schiefer">Schiefer-Fotogravur (Fixpreise)</option>
+          <option value="metall">Metallgravur (V0, auf Anfrage)</option>
+        </select>
 
-      if(!sel) return;
+        <div class="hr" style="margin:16px 0"></div>
 
-      // WICHTIG: value muss exakt passen (z.B. <option value="metall">Metall</option>)
-      // Wenn du im HTML <option value="Metall"> hast, klappt das NICHT -> dann value ändern!
-      const has = Array.from(sel.options).some(o => (o.value || '').toLowerCase() === want);
+        <!-- SCHIEFER -->
+        <div id="panelSchiefer">
+          <h3 style="margin:0 0 10px 0">Schiefer – Fixpreise</h3>
 
-      if(!has) return;
+          <label class="small" for="slateSize" style="display:block;margin:10px 0 8px;color:var(--muted)">Größe / Format</label>
+          <select id="slateSize" class="input" style="width:100%"></select>
 
-      // setzen + Change feuern (damit dein Kalkulator-Update-Code anspringt)
-      sel.value = want;
-      sel.dispatchEvent(new Event('change', { bubbles: true }));
+          <label class="small" for="extraNote" style="display:block;margin:14px 0 8px;color:var(--muted)">Extra: Was soll ich wissen?</label>
+          <input id="extraNote" class="input" style="width:100%" placeholder="z. B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …" />
+
+          <div class="hr" style="margin:16px 0"></div>
+
+          <h3 style="margin:0 0 10px 0">Upgrades (optional)</h3>
+
+          <label class="check" style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.03);margin-bottom:10px">
+            <input id="upSig" type="checkbox" />
+            <span>
+              <strong>Signatur / Widmung (+4,95 €)</strong><br>
+              <span class="small muted">Dezent, sauber. Kein Kitsch.</span>
+            </span>
+          </label>
+
+          <div style="padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.03);margin-bottom:10px">
+            <strong>3D-Standfuß</strong><span class="small muted"> (optional)</span>
+            <div class="small muted" style="margin-top:6px">Schwarz: Standard oder Premium.</div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px">
+              <label class="small" style="display:flex;gap:8px;align-items:center"><input type="radio" name="stand" value="none" checked> Kein Standfuß</label>
+              <label class="small" style="display:flex;gap:8px;align-items:center"><input type="radio" name="stand" value="std"> Standard (+9,95 €)</label>
+              <label class="small" style="display:flex;gap:8px;align-items:center"><input type="radio" name="stand" value="prem"> Premium (+14,95 €)</label>
+            </div>
+          </div>
+
+          <label class="check" style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.03);margin-bottom:10px">
+            <input id="upWall" type="checkbox" />
+            <span>
+              <strong>3D-Wandhalterung (+6,95 €)</strong><br>
+              <span class="small muted">Zum Aufhängen (wenn’s das Format hergibt).</span>
+            </span>
+          </label>
+
+          <label class="check" style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.03);margin-bottom:10px">
+            <input id="upExpress" type="checkbox" />
+            <span>
+              <strong>Express 3 Werktage (+19,95 €)</strong><br>
+              <span class="small muted">Ab Eingang aller nötigen Infos/Unterlagen.</span>
+            </span>
+          </label>
+
+          <div class="hr" style="margin:16px 0"></div>
+
+          <h3 style="margin:0 0 10px 0">Versand</h3>
+          <label class="check" style="display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid rgba(255,255,255,.10);border-radius:14px;background:rgba(255,255,255,.03)">
+            <input id="ship" type="checkbox" />
+            <span>
+              <strong>Versand gewünscht</strong><br>
+              <span class="small muted">ab 6,95 € • Mindestbestellwert für Versand: 29,95 € • Versandfrei ab 80,00 €</span>
+            </span>
+          </label>
+
+          <div id="shipWarn" class="notice" style="display:none;margin-top:12px">
+            <strong style="color:var(--text)">Hinweis:</strong> Versand erst ab <strong>29,95 €</strong> Mindestbestellwert.
+          </div>
+
+          <div class="hr" style="margin:16px 0"></div>
+
+          <div class="notice" style="margin-top:0">
+            <strong style="color:var(--text)">Gesamt (Fixpreis-Logik):</strong>
+            <span id="totalSchiefer" style="float:right;font-weight:700;color:var(--text)">—</span>
+            <div class="small muted" style="margin-top:8px">
+              Skizzen sind sehr willkommen (Handy-Skizze oder Screenshot reicht völlig).
+            </div>
+          </div>
+
+          <div class="cta" style="margin-top:14px">
+            <a class="btn primary" id="btnSchieferKontakt" href="/kontakt/">Weiter zu Kontakt</a>
+            <a class="btn" href="/leistungen/schiefer/">Preisliste ansehen</a>
+          </div>
+        </div>
+
+        <!-- METALL -->
+        <div id="panelMetall" style="display:none">
+          <h3 style="margin:0 0 10px 0">Metall – V0 (auf Anfrage)</h3>
+
+          <div class="notice" style="margin-top:0">
+            <strong style="color:var(--text)">Regel:</strong> Erst grob einsortieren → dann Anfrage mit Kontext.
+            <div class="small muted" style="margin-top:8px">
+              Skizzen sind sehr willkommen (Handy-Skizze oder Screenshot reicht völlig).
+            </div>
+          </div>
+
+          <label class="small" for="metalType" style="display:block;margin:14px 0 8px;color:var(--muted)">Was genau?</label>
+          <select id="metalType" class="input" style="width:100%">
+            <option value="Metall – Tags / Hundemarken">Tags / Hundemarken</option>
+            <option value="Metall – Plaketten / Schilder">Plaketten / Schilder</option>
+            <option value="Metall – Kleinserien">Kleinserien</option>
+            <option value="Metall – Sonstiges">Sonstiges</option>
+          </select>
+
+          <label class="small" for="metalSize" style="display:block;margin:14px 0 8px;color:var(--muted)">Größe / Stückzahl (optional)</label>
+          <input id="metalSize" class="input" style="width:100%" placeholder="z. B. 30×50 mm, 12 Stück, 1× Plakette 100×200 mm …" />
+
+          <label class="small" for="metalNote" style="display:block;margin:14px 0 8px;color:var(--muted)">Notiz (optional)</label>
+          <input id="metalNote" class="input" style="width:100%" placeholder="z. B. soll kratzfest sein, Outdoor, Geschenk bis Datum X …" />
+
+          <div class="cta" style="margin-top:14px">
+            <a class="btn primary" id="btnMetallKontakt" href="/kontakt/">Weiter zu Kontakt</a>
+            <a class="btn" href="/leistungen/metall/">Preise / Details</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="section">
+      <h2>2) Direktkontakt</h2>
+      <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
+      <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 5925858</a></p>
+      <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // --- Daten: Schiefer Fixpreise ---
+    const SLATE_PRICES = [
+      { label: "10×10 cm (eckig) / 10 cm rund", price: 9.95 },
+      { label: "20×20 cm (eckig) / 20 cm rund", price: 19.95 },
+      { label: "25×25 cm (eckig)", price: 39.95 },
+      { label: "30 cm rund", price: 44.95 },
+      { label: "38×13 cm", price: 34.95 },
+      { label: "45×30 cm (A70 Max)", price: 89.95 }
+    ];
+
+    const ADD_SIG = 4.95;
+    const ADD_WALL = 6.95;
+    const ADD_EXPRESS = 19.95;
+    const STAND_STD = 9.95;
+    const STAND_PREM = 14.95;
+
+    const SHIP_COST = 6.95;         // "ab 6,95" -> V0 pauschal
+    const SHIP_MIN = 29.95;
+    const SHIP_FREE = 80.00;
+
+    const els = {
+      kind: document.getElementById('kind'),
+      panelSchiefer: document.getElementById('panelSchiefer'),
+      panelMetall: document.getElementById('panelMetall'),
+
+      slateSize: document.getElementById('slateSize'),
+      upSig: document.getElementById('upSig'),
+      upWall: document.getElementById('upWall'),
+      upExpress: document.getElementById('upExpress'),
+      ship: document.getElementById('ship'),
+      shipWarn: document.getElementById('shipWarn'),
+      totalSchiefer: document.getElementById('totalSchiefer'),
+      extraNote: document.getElementById('extraNote'),
+      btnSchieferKontakt: document.getElementById('btnSchieferKontakt'),
+
+      metalType: document.getElementById('metalType'),
+      metalSize: document.getElementById('metalSize'),
+      metalNote: document.getElementById('metalNote'),
+      btnMetallKontakt: document.getElementById('btnMetallKontakt')
+    };
+
+    // Populate sizes
+    SLATE_PRICES.forEach((s, i) => {
+      const opt = document.createElement('option');
+      opt.value = String(i);
+      opt.textContent = `${s.label} — ${s.price.toFixed(2).replace('.', ',')} €`;
+      els.slateSize.appendChild(opt);
     });
-  })();
-</script>
+
+    function eur(n){
+      return n.toFixed(2).replace('.', ',') + " €";
+    }
+
+    function getStandAdd(){
+      const v = (document.querySelector('input[name="stand"]:checked') || {}).value || "none";
+      if(v === "std") return STAND_STD;
+      if(v === "prem") return STAND_PREM;
+      return 0;
+    }
+
+    function calcSchiefer(){
+      const idx = parseInt(els.slateSize.value || "0", 10);
+      const base = SLATE_PRICES[idx]?.price || 0;
+
+      let total = base;
+      if(els.upSig.checked) total += ADD_SIG;
+      if(els.upWall.checked) total += ADD_WALL;
+      if(els.upExpress.checked) total += ADD_EXPRESS;
+      total += getStandAdd();
+
+      // Versand
+      let shipAdd = 0;
+      if(els.ship.checked){
+        if(total >= SHIP_FREE) shipAdd = 0;
+        else shipAdd = SHIP_COST;
+      }
+      const grand = total + shipAdd;
+
+      // Warnung Mindestbestellwert
+      if(els.ship.checked && total < SHIP_MIN){
+        els.shipWarn.style.display = '';
+      } else {
+        els.shipWarn.style.display = 'none';
+      }
+
+      els.totalSchiefer.textContent = eur(grand);
+
+      // Kontakt-Link bauen (mit Kontext)
+      const p = "Schiefer-Fotogravur";
+      const size = SLATE_PRICES[idx]?.label || "";
+      const ups = [];
+      if(els.upSig.checked) ups.push("Signatur/Widmung");
+      const stand = (document.querySelector('input[name="stand"]:checked') || {}).value || "none";
+      if(stand === "std") ups.push("Standfuß Standard");
+      if(stand === "prem") ups.push("Standfuß Premium");
+      if(els.upWall.checked) ups.push("Wandhalterung");
+      if(els.upExpress.checked) ups.push("Express (3 WT)");
+      if(els.ship.checked) ups.push(total >= SHIP_FREE ? "Versand (frei ab 80€)" : "Versand");
+
+      const noteBits = [];
+      if(ups.length) noteBits.push("Upgrades: " + ups.join(", "));
+      const extra = (els.extraNote.value || "").trim();
+      if(extra) noteBits.push(extra);
+
+      const note = noteBits.join(" | ");
+      const href = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(size)}&note=${encodeURIComponent(note)}`;
+      els.btnSchieferKontakt.setAttribute('href', href);
+    }
+
+    function calcMetallLink(){
+      const p = (els.metalType.value || "Metall");
+      const size = (els.metalSize.value || "").trim();
+      const note = (els.metalNote.value || "").trim();
+      const href = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(size)}&note=${encodeURIComponent(note)}`;
+      els.btnMetallKontakt.setAttribute('href', href);
+    }
+
+    function setMode(mode){
+      const isSchiefer = mode === "schiefer";
+      els.panelSchiefer.style.display = isSchiefer ? "" : "none";
+      els.panelMetall.style.display = isSchiefer ? "none" : "";
+      els.kind.value = mode;
+
+      // merken
+      try { localStorage.setItem('lb_kalk_mode', mode); } catch(e){}
+      if(isSchiefer) calcSchiefer(); else calcMetallLink();
+    }
+
+    // Auto-Vorwahl: URL-Param ?t=metall / ?t=schiefer
+    function detectInitialMode(){
+      const params = new URLSearchParams(location.search);
+      const t = (params.get('t') || "").toLowerCase().trim();
+      if(t === "metall" || t === "metal") return "metall";
+      if(t === "schiefer" || t === "slate") return "schiefer";
+
+      // Referrer (wenn du von /leistungen/metall/ kommst)
+      try{
+        if(document.referrer && document.referrer.includes('/leistungen/metall')) return "metall";
+      }catch(e){}
+
+      // last mode
+      try{
+        const saved = localStorage.getItem('lb_kalk_mode');
+        if(saved === "metall" || saved === "schiefer") return saved;
+      }catch(e){}
+
+      return "schiefer";
+    }
+
+    // Events
+    els.kind.addEventListener('change', () => setMode(els.kind.value));
+    els.slateSize.addEventListener('change', calcSchiefer);
+    els.upSig.addEventListener('change', calcSchiefer);
+    els.upWall.addEventListener('change', calcSchiefer);
+    els.upExpress.addEventListener('change', calcSchiefer);
+    els.ship.addEventListener('change', calcSchiefer);
+    els.extraNote.addEventListener('input', calcSchiefer);
+    document.querySelectorAll('input[name="stand"]').forEach(r => r.addEventListener('change', calcSchiefer));
+
+    els.metalType.addEventListener('change', calcMetallLink);
+    els.metalSize.addEventListener('input', calcMetallLink);
+    els.metalNote.addEventListener('input', calcMetallLink);
+
+    // Init
+    setMode(detectInitialMode());
+  </script>
+</body>
+</html>
