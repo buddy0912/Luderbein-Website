@@ -1,260 +1,50 @@
-<!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="Upgrade-Kostenrechnung (V0): Schiefer-Fixpreise + Anfrage-Flow. Metall (V0) folgt – bis dahin grob kalkulieren & mit Skizze anfragen." />
-  <link rel="stylesheet" href="/assets/style.css" />
-</head>
-<body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
-        </div>
-      </a>
+<script>
+  (function () {
+    // wartet bis DOM da ist (falls Script im <head> oder async geladen wird)
+    function ready(fn){ if(document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
-
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-        <a href="/">Start</a>
-        <a href="/leistungen/">Leistungen</a>
-        <a href="/schwibboegen/">Schwibbögen</a>
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="hero">
-      <span class="badge"><i></i> Tool – V0</span>
-      <h1>Kalkulator</h1>
-      <p class="lead">
-        Erst Preis/Logik checken → dann (wenn’s passt) anfragen. Spart dir und mir Zeit.
-      </p>
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Kleinunternehmer (§19 UStG):</strong> keine MwSt. ausgewiesen.
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>1) Wähle dein Ding</h2>
-        <p class="small muted">Schiefer hat Fixpreise. Metall ist V0 (Preise im Aufbau).</p>
-      </div>
-
-      <div class="card" style="padding:16px">
-        <label class="small" for="productSel" style="display:block;margin-bottom:6px">Was willst du?</label>
-        <select id="productSel" class="input" style="width:100%">
-          <option value="schiefer_foto">Schiefer – Fotogravur (Fixpreise)</option>
-          <option value="schiefer_text">Schiefer – Text & Symbole (V0: folgt)</option>
-          <option value="metall">Metall – Gravur (V0: Preise im Aufbau)</option>
-        </select>
-
-        <div id="schieferBox" style="margin-top:14px">
-          <div class="hr"></div>
-
-          <label class="small" for="sizeSel" style="display:block;margin-bottom:6px">Größe / Format</label>
-          <select id="sizeSel" class="input" style="width:100%">
-            <option value="10x10" data-price="9.95">10 × 10 cm (eckig) / 10 cm rund – 9,95 €</option>
-            <option value="20x20" data-price="19.95" selected>20 × 20 cm (eckig) / 20 cm rund – 19,95 €</option>
-            <option value="25x25" data-price="39.95">25 × 25 cm (eckig) – 39,95 €</option>
-            <option value="30r" data-price="44.95">30 cm rund – 44,95 €</option>
-            <option value="38x13" data-price="34.95">38 × 13 cm – 34,95 €</option>
-            <option value="45x30" data-price="89.95">45 × 30 cm (A70 Max) – 89,95 €</option>
-          </select>
-
-          <div class="hr"></div>
-
-          <label class="small" for="extraNote" style="display:block;margin-bottom:6px">Extra: Was soll ich wissen?</label>
-          <input id="extraNote" class="input" type="text" placeholder="z.B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …" style="width:100%">
-
-          <div class="hr"></div>
-
-          <div class="small muted" style="margin-bottom:8px">Upgrades (optional)</div>
-
-          <label class="check">
-            <input type="checkbox" id="uSig" data-add="4.95">
-            <span><strong>Signatur / Widmung</strong> (+4,95 €) <span class="small muted">– dezent, sauber.</span></span>
-          </label>
-
-          <label class="check" style="margin-top:10px">
-            <input type="checkbox" id="uStand" data-add="9.95">
-            <span><strong>3D-Standfuß (schwarz)</strong> (+9,95 €) <span class="small muted">– optional.</span></span>
-          </label>
-
-          <label class="check" style="margin-top:10px">
-            <input type="checkbox" id="uWall" data-add="6.95">
-            <span><strong>3D-Wandhalterung</strong> (+6,95 €) <span class="small muted">– zum Aufhängen.</span></span>
-          </label>
-
-          <label class="check" style="margin-top:10px">
-            <input type="checkbox" id="uExpress" data-add="19.95">
-            <span><strong>Express</strong> (+19,95 €) <span class="small muted">– 3 Werktage ab vollständigen Infos.</span></span>
-          </label>
-
-          <div class="hr"></div>
-
-          <div class="notice">
-            <strong style="color:var(--text)">Zwischensumme:</strong>
-            <span id="sumOut">–</span>
-            <div class="small muted" style="margin-top:6px">
-              Versand (falls gewünscht): ab 6,95 € · Mindestbestellwert Versand: 29,95 € · Versandfrei ab 80,00 €
-            </div>
-          </div>
-
-          <div class="cta" style="margin-top:14px">
-            <a class="btn primary" id="btnToContactSchiefer" href="/kontakt/">Mit Angaben anfragen</a>
-            <a class="btn" href="/leistungen/schiefer/">Zur Schiefer-Seite</a>
-          </div>
-        </div>
-
-        <div id="metallBox" style="display:none;margin-top:14px">
-          <div class="hr"></div>
-          <div class="notice">
-            <strong style="color:var(--text)">Metall (V0):</strong>
-            Fixpreise sind gerade im Aufbau. Bis dahin: kurze Anfrage mit Skizze/Screenshot, Material (Edelstahl/Alu/Messing) und Größe.
-          </div>
-
-          <label class="small" for="metallNote" style="display:block;margin:12px 0 6px">Kurzangaben (optional)</label>
-          <input id="metallNote" class="input" type="text" placeholder="z.B. Hundemarke 30×20mm, Edelstahl, 2-seitig, Icon + Text" style="width:100%">
-
-          <div class="cta" style="margin-top:14px">
-            <a class="btn primary" id="btnToContactMetall" href="/kontakt/?p=Metallgravur">Mit Skizze anfragen</a>
-            <a class="btn" href="/leistungen/metall/">Zur Metall-Seite</a>
-          </div>
-        </div>
-
-        <div id="schieferTextBox" style="display:none;margin-top:14px">
-          <div class="hr"></div>
-          <div class="notice">
-            <strong style="color:var(--text)">Schiefer Text & Symbole:</strong>
-            Preise kommen als nächstes (V0). Bis dahin: kurz anfragen mit Text/Idee + gewünschtem Format.
-          </div>
-          <div class="cta" style="margin-top:14px">
-            <a class="btn primary" id="btnToContactSchieferText" href="/kontakt/?p=Schiefer%20Text%20%26%20Symbole">Anfragen</a>
-            <a class="btn" href="/leistungen/schiefer-text/">Zur Seite</a>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="/assets/site.js"></script>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    (function(){
+    ready(function(){
       const params = new URLSearchParams(location.search);
-      const topic = (params.get('topic') || params.get('p') || '').toLowerCase().trim();
 
-      const productSel = document.getElementById('productSel');
-      const schieferBox = document.getElementById('schieferBox');
-      const metallBox = document.getElementById('metallBox');
-      const schieferTextBox = document.getElementById('schieferTextBox');
+      // wir akzeptieren mehrere Parameter-Namen, damit du flexibel bist:
+      // /tools/kalkulator/?topic=metall
+      // /tools/kalkulator/?p=metall
+      // /tools/kalkulator/?service=metall
+      const raw =
+        (params.get('topic') || params.get('p') || params.get('service') || '').trim().toLowerCase();
 
-      const sizeSel = document.getElementById('sizeSel');
-      const sumOut = document.getElementById('sumOut');
+      if(!raw) return;
 
-      const extraNote = document.getElementById('extraNote');
+      // robustes Mapping
+      const map = {
+        'metall': 'metall',
+        'metal': 'metall',
+        'metallgravur': 'metall',
+        'metall-gravur': 'metall',
+        'schiefer': 'schiefer',
+        'slate': 'schiefer'
+      };
 
-      const uSig = document.getElementById('uSig');
-      const uStand = document.getElementById('uStand');
-      const uWall = document.getElementById('uWall');
-      const uExpress = document.getElementById('uExpress');
+      const want = map[raw] || raw;
 
-      const btnToContactSchiefer = document.getElementById('btnToContactSchiefer');
-      const btnToContactMetall = document.getElementById('btnToContactMetall');
-      const btnToContactSchieferText = document.getElementById('btnToContactSchieferText');
+      // möglichst tolerant das Dropdown finden
+      const sel =
+        document.querySelector('select#topic') ||
+        document.querySelector('select[name="topic"]') ||
+        document.querySelector('select[data-topic]') ||
+        document.querySelector('select');
 
-      const metallNote = document.getElementById('metallNote');
+      if(!sel) return;
 
-      // URL-Sprung: /tools/kalkulator/?topic=metall
-      if(topic.includes('metall')){
-        productSel.value = 'metall';
-      } else if(topic.includes('schiefer') && topic.includes('text')){
-        productSel.value = 'schiefer_text';
-      } else if(topic.includes('schiefer')){
-        productSel.value = 'schiefer_foto';
-      }
+      // WICHTIG: value muss exakt passen (z.B. <option value="metall">Metall</option>)
+      // Wenn du im HTML <option value="Metall"> hast, klappt das NICHT -> dann value ändern!
+      const has = Array.from(sel.options).some(o => (o.value || '').toLowerCase() === want);
 
-      function showMode(){
-        const v = productSel.value;
+      if(!has) return;
 
-        schieferBox.style.display = (v === 'schiefer_foto') ? '' : 'none';
-        schieferTextBox.style.display = (v === 'schiefer_text') ? '' : 'none';
-        metallBox.style.display = (v === 'metall') ? '' : 'none';
-
-        if(v === 'schiefer_foto') calc();
-      }
-
-      function money(n){
-        return n.toFixed(2).replace('.', ',') + ' €';
-      }
-
-      function calc(){
-        const opt = sizeSel.options[sizeSel.selectedIndex];
-        const base = parseFloat(opt.getAttribute('data-price') || '0');
-
-        let add = 0;
-        [uSig, uStand, uWall, uExpress].forEach(ch => {
-          if(ch && ch.checked) add += parseFloat(ch.getAttribute('data-add') || '0');
-        });
-
-        const sum = base + add;
-        sumOut.textContent = money(sum);
-
-        // Kontaktlink mit Kontext
-        const sizeText = opt.textContent.split('–')[0].trim();
-        const note = (extraNote.value || '').trim();
-
-        const p = 'Schiefer-Fotogravur';
-        const href = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(sizeText)}${note ? `&note=${encodeURIComponent(note)}` : ''}`;
-        btnToContactSchiefer.setAttribute('href', href);
-      }
-
-      function wireMetallLink(){
-        const note = (metallNote.value || '').trim();
-        const p = 'Metallgravur';
-        const href = `/kontakt/?p=${encodeURIComponent(p)}${note ? `&note=${encodeURIComponent(note)}` : ''}`;
-        btnToContactMetall.setAttribute('href', href);
-      }
-
-      // Events
-      productSel.addEventListener('change', showMode);
-
-      [sizeSel, uSig, uStand, uWall, uExpress, extraNote].forEach(el => {
-        if(!el) return;
-        el.addEventListener('change', calc);
-        el.addEventListener('input', calc);
-      });
-
-      metallNote.addEventListener('input', wireMetallLink);
-
-      // Init
-      showMode();
-      calc();
-      wireMetallLink();
-    })();
-  </script>
-</body>
-</html>
+      // setzen + Change feuern (damit dein Kalkulator-Update-Code anspringt)
+      sel.value = want;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  })();
+</script>
