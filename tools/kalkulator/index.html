@@ -202,4 +202,158 @@
 
     <section class="section">
       <h2>Kontakt</h2>
-      <p class="small">E-Mail: <a href="mailto:luder
+      <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
+      <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js"></script>
+
+  <script>
+  (function(){
+    try {
+      // year
+      var y = document.getElementById('y');
+      if (y) y.textContent = new Date().getFullYear();
+
+      var serviceSelect = document.getElementById('serviceSelect');
+      var sectionSchiefer = document.getElementById('sectionSchiefer');
+      var sectionMetall = document.getElementById('sectionMetall');
+
+      var schieferSize = document.getElementById('schieferSize');
+      var schieferExtra = document.getElementById('schieferExtra');
+      var upgSig = document.getElementById('upgSig');
+      var upgStand = document.getElementById('upgStand');
+      var schieferTotal = document.getElementById('schieferTotal');
+      var btnSchieferAnfrage = document.getElementById('btnSchieferAnfrage');
+
+      var metallWas = document.getElementById('metallWas');
+      var metallMenge = document.getElementById('metallMenge');
+      var metallGroesse = document.getElementById('metallGroesse');
+      var metallText = document.getElementById('metallText');
+      var btnMetallKontakt = document.getElementById('btnMetallKontakt');
+
+      function money(n){
+        try { return (Math.round(n * 100) / 100).toFixed(2).replace('.', ',') + ' €'; }
+        catch(e){ return '–'; }
+      }
+
+      function getDefaultService(){
+        var params = new URLSearchParams(location.search);
+        var t = (params.get('t') || params.get('type') || params.get('service') || '').trim().toLowerCase();
+
+        if (t.includes('metall')) return 'metall';
+        if (t.includes('schiefer')) return 'schiefer-foto';
+
+        // referrer fallback (gleiches origin -> klappt bei dir meistens)
+        var r = (document.referrer || '').toLowerCase();
+        if (r.includes('/leistungen/metall')) return 'metall';
+        if (r.includes('/leistungen/schiefer')) return 'schiefer-foto';
+
+        return 'schiefer-foto';
+      }
+
+      function showService(val){
+        if (!val) val = 'schiefer-foto';
+
+        if (sectionSchiefer) sectionSchiefer.style.display = (val === 'schiefer-foto') ? '' : 'none';
+        if (sectionMetall) sectionMetall.style.display = (val === 'metall') ? '' : 'none';
+
+        if (val === 'schiefer-foto') {
+          recalcSchiefer();
+        } else if (val === 'metall') {
+          updateMetallLink();
+        }
+      }
+
+      function baseSchiefer(){
+        var opt = schieferSize && schieferSize.options ? schieferSize.options[schieferSize.selectedIndex] : null;
+        var base = opt ? parseFloat(opt.getAttribute('data-base') || '0') : 0;
+        return isFinite(base) ? base : 0;
+      }
+
+      function recalcSchiefer(){
+        if (!schieferTotal) return;
+
+        var total = baseSchiefer();
+
+        if (upgSig && upgSig.checked) total += parseFloat(upgSig.getAttribute('data-price') || '0') || 0;
+        if (upgStand && upgStand.checked) total += parseFloat(upgStand.getAttribute('data-price') || '0') || 0;
+
+        schieferTotal.textContent = money(total);
+
+        // Anfrage-Link bauen (p + size + note)
+        var sizeLabel = '';
+        try {
+          sizeLabel = schieferSize.options[schieferSize.selectedIndex].textContent.split('–')[0].trim();
+        } catch(e){ sizeLabel = ''; }
+
+        var note = (schieferExtra && schieferExtra.value || '').trim();
+
+        var url = new URL('/kontakt/', location.origin);
+        url.searchParams.set('p', 'Schiefer-Fotogravur');
+        if (sizeLabel) url.searchParams.set('size', sizeLabel);
+        if (note) url.searchParams.set('note', note);
+
+        if (btnSchieferAnfrage) btnSchieferAnfrage.setAttribute('href', url.pathname + url.search);
+      }
+
+      function updateMetallLink(){
+        // Kontakt-Link mit Kontext füllen (ohne Zwang)
+        var was = (metallWas && metallWas.value || '').trim();
+        var menge = (metallMenge && metallMenge.value || '').trim();
+        var groesse = (metallGroesse && metallGroesse.value || '').trim();
+        var text = (metallText && metallText.value || '').trim();
+
+        var p = 'Metallgravur';
+        var size = [];
+        if (was) size.push(was);
+        if (groesse) size.push(groesse);
+        if (menge) size.push('Menge: ' + menge);
+
+        var url = new URL('/kontakt/', location.origin);
+        url.searchParams.set('p', p);
+        if (size.length) url.searchParams.set('size', size.join(' – '));
+        if (text) url.searchParams.set('note', text);
+
+        if (btnMetallKontakt) btnMetallKontakt.setAttribute('href', url.pathname + url.search);
+      }
+
+      // Init: Default wählen
+      if (serviceSelect) {
+        serviceSelect.value = getDefaultService();
+        serviceSelect.addEventListener('change', function(){ showService(serviceSelect.value); });
+      }
+
+      // Listeners Schiefer
+      if (schieferSize) schieferSize.addEventListener('change', recalcSchiefer);
+      if (schieferExtra) schieferExtra.addEventListener('input', recalcSchiefer);
+      if (upgSig) upgSig.addEventListener('change', recalcSchiefer);
+      if (upgStand) upgStand.addEventListener('change', recalcSchiefer);
+
+      // Listeners Metall
+      if (metallWas) metallWas.addEventListener('change', updateMetallLink);
+      if (metallMenge) metallMenge.addEventListener('input', updateMetallLink);
+      if (metallGroesse) metallGroesse.addEventListener('input', updateMetallLink);
+      if (metallText) metallText.addEventListener('input', updateMetallLink);
+
+      // Anzeige initial
+      showService(serviceSelect ? serviceSelect.value : getDefaultService());
+    } catch (e) {
+      // NIE White-Page riskieren
+      console && console.log && console.log('Kalkulator init skipped:', e);
+    }
+  })();
+  </script>
+</body>
+</html>
