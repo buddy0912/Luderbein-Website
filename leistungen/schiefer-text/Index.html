@@ -6,6 +6,42 @@
   <title>Schiefer Text & Symbole – Luderbein</title>
   <meta name="description" content="Schiefergravur mit Text, Symbolen, Koordinaten. Schnell, clean, urban – als Geschenk oder Schild." />
   <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    .pricelist{
+      margin-top:12px;
+      border-radius:14px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,10,10,.25);
+    }
+    .pricelist h3{margin:0 0 10px;font-size:16px;color:var(--text)}
+    .pricelist .small{margin:0 0 10px}
+    .plist{display:grid;grid-template-columns:1fr;gap:8px;margin:0;padding:0;list-style:none}
+    .pitem{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      align-items:baseline;
+    }
+    .pitem b{color:var(--text);font-size:14px}
+    .pitem span{color:rgba(255,255,255,.92);font-weight:800}
+    .muter{color:var(--muted);font-size:12px;margin-top:10px;line-height:1.35}
+    .chips{margin-top:10px}
+    .chip{
+      display:inline-block;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.35);
+      color:rgba(255,255,255,.9);
+      margin:6px 6px 0 0;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -50,6 +86,34 @@
       <div class="notice" style="margin-top:14px">
         <strong style="color:var(--text)">Typisch Luderbein:</strong>
         dezent wild, sauber gemacht. Nicht „Deko-Katalog“, eher „Industrie/Urban“.
+      </div>
+
+      <div class="pricelist">
+        <h3>Fixpreise (V0)</h3>
+        <p class="small muted">
+          Für Text/Symbole nutzen wir dieselben Format-Fixpreise wie bei Schiefer — weil Material + Finish gleich bleibt.
+        </p>
+
+        <ul class="plist">
+          <li class="pitem"><b>10×10 cm / 10 cm rund</b><span>9,95 €</span></li>
+          <li class="pitem"><b>20×20 cm / 20 cm rund</b><span>19,95 €</span></li>
+          <li class="pitem"><b>25×25 cm</b><span>39,95 €</span></li>
+          <li class="pitem"><b>30 cm rund</b><span>44,95 €</span></li>
+          <li class="pitem"><b>38×13 cm</b><span>34,95 €</span></li>
+          <li class="pitem"><b>45×30 cm</b><span>89,95 €</span></li>
+        </ul>
+
+        <div class="chips" aria-label="Upgrades">
+          <span class="chip">Signatur/Widmung +4,95 €</span>
+          <span class="chip">Standfuß +9,95 € (Premium +14,95 €)</span>
+          <span class="chip">Wandhalterung +6,95 €</span>
+          <span class="chip">Express (3 WT) +19,95 €</span>
+          <span class="chip">Versand ab 6,95 €</span>
+        </div>
+
+        <p class="muter">
+          Kleinunternehmer (§19 UStG): keine MwSt. ausgewiesen. Versand: Mindestbestellwert 29,95 € • versandfrei ab 80,00 €.
+        </p>
       </div>
     </section>
 
@@ -142,7 +206,7 @@
       <div class="section" style="margin-top:16px">
         <div class="notice">
           <strong style="color:var(--text)">Preislogik:</strong>
-          hängt primär am Format + Textmenge + Icon/QR. Ich gebe dir nach Anfrage schnell eine klare Zahl.
+          Fixpreis nach Format + optionale Upgrades. Final bekommst du nach Anfrage sofort eine klare Zahl.
         </div>
       </div>
 
