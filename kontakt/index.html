@@ -48,17 +48,9 @@
       </div>
 
       <div class="cta">
-        <a class="btn primary" id="btnMail" href="#">
-          E-Mail schreiben
-        </a>
-
-        <a class="btn" id="btnWA" href="#" rel="noopener">
-          WhatsApp
-        </a>
-
-        <a class="btn" href="https://instagram.com/luderbein_gravur" rel="noopener">
-          Instagram
-        </a>
+        <a class="btn primary" id="btnMail" href="#">E-Mail schreiben</a>
+        <a class="btn" id="btnWA" href="#" rel="noopener">WhatsApp</a>
+        <a class="btn" href="https://instagram.com/luderbein_gravur" rel="noopener">Instagram</a>
       </div>
 
       <div class="section" style="margin-top:16px">
@@ -95,18 +87,29 @@
 
     (function(){
       const params = new URLSearchParams(location.search);
-      const p = (params.get('p') || '').trim();     // Produkt/Variante
+      const p = (params.get('p') || '').trim();       // Produkt/Variante
       const size = (params.get('size') || '').trim(); // optional
       const note = (params.get('note') || '').trim(); // optional
 
       const contextBox = document.getElementById('contextBox');
       const contextText = document.getElementById('contextText');
 
+      const btnMail = document.getElementById('btnMail');
+      const btnWA = document.getElementById('btnWA');
+
       const productLine = [p, size].filter(Boolean).join(' – ');
 
       if(productLine){
         contextBox.style.display = '';
         contextText.textContent = productLine;
+
+        // Wenn Produkt-Kontext da ist: WhatsApp wird Primary, Mail Secondary
+        btnWA.classList.add('primary');
+        btnMail.classList.remove('primary');
+      } else {
+        // Ohne Kontext: Mail bleibt Primary (neutral)
+        btnMail.classList.add('primary');
+        btnWA.classList.remove('primary');
       }
 
       const subject = productLine
@@ -138,8 +141,8 @@
       const waHref =
         `https://wa.me/491725925858?text=${encodeURIComponent(waText)}`;
 
-      document.getElementById('btnMail').setAttribute('href', mailHref);
-      document.getElementById('btnWA').setAttribute('href', waHref);
+      btnMail.setAttribute('href', mailHref);
+      btnWA.setAttribute('href', waHref);
     })();
   </script>
 </body>
