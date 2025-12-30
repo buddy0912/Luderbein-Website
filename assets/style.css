@@ -459,3 +459,32 @@ footer a:hover{color:var(--text)}
     font-size: 1.15rem;
   }
 }
+/* Werkstatt-Feed (Reel) */
+.reelgrid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:14px;
+}
+
+@media (max-width: 860px){
+  .reelgrid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+}
+
+.reelitem{
+  display:block;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.03);
+}
+
+.reelitem img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  display:block;
+}
+
+@media (max-width: 520px){
+  .reelitem img{ height:180px; }
+}
