@@ -6,6 +6,109 @@
   <title>Luderbein – Schwibbögen & Gravur</title>
   <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail, Website im Aufbau." />
   <link rel="stylesheet" href="/assets/style.css" />
+
+  <style>
+    /* --- Werkstatt-Reel (authentisch, nicht geschniegelt) --- */
+    .reel-wrap{ margin-top:16px; }
+    .reel-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      margin:10px 0 10px;
+    }
+    .reel-head h2{ margin:0; }
+    .reel-head .small{ margin:0; }
+
+    .reel{
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
+      padding:8px 2px 14px;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    }
+    .reel::-webkit-scrollbar{ height:10px; }
+    .reel::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.14);
+      border-radius:999px;
+      border: 2px solid rgba(0,0,0,.35);
+    }
+
+    .reelcard{
+      flex: 0 0 clamp(220px, 78vw, 420px);
+      aspect-ratio: 4 / 3;
+      border-radius:16px;
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      scroll-snap-align:start;
+      text-decoration:none;
+      color:inherit;
+    }
+    .reelcard img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter: contrast(1.05);
+      transform: scale(1.01);
+    }
+    .reelcard::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.62));
+      pointer-events:none;
+    }
+    .reelcap{
+      position:absolute;
+      left:12px; bottom:12px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.45);
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      letter-spacing:.2px;
+      backdrop-filter: blur(6px);
+      z-index:2;
+    }
+    .reelcap i{
+      width:8px; height:8px; border-radius:2px;
+      background:rgba(255,255,255,.75);
+      display:inline-block;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.10);
+    }
+
+    /* Placeholder wenn Bild noch nicht im Repo liegt */
+    .reelcard.missing{
+      background:
+        radial-gradient(circle at 20% 25%, rgba(255,255,255,.08) 0 2px, transparent 3px),
+        radial-gradient(circle at 68% 38%, rgba(255,255,255,.06) 0 1px, transparent 2px),
+        radial-gradient(circle at 42% 70%, rgba(255,255,255,.07) 0 2px, transparent 3px),
+        radial-gradient(circle at 86% 78%, rgba(255,255,255,.05) 0 1px, transparent 2px),
+        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,0) 55%),
+        linear-gradient(0deg, rgba(0,0,0,.45), rgba(0,0,0,.15));
+    }
+    .reelcard.missing::before{
+      content:"Bild folgt in Kürze";
+      position:absolute;
+      left:12px; top:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.45);
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      letter-spacing:.2px;
+      z-index:2;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -43,7 +146,7 @@
       </p>
       <div class="cta">
         <a class="btn primary" href="/schwibboegen/">Schwibbögen ansehen</a>
-        <a class="btn" href="/kontakt/?p=Custom%20Wunschmotiv">Wunschmotiv anfragen</a>
+        <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
       </div>
 
       <div class="grid">
@@ -59,6 +162,48 @@
           <h3>Fixe Abstimmung</h3>
           <p>Kurzer Draht per Mail/WhatsApp. Entwurf, Freigabe, Fertig.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- Werkstatt-Reel -->
+    <section class="section reel-wrap" aria-label="Werkstatt-Feed">
+      <div class="reel-head">
+        <h2>Werkstatt-Feed</h2>
+        <p class="small muted">Echt, nicht geschniegelt. Tippen = groß.</p>
+      </div>
+
+      <div class="reel">
+        <!-- Diese Dateien legst du später ins Repo: assets/img/reel/reel-01.jpg ... -->
+        <a class="reelcard missing" href="/assets/img/reel/reel-01.jpg" target="_blank" rel="noopener">
+          <img src="/assets/img/reel/reel-01.jpg" alt="Werkstattbild 1" loading="lazy"
+               onerror="this.closest('.reelcard').classList.add('missing'); this.remove();" />
+          <span class="reelcap"><i></i> Schiefer</span>
+        </a>
+        <a class="reelcard missing" href="/assets/img/reel/reel-02.jpg" target="_blank" rel="noopener">
+          <img src="/assets/img/reel/reel-02.jpg" alt="Werkstattbild 2" loading="lazy"
+               onerror="this.closest('.reelcard').classList.add('missing'); this.remove();" />
+          <span class="reelcap"><i></i> Laser</span>
+        </a>
+        <a class="reelcard missing" href="/assets/img/reel/reel-03.jpg" target="_blank" rel="noopener">
+          <img src="/assets/img/reel/reel-03.jpg" alt="Werkstattbild 3" loading="lazy"
+               onerror="this.closest('.reelcard').classList.add('missing'); this.remove();" />
+          <span class="reelcap"><i></i> Metall</span>
+        </a>
+        <a class="reelcard missing" href="/assets/img/reel/reel-04.jpg" target="_blank" rel="noopener">
+          <img src="/assets/img/reel/reel-04.jpg" alt="Werkstattbild 4" loading="lazy"
+               onerror="this.closest('.reelcard').classList.add('missing'); this.remove();" />
+          <span class="reelcap"><i></i> Acryl</span>
+        </a>
+        <a class="reelcard missing" href="/assets/img/reel/reel-05.jpg" target="_blank" rel="noopener">
+          <img src="/assets/img/reel/reel-05.jpg" alt="Werkstattbild 5" loading="lazy"
+               onerror="this.closest('.reelcard').classList.add('missing'); this.remove();" />
+          <span class="reelcap"><i></i> Custom</span>
+        </a>
+      </div>
+
+      <div class="notice" style="margin-top:10px">
+        <strong style="color:var(--text)">Hinweis:</strong>
+        V0 zeigt bewusst echte Werkstatt-Sachen. Hochglanz kommt später — wenn’s Sinn ergibt.
       </div>
     </section>
 
@@ -80,43 +225,6 @@
       </div>
     </section>
 
-    <!-- EYECATCHER: SCHIEFER -->
-    <section class="section">
-      <div class="section-head">
-        <h2>Neu & schnell: Schiefer-Fotogravur</h2>
-        <p class="small muted">
-          Wenig Material, viel Wirkung: Portraits, Haustiere, Erinnerungen – als matte, echte Gravur.
-        </p>
-      </div>
-
-      <div class="products">
-        <article class="productcard">
-          <div class="thumb" style="padding:0">
-            <img src="/assets/img/schiefer-home.jpg"
-                 alt="Beispiel einer Fotogravur auf Schiefer (20 cm)"
-                 style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
-          </div>
-
-          <div class="meta">
-            <span class="price">20 cm</span><span>•</span><span>Schiefer</span><span>•</span><span>Geschenkfähig</span>
-          </div>
-          <h3>Ein Bild, das hängen bleibt.</h3>
-          <p class="kicker">
-            Wenn das Foto passt, wird’s brutal gut. Wenn nicht, sag ich’s dir vorher – ehrlich.
-          </p>
-          <ul class="bullets">
-            <li>Ideal: Portraits & Haustiere</li>
-            <li>Optional: Name/Datum/kurzer Satz</li>
-            <li>Flow: Foto schicken → kurzer Check → Gravur</li>
-          </ul>
-          <div class="actions">
-            <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
-            <a class="btn" href="/kontakt/?p=Schiefer-Fotogravur&size=20cm">Anfragen</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
     <section class="section">
       <div class="section-head">
         <h2>Kernsortiment Preview</h2>
@@ -135,7 +243,7 @@
           <p class="kicker">Sauberer Layer-Look, personalisierbar (Name/Ort/Jahr).</p>
           <div class="actions">
             <a class="btn primary" href="/schwibboegen/#classic">Details</a>
-            <a class="btn" href="/kontakt/?p=Schwibbogen%20Classic&size=400mm">Anfragen</a>
+            <a class="btn" href="/kontakt/">Anfragen</a>
           </div>
         </article>
 
@@ -150,7 +258,7 @@
           <p class="kicker">Stimmung on top: Licht + Schatten + saubere Konturen.</p>
           <div class="actions">
             <a class="btn primary" href="/schwibboegen/#led">Details</a>
-            <a class="btn" href="/kontakt/?p=Schwibbogen%20LED&size=400mm">Anfragen</a>
+            <a class="btn" href="/kontakt/">Anfragen</a>
           </div>
         </article>
 
@@ -165,7 +273,7 @@
           <p class="kicker">Foto → Silhouette → Layer. Kein Katalog, sondern “deins”.</p>
           <div class="actions">
             <a class="btn primary" href="/schwibboegen/#signature">Details</a>
-            <a class="btn" href="/kontakt/?p=Schwibbogen%20Signature%20(Silhouette)&size=400mm">Anfragen</a>
+            <a class="btn" href="/kontakt/">Anfragen</a>
           </div>
         </article>
       </div>
@@ -184,7 +292,6 @@
     <section class="section">
       <h2>Kontakt</h2>
       <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
-      <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 5925858</a></p>
       <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
     </section>
   </main>
@@ -193,8 +300,7 @@
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
       <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+        <a href="/rechtliches/impressum.html">Impressum</a> · <a href="/rechtliches/datenschutz.html">Datenschutz</a>
       </div>
     </div>
   </footer>
