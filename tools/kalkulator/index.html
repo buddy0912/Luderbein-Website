@@ -4,78 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="Kalkulator: grobe Preisindikation bzw. Fixpreise (Schiefer), danach direkt mit den Angaben anfragen." />
+  <meta name="description" content="Upgrade-Kostenrechnung (V0): Schiefer-Fixpreise + Anfrage-Flow. Metall (V0) folgt – bis dahin grob kalkulieren & mit Skizze anfragen." />
   <link rel="stylesheet" href="/assets/style.css" />
-  <style>
-    .formgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
-    .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    .field input,.field select{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(10,10,10,.35);
-      color:var(--text);
-      outline:none;
-    }
-    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width:700px){ .row2{grid-template-columns:1fr} }
-
-    .result{
-      border-radius:14px;
-      padding:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(10,10,10,.25);
-      margin-top:14px;
-    }
-    .result strong{color:var(--text)}
-    .pricebig{
-      font-size:26px;
-      font-weight:900;
-      margin:6px 0 10px;
-      letter-spacing:.2px;
-    }
-    .mini{font-size:12px;color:var(--muted);line-height:1.35}
-    .pill{
-      display:inline-block;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.35);
-      color:rgba(255,255,255,.9);
-      margin:6px 6px 0 0;
-    }
-    .checkrow{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:10px;
-      margin-top:6px;
-    }
-    .check{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.20);
-    }
-    .check input{ margin-top:3px; }
-    .check b{ color:var(--text); font-size:14px; }
-    .check span{ color:var(--muted); font-size:12px; display:block; margin-top:2px; }
-    .subhead{ margin-top:8px; font-size:13px; color:var(--muted); }
-    .warn{
-      margin-top:10px;
-      border-radius:12px;
-      padding:10px 12px;
-      border:1px solid rgba(255,80,80,.35);
-      background:rgba(255,80,80,.12);
-      color:rgba(255,255,255,.92);
-      font-size:12px;
-      display:none;
-    }
-  </style>
 </head>
 <body>
   <header>
@@ -108,112 +38,113 @@
       <span class="badge"><i></i> Tool – V0</span>
       <h1>Kalkulator</h1>
       <p class="lead">
-        Für Schiefer gibt’s hier <strong>Fixpreise</strong> (inkl. Fotoaufbereitung + Gravur + Klarlack).
-        Danach kannst du direkt „mit Angaben anfragen“ — ich sehe sofort, worum’s geht.
+        Erst Preis/Logik checken → dann (wenn’s passt) anfragen. Spart dir und mir Zeit.
       </p>
       <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Kleinunternehmer (§19 UStG):</strong>
-        keine MwSt. ausgewiesen.
+        <strong style="color:var(--text)">Kleinunternehmer (§19 UStG):</strong> keine MwSt. ausgewiesen.
       </div>
     </section>
 
     <section class="section">
-      <h2>1) Wähle dein Ding</h2>
-
-      <div class="formgrid">
-        <div class="field">
-          <label for="prod">Was willst du?</label>
-          <select id="prod">
-            <option value="schiefer">Schiefer-Fotogravur (Fixpreise)</option>
-            <option value="sw_classic">Schwibbogen Classic (Range)</option>
-            <option value="sw_led">Schwibbogen LED (Range)</option>
-            <option value="sw_signature">Schwibbogen Signature (Range)</option>
-          </select>
-        </div>
-
-        <div class="row2">
-          <div class="field">
-            <label for="size">Größe / Format</label>
-            <select id="size"></select>
-          </div>
-          <div class="field">
-            <label for="note">Extra: Was soll ich wissen?</label>
-            <input id="note" type="text" placeholder="z. B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …">
-          </div>
-        </div>
-
-        <!-- Schiefer Optionen -->
-        <div id="schieferOpts" style="display:none">
-          <div class="subhead">Upgrades (optional)</div>
-          <div class="checkrow">
-            <label class="check">
-              <input type="checkbox" id="optSig">
-              <div>
-                <b>Signatur / Widmung (+4,95 €)</b>
-                <span>Dezent, sauber. Kein Kitsch.</span>
-              </div>
-            </label>
-
-            <div class="check" style="flex-direction:column; gap:8px">
-              <div style="display:flex; gap:10px; align-items:flex-start">
-                <div style="min-width:18px; height:18px; border-radius:6px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.25); margin-top:3px"></div>
-                <div>
-                  <b>3D-Standfuß (schwarz)</b>
-                  <span>Optional. Standard oder Premium.</span>
-                </div>
-              </div>
-              <select id="optStand" style="width:100%; padding:12px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(10,10,10,.35); color:var(--text)">
-                <option value="none">Kein Standfuß</option>
-                <option value="std">Standfuß (+9,95 €)</option>
-                <option value="prem">Standfuß Premium (+14,95 €)</option>
-              </select>
-            </div>
-
-            <label class="check">
-              <input type="checkbox" id="optWall">
-              <div>
-                <b>3D-Wandhalterung (+6,95 €)</b>
-                <span>Zum Aufhängen.</span>
-              </div>
-            </label>
-
-            <label class="check">
-              <input type="checkbox" id="optExpress">
-              <div>
-                <b>Express 3 Werktage (+19,95 €)</b>
-                <span>Ab Eingang aller nötigen Infos/Unterlagen.</span>
-              </div>
-            </label>
-
-            <label class="check">
-              <input type="checkbox" id="optShip">
-              <div>
-                <b>Versand (ab 6,95 €)</b>
-                <span>Mindestbestellwert Versand: 29,95 € • Versandfrei ab 80,00 €</span>
-              </div>
-            </label>
-
-            <div class="warn" id="shipWarn">
-              Versand ist erst ab <strong>29,95 €</strong> Bestellwert möglich (sonst Abholung / Kombi-Bestellung).
-            </div>
-          </div>
-        </div>
+      <div class="section-head">
+        <h2>1) Wähle dein Ding</h2>
+        <p class="small muted">Schiefer hat Fixpreise. Metall ist V0 (Preise im Aufbau).</p>
       </div>
 
-      <div class="result" id="result">
-        <strong>Preis / Indikation:</strong>
-        <div class="pricebig" id="price">—</div>
-        <div id="chips"></div>
+      <div class="card" style="padding:16px">
+        <label class="small" for="productSel" style="display:block;margin-bottom:6px">Was willst du?</label>
+        <select id="productSel" class="input" style="width:100%">
+          <option value="schiefer_foto">Schiefer – Fotogravur (Fixpreise)</option>
+          <option value="schiefer_text">Schiefer – Text & Symbole (V0: folgt)</option>
+          <option value="metall">Metall – Gravur (V0: Preise im Aufbau)</option>
+        </select>
 
-        <p class="mini" id="hint">
-          Schiefer = Fixpreise (inkl. Fotoaufbereitung + Gravur + Klarlack).<br>
-          Schwibbögen = Range/Indikation (final nach Motiv/Optionen/Slot).
-        </p>
+        <div id="schieferBox" style="margin-top:14px">
+          <div class="hr"></div>
 
-        <div class="cta" style="margin-top:12px">
-          <a class="btn primary" id="btnAsk" href="/kontakt/">Mit diesen Angaben anfragen</a>
-          <a class="btn" id="btnWA" href="#" rel="noopener">WhatsApp (mit Text)</a>
+          <label class="small" for="sizeSel" style="display:block;margin-bottom:6px">Größe / Format</label>
+          <select id="sizeSel" class="input" style="width:100%">
+            <option value="10x10" data-price="9.95">10 × 10 cm (eckig) / 10 cm rund – 9,95 €</option>
+            <option value="20x20" data-price="19.95" selected>20 × 20 cm (eckig) / 20 cm rund – 19,95 €</option>
+            <option value="25x25" data-price="39.95">25 × 25 cm (eckig) – 39,95 €</option>
+            <option value="30r" data-price="44.95">30 cm rund – 44,95 €</option>
+            <option value="38x13" data-price="34.95">38 × 13 cm – 34,95 €</option>
+            <option value="45x30" data-price="89.95">45 × 30 cm (A70 Max) – 89,95 €</option>
+          </select>
+
+          <div class="hr"></div>
+
+          <label class="small" for="extraNote" style="display:block;margin-bottom:6px">Extra: Was soll ich wissen?</label>
+          <input id="extraNote" class="input" type="text" placeholder="z.B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …" style="width:100%">
+
+          <div class="hr"></div>
+
+          <div class="small muted" style="margin-bottom:8px">Upgrades (optional)</div>
+
+          <label class="check">
+            <input type="checkbox" id="uSig" data-add="4.95">
+            <span><strong>Signatur / Widmung</strong> (+4,95 €) <span class="small muted">– dezent, sauber.</span></span>
+          </label>
+
+          <label class="check" style="margin-top:10px">
+            <input type="checkbox" id="uStand" data-add="9.95">
+            <span><strong>3D-Standfuß (schwarz)</strong> (+9,95 €) <span class="small muted">– optional.</span></span>
+          </label>
+
+          <label class="check" style="margin-top:10px">
+            <input type="checkbox" id="uWall" data-add="6.95">
+            <span><strong>3D-Wandhalterung</strong> (+6,95 €) <span class="small muted">– zum Aufhängen.</span></span>
+          </label>
+
+          <label class="check" style="margin-top:10px">
+            <input type="checkbox" id="uExpress" data-add="19.95">
+            <span><strong>Express</strong> (+19,95 €) <span class="small muted">– 3 Werktage ab vollständigen Infos.</span></span>
+          </label>
+
+          <div class="hr"></div>
+
+          <div class="notice">
+            <strong style="color:var(--text)">Zwischensumme:</strong>
+            <span id="sumOut">–</span>
+            <div class="small muted" style="margin-top:6px">
+              Versand (falls gewünscht): ab 6,95 € · Mindestbestellwert Versand: 29,95 € · Versandfrei ab 80,00 €
+            </div>
+          </div>
+
+          <div class="cta" style="margin-top:14px">
+            <a class="btn primary" id="btnToContactSchiefer" href="/kontakt/">Mit Angaben anfragen</a>
+            <a class="btn" href="/leistungen/schiefer/">Zur Schiefer-Seite</a>
+          </div>
         </div>
+
+        <div id="metallBox" style="display:none;margin-top:14px">
+          <div class="hr"></div>
+          <div class="notice">
+            <strong style="color:var(--text)">Metall (V0):</strong>
+            Fixpreise sind gerade im Aufbau. Bis dahin: kurze Anfrage mit Skizze/Screenshot, Material (Edelstahl/Alu/Messing) und Größe.
+          </div>
+
+          <label class="small" for="metallNote" style="display:block;margin:12px 0 6px">Kurzangaben (optional)</label>
+          <input id="metallNote" class="input" type="text" placeholder="z.B. Hundemarke 30×20mm, Edelstahl, 2-seitig, Icon + Text" style="width:100%">
+
+          <div class="cta" style="margin-top:14px">
+            <a class="btn primary" id="btnToContactMetall" href="/kontakt/?p=Metallgravur">Mit Skizze anfragen</a>
+            <a class="btn" href="/leistungen/metall/">Zur Metall-Seite</a>
+          </div>
+        </div>
+
+        <div id="schieferTextBox" style="display:none;margin-top:14px">
+          <div class="hr"></div>
+          <div class="notice">
+            <strong style="color:var(--text)">Schiefer Text & Symbole:</strong>
+            Preise kommen als nächstes (V0). Bis dahin: kurz anfragen mit Text/Idee + gewünschtem Format.
+          </div>
+          <div class="cta" style="margin-top:14px">
+            <a class="btn primary" id="btnToContactSchieferText" href="/kontakt/?p=Schiefer%20Text%20%26%20Symbole">Anfragen</a>
+            <a class="btn" href="/leistungen/schiefer-text/">Zur Seite</a>
+          </div>
+        </div>
+
       </div>
     </section>
   </main>
@@ -232,245 +163,98 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // ---------- CONFIG ----------
-    // Schiefer: Fixpreise inkl. Fotoaufbereitung, Gravur & Klarlack
-    const CFG = {
-      schiefer: {
-        name: "Schiefer-Fotogravur (JL7)",
-        fixed: true,
-        sizes: [
-          { key:"10", label:"10×10 cm (eckig) / 10 cm rund", price: 9.95 },
-          { key:"20", label:"20×20 cm (eckig) / 20 cm rund", price: 19.95 },
-          { key:"25x25", label:"25×25 cm (eckig)", price: 39.95 },
-          { key:"30r", label:"30 cm rund", price: 44.95 },
-          { key:"38x13", label:"38×13 cm", price: 34.95 },
-          { key:"45x30", label:"45×30 cm (A70 Max)", price: 89.95 }
-        ],
-        upgrades: {
-          sig: 4.95,
-          stand_std: 9.95,
-          stand_prem: 14.95,
-          wall: 6.95,
-          express: 19.95,
-          ship_base: 6.95,
-          ship_min_order: 29.95,
-          ship_free_from: 80.00
-        }
-      },
+    (function(){
+      const params = new URLSearchParams(location.search);
+      const topic = (params.get('topic') || params.get('p') || '').toLowerCase().trim();
 
-      // Schwibbögen bleiben erstmal als Range drin (bis du mir auch dafür Preise gibst)
-      sw_classic: {
-        name: "Schwibbogen Classic",
-        fixed: false,
-        sizes: [
-          { key:"300", label:"300 mm", min: 59, max: 79 },
-          { key:"400", label:"400 mm", min: 69, max: 99 },
-          { key:"600", label:"600 mm", min: 109, max: 159 }
-        ]
-      },
-      sw_led: {
-        name: "Schwibbogen LED",
-        fixed: false,
-        sizes: [
-          { key:"300", label:"300 mm", min: 79, max: 109 },
-          { key:"400", label:"400 mm", min: 89, max: 129 },
-          { key:"600", label:"600 mm", min: 139, max: 199 }
-        ]
-      },
-      sw_signature: {
-        name: "Schwibbogen Signature (Silhouette)",
-        fixed: false,
-        sizes: [
-          { key:"300", label:"300 mm", min: 89, max: 129 },
-          { key:"400", label:"400 mm", min: 99, max: 159 },
-          { key:"600", label:"600 mm", min: 159, max: 239 }
-        ]
-      }
-    };
+      const productSel = document.getElementById('productSel');
+      const schieferBox = document.getElementById('schieferBox');
+      const metallBox = document.getElementById('metallBox');
+      const schieferTextBox = document.getElementById('schieferTextBox');
 
-    // ---------- UI ----------
-    const elProd = document.getElementById('prod');
-    const elSize = document.getElementById('size');
-    const elNote = document.getElementById('note');
+      const sizeSel = document.getElementById('sizeSel');
+      const sumOut = document.getElementById('sumOut');
 
-    const elSchieferOpts = document.getElementById('schieferOpts');
+      const extraNote = document.getElementById('extraNote');
 
-    const optSig = document.getElementById('optSig');
-    const optStand = document.getElementById('optStand');
-    const optWall = document.getElementById('optWall');
-    const optExpress = document.getElementById('optExpress');
-    const optShip = document.getElementById('optShip');
-    const shipWarn = document.getElementById('shipWarn');
+      const uSig = document.getElementById('uSig');
+      const uStand = document.getElementById('uStand');
+      const uWall = document.getElementById('uWall');
+      const uExpress = document.getElementById('uExpress');
 
-    const elPrice = document.getElementById('price');
-    const elChips = document.getElementById('chips');
+      const btnToContactSchiefer = document.getElementById('btnToContactSchiefer');
+      const btnToContactMetall = document.getElementById('btnToContactMetall');
+      const btnToContactSchieferText = document.getElementById('btnToContactSchieferText');
 
-    const btnAsk = document.getElementById('btnAsk');
-    const btnWA = document.getElementById('btnWA');
+      const metallNote = document.getElementById('metallNote');
 
-    function money(n){
-      // 2 Nachkommastellen, deutsches Komma
-      return `${n.toFixed(2).replace('.', ',')} €`;
-    }
-    function moneyNoCents(n){
-      // für Ranges ohne Cent
-      return `${Math.round(n)},– €`.replace('.', ',');
-    }
-
-    function setSizes(prodKey){
-      const cfg = CFG[prodKey];
-      elSize.innerHTML = '';
-      for(const s of cfg.sizes){
-        const opt = document.createElement('option');
-        opt.value = s.key;
-        opt.textContent = s.label;
-        elSize.appendChild(opt);
-      }
-    }
-
-    function calc(){
-      const pk = elProd.value;
-      const cfg = CFG[pk];
-      const sk = elSize.value;
-      const s = cfg.sizes.find(x => x.key === sk) || cfg.sizes[0];
-
-      const chips = [];
-      chips.push(cfg.name);
-      chips.push(s.label);
-
-      let total = 0;
-      let shipCost = 0;
-      let shipPossible = true;
-
-      // Show/hide Schiefer Upgrades
-      elSchieferOpts.style.display = (pk === 'schiefer') ? '' : 'none';
-
-      if(cfg.fixed){
-        total = s.price;
-
-        // Upgrades nur bei Schiefer aktiv
-        if(pk === 'schiefer'){
-          const u = cfg.upgrades;
-
-          if(optSig.checked){
-            total += u.sig;
-            chips.push(`Signatur +${money(u.sig)}`);
-          }
-
-          if(optStand.value === 'std'){
-            total += u.stand_std;
-            chips.push(`Standfuß +${money(u.stand_std)}`);
-          } else if(optStand.value === 'prem'){
-            total += u.stand_prem;
-            chips.push(`Standfuß Premium +${money(u.stand_prem)}`);
-          }
-
-          if(optWall.checked){
-            total += u.wall;
-            chips.push(`Wandhalterung +${money(u.wall)}`);
-          }
-
-          if(optExpress.checked){
-            total += u.express;
-            chips.push(`Express +${money(u.express)}`);
-          }
-
-          // Versandlogik
-          if(optShip.checked){
-            if(total < u.ship_min_order){
-              shipPossible = false;
-              shipCost = 0;
-              shipWarn.style.display = '';
-            } else {
-              shipWarn.style.display = 'none';
-
-              if(total >= u.ship_free_from){
-                shipCost = 0;
-                chips.push(`Versand: kostenlos (ab ${money(u.ship_free_from)})`);
-              } else {
-                shipCost = u.ship_base; // V0: "ab 6,95" -> wir nehmen 6,95 als Basis
-                chips.push(`Versand ab ${money(u.ship_base)}`);
-              }
-            }
-          } else {
-            shipWarn.style.display = 'none';
-          }
-
-          total = total + shipCost;
-        }
-
-        elPrice.textContent = shipPossible ? money(total) : money(s.price) + " (ohne Versand)";
-      } else {
-        // Range-Produkte
-        const min = s.min;
-        const max = s.max;
-        elPrice.textContent = `${moneyNoCents(min)} – ${moneyNoCents(max)}`;
-        chips.push('Range (final nach Motiv/Optionen)');
+      // URL-Sprung: /tools/kalkulator/?topic=metall
+      if(topic.includes('metall')){
+        productSel.value = 'metall';
+      } else if(topic.includes('schiefer') && topic.includes('text')){
+        productSel.value = 'schiefer_text';
+      } else if(topic.includes('schiefer')){
+        productSel.value = 'schiefer_foto';
       }
 
-      elChips.innerHTML = chips.map(c => `<span class="pill">${c}</span>`).join('');
+      function showMode(){
+        const v = productSel.value;
 
-      // ---------- Prefill Kontakt + WhatsApp ----------
-      const p = cfg.name;
-      const sizeText = s.label;
+        schieferBox.style.display = (v === 'schiefer_foto') ? '' : 'none';
+        schieferTextBox.style.display = (v === 'schiefer_text') ? '' : 'none';
+        metallBox.style.display = (v === 'metall') ? '' : 'none';
 
-      // Notiztext zusammenbauen
-      const noteParts = [];
-      if(cfg.fixed){
-        noteParts.push(`Fixpreis-Schiefer inkl. Fotoaufbereitung+Klarlack`);
-        noteParts.push(`Zwischensumme/Preis: ${elPrice.textContent}`);
-        if(pk === 'schiefer'){
-          if(optSig.checked) noteParts.push('Upgrade: Signatur/Widmung');
-          if(optStand.value === 'std') noteParts.push('Upgrade: Standfuß');
-          if(optStand.value === 'prem') noteParts.push('Upgrade: Standfuß Premium');
-          if(optWall.checked) noteParts.push('Upgrade: Wandhalterung');
-          if(optExpress.checked) noteParts.push('Upgrade: Express (3 WT)');
-          if(optShip.checked){
-            if(shipPossible){
-              noteParts.push(shipCost === 0 ? 'Versand: kostenlos (ab 80€)' : `Versand: ab ${money(CFG.schiefer.upgrades.ship_base)}`);
-            } else {
-              noteParts.push('Versand: NICHT möglich (<29,95€ Mindestbestellwert)');
-            }
-          }
-        }
-      } else {
-        noteParts.push(`Indikation: ${elPrice.textContent}`);
+        if(v === 'schiefer_foto') calc();
       }
 
-      if(elNote.value.trim()) noteParts.push(`Notiz: ${elNote.value.trim()}`);
+      function money(n){
+        return n.toFixed(2).replace('.', ',') + ' €';
+      }
 
-      const noteText = noteParts.join(' | ');
+      function calc(){
+        const opt = sizeSel.options[sizeSel.selectedIndex];
+        const base = parseFloat(opt.getAttribute('data-price') || '0');
 
-      const askHref = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(sizeText)}&note=${encodeURIComponent(noteText)}`;
-      btnAsk.href = askHref;
+        let add = 0;
+        [uSig, uStand, uWall, uExpress].forEach(ch => {
+          if(ch && ch.checked) add += parseFloat(ch.getAttribute('data-add') || '0');
+        });
 
-      const waLines = [
-        'Hi Luderbein,',
-        '',
-        'Ich komme aus dem Kalkulator:',
-        `Produkt: ${p}`,
-        `Größe/Format: ${sizeText}`,
-        `Info: ${noteText}`,
-        '',
-        'Ich kann Foto/Details direkt mit schicken.'
-      ];
-      btnWA.href = `https://wa.me/491725925858?text=${encodeURIComponent(waLines.join('\n'))}`;
-    }
+        const sum = base + add;
+        sumOut.textContent = money(sum);
 
-    function wire(){
-      elProd.addEventListener('change', () => { setSizes(elProd.value); calc(); });
-      elSize.addEventListener('change', calc);
-      elNote.addEventListener('input', calc);
+        // Kontaktlink mit Kontext
+        const sizeText = opt.textContent.split('–')[0].trim();
+        const note = (extraNote.value || '').trim();
 
-      // Schiefer-Optionen
-      [optSig, optWall, optExpress, optShip].forEach(el => el.addEventListener('change', calc));
-      optStand.addEventListener('change', calc);
-    }
+        const p = 'Schiefer-Fotogravur';
+        const href = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(sizeText)}${note ? `&note=${encodeURIComponent(note)}` : ''}`;
+        btnToContactSchiefer.setAttribute('href', href);
+      }
 
-    // init
-    setSizes(elProd.value);
-    wire();
-    calc();
+      function wireMetallLink(){
+        const note = (metallNote.value || '').trim();
+        const p = 'Metallgravur';
+        const href = `/kontakt/?p=${encodeURIComponent(p)}${note ? `&note=${encodeURIComponent(note)}` : ''}`;
+        btnToContactMetall.setAttribute('href', href);
+      }
+
+      // Events
+      productSel.addEventListener('change', showMode);
+
+      [sizeSel, uSig, uStand, uWall, uExpress, extraNote].forEach(el => {
+        if(!el) return;
+        el.addEventListener('change', calc);
+        el.addEventListener('input', calc);
+      });
+
+      metallNote.addEventListener('input', wireMetallLink);
+
+      // Init
+      showMode();
+      calc();
+      wireMetallLink();
+    })();
   </script>
 </body>
 </html>
