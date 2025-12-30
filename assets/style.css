@@ -488,3 +488,81 @@ footer a:hover{color:var(--text)}
 @media (max-width: 520px){
   .reelitem img{ height:180px; }
 }
+
+/* Werkstatt-Feed (Slider / Reel) */
+.reelslider{
+  position:relative;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.03);
+  padding:14px;
+  overflow:hidden;
+}
+
+.reeltrack{
+  display:flex;
+  gap:14px;
+  overflow:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  outline:none;
+}
+.reeltrack::-webkit-scrollbar{ display:none; }
+
+.reelslide{
+  scroll-snap-align:start;
+  display:block;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.20);
+  flex:0 0 calc(33.333% - 10px);
+}
+
+.reelslide img{
+  width:100%;
+  height:240px;
+  object-fit:cover;
+  display:block;
+  transform:scale(1.01);
+  transition:transform .25s ease, filter .25s ease;
+}
+.reelslide:hover img{
+  transform:scale(1.04);
+  filter:contrast(1.05);
+}
+
+@media (max-width: 860px){
+  .reelslide{ flex-basis:calc(50% - 7px); }
+  .reelslide img{ height:220px; }
+}
+@media (max-width: 520px){
+  .reelslide{ flex-basis:86%; }
+  .reelslide img{ height:240px; }
+}
+
+.reelbtn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(0,0,0,.45);
+  color:rgba(255,255,255,.92);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  z-index:2;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+}
+.reelbtn:hover{ background:rgba(0,0,0,.60); }
+.reelbtn.prev{ left:10px; }
+.reelbtn.next{ right:10px; }
+
+@media (max-width: 520px){
+  .reelbtn{ display:none; } /* Mobile: wischen statt Buttons */
+}
