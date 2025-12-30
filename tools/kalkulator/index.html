@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="V0 Kalkulator: grobe Preisindikation, dann direkt mit den Angaben anfragen." />
+  <meta name="description" content="Kalkulator: grobe Preisindikation bzw. Fixpreise (Schiefer), danach direkt mit den Angaben anfragen." />
   <link rel="stylesheet" href="/assets/style.css" />
   <style>
     .formgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
@@ -29,13 +29,13 @@
       margin-top:14px;
     }
     .result strong{color:var(--text)}
-    .range{
-      font-size:22px;
-      font-weight:800;
-      margin:6px 0 8px;
+    .pricebig{
+      font-size:26px;
+      font-weight:900;
+      margin:6px 0 10px;
       letter-spacing:.2px;
     }
-    .mini{font-size:12px;color:var(--muted)}
+    .mini{font-size:12px;color:var(--muted);line-height:1.35}
     .pill{
       display:inline-block;
       font-size:12px;
@@ -45,6 +45,35 @@
       background:rgba(0,0,0,.35);
       color:rgba(255,255,255,.9);
       margin:6px 6px 0 0;
+    }
+    .checkrow{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin-top:6px;
+    }
+    .check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+    }
+    .check input{ margin-top:3px; }
+    .check b{ color:var(--text); font-size:14px; }
+    .check span{ color:var(--muted); font-size:12px; display:block; margin-top:2px; }
+    .subhead{ margin-top:8px; font-size:13px; color:var(--muted); }
+    .warn{
+      margin-top:10px;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid rgba(255,80,80,.35);
+      background:rgba(255,80,80,.12);
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      display:none;
     }
   </style>
 </head>
@@ -77,18 +106,14 @@
   <main class="wrap">
     <section class="hero">
       <span class="badge"><i></i> Tool – V0</span>
-      <h1>Kalkulator (Preis-Upgrade)</h1>
+      <h1>Kalkulator</h1>
       <p class="lead">
-        Grobe Preisindikation – damit du und ich beide sofort wissen, in welcher Liga wir spielen.
-        Danach: mit einem Klick anfragen (die Angaben sind schon drin).
+        Für Schiefer gibt’s hier <strong>Fixpreise</strong> (inkl. Fotoaufbereitung + Gravur + Klarlack).
+        Danach kannst du direkt „mit Angaben anfragen“ — ich sehe sofort, worum’s geht.
       </p>
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Allgemeine%20Anfrage&note=Ich%20nutze%20gerade%20den%20Kalkulator%20und%20habe%20eine%20Frage">Frage stellen</a>
-        <a class="btn" href="/leistungen/">Zurück zu Leistungen</a>
-      </div>
       <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Hinweis:</strong>
-        V0 = bewusst simpel. Werte werden von mir laufend nach echten Jobs/Fotos nachgeschärft.
+        <strong style="color:var(--text)">Kleinunternehmer (§19 UStG):</strong>
+        keine MwSt. ausgewiesen.
       </div>
     </section>
 
@@ -97,53 +122,92 @@
 
       <div class="formgrid">
         <div class="field">
-          <label for="prod">Produkt</label>
+          <label for="prod">Was willst du?</label>
           <select id="prod">
-            <option value="schiefer">Schiefer-Fotogravur</option>
-            <option value="sw_classic">Schwibbogen Classic</option>
-            <option value="sw_led">Schwibbogen LED</option>
-            <option value="sw_signature">Schwibbogen Signature (Silhouette)</option>
+            <option value="schiefer">Schiefer-Fotogravur (Fixpreise)</option>
+            <option value="sw_classic">Schwibbogen Classic (Range)</option>
+            <option value="sw_led">Schwibbogen LED (Range)</option>
+            <option value="sw_signature">Schwibbogen Signature (Range)</option>
           </select>
         </div>
 
         <div class="row2">
           <div class="field">
             <label for="size">Größe / Format</label>
-            <select id="size">
-              <!-- dynamisch via JS -->
-            </select>
+            <select id="size"></select>
           </div>
           <div class="field">
-            <label for="optText">Text/Personalisierung</label>
-            <select id="optText">
-              <option value="no">Nein (clean)</option>
-              <option value="yes">Ja (dezent)</option>
-            </select>
+            <label for="note">Extra: Was soll ich wissen?</label>
+            <input id="note" type="text" placeholder="z. B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …">
           </div>
         </div>
 
-        <div class="row2">
-          <div class="field">
-            <label for="optRush">Tempo</label>
-            <select id="optRush">
-              <option value="normal">Normal</option>
-              <option value="rush">Express (wenn möglich)</option>
-            </select>
-          </div>
+        <!-- Schiefer Optionen -->
+        <div id="schieferOpts" style="display:none">
+          <div class="subhead">Upgrades (optional)</div>
+          <div class="checkrow">
+            <label class="check">
+              <input type="checkbox" id="optSig">
+              <div>
+                <b>Signatur / Widmung (+4,95 €)</b>
+                <span>Dezent, sauber. Kein Kitsch.</span>
+              </div>
+            </label>
 
-          <div class="field">
-            <label for="note">Notiz (optional)</label>
-            <input id="note" type="text" placeholder="z. B. Geschenk bis Datum X, Stilwunsch, Abholung/Versand …">
+            <div class="check" style="flex-direction:column; gap:8px">
+              <div style="display:flex; gap:10px; align-items:flex-start">
+                <div style="min-width:18px; height:18px; border-radius:6px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.25); margin-top:3px"></div>
+                <div>
+                  <b>3D-Standfuß (schwarz)</b>
+                  <span>Optional. Standard oder Premium.</span>
+                </div>
+              </div>
+              <select id="optStand" style="width:100%; padding:12px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(10,10,10,.35); color:var(--text)">
+                <option value="none">Kein Standfuß</option>
+                <option value="std">Standfuß (+9,95 €)</option>
+                <option value="prem">Standfuß Premium (+14,95 €)</option>
+              </select>
+            </div>
+
+            <label class="check">
+              <input type="checkbox" id="optWall">
+              <div>
+                <b>3D-Wandhalterung (+6,95 €)</b>
+                <span>Zum Aufhängen.</span>
+              </div>
+            </label>
+
+            <label class="check">
+              <input type="checkbox" id="optExpress">
+              <div>
+                <b>Express 3 Werktage (+19,95 €)</b>
+                <span>Ab Eingang aller nötigen Infos/Unterlagen.</span>
+              </div>
+            </label>
+
+            <label class="check">
+              <input type="checkbox" id="optShip">
+              <div>
+                <b>Versand (ab 6,95 €)</b>
+                <span>Mindestbestellwert Versand: 29,95 € • Versandfrei ab 80,00 €</span>
+              </div>
+            </label>
+
+            <div class="warn" id="shipWarn">
+              Versand ist erst ab <strong>29,95 €</strong> Bestellwert möglich (sonst Abholung / Kombi-Bestellung).
+            </div>
           </div>
         </div>
       </div>
 
       <div class="result" id="result">
-        <strong>Indikation (V0):</strong>
-        <div class="range" id="range">—</div>
+        <strong>Preis / Indikation:</strong>
+        <div class="pricebig" id="price">—</div>
         <div id="chips"></div>
-        <p class="mini" id="disclaimer">
-          Das ist eine grobe Range, kein verbindliches Angebot. Final hängt’s am Motiv/Foto, Aufwand und Slot.
+
+        <p class="mini" id="hint">
+          Schiefer = Fixpreise (inkl. Fotoaufbereitung + Gravur + Klarlack).<br>
+          Schwibbögen = Range/Indikation (final nach Motiv/Optionen/Slot).
         </p>
 
         <div class="cta" style="margin-top:12px">
@@ -168,72 +232,95 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
-    // ----------- V0 PREIS-LOGIK (easy später anpassen) -----------
+    // ---------- CONFIG ----------
+    // Schiefer: Fixpreise inkl. Fotoaufbereitung, Gravur & Klarlack
     const CFG = {
       schiefer: {
-        name: "Schiefer-Fotogravur",
+        name: "Schiefer-Fotogravur (JL7)",
+        fixed: true,
         sizes: [
-          { key: "20cm", label: "20 cm rund", baseMin: 29, baseMax: 49 },
-          { key: "25x25", label: "25×25 cm", baseMin: 34, baseMax: 59 },
-          { key: "30x30", label: "30×30 cm", baseMin: 39, baseMax: 69 }
+          { key:"10", label:"10×10 cm (eckig) / 10 cm rund", price: 9.95 },
+          { key:"20", label:"20×20 cm (eckig) / 20 cm rund", price: 19.95 },
+          { key:"25x25", label:"25×25 cm (eckig)", price: 39.95 },
+          { key:"30r", label:"30 cm rund", price: 44.95 },
+          { key:"38x13", label:"38×13 cm", price: 34.95 },
+          { key:"45x30", label:"45×30 cm (A70 Max)", price: 89.95 }
         ],
-        textAdd: { min: 0, max: 5 },
-        rushAdd: { min: 0, max: 15 }
+        upgrades: {
+          sig: 4.95,
+          stand_std: 9.95,
+          stand_prem: 14.95,
+          wall: 6.95,
+          express: 19.95,
+          ship_base: 6.95,
+          ship_min_order: 29.95,
+          ship_free_from: 80.00
+        }
       },
+
+      // Schwibbögen bleiben erstmal als Range drin (bis du mir auch dafür Preise gibst)
       sw_classic: {
         name: "Schwibbogen Classic",
+        fixed: false,
         sizes: [
-          { key: "300mm", label: "300 mm", baseMin: 59, baseMax: 79 },
-          { key: "400mm", label: "400 mm", baseMin: 69, baseMax: 99 },
-          { key: "600mm", label: "600 mm", baseMin: 109, baseMax: 159 }
-        ],
-        textAdd: { min: 0, max: 10 },
-        rushAdd: { min: 0, max: 25 }
+          { key:"300", label:"300 mm", min: 59, max: 79 },
+          { key:"400", label:"400 mm", min: 69, max: 99 },
+          { key:"600", label:"600 mm", min: 109, max: 159 }
+        ]
       },
       sw_led: {
         name: "Schwibbogen LED",
+        fixed: false,
         sizes: [
-          { key: "300mm", label: "300 mm", baseMin: 79, baseMax: 109 },
-          { key: "400mm", label: "400 mm", baseMin: 89, baseMax: 129 },
-          { key: "600mm", label: "600 mm", baseMin: 139, baseMax: 199 }
-        ],
-        textAdd: { min: 0, max: 10 },
-        rushAdd: { min: 0, max: 30 }
+          { key:"300", label:"300 mm", min: 79, max: 109 },
+          { key:"400", label:"400 mm", min: 89, max: 129 },
+          { key:"600", label:"600 mm", min: 139, max: 199 }
+        ]
       },
       sw_signature: {
         name: "Schwibbogen Signature (Silhouette)",
+        fixed: false,
         sizes: [
-          { key: "300mm", label: "300 mm", baseMin: 89, baseMax: 129 },
-          { key: "400mm", label: "400 mm", baseMin: 99, baseMax: 159 },
-          { key: "600mm", label: "600 mm", baseMin: 159, baseMax: 239 }
-        ],
-        textAdd: { min: 0, max: 10 },
-        rushAdd: { min: 0, max: 35 }
+          { key:"300", label:"300 mm", min: 89, max: 129 },
+          { key:"400", label:"400 mm", min: 99, max: 159 },
+          { key:"600", label:"600 mm", min: 159, max: 239 }
+        ]
       }
     };
 
-    // ----------- UI -----------
+    // ---------- UI ----------
     const elProd = document.getElementById('prod');
     const elSize = document.getElementById('size');
-    const elText = document.getElementById('optText');
-    const elRush = document.getElementById('optRush');
     const elNote = document.getElementById('note');
 
-    const elRange = document.getElementById('range');
+    const elSchieferOpts = document.getElementById('schieferOpts');
+
+    const optSig = document.getElementById('optSig');
+    const optStand = document.getElementById('optStand');
+    const optWall = document.getElementById('optWall');
+    const optExpress = document.getElementById('optExpress');
+    const optShip = document.getElementById('optShip');
+    const shipWarn = document.getElementById('shipWarn');
+
+    const elPrice = document.getElementById('price');
     const elChips = document.getElementById('chips');
 
     const btnAsk = document.getElementById('btnAsk');
     const btnWA = document.getElementById('btnWA');
 
-    function euro(n){
-      // Keine Cents in V0 – wir runden bewusst
+    function money(n){
+      // 2 Nachkommastellen, deutsches Komma
+      return `${n.toFixed(2).replace('.', ',')} €`;
+    }
+    function moneyNoCents(n){
+      // für Ranges ohne Cent
       return `${Math.round(n)},– €`.replace('.', ',');
     }
 
     function setSizes(prodKey){
-      const sizes = CFG[prodKey].sizes;
+      const cfg = CFG[prodKey];
       elSize.innerHTML = '';
-      for(const s of sizes){
+      for(const s of cfg.sizes){
         const opt = document.createElement('option');
         opt.value = s.key;
         opt.textContent = s.label;
@@ -245,72 +332,144 @@
       const pk = elProd.value;
       const cfg = CFG[pk];
       const sk = elSize.value;
-      const sizeObj = cfg.sizes.find(s => s.key === sk) || cfg.sizes[0];
-
-      let min = sizeObj.baseMin;
-      let max = sizeObj.baseMax;
+      const s = cfg.sizes.find(x => x.key === sk) || cfg.sizes[0];
 
       const chips = [];
+      chips.push(cfg.name);
+      chips.push(s.label);
 
-      chips.push(`${cfg.name}`);
-      chips.push(`${sizeObj.label}`);
+      let total = 0;
+      let shipCost = 0;
+      let shipPossible = true;
 
-      if(elText.value === 'yes'){
-        min += cfg.textAdd.min;
-        max += cfg.textAdd.max;
-        chips.push('Text: ja');
+      // Show/hide Schiefer Upgrades
+      elSchieferOpts.style.display = (pk === 'schiefer') ? '' : 'none';
+
+      if(cfg.fixed){
+        total = s.price;
+
+        // Upgrades nur bei Schiefer aktiv
+        if(pk === 'schiefer'){
+          const u = cfg.upgrades;
+
+          if(optSig.checked){
+            total += u.sig;
+            chips.push(`Signatur +${money(u.sig)}`);
+          }
+
+          if(optStand.value === 'std'){
+            total += u.stand_std;
+            chips.push(`Standfuß +${money(u.stand_std)}`);
+          } else if(optStand.value === 'prem'){
+            total += u.stand_prem;
+            chips.push(`Standfuß Premium +${money(u.stand_prem)}`);
+          }
+
+          if(optWall.checked){
+            total += u.wall;
+            chips.push(`Wandhalterung +${money(u.wall)}`);
+          }
+
+          if(optExpress.checked){
+            total += u.express;
+            chips.push(`Express +${money(u.express)}`);
+          }
+
+          // Versandlogik
+          if(optShip.checked){
+            if(total < u.ship_min_order){
+              shipPossible = false;
+              shipCost = 0;
+              shipWarn.style.display = '';
+            } else {
+              shipWarn.style.display = 'none';
+
+              if(total >= u.ship_free_from){
+                shipCost = 0;
+                chips.push(`Versand: kostenlos (ab ${money(u.ship_free_from)})`);
+              } else {
+                shipCost = u.ship_base; // V0: "ab 6,95" -> wir nehmen 6,95 als Basis
+                chips.push(`Versand ab ${money(u.ship_base)}`);
+              }
+            }
+          } else {
+            shipWarn.style.display = 'none';
+          }
+
+          total = total + shipCost;
+        }
+
+        elPrice.textContent = shipPossible ? money(total) : money(s.price) + " (ohne Versand)";
       } else {
-        chips.push('Text: nein');
+        // Range-Produkte
+        const min = s.min;
+        const max = s.max;
+        elPrice.textContent = `${moneyNoCents(min)} – ${moneyNoCents(max)}`;
+        chips.push('Range (final nach Motiv/Optionen)');
       }
-
-      if(elRush.value === 'rush'){
-        min += cfg.rushAdd.min;
-        max += cfg.rushAdd.max;
-        chips.push('Express: wenn möglich');
-      } else {
-        chips.push('Tempo: normal');
-      }
-
-      elRange.textContent = `${euro(min)} – ${euro(max)}`;
 
       elChips.innerHTML = chips.map(c => `<span class="pill">${c}</span>`).join('');
 
-      // Prefill Kontakt-Link
+      // ---------- Prefill Kontakt + WhatsApp ----------
       const p = cfg.name;
-      const sizeText = sizeObj.label;
-      const note = [
-        `Kalkulator V0: ${euro(min)} – ${euro(max)}`,
-        elText.value === 'yes' ? 'Text/Personalisierung: ja' : 'Text/Personalisierung: nein',
-        elRush.value === 'rush' ? 'Tempo: Express (wenn möglich)' : 'Tempo: normal',
-        elNote.value.trim() ? `Notiz: ${elNote.value.trim()}` : ''
-      ].filter(Boolean).join(' | ');
+      const sizeText = s.label;
 
-      const askHref = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(sizeText)}&note=${encodeURIComponent(note)}`;
+      // Notiztext zusammenbauen
+      const noteParts = [];
+      if(cfg.fixed){
+        noteParts.push(`Fixpreis-Schiefer inkl. Fotoaufbereitung+Klarlack`);
+        noteParts.push(`Zwischensumme/Preis: ${elPrice.textContent}`);
+        if(pk === 'schiefer'){
+          if(optSig.checked) noteParts.push('Upgrade: Signatur/Widmung');
+          if(optStand.value === 'std') noteParts.push('Upgrade: Standfuß');
+          if(optStand.value === 'prem') noteParts.push('Upgrade: Standfuß Premium');
+          if(optWall.checked) noteParts.push('Upgrade: Wandhalterung');
+          if(optExpress.checked) noteParts.push('Upgrade: Express (3 WT)');
+          if(optShip.checked){
+            if(shipPossible){
+              noteParts.push(shipCost === 0 ? 'Versand: kostenlos (ab 80€)' : `Versand: ab ${money(CFG.schiefer.upgrades.ship_base)}`);
+            } else {
+              noteParts.push('Versand: NICHT möglich (<29,95€ Mindestbestellwert)');
+            }
+          }
+        }
+      } else {
+        noteParts.push(`Indikation: ${elPrice.textContent}`);
+      }
+
+      if(elNote.value.trim()) noteParts.push(`Notiz: ${elNote.value.trim()}`);
+
+      const noteText = noteParts.join(' | ');
+
+      const askHref = `/kontakt/?p=${encodeURIComponent(p)}&size=${encodeURIComponent(sizeText)}&note=${encodeURIComponent(noteText)}`;
       btnAsk.href = askHref;
 
-      // Optional zusätzlich: WhatsApp direkt mit dem Text (für Schnellschießer)
-      const waBody = [
+      const waLines = [
         'Hi Luderbein,',
         '',
-        `Ich komme aus dem Kalkulator:`,
+        'Ich komme aus dem Kalkulator:',
         `Produkt: ${p}`,
-        `Größe: ${sizeText}`,
-        `Indikation: ${euro(min)} – ${euro(max)}`,
-        elText.value === 'yes' ? 'Text/Personalisierung: ja' : 'Text/Personalisierung: nein',
-        elRush.value === 'rush' ? 'Tempo: Express (wenn möglich)' : 'Tempo: normal',
-        elNote.value.trim() ? `Notiz: ${elNote.value.trim()}` : '',
+        `Größe/Format: ${sizeText}`,
+        `Info: ${noteText}`,
         '',
-        'Ich schicke bei Bedarf Foto/Details direkt mit.'
-      ].filter(Boolean).join('\n');
-
-      btnWA.href = `https://wa.me/491725925858?text=${encodeURIComponent(waBody)}`;
+        'Ich kann Foto/Details direkt mit schicken.'
+      ];
+      btnWA.href = `https://wa.me/491725925858?text=${encodeURIComponent(waLines.join('\n'))}`;
     }
 
-    elProd.addEventListener('change', () => { setSizes(elProd.value); calc(); });
-    [elSize, elText, elRush, elNote].forEach(el => el.addEventListener('input', calc));
+    function wire(){
+      elProd.addEventListener('change', () => { setSizes(elProd.value); calc(); });
+      elSize.addEventListener('change', calc);
+      elNote.addEventListener('input', calc);
+
+      // Schiefer-Optionen
+      [optSig, optWall, optExpress, optShip].forEach(el => el.addEventListener('change', calc));
+      optStand.addEventListener('change', calc);
+    }
 
     // init
     setSizes(elProd.value);
+    wire();
     calc();
   </script>
 </body>
