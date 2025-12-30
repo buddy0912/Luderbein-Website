@@ -1,63 +1,204 @@
-<script>
-  document.getElementById('y').textContent = new Date().getFullYear();
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kontakt – Luderbein</title>
+  <meta name="description" content="Kontakt zu Luderbein: E-Mail, WhatsApp und Instagram." />
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
 
-  (function(){
-    const params = new URLSearchParams(location.search);
-    const p = (params.get('p') || '').trim();       // Produkt/Variante
-    const size = (params.get('size') || '').trim(); // optional
-    const note = (params.get('note') || '').trim(); // optional
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
 
-    const contextBox = document.getElementById('contextBox');
-    const contextText = document.getElementById('contextText');
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+        <a href="/">Start</a>
+        <a href="/leistungen/">Leistungen</a>
+        <a href="/schwibboegen/">Schwibbögen</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/" aria-current="page">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
 
-    const btnMail = document.getElementById('btnMail');
-    const btnWA = document.getElementById('btnWA');
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge"><i></i> Schnellster Weg: kurz schreiben, kurz klären</span>
+      <h1>Kontakt</h1>
+      <p class="lead">
+        Du willst ein Motiv, eine Personalisierung oder nur fix wissen, ob’s machbar ist?
+        Schreib kurz – ich melde mich flott.
+      </p>
 
-    const productLine = [p, size].filter(Boolean).join(' – ');
+      <div class="notice" id="contextBox" style="display:none;margin-top:14px">
+        <strong style="color:var(--text)">Anfrage zu:</strong>
+        <span id="contextText"></span>
+      </div>
 
-    if(productLine){
-      contextBox.style.display = '';
-      contextText.textContent = productLine;
+      <div class="cta">
+        <a class="btn primary" id="btnMail" href="#">E-Mail schreiben</a>
+        <a class="btn" id="btnWA" href="#" rel="noopener">WhatsApp</a>
+        <a class="btn" href="https://instagram.com/luderbein_gravur" rel="noopener">Instagram</a>
+      </div>
 
-      // Wenn Produkt-Kontext da ist: WhatsApp wird Primary, Mail Secondary
-      btnWA.classList.add('primary');
-      btnMail.classList.remove('primary');
-    } else {
-      // Ohne Kontext: Mail bleibt Primary (neutral)
-      btnMail.classList.add('primary');
-      btnWA.classList.remove('primary');
-    }
+      <div class="section" style="margin-top:16px">
+        <div class="notice">
+          <strong style="color:var(--text)">Tipp:</strong>
+          Je genauer du bist (Produkt/Größe/Text/Foto), desto schneller bekommst du Preis + Zeitplan.
+        </div>
+      </div>
+    </section>
 
-    const subject = productLine
-      ? `Anfrage – ${productLine} – Luderbein`
-      : `Anfrage – Luderbein`;
+    <div class="hr"></div>
 
-    const bodyLines = [
-      'Hi Luderbein,',
-      '',
-      productLine ? `Ich möchte anfragen: ${productLine}` : 'Ich möchte etwas anfragen:',
-      '',
-      '- Größe/Format:',
-      '- Personalisierung/Text (optional):',
-      '- Foto (falls relevant):',
-      '- Skizzen/Beispielbilder (sehr willkommen):',
-      '- Sonstiges:',
-      '',
-      note ? `Notiz: ${note}` : '',
-      '',
-      'Danke!'
-    ].filter(line => line !== '');
+    <section class="section">
+      <h2>Direktdaten</h2>
+      <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
+      <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 5925858</a></p>
+      <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
+    </section>
+  </main>
 
-    const body = bodyLines.join('\n');
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
 
-    const mailHref =
-      `mailto:luderbein_gravur@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  <script src="/assets/site.js"></script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
 
-    const waText = bodyLines.join('\n');
-    const waHref =
-      `https://wa.me/491725925858?text=${encodeURIComponent(waText)}`;
+    (function(){
+      const params = new URLSearchParams(location.search);
 
-    btnMail.setAttribute('href', mailHref);
-    btnWA.setAttribute('href', waHref);
-  })();
-</script>
+      const pRaw = (params.get('p') || '').trim();
+      const size = (params.get('size') || '').trim();
+      const note = (params.get('note') || '').trim();
+
+      const p = pRaw.toLowerCase().replace(/\s+/g,'-');
+
+      const PRODUCTS = {
+        'schiefer-foto': {
+          label: 'Schiefer – Fotogravur (Portrait/Haustier)',
+          hints: [
+            '- Foto (als Anhang oder Link):',
+            '- Motivzuschnitt (Kopf/Brust/…):',
+            '- Skizzen/Beispielbilder (sehr willkommen):',
+            '- Signatur/Widmung (optional):'
+          ]
+        },
+        'schiefer-text': {
+          label: 'Schiefer – Text / Symbole',
+          hints: [
+            '- Text (genau so wie er drauf soll):',
+            '- Schriftstil (clean/kantig/klassisch):',
+            '- Symbol/Icon (optional):',
+            '- Skizzen/Beispielbilder (sehr willkommen):'
+          ]
+        },
+        'holz': {
+          label: 'Holz – Schwibbögen / Schilder / Deko',
+          hints: [
+            '- Motiv/Stil (kurz beschreiben oder Foto):',
+            '- Personalisierung (Name/Ort/Jahr):',
+            '- LED ja/nein (falls Schwibbogen):',
+            '- Skizzen/Beispielbilder (sehr willkommen):'
+          ]
+        },
+        'metall': {
+          label: 'Metall – Tags / Plaketten / Schmuck',
+          hints: [
+            '- Produkt (Tag/Plakette/Schmuck):',
+            '- Material (wenn bekannt):',
+            '- Motiv/Logo/Text:',
+            '- Skizzen/Beispielbilder (sehr willkommen):'
+          ]
+        },
+        'custom': {
+          label: 'Custom – Sonderwunsch',
+          hints: [
+            '- Idee kurz erklären:',
+            '- Material (wenn klar):',
+            '- Maße/Größe:',
+            '- Skizzen/Beispielbilder (sehr willkommen):'
+          ]
+        }
+      };
+
+      const ctx = PRODUCTS[p] || (pRaw ? { label: pRaw, hints: [] } : null);
+
+      const contextBox  = document.getElementById('contextBox');
+      const contextText = document.getElementById('contextText');
+      const btnMail = document.getElementById('btnMail');
+      const btnWA   = document.getElementById('btnWA');
+
+      const productLine = [
+        ctx ? ctx.label : '',
+        size
+      ].filter(Boolean).join(' – ');
+
+      if(productLine){
+        contextBox.style.display = '';
+        contextText.textContent = productLine;
+        btnWA.classList.add('primary');
+        btnMail.classList.remove('primary');
+      } else {
+        btnMail.classList.add('primary');
+        btnWA.classList.remove('primary');
+      }
+
+      const subject = productLine
+        ? `Anfrage – ${productLine} – Luderbein`
+        : `Anfrage – Luderbein`;
+
+      const baseLines = [
+        'Hi Luderbein,',
+        '',
+        productLine ? `Ich möchte anfragen: ${productLine}` : 'Ich möchte etwas anfragen:',
+        '',
+        '- Größe/Format:',
+        '- Personalisierung/Text (optional):',
+        '- Foto (falls relevant):',
+        '- Sonstiges:',
+      ];
+
+      const hintLines = (ctx && ctx.hints && ctx.hints.length)
+        ? ['','Details:'].concat(ctx.hints)
+        : [];
+
+      const tailLines = [
+        '',
+        note ? `Notiz: ${note}` : '',
+        '',
+        'Danke!'
+      ].filter(line => line !== '');
+
+      const bodyLines = baseLines.concat(hintLines).concat(tailLines);
+      const body = bodyLines.join('\n');
+
+      btnMail.href =
+        `mailto:luderbein_gravur@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+      btnWA.href =
+        `https://wa.me/491725925858?text=${encodeURIComponent(body)}`;
+    })();
+  </script>
+</body>
+</html>
