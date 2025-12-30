@@ -4,9 +4,82 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Luderbein – Schwibbögen & Gravur</title>
-  <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail, Website im Aufbau." />
-  <link rel="stylesheet" href="/assets/style.css" />
+  <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
+
+  <!-- Cache-Breaker gegen iOS/Cloudflare-Cache -->
+  <link rel="stylesheet" href="/assets/style.css?v=8" />
+
+  <!-- Werkstatt-Feed als Slider (inline, damit nix mehr riesig/untereinander ist) -->
+  <style>
+    .reelslider{
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      padding:14px;
+      overflow:hidden;
+    }
+    .reeltrack{
+      display:flex;
+      gap:14px;
+      overflow:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      outline:none;
+    }
+    .reeltrack::-webkit-scrollbar{display:none}
+
+    .reelslide{
+      scroll-snap-align:start;
+      display:block;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      flex:0 0 calc(33.333% - 10px);
+    }
+    .reelslide img{
+      width:100%;
+      height:240px;
+      object-fit:cover;
+      display:block;
+    }
+
+    @media (max-width: 860px){
+      .reelslide{flex-basis:calc(50% - 7px)}
+      .reelslide img{height:220px}
+    }
+    @media (max-width: 520px){
+      .reelslide{flex-basis:86%}
+      .reelslide img{height:240px}
+    }
+
+    .reelbtn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:44px;
+      height:44px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.45);
+      color:rgba(255,255,255,.92);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      z-index:2;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .reelbtn.prev{left:10px}
+    .reelbtn.next{right:10px}
+    @media (max-width: 520px){.reelbtn{display:none}}
+  </style>
+
+  <link rel="stylesheet" href="/assets/style.css?v=8" />
 </head>
+
 <body>
   <header>
     <div class="wrap nav">
@@ -23,7 +96,7 @@
       </button>
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-        <a href="/">Start</a>
+        <a href="/" aria-current="page">Start</a>
         <a href="/leistungen/">Leistungen</a>
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
@@ -41,6 +114,7 @@
         Erzgebirge-Feeling, aber mit Luderbein-Kante: sauber gefertigt, gut personalisierbar,
         und ohne Schnickschnack im Bestellprozess.
       </p>
+
       <div class="cta">
         <a class="btn primary" href="/schwibboegen/">Schwibbögen ansehen</a>
         <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
@@ -80,110 +154,31 @@
       </div>
     </section>
 
-    <!-- Werkstatt-Feed (Slider) -->
+    <!-- Werkstatt-Feed (Slideshow/Slider) -->
     <section class="section" aria-label="Werkstatt-Feed">
       <div class="section-head">
         <h2>Werkstatt-Feed</h2>
-        <p class="small muted">Authentisch. Wischbar. Antippen = groß.</p>
+        <p class="small muted">Echt, nicht geschniegelt. Wischen = weiter. Tap = groß.</p>
       </div>
 
-      <div class="reelslider" data-reelslider>
-        <button class="reelbtn prev" type="button" data-reel-prev aria-label="Vorheriges Bild">‹</button>
+      <div class="reelslider">
+        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
+        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
-        <div class="reeltrack" data-reel-track tabindex="0" aria-label="Werkstatt-Feed Slider">
-          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-01.jpg" alt="Werkstatt-Feed 01" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-02.jpg" alt="Werkstatt-Feed 02" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-03.jpg" alt="Werkstatt-Feed 03" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-04.jpg" alt="Werkstatt-Feed 04" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-05.jpg" alt="Werkstatt-Feed 05" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-06.jpg" alt="Werkstatt-Feed 06" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-07.jpg" alt="Werkstatt-Feed 07" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-08.jpg" alt="Werkstatt-Feed 08" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-09.jpg" alt="Werkstatt-Feed 09" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-10.jpg" alt="Werkstatt-Feed 10" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-11.jpg" alt="Werkstatt-Feed 11" loading="lazy" decoding="async">
-          </a>
-          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener">
-            <img src="/assets/reel/reel-12.jpg" alt="Werkstatt-Feed 12" loading="lazy" decoding="async">
-          </a>
+        <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
+          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01"></a>
+          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02"></a>
+          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03"></a>
+          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-04.jpg" alt="Werkstatt Bild 04"></a>
+          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-05.jpg" alt="Werkstatt Bild 05"></a>
+          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-06.jpg" alt="Werkstatt Bild 06"></a>
+          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-07.jpg" alt="Werkstatt Bild 07"></a>
+          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-08.jpg" alt="Werkstatt Bild 08"></a>
+          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-09.jpg" alt="Werkstatt Bild 09"></a>
+          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10"></a>
+          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11"></a>
+          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12"></a>
         </div>
-
-        <button class="reelbtn next" type="button" data-reel-next aria-label="Nächstes Bild">›</button>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Kernsortiment Preview</h2>
-        <p class="small muted">Kurzer Blick auf typische Varianten. Bestellen läuft aktuell über Anfrage.</p>
-      </div>
-
-      <div class="products">
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta">
-            <span class="price">ab 69,95 €</span>
-            <span>•</span>
-            <span>400 mm</span>
-          </div>
-          <h3>Classic – Erzgebirge modern</h3>
-          <p class="kicker">Sauberer Layer-Look, personalisierbar (Name/Ort/Jahr).</p>
-          <div class="actions">
-            <a class="btn primary" href="/schwibboegen/#classic">Details</a>
-            <a class="btn" href="/kontakt/">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta">
-            <span class="price">ab 89,95 €</span>
-            <span>•</span>
-            <span>LED optional</span>
-          </div>
-          <h3>LED – Mehr Tiefe, mehr Kante</h3>
-          <p class="kicker">Stimmung on top: Licht + Schatten + saubere Konturen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/schwibboegen/#led">Details</a>
-            <a class="btn" href="/kontakt/">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta">
-            <span class="price">ab 99,95 €</span>
-            <span>•</span>
-            <span>Custom Motiv</span>
-          </div>
-          <h3>Signature – Dein Motiv als Silhouette</h3>
-          <p class="kicker">Foto → Silhouette → Layer. Kein Katalog, sondern “deins”.</p>
-          <div class="actions">
-            <a class="btn primary" href="/schwibboegen/#signature">Details</a>
-            <a class="btn" href="/kontakt/">Anfragen</a>
-          </div>
-        </article>
       </div>
     </section>
 
@@ -215,52 +210,29 @@
   </footer>
 
   <script src="/assets/site.js"></script>
-  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
-
-  <!-- Reel-Slider: minimaler JS, kein Tracking, nur UX -->
   <script>
-  (function () {
-    const root = document.querySelector('[data-reelslider]');
-    if (!root) return;
+    document.getElementById('y').textContent = new Date().getFullYear();
 
-    const track = root.querySelector('[data-reel-track]');
-    const prev = root.querySelector('[data-reel-prev]');
-    const next = root.querySelector('[data-reel-next]');
+    (function(){
+      var track = document.getElementById('reelTrack');
+      if(!track) return;
 
-    function slideBy(dir){
-      const first = track.querySelector('.reelslide');
-      if (!first) return;
-      const gap = parseFloat(getComputedStyle(track).gap || '0') || 0;
-      const w = first.getBoundingClientRect().width + gap;
-      track.scrollBy({ left: dir * w, behavior: 'smooth' });
-    }
+      var prev = document.querySelector('.reelbtn.prev');
+      var next = document.querySelector('.reelbtn.next');
 
-    prev.addEventListener('click', () => slideBy(-1));
-    next.addEventListener('click', () => slideBy(1));
+      function slideWidth(){
+        var first = track.querySelector('.reelslide');
+        if(!first) return 320;
+        return first.getBoundingClientRect().width + 14; // +gap
+      }
 
-    // Autoplay (pausiert bei Hover/Focus/Touch)
-    let timer = null;
-    const start = () => {
-      stop();
-      timer = setInterval(() => {
-        // wenn am Ende -> zurück an den Anfang
-        const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
-        if (atEnd) track.scrollTo({ left: 0, behavior: 'smooth' });
-        else slideBy(1);
-      }, 3200);
-    };
-    const stop = () => { if (timer) clearInterval(timer); timer = null; };
-
-    root.addEventListener('mouseenter', stop);
-    root.addEventListener('mouseleave', start);
-    root.addEventListener('focusin', stop);
-    root.addEventListener('focusout', start);
-    root.addEventListener('touchstart', stop, {passive:true});
-    root.addEventListener('touchend', start, {passive:true});
-
-    // Start erst, wenn Layout steht
-    window.addEventListener('load', start);
-  })();
+      if(prev) prev.addEventListener('click', function(){
+        track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
+      });
+      if(next) next.addEventListener('click', function(){
+        track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
+      });
+    })();
   </script>
 </body>
 </html>
