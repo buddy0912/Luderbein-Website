@@ -9,17 +9,23 @@
 
   <!-- Metall-Feed (eigener Slider) -->
   <style>
+    /* -------------------------------------------------------
+       Metall-Feed: kompakter + dezenter als Werkstatt-Feed
+       ------------------------------------------------------- */
     .reelslider{
       position:relative;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      padding:14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.02);
+      padding:10px;
       overflow:hidden;
+      max-width: 920px;       /* kompakter */
+      margin: 0 auto;         /* zentriert */
     }
+
     .reeltrack{
       display:flex;
-      gap:14px;
+      gap:12px;               /* etwas tighter */
       overflow:auto;
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
@@ -31,44 +37,48 @@
     .reelslide{
       scroll-snap-align:start;
       display:block;
-      border-radius:16px;
+      border-radius:12px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.20);
-      flex:0 0 calc(33.333% - 10px);
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(0,0,0,.18);
+      flex:0 0 calc(33.333% - 8px);
     }
     .reelslide img{
       width:100%;
-      height:240px;
+      height:200px;           /* kleiner */
       object-fit:cover;
       display:block;
     }
+
     @media (max-width: 860px){
-      .reelslide{flex-basis:calc(50% - 7px)}
-      .reelslide img{height:220px}
+      .reelslide{flex-basis:calc(50% - 6px)}
+      .reelslide img{height:190px}
     }
     @media (max-width: 520px){
+      .reelslider{max-width:none; padding:10px}
       .reelslide{flex-basis:86%}
-      .reelslide img{height:240px}
+      .reelslide img{height:220px}
     }
 
     .reelbtn{
       position:absolute;
       top:50%;
       transform:translateY(-50%);
-      width:44px;
-      height:44px;
+      width:38px;             /* subtiler */
+      height:38px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(0,0,0,.45);
-      color:rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.30);
+      color:rgba(255,255,255,.88);
       display:grid;
       place-items:center;
       cursor:pointer;
       z-index:2;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
+      opacity:.9;             /* weniger „schreit“ */
     }
+    .reelbtn:hover{opacity:1}
     .reelbtn.prev{left:10px}
     .reelbtn.next{right:10px}
     @media (max-width: 520px){.reelbtn{display:none}}
@@ -102,28 +112,9 @@
   </header>
 
   <main class="wrap">
-    <section class="hero">
-      <span class="badge"><i></i> Metall (V0) – echte Beispiele + Festprodukte</span>
-      <h1>Metall</h1>
-      <p class="lead">
-        Edelstahl/Alu: robust, präzise, urban. Erst Beispiele anschauen, dann entscheiden.
-        Preise sind gerade im Aufbau – bis dahin hilft dir die Upgrade-Kostenrechnung beim Einordnen.
-      </p>
 
-      <div class="cta">
-        <a class="btn primary" href="#feed">Metall-Feed</a>
-        <a class="btn" href="/tools/kalkulator/?service=metall">Upgrade Kostenrechnung</a>
-        <a class="btn" href="#festprodukte">Festprodukte</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Hinweis:</strong>
-        Skizzen/Ideenbilder sind ausdrücklich willkommen. Lieber grob und ehrlich als „perfekt“ und unklar.
-      </div>
-    </section>
-
-    <!-- Metall-Feed -->
-    <section class="section" id="feed" aria-label="Metall-Feed">
+    <!-- Metall-Feed (ganz oben) -->
+    <section class="section" id="feed" aria-label="Metall-Feed" style="padding-top:18px">
       <div class="section-head">
         <h2>Metall-Feed</h2>
         <p class="small muted">Echte Jobs. Wischen = weiter. Tap = groß. Läuft automatisch.</p>
@@ -150,11 +141,33 @@
         </div>
       </div>
 
-      <div class="section" style="margin-top:16px">
+      <div class="section" style="margin-top:14px; padding-top:0">
         <div class="cta">
           <a class="btn primary" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage zu Metall</a>
           <a class="btn" href="/tools/kalkulator/?service=metall">Vorher kurz kalkulieren</a>
+          <a class="btn" href="#festprodukte">Festprodukte</a>
         </div>
+      </div>
+    </section>
+
+    <!-- Hero / Intro -->
+    <section class="hero">
+      <span class="badge"><i></i> Metall (V0) – echte Beispiele + Festprodukte</span>
+      <h1>Metall</h1>
+      <p class="lead">
+        Edelstahl/Alu: robust, präzise, urban. Erst Beispiele anschauen, dann entscheiden.
+        Preise sind gerade im Aufbau – bis dahin hilft dir die Upgrade-Kostenrechnung beim Einordnen.
+      </p>
+
+      <div class="cta">
+        <a class="btn" href="/tools/kalkulator/?service=metall">Upgrade Kostenrechnung</a>
+        <a class="btn" href="#festprodukte">Festprodukte</a>
+        <a class="btn" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage</a>
+      </div>
+
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Hinweis:</strong>
+        Skizzen/Ideenbilder sind ausdrücklich willkommen. Lieber grob und ehrlich als „perfekt“ und unklar.
       </div>
     </section>
 
@@ -210,7 +223,7 @@
           <p class="kicker">Hundemarken, Geräte-Tags, Seriennummern. Details/Preise folgen.</p>
           <div class="actions">
             <a class="btn primary" href="/tools/kalkulator/?service=metall&item=tag">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/ %20Plakette">Anfragen</a>
+            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/%20Plakette">Anfragen</a>
           </div>
         </article>
       </div>
@@ -251,7 +264,7 @@
       function slideWidth(){
         var first = track.querySelector('.reelslide');
         if(!first) return 320;
-        return first.getBoundingClientRect().width + 14;
+        return first.getBoundingClientRect().width + 12; // gap angepasst
       }
 
       if(prev) prev.addEventListener('click', function(){
