@@ -7,7 +7,7 @@
   <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
 
   <!-- Cache-Breaker gegen iOS/Cloudflare-Cache -->
-  <link rel="stylesheet" href="/assets/style.css?v=9" />
+  <link rel="stylesheet" href="/assets/style.css?v=10" />
 
   <!-- Werkstatt-Feed als Slider (inline, damit nix mehr riesig/untereinander ist) -->
   <style>
@@ -105,6 +105,35 @@
   </header>
 
   <main class="wrap">
+
+    <!-- Werkstatt-Feed ganz nach oben (Random Reihenfolge) -->
+    <section class="section" aria-label="Werkstatt-Feed">
+      <div class="section-head">
+        <h2>Werkstatt-Feed</h2>
+        <p class="small muted">Echt, nicht geschniegelt. Wischen = weiter. Tap = groß. (Reihenfolge random)</p>
+      </div>
+
+      <div class="reelslider">
+        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
+        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
+
+        <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
+          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01"></a>
+          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02"></a>
+          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03"></a>
+          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-04.jpg" alt="Werkstatt Bild 04"></a>
+          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-05.jpg" alt="Werkstatt Bild 05"></a>
+          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-06.jpg" alt="Werkstatt Bild 06"></a>
+          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-07.jpg" alt="Werkstatt Bild 07"></a>
+          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-08.jpg" alt="Werkstatt Bild 08"></a>
+          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-09.jpg" alt="Werkstatt Bild 09"></a>
+          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10"></a>
+          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11"></a>
+          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12"></a>
+        </div>
+      </div>
+    </section>
+
     <section class="hero">
       <span class="badge"><i></i> Live – V0 (Website im Aufbau)</span>
       <h1>Schwibbögen, die nicht nach „Standard-Katalog“ schreien.</h1>
@@ -149,34 +178,6 @@
           <span class="sigk">CUSTOM</span>
           <span class="sigv">kurzer Draht • schneller Entwurf</span>
         </a>
-      </div>
-    </section>
-
-    <!-- Werkstatt-Feed (Slideshow/Slider) -->
-    <section class="section" aria-label="Werkstatt-Feed">
-      <div class="section-head">
-        <h2>Werkstatt-Feed</h2>
-        <p class="small muted">Echt, nicht geschniegelt. Wischen = weiter. Tap = groß.</p>
-      </div>
-
-      <div class="reelslider">
-        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
-        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
-
-        <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
-          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01"></a>
-          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02"></a>
-          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03"></a>
-          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-04.jpg" alt="Werkstatt Bild 04"></a>
-          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-05.jpg" alt="Werkstatt Bild 05"></a>
-          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-06.jpg" alt="Werkstatt Bild 06"></a>
-          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-07.jpg" alt="Werkstatt Bild 07"></a>
-          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-08.jpg" alt="Werkstatt Bild 08"></a>
-          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-09.jpg" alt="Werkstatt Bild 09"></a>
-          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10"></a>
-          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11"></a>
-          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12"></a>
-        </div>
       </div>
     </section>
 
@@ -277,6 +278,18 @@
     (function(){
       var track = document.getElementById('reelTrack');
       if(!track) return;
+
+      // Random Reihenfolge (Fisher-Yates)
+      (function shuffleSlides(){
+        var slides = Array.prototype.slice.call(track.children);
+        for (var i = slides.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = slides[i];
+          slides[i] = slides[j];
+          slides[j] = tmp;
+        }
+        slides.forEach(function(node){ track.appendChild(node); });
+      })();
 
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
