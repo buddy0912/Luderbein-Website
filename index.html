@@ -197,8 +197,19 @@
       </div>
 
       <div class="products">
+
+        <!-- SCHIEFER mit Vorschaubild -->
         <article class="productcard">
-          <div class="thumb" aria-label="Schiefer"><span class="thumblabel">Schiefer</span></div>
+          <div class="thumb" style="padding:0">
+            <a href="/leistungen/schiefer/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
+              <img
+                src="/assets/img/schiefer-home.jpg"
+                alt="Fotogravur auf Schiefer – Beispiel (20 cm)"
+                loading="lazy"
+                style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit"
+              >
+            </a>
+          </div>
           <div class="meta">
             <span class="price">ab 9,95 €</span><span>•</span><span>Foto / Text / Symbole</span>
           </div>
@@ -223,8 +234,18 @@
           </div>
         </article>
 
+        <!-- METALL mit Vorschaubild -->
         <article class="productcard">
-          <div class="thumb" aria-label="Metall"><span class="thumblabel">Metall</span></div>
+          <div class="thumb" style="padding:0">
+            <a href="/leistungen/metall/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
+              <img
+                src="/assets/metall/metall-reel-05.jpg"
+                alt="Gravur auf Metall – Beispiel"
+                loading="lazy"
+                style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit"
+              >
+            </a>
+          </div>
           <div class="meta">
             <span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span>
           </div>
@@ -320,7 +341,7 @@
       if (reduceMotion) return;
 
       var paused = false;
-      var AUTOPLAY_MS = 4600; // <- HIER ist die verlangsamte Zeit (+2 Sekunden)
+      var AUTOPLAY_MS = 4600;
 
       function atEnd(){
         return (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
