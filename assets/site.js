@@ -1,7 +1,7 @@
 /* Luderbein – site.js
    - Mobile Nav Toggle
    - Auto aria-current="page" für die Hauptnavigation
-   - Reel/Feed: Bilder automatisch befüllen + randomisieren
+   - Reel/Feed: Bilder automatisch laden + random start + autoplay
 */
 
 (function () {
@@ -9,13 +9,15 @@
 
   // ---------------- Reel-Konfig ----------------
   // Ordner: /assets/reel/
-  // Dateien: reel-01.jpg ... reel-17.jpg (passt zu deinen zuletzt erzeugten reel-13..17)
+  // Dateien: reel-01.jpg ... reel-XX.jpg
   const REEL_DIR = "/assets/reel/";
-  const REEL_FILES = [
-    "reel-01.jpg","reel-02.jpg","reel-03.jpg","reel-04.jpg","reel-05.jpg","reel-06.jpg",
-    "reel-07.jpg","reel-08.jpg","reel-09.jpg","reel-10.jpg","reel-11.jpg","reel-12.jpg",
-    "reel-13.jpg","reel-14.jpg","reel-15.jpg","reel-16.jpg","reel-17.jpg"
-  ];
+  const REEL_TOTAL = 50;          // <- HOCHDREHEN, wenn du mehr als 17/20 hast
+  const REEL_PREFIX = "reel-";
+  const REEL_EXT = ".jpg";
+
+  // Slideshow
+  const REEL_INTERVAL_MS = 2800;  // <- Geschwindigkeit (ms)
+  const REEL_FADE_MS = 220;       // <- schneller Übergang (ohne CSS nötig)
 
   function ready(fn) {
     if (document.readyState === "loading") {
@@ -23,6 +25,18 @@
     } else {
       fn();
     }
+  }
+
+  function pad2(n) {
+    return String(n).padStart(2, "0");
+  }
+
+  function buildReelUrls() {
+    const out = [];
+    for (let i = 1; i <= REEL_TOTAL; i++) {
+      out.push(`${REEL_DIR}${REEL_PREFIX}${pad2(i)}${REEL_EXT}`);
+    }
+    return out;
   }
 
   function shuffle(arr) {
@@ -34,23 +48,11 @@
     return a;
   }
 
-  function pickUnique(arr, n) {
-    return shuffle(arr).slice(0, Math.max(0, n));
-  }
-
-  function absPath(p) {
-    if (!p) return p;
-    // macht aus "assets/reel/x.jpg" -> "/assets/reel/x.jpg"
-    if (p.startsWith("http://") || p.startsWith("https://")) return p;
-    if (p.startsWith("/")) return p;
-    return "/" + p;
-  }
-
-  // Prüft Bilder nacheinander (nicht alles parallel), sammelt "available" bis count erreicht
-  function collectExistingImages(urls, count, done) {
-    const wanted = Math.max(1, count || 3);
+  // sammelt existierende Bilder (prüft real per Image load)
+  function collectExistingImages(urls, minCount, done) {
     const pool = shuffle(urls);
     const found = [];
+    const wanted = Math.max(1, minCount || 6);
 
     let idx = 0;
     function next() {
@@ -58,18 +60,18 @@
 
       const url = pool[idx++];
       const img = new Image();
-      img.onload = () => {
-        found.push(url);
-        next();
-      };
+      img.onload = () => { found.push(url); next(); };
       img.onerror = () => next();
       img.src = url;
     }
     next();
   }
 
+  function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
   function initReel() {
-    // Container finden (du musst NICHTS suchen – einer davon wird’s bei dir sein)
     const reel =
       document.querySelector("[data-reel]") ||
       document.getElementById("reel") ||
@@ -77,42 +79,87 @@
 
     if (!reel) return;
 
-    // Wie viele Bilder?
-    const attrCount = parseInt(reel.getAttribute("data-reel-count") || "", 10);
-    const existingImgs = Array.from(reel.querySelectorAll("img"));
-    const count = Number.isFinite(attrCount) ? attrCount : (existingImgs.length || 3);
+    // wie viele Bilder sollen mindestens gefunden werden, damit’s schön randomisiert?
+    const attrMin = parseInt(reel.getAttribute("data-reel-min") || "", 10);
+    const minPool = Number.isFinite(attrMin) ? attrMin : 10;
 
-    const urls = REEL_FILES.map((f) => absPath(REEL_DIR + f));
+    // falls du die Geschwindigkeit pro Seite ändern willst:
+    const attrInterval = parseInt(reel.getAttribute("data-reel-interval") || "", 10);
+    const intervalMs = Number.isFinite(attrInterval) ? attrInterval : REEL_INTERVAL_MS;
 
-    collectExistingImages(urls, count, (available) => {
-      // wenn nix gefunden wurde: lieber still sein als kaputt wirken
+    // 1) wir nutzen EIN "main img" und tauschen src
+    let main = reel.querySelector("img[data-reel-main]") || reel.querySelector("img");
+
+    if (!main) {
+      main = document.createElement("img");
+      main.alt = "Beispiel – Luderbein";
+      reel.innerHTML = "";
+      reel.appendChild(main);
+    }
+
+    // sanity attrs
+    if (!main.hasAttribute("loading")) main.setAttribute("loading", "eager");
+    if (!main.hasAttribute("decoding")) main.setAttribute("decoding", "async");
+
+    // leichtes Fade ohne CSS
+    main.style.transition = `opacity ${REEL_FADE_MS}ms ease`;
+    main.style.opacity = "1";
+
+    const urls = buildReelUrls();
+
+    collectExistingImages(urls, minPool, (available) => {
       if (!available.length) return;
 
-      const chosen = pickUnique(available, count);
+      // random start + shuffle playlist
+      let playlist = shuffle(available);
+      let i = Math.floor(Math.random() * playlist.length);
 
-      // Wenn es schon <img> gibt: befüllen
-      if (existingImgs.length) {
-        for (let i = 0; i < existingImgs.length; i++) {
-          const slot = existingImgs[i];
-          const u = chosen[i % chosen.length];
-          slot.src = u;
-          // optional: lazy nur wenn nicht "hero"
-          if (!slot.hasAttribute("loading")) slot.setAttribute("loading", "lazy");
-          if (!slot.hasAttribute("decoding")) slot.setAttribute("decoding", "async");
-        }
-        return;
+      function show(url) {
+        // kleines Fade-out → src swap → fade-in
+        main.style.opacity = "0";
+        window.setTimeout(() => {
+          main.src = url;
+          main.style.opacity = "1";
+        }, REEL_FADE_MS);
       }
 
-      // Sonst: Slots erzeugen
-      reel.innerHTML = "";
-      chosen.forEach((u) => {
-        const img = document.createElement("img");
-        img.src = u;
-        img.alt = "Beispiel – Luderbein";
-        img.loading = "lazy";
-        img.decoding = "async";
-        reel.appendChild(img);
+      // initial
+      show(playlist[i]);
+
+      // autoplay (wenn nicht reduce motion)
+      if (prefersReducedMotion()) return;
+
+      // wenn Nutzer drauf tippt/hover: kurz pausieren (mobile-friendly)
+      let timer = null;
+      let paused = false;
+
+      function start() {
+        if (timer) return;
+        timer = window.setInterval(() => {
+          if (paused) return;
+          i = (i + 1) % playlist.length;
+          show(playlist[i]);
+        }, intervalMs);
+      }
+
+      function stop() {
+        if (!timer) return;
+        window.clearInterval(timer);
+        timer = null;
+      }
+
+      reel.addEventListener("mouseenter", () => { paused = true; });
+      reel.addEventListener("mouseleave", () => { paused = false; });
+      reel.addEventListener("touchstart", () => { paused = true; }, { passive: true });
+      reel.addEventListener("touchend", () => { paused = false; }, { passive: true });
+
+      // wenn Tab inaktiv → stoppen (spart Ressourcen)
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop();
+        else start();
       });
+
+      start();
     });
   }
 
