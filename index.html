@@ -132,7 +132,7 @@
           <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12" loading="lazy"></a>
 
-          <!-- NEU: Metallbilder -->
+          <!-- Metallbilder -->
           <a class="reelslide" href="/assets/reel/reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-13.jpg" alt="Werkstatt Bild 13" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-14.jpg" alt="Werkstatt Bild 14" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-15.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-15.jpg" alt="Werkstatt Bild 15" loading="lazy"></a>
@@ -320,6 +320,7 @@
       if (reduceMotion) return;
 
       var paused = false;
+      var AUTOPLAY_MS = 4600; // <- HIER ist die verlangsamte Zeit (+2 Sekunden)
 
       function atEnd(){
         return (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
@@ -334,7 +335,7 @@
         }
       }
 
-      var timer = window.setInterval(tick, 2600);
+      var timer = window.setInterval(tick, AUTOPLAY_MS);
 
       track.addEventListener('mouseenter', function(){ paused = true; });
       track.addEventListener('mouseleave', function(){ paused = false; });
@@ -347,7 +348,7 @@
           window.clearInterval(timer);
           timer = null;
         } else if(!timer){
-          timer = window.setInterval(tick, 2600);
+          timer = window.setInterval(tick, AUTOPLAY_MS);
         }
       });
     })();
