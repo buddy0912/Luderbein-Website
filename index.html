@@ -7,9 +7,9 @@
   <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
 
   <!-- Cache-Breaker gegen iOS/Cloudflare-Cache -->
-  <link rel="stylesheet" href="/assets/style.css?v=10" />
+  <link rel="stylesheet" href="/assets/style.css?v=9" />
 
-  <!-- Werkstatt-Feed als Slider (inline, damit nix mehr riesig/untereinander ist) -->
+  <!-- Werkstatt-Feed als Slider -->
   <style>
     .reelslider{
       position:relative;
@@ -106,11 +106,11 @@
 
   <main class="wrap">
 
-    <!-- Werkstatt-Feed ganz nach oben (Random Reihenfolge) -->
+    <!-- Werkstatt-Feed (Slideshow/Slider) GANZ OBEN -->
     <section class="section" aria-label="Werkstatt-Feed">
       <div class="section-head">
         <h2>Werkstatt-Feed</h2>
-        <p class="small muted">Echt, nicht geschniegelt. Wischen = weiter. Tap = groß. (Reihenfolge random)</p>
+        <p class="small muted">Echt, nicht geschniegelt. Wischen = weiter. Tap = groß. Läuft automatisch durch.</p>
       </div>
 
       <div class="reelslider">
@@ -118,18 +118,26 @@
         <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
         <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
-          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01"></a>
-          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02"></a>
-          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03"></a>
-          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-04.jpg" alt="Werkstatt Bild 04"></a>
-          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-05.jpg" alt="Werkstatt Bild 05"></a>
-          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-06.jpg" alt="Werkstatt Bild 06"></a>
-          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-07.jpg" alt="Werkstatt Bild 07"></a>
-          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-08.jpg" alt="Werkstatt Bild 08"></a>
-          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-09.jpg" alt="Werkstatt Bild 09"></a>
-          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10"></a>
-          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11"></a>
-          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12"></a>
+          <!-- reel-01 bis reel-17 -->
+          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-04.jpg" alt="Werkstatt Bild 04" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-05.jpg" alt="Werkstatt Bild 05" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-06.jpg" alt="Werkstatt Bild 06" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-07.jpg" alt="Werkstatt Bild 07" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-08.jpg" alt="Werkstatt Bild 08" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-09.jpg" alt="Werkstatt Bild 09" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12" loading="lazy"></a>
+
+          <!-- NEU: Metallbilder -->
+          <a class="reelslide" href="/assets/reel/reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-13.jpg" alt="Werkstatt Bild 13" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-14.jpg" alt="Werkstatt Bild 14" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-15.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-15.jpg" alt="Werkstatt Bild 15" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-16.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-16.jpg" alt="Werkstatt Bild 16" loading="lazy"></a>
+          <a class="reelslide" href="/assets/reel/reel-17.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-17.jpg" alt="Werkstatt Bild 17" loading="lazy"></a>
         </div>
       </div>
     </section>
@@ -185,7 +193,7 @@
     <section class="section" aria-label="Leistungen Preview">
       <div class="section-head">
         <h2>Leistungen (Preview)</h2>
-        <p class="small muted">Schneller Einstieg: anklicken → ansehen → kalkulieren.</p>
+        <p class="small muted">Schneller Einstieg: anklicken → ansehen → anfragen.</p>
       </div>
 
       <div class="products">
@@ -198,7 +206,7 @@
           <p class="kicker">Fotogravur, Widmung, Haustier – sauber aufbereitet und versiegelt.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulator</a>
+            <a class="btn" href="/kontakt/?topic=schiefer">Anfragen</a>
           </div>
         </article>
 
@@ -211,7 +219,7 @@
           <p class="kicker">Schwibbögen, Schilder, Deko – urban & sauber, gern personalisiert.</p>
           <div class="actions">
             <a class="btn primary" href="/schwibboegen/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulator</a>
+            <a class="btn" href="/kontakt/?topic=holz">Anfragen</a>
           </div>
         </article>
 
@@ -224,7 +232,7 @@
           <p class="kicker">Tags, Plaketten, Gravur – robust, kantig, präzise.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulator</a>
+            <a class="btn" href="/kontakt/?topic=metall">Anfragen</a>
           </div>
         </article>
 
@@ -237,7 +245,7 @@
           <p class="kicker">Wenn’s machbar ist, finden wir ’nen Weg. Wenn nicht, sag ich’s dir auch.</p>
           <div class="actions">
             <a class="btn primary" href="/kontakt/">Kontakt</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulator</a>
+            <a class="btn" href="/kontakt/?topic=custom">Anfragen</a>
           </div>
         </article>
       </div>
@@ -271,7 +279,9 @@
     </div>
   </footer>
 
-  <script src="/assets/site.js"></script>
+  <!-- Cachebreaker auch für JS -->
+  <script src="/assets/site.js?v=10"></script>
+
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
@@ -279,20 +289,18 @@
       var track = document.getElementById('reelTrack');
       if(!track) return;
 
-      // Random Reihenfolge (Fisher-Yates)
-      (function shuffleSlides(){
-        var slides = Array.prototype.slice.call(track.children);
-        for (var i = slides.length - 1; i > 0; i--) {
-          var j = Math.floor(Math.random() * (i + 1));
-          var tmp = slides[i];
-          slides[i] = slides[j];
-          slides[j] = tmp;
-        }
-        slides.forEach(function(node){ track.appendChild(node); });
-      })();
-
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
+
+      // --- RANDOM: Reihenfolge der Slides mischen ---
+      var slides = Array.prototype.slice.call(track.children);
+      for (var i = slides.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = slides[i];
+        slides[i] = slides[j];
+        slides[j] = tmp;
+      }
+      slides.forEach(function(el){ track.appendChild(el); });
 
       function slideWidth(){
         var first = track.querySelector('.reelslide');
@@ -305,6 +313,42 @@
       });
       if(next) next.addEventListener('click', function(){
         track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
+      });
+
+      // --- AUTOPLAY (respektiert Reduce Motion) ---
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion) return;
+
+      var paused = false;
+
+      function atEnd(){
+        return (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
+      }
+
+      function tick(){
+        if(paused) return;
+        if(atEnd()){
+          track.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
+        }
+      }
+
+      var timer = window.setInterval(tick, 2600);
+
+      track.addEventListener('mouseenter', function(){ paused = true; });
+      track.addEventListener('mouseleave', function(){ paused = false; });
+
+      track.addEventListener('touchstart', function(){ paused = true; }, { passive:true });
+      track.addEventListener('touchend', function(){ paused = false; }, { passive:true });
+
+      document.addEventListener('visibilitychange', function(){
+        if(document.hidden){
+          window.clearInterval(timer);
+          timer = null;
+        } else if(!timer){
+          timer = window.setInterval(tick, 2600);
+        }
       });
     })();
   </script>
