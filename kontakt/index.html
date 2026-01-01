@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kontakt – Luderbein</title>
-  <meta name="description" content="Kontakt zu Luderbein: E-Mail, WhatsApp und Instagram." />
+  <meta name="description" content="Kontakt zu Luderbein: WhatsApp oder E-Mail. Kurz, direkt, schnell." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
@@ -25,20 +25,7 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-
-        <!-- Leistungen + Dropdown -->
-        <div class="navdrop" data-navdrop>
-          <a class="navdrop__link" href="/leistungen/">Leistungen</a>
-          <button class="navdrop__btn" type="button" aria-label="Leistungen Untermenü öffnen" aria-expanded="false" data-navdrop-toggle>
-            ▾
-          </button>
-          <div class="navdrop__menu" role="menu" aria-label="Leistungen Untermenü" data-navdrop-menu>
-            <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
-            <a role="menuitem" href="/leistungen/metall/">Metall</a>
-            <a role="menuitem" href="/kontakt/?p=Custom%20(Anfrage)">Custom</a>
-          </div>
-        </div>
-
+        <a href="/leistungen/">Leistungen</a>
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/" aria-current="page">Kontakt</a>
@@ -49,29 +36,43 @@
 
   <main class="wrap">
     <section class="hero">
-      <span class="badge"><i></i> Schnellster Weg: kurz schreiben, kurz klären</span>
-      <h1>Kontakt</h1>
+      <span class="badge"><i></i> Kontakt</span>
+      <h1>Kurzer Draht.</h1>
       <p class="lead">
-        Du willst ein Motiv, eine Personalisierung oder nur fix wissen, ob’s machbar ist?
-        Schreib kurz – ich melde mich flott.
+        Schreib mir per WhatsApp oder Mail. Foto/Idee dazu, dann sag ich schnell, ob’s taugt und wie wir’s umsetzen.
       </p>
 
-      <div class="notice" id="contextBox" style="display:none;margin-top:14px">
-        <strong style="color:var(--text)">Anfrage zu:</strong>
-        <span id="contextText"></span>
+      <div class="cta">
+        <a class="btn primary" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20was%20anfragen%3A%20" rel="noopener">WhatsApp</a>
+        <a class="btn" href="mailto:luderbein_gravur@icloud.com?subject=Anfrage%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20folgendes%20anfragen%3A%0A-%20Material%3A%20Schiefer%20%2F%20Holz%20%2F%20Metall%20%2F%20Custom%0A-%20Gr%C3%B6%C3%9Fe%2FFormat%3A%20%0A-%20Motiv%2FText%3A%20%0A-%20Deadline%20(optional)%3A%20%0A%0AAnhang%2FFoto%20schicke%20ich%20mit.%0A%0ADanke!">E-Mail</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Damit’s schnell geht</h2>
+        <p class="small muted">3 Infos reichen meist schon.</p>
       </div>
 
-      <div class="cta">
-        <a class="btn primary" id="btnMail" href="#">E-Mail schreiben</a>
-        <a class="btn" id="btnWA" href="#" rel="noopener">WhatsApp</a>
-        <a class="btn" href="https://instagram.com/luderbein_gravur" rel="noopener">Instagram</a>
+      <div class="grid">
+        <div class="card">
+          <h3>1) Material</h3>
+          <p>Schiefer / Holz / Metall / Custom</p>
+        </div>
+        <div class="card">
+          <h3>2) Größe</h3>
+          <p>z. B. 10×10 cm / 20 cm rund / “so groß wie …”</p>
+        </div>
+        <div class="card">
+          <h3>3) Motiv</h3>
+          <p>Foto / Text / Symbol — bei Foto am besten: scharf + gut ausgeleuchtet.</p>
+        </div>
       </div>
 
       <div class="section" style="margin-top:16px">
         <div class="notice">
-          <strong style="color:var(--text)">Tipp:</strong>
-          Je genauer du bist (Produkt/Größe/Text/Foto), desto schneller bekommst du Preis + Zeitplan.
-          <br><strong style="color:var(--text)">Skizzen/Screenshots sind sehr willkommen.</strong>
+          <strong style="color:var(--text)">Hinweis:</strong><br>
+          Kein “Screenshot vom Screenshot”-Kettenbrief. Lieber 1 gutes Originalbild als 5 matschige.
         </div>
       </div>
     </section>
@@ -79,7 +80,7 @@
     <div class="hr"></div>
 
     <section class="section">
-      <h2>Direktdaten</h2>
+      <h2>Direktlinks</h2>
       <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
       <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 5925858</a></p>
       <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
@@ -98,68 +99,6 @@
 
   <script src="/assets/site.js"></script>
   <script src="/assets/nav-dropdown.js"></script>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    (function(){
-      const params = new URLSearchParams(location.search);
-
-      // Alias-Falle entschärfen: p oder topic akzeptieren
-      const pRaw = (params.get('p') || params.get('topic') || '').trim();
-      const size = (params.get('size') || '').trim();
-      const note = (params.get('note') || '').trim();
-
-      const contextBox = document.getElementById('contextBox');
-      const contextText = document.getElementById('contextText');
-
-      const btnMail = document.getElementById('btnMail');
-      const btnWA = document.getElementById('btnWA');
-
-      const productLine = [pRaw, size].filter(Boolean).join(' – ');
-
-      if(productLine){
-        contextBox.style.display = '';
-        contextText.textContent = productLine;
-
-        // Wenn Kontext da ist: WhatsApp wird Primary
-        btnWA.classList.add('primary');
-        btnMail.classList.remove('primary');
-      } else {
-        btnMail.classList.add('primary');
-        btnWA.classList.remove('primary');
-      }
-
-      const subject = productLine
-        ? `Anfrage – ${productLine} – Luderbein`
-        : `Anfrage – Luderbein`;
-
-      const bodyLines = [
-        'Hi Luderbein,',
-        '',
-        productLine ? `Ich möchte anfragen: ${productLine}` : 'Ich möchte etwas anfragen:',
-        '',
-        '- Größe/Format:',
-        '- Personalisierung/Text (optional):',
-        '- Foto (falls relevant):',
-        '- Skizze/Screenshot (sehr willkommen):',
-        '- Sonstiges:',
-        '',
-        note ? `Notiz: ${note}` : '',
-        '',
-        'Danke!'
-      ].filter(line => line !== '');
-
-      const body = bodyLines.join('\n');
-
-      const mailHref =
-        `mailto:luderbein_gravur@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-      const waHref =
-        `https://wa.me/491725925858?text=${encodeURIComponent(body)}`;
-
-      btnMail.setAttribute('href', mailHref);
-      btnWA.setAttribute('href', waHref);
-    })();
-  </script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
