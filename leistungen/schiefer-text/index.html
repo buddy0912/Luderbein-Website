@@ -26,18 +26,20 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
-        <!-- Dropdown: Leistungen -->
-        <details class="navdrop" data-navdrop open>
-          <summary class="navdrop__sum" aria-label="Leistungen öffnen">
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </summary>
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+        <!-- Einheitliches Dropdown: Leistungen -->
+        <div class="navdd" data-navdd data-open="0">
+          <a class="navdd__link" href="/leistungen/">Leistungen</a>
+          <button class="navdd__toggle" type="button" data-navdd-toggle aria-expanded="false" aria-label="Leistungen öffnen">
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div class="navdd__menu" data-navdd-menu role="menu" aria-label="Leistungen">
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/acryl-Schilder/" role="menuitem">Acryl-Schilder</a>
+            <a href="/leistungen/" role="menuitem">Holz</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <!-- Acryl ist hier absichtlich NICHT drin (drittrangig + Case-Falle) -->
           </div>
-        </details>
+        </div>
 
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
