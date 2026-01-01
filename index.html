@@ -6,9 +6,11 @@
   <title>Luderbein – Schwibbögen & Gravur</title>
   <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
 
+  <!-- Cache-Breaker gegen iOS/Cloudflare-Cache -->
   <link rel="stylesheet" href="/assets/style.css?v=9" />
-  <link rel="stylesheet" href="/assets/nav-dropdown.css?v=1" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
+  <!-- Werkstatt-Feed als Slider -->
   <style>
     .reelslider{
       position:relative;
@@ -75,6 +77,7 @@
     .reelbtn.next{right:10px}
     @media (max-width: 520px){.reelbtn{display:none}}
 
+    /* --- Schiefer-Kachel: Auto-Slideshow im Thumb (ohne Controls) --- */
     .thumbslider{
       position:relative;
       width:100%;
@@ -141,16 +144,15 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/" aria-current="page">Start</a>
 
-        <!-- Leistungen (einheitlicher Dropdown) -->
-        <div class="navdrop" data-navdrop>
+        <!-- Leistungen Dropdown (einheitlich) -->
+        <div class="navdd" data-navdd data-open="0">
           <a href="/leistungen/">Leistungen</a>
-          <button class="navdrop-toggle" type="button" aria-label="Leistungen Untermenü" aria-expanded="false" data-navdrop-toggle>▾</button>
-          <div class="navdrop-menu" data-navdrop-menu aria-label="Leistungen Untermenü">
-            <a href="/leistungen/"><span>Leistungen – Überblick</span><small>V0</small></a>
-            <a href="/leistungen/schiefer/"><span>Schiefer</span><small>Foto • Text • Symbole</small></a>
-            <a href="/leistungen/metall/"><span>Metall</span><small>Tags • Plaketten</small></a>
-            <a href="/schwibboegen/"><span>Holz</span><small>Schwibbögen</small></a>
-            <a href="/kontakt/?p=Custom"><span>Custom</span><small>Anfrage</small></a>
+          <button class="navddbtn" type="button" data-navdd-toggle aria-label="Leistungen öffnen" aria-expanded="false">▾</button>
+          <div class="navddmenu" data-navdd-menu>
+            <a href="/leistungen/schiefer/">Schiefer</a>
+            <a href="/leistungen/metall/">Metall</a>
+            <a href="/schwibboegen/">Holz</a>
+            <a href="/kontakt/?p=Custom">Custom</a>
           </div>
         </div>
 
@@ -163,6 +165,7 @@
   </header>
 
   <main class="wrap">
+
     <!-- Werkstatt-Feed GANZ OBEN -->
     <section class="section" aria-label="Werkstatt-Feed">
       <div class="section-head">
@@ -175,6 +178,7 @@
         <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
         <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
+          <!-- reel-01 bis reel-17 -->
           <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03" loading="lazy"></a>
@@ -188,6 +192,7 @@
           <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12" loading="lazy"></a>
 
+          <!-- Metallbilder -->
           <a class="reelslide" href="/assets/reel/reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-13.jpg" alt="Werkstatt Bild 13" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-14.jpg" alt="Werkstatt Bild 14" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-15.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-15.jpg" alt="Werkstatt Bild 15" loading="lazy"></a>
@@ -244,6 +249,7 @@
       </div>
     </section>
 
+    <!-- Startseite: nur die 4 Kacheln (Schiefer, Holz, Metall, Custom) -->
     <section class="section" aria-label="Leistungen Preview">
       <div class="section-head">
         <h2>Leistungen</h2>
@@ -251,12 +257,16 @@
       </div>
 
       <div class="products">
+        <!-- SCHIEFER (mit Slideshow im Bild) -->
         <article class="productcard">
           <div class="thumb" style="padding:0">
             <a class="thumblink" href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
               <span class="thumbslider" aria-hidden="true">
+                <!-- 1) Fotogravur -->
                 <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
+                <!-- 2) Text & Symbole (wenn Datei fehlt, fallback auf schiefer-home) -->
                 <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
+                <!-- 3) Gedenktafel (fallback) -->
                 <img src="/assets/img/schiefer-gedenk.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
               </span>
             </a>
@@ -273,6 +283,7 @@
           </div>
         </article>
 
+        <!-- HOLZ -->
         <article class="productcard">
           <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
           <div class="meta">
@@ -286,6 +297,7 @@
           </div>
         </article>
 
+        <!-- METALL -->
         <article class="productcard">
           <div class="thumb" aria-label="Metall"><span class="thumblabel">Metall</span></div>
           <div class="meta">
@@ -300,6 +312,7 @@
           </div>
         </article>
 
+        <!-- CUSTOM -->
         <article class="productcard">
           <div class="thumb" aria-label="Custom"><span class="thumblabel">Custom</span></div>
           <div class="meta">
@@ -343,8 +356,9 @@
     </div>
   </footer>
 
+  <!-- Cachebreaker auch für JS -->
   <script src="/assets/site.js?v=10"></script>
-  <script src="/assets/nav-dropdown.js?v=1"></script>
+  <script src="/assets/nav-dropdown.js"></script>
 
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
@@ -356,6 +370,7 @@
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
 
+      // --- RANDOM: Reihenfolge der Slides mischen ---
       var slides = Array.prototype.slice.call(track.children);
       for (var i = slides.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -368,7 +383,7 @@
       function slideWidth(){
         var first = track.querySelector('.reelslide');
         if(!first) return 320;
-        return first.getBoundingClientRect().width + 14;
+        return first.getBoundingClientRect().width + 14; // +gap
       }
 
       if(prev) prev.addEventListener('click', function(){
@@ -378,6 +393,7 @@
         track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
       });
 
+      // --- AUTOPLAY (respektiert Reduce Motion) ---
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
 
