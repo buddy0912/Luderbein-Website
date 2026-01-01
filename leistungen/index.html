@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Leistungen – Luderbein</title>
-  <meta name="description" content="Leistungen von Luderbein: Schiefer-Fotogravur, Holz, Metall, Acryl und Sonderwünsche – aktuell V0, per Anfrage." />
+  <meta name="description" content="Leistungen von Luderbein: Schiefer, Holz, Metall und Sonderwünsche – aktuell V0, per Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
@@ -26,15 +26,16 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
-        <!-- Leistungen Dropdown (einheitlich + active auf Übersicht) -->
-        <div class="navdd" data-navdd data-open="0">
-          <a href="/leistungen/" aria-current="page">Leistungen</a>
-          <button class="navddbtn" type="button" data-navdd-toggle aria-label="Leistungen öffnen" aria-expanded="false">▾</button>
-          <div class="navddmenu" data-navdd-menu>
-            <a href="/leistungen/schiefer/">Schiefer</a>
-            <a href="/leistungen/metall/">Metall</a>
-            <a href="/schwibboegen/">Holz</a>
-            <a href="/kontakt/?p=Custom">Custom</a>
+        <!-- Leistungen + Dropdown -->
+        <div class="navdrop" data-navdrop>
+          <a class="navdrop__link" href="/leistungen/" aria-current="page">Leistungen</a>
+          <button class="navdrop__btn" type="button" aria-label="Leistungen Untermenü öffnen" aria-expanded="false" data-navdrop-toggle>
+            ▾
+          </button>
+          <div class="navdrop__menu" role="menu" aria-label="Leistungen Untermenü" data-navdrop-menu>
+            <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
+            <a role="menuitem" href="/leistungen/metall/">Metall</a>
+            <a role="menuitem" href="/kontakt/?p=Custom%20(Anfrage)">Custom</a>
           </div>
         </div>
 
@@ -53,7 +54,7 @@
       <p class="lead">
         Schwibbögen sind nur ein Teil vom Luderbein-Universum.
         Wir packen nach und nach echte Beispiele rein – ohne Shop-Geraffel.
-        Erst ansehen/kalkulieren, dann Kontakt.
+        Erst grob kalkulieren, dann Kontakt.
       </p>
 
       <div class="cta">
@@ -70,7 +71,7 @@
     <section class="section">
       <div class="section-head">
         <h2>Jetzt schon live</h2>
-        <p class="small muted">Schiefer ist drin — Foto/Text/Symbole/Gedenktafeln. Metall folgt als Nächstes.</p>
+        <p class="small muted">Schiefer ist drin — Foto/Gravur & Gedenktafeln. Metall ist im Aufbau.</p>
       </div>
 
       <div class="products">
@@ -78,21 +79,20 @@
           <div class="thumb" style="padding:0">
             <a href="/leistungen/schiefer/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
               <img src="/assets/img/schiefer-home.jpg"
-                   alt="Beispiel einer Fotogravur auf Schiefer (20 cm)"
+                   alt="Beispiel einer Fotogravur auf Schiefer"
                    style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
             </a>
           </div>
           <div class="meta">
-            <span class="price">ab 9,95 €</span><span>•</span><span>Schiefer</span><span>•</span><span>Foto • Text • Symbole • Gedenktafeln</span>
+            <span class="price">Schiefer</span><span>•</span><span>Foto / Text / Symbole / Gedenktafeln</span>
           </div>
           <h3>Schiefer</h3>
           <p class="kicker">
             Fotogravur, Widmung, Schilder, Erinnerungsstücke – sauber aufbereitet und versiegelt.
           </p>
           <div class="actions">
-            <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-            <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
+            <a class="btn primary" href="/leistungen/schiefer/">Preise / Details</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulator</a>
           </div>
         </article>
 
@@ -101,65 +101,22 @@
           <div class="meta">
             <span class="price">Metall</span><span>•</span><span>Gravur</span><span>•</span><span>V0</span>
           </div>
-          <h3>Metallgravur</h3>
+          <h3>Metall</h3>
           <p class="kicker">
             Tags, Plaketten, Kleinserien – robust, kantig, präzise. Preise kommen als Nächstes.
           </p>
           <div class="actions">
-            <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
-            <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
+            <a class="btn primary" href="/leistungen/metall/">Preise / Details</a>
+            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulator</a>
           </div>
         </article>
 
         <article class="productcard">
-          <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
+          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
           <div class="meta">
-            <span class="price">ab 69,95 €</span><span>•</span><span>Schwibbögen / Gravur</span>
+            <span class="price">Custom</span><span>•</span><span>Sonderwünsche</span><span>•</span><span>Machbarkeit</span>
           </div>
-          <h3>Holz</h3>
-          <p class="kicker">Schwibbögen, Schilder, Deko – urban & sauber, gern personalisiert.</p>
-          <div class="actions">
-            <a class="btn primary" href="/schwibboegen/">Ansehen</a>
-            <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Kommt als Nächstes</h2>
-        <p class="small muted">Platzhalter sind absichtlich markiert, damit niemand denkt „lädt nicht“.</p>
-      </div>
-
-      <div class="products">
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Acryl</span><span>•</span><span>Cut / Gravur</span></div>
-          <h3>Acryl</h3>
-          <p class="kicker">Schilder, Deko, Custom-Teile – clean oder frech, je nachdem was du willst.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl%20(Cut%2FGravur)">Kontakt</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Schmuck</span><span>•</span><span>Custom</span></div>
-          <h3>Schmuck / Kleinserien</h3>
-          <p class="kicker">Klein, fein, tragbar – und nicht von der Stange. Kommt mit Beispielen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Schmuck%20%2F%20Kleinserie">Kontakt</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Sonderwünsche</span><span>•</span><span>Machbarkeit</span></div>
-          <h3>Sonderwünsche</h3>
+          <h3>Custom / Sonderwünsche</h3>
           <p class="kicker">Wenn’s machbar ist: machen wir. Wenn nicht: sag ich’s dir direkt.</p>
           <div class="actions">
             <a class="btn primary" href="/kontakt/?p=Sonderwunsch%20(Machbarkeit)">Kontakt</a>
