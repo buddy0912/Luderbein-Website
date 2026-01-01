@@ -1,3 +1,6 @@
+<!-- =========================
+  DATEI 1/2: /index.html
+========================= -->
 <!doctype html>
 <html lang="de">
 <head>
@@ -94,11 +97,15 @@
       display:block;
       opacity:0;
       transform:scale(1.03);
-      animation: thumbfade 12s infinite;
+      animation: thumbfade 20s infinite;
     }
-    .thumbslider img:nth-child(1){ animation-delay:0s; opacity:1; }
+
+    /* 5 Slides à 4s */
+    .thumbslider img:nth-child(1){ animation-delay:0s;  opacity:1; }
     .thumbslider img:nth-child(2){ animation-delay:4s; }
     .thumbslider img:nth-child(3){ animation-delay:8s; }
+    .thumbslider img:nth-child(4){ animation-delay:12s; }
+    .thumbslider img:nth-child(5){ animation-delay:16s; }
 
     @keyframes thumbfade{
       0%{opacity:0}
@@ -251,10 +258,18 @@
               <span class="thumbslider" aria-hidden="true">
                 <!-- 1) Fotogravur -->
                 <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
-                <!-- 2) Text & Symbole (wenn Datei fehlt, fallback auf schiefer-home) -->
-                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
-                <!-- 3) Gedenktafel (fallback) -->
-                <img src="/assets/img/schiefer-gedenk.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
+
+                <!-- 2) Text & Symbole (falls noch nicht vorhanden: Fallback) -->
+                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy"
+                     onerror="this.src='/assets/img/schiefer-home.jpg'">
+
+                <!-- 3–5) Gedenktafeln (neu) -->
+                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="" loading="lazy"
+                     onerror="this.src='/assets/img/schiefer-home.jpg'">
+                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="" loading="lazy"
+                     onerror="this.src='/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg'">
+                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="" loading="lazy"
+                     onerror="this.src='/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg'">
               </span>
             </a>
           </div>
