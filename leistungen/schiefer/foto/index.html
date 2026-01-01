@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Schiefer-Fotogravur – Luderbein</title>
+  <meta name="description" content="Schiefer-Fotogravur von Luderbein: Portraits, Haustiere, Erinnerungen. Schnell per Anfrage über WhatsApp oder Mail." />
+  <link rel="stylesheet" href="/assets/style.css" />
+
+  <!-- Page-only Lightbox -->
+  <style>
+    .thumbbtn{
+      all:unset;
+      cursor:zoom-in;
+      display:block;
+      width:100%;
+      height:100%;
+      border-radius:inherit;
+      position:relative;
+    }
+    .thumbbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+    .thumbhint{
+      position:absolute;
+      left:10px; bottom:10px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      color:rgba(255,255,255,.92);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(6px);
+    }
+
+    .lightbox{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      background:rgba(0,0,0,.82);
+      z-index:9999;
+    }
+    .lightbox[aria-hidden="false"]{ display:flex; }
+    .lightbox__panel{
+      position:relative;
+      max-width:min(1100px, 100%);
+      width:100%;
+    }
+    .lightbox__img{
+      width:100%;
+      max-height:85vh;
+      object-fit:contain;
+      display:block;
+      border-radius:14px;
+      background:rgba(10,10,10,.55);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 20px 80px rgba(0,0,0,.55);
+    }
+    .lightbox__close{
+      position:absolute;
+      top:10px;
+      right:10px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.55);
+      color:#fff;
+      border-radius:999px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-size:14px;
+      line-height:1;
+    }
+    .lightbox__cap{
+      margin-top:10px;
+      font-size:13px;
+      color:rgba(255,255,255,.85);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+        <a href="/">Start</a>
+        <a href="/leistungen/" aria-current="page">Leistungen</a>
+        <a href="/schwibboegen/">Schwibbögen</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge"><i></i> Schiefer → Fotogravur</span>
+      <h1>Schiefer-Fotogravur</h1>
+      <p class="lead">
+        Portraits, Haustiere, Erinnerungen – als echte Gravur auf Schiefer.
+        Du schickst ein Foto, ich sage „taugt / taugt nicht“, dann geht’s los.
+      </p>
+
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Schiefer-Fotogravur&size=20cm">Anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=schiefer&v=foto">Kalkulieren</a>
+        <a class="btn" href="/leistungen/schiefer/">Zurück (Schiefer)</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Beispiel</h2>
+        <p class="small muted">Tippen zum Vergrößern. V0 reicht: echt ist besser als perfekt.</p>
+      </div>
+
+      <div class="products">
+        <article class="productcard">
+          <div class="thumb" style="padding:0">
+            <button class="thumbbtn" type="button"
+                    data-lightbox
+                    data-src="/assets/img/schiefer-home.jpg"
+                    data-alt="Beispiel einer Fotogravur auf Schiefer (20 cm)">
+              <img src="/assets/img/schiefer-home.jpg"
+                   alt="Beispiel einer Fotogravur auf Schiefer (20 cm)"
+                   style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
+              <span class="thumbhint">Tippen zum Vergrößern</span>
+            </button>
+          </div>
+
+          <div class="meta">
+            <span class="price">20 cm</span><span>•</span><span>Schiefer</span><span>•</span><span>Fotogravur</span>
+          </div>
+          <h3>Kontrast. Schärfe. Boom.</h3>
+          <p class="kicker">
+            Schiefer ist gnadenlos ehrlich: gutes Foto = starkes Ergebnis.
+            Und wenn’s nicht taugt, sag ich’s dir vorher.
+          </p>
+
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Schiefer-Fotogravur&size=20cm">Anfragen</a>
+            <a class="btn" href="/leistungen/schiefer/">Schiefer Hub</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Optionen (simpel)</h2>
+        <p class="small muted">Kein Konfigurator-Quatsch. Kurz auswählen, fertig.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Format</h3>
+          <p>Rund (z. B. 20 cm) oder Platte. Wenn du unsicher bist: Foto schicken, wir klären.</p>
+        </div>
+        <div class="card">
+          <h3>Text (optional)</h3>
+          <p>Name, Datum, kurzer Satz. Dezent – nicht kitschig.</p>
+        </div>
+        <div class="card">
+          <h3>Motiv</h3>
+          <p>Portrait / Haustier / Erinnerung. Hauptsache: gute Lichtquelle & scharf.</p>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="notice">
+          <strong style="color:var(--text)">Mini-Check fürs Foto:</strong><br>
+          gut ausgeleuchtet · nicht verwackelt · Augen erkennbar · keine „Screenshot-vom-Screenshot“-Kette.
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="cta">
+          <a class="btn primary" href="/kontakt/?p=Schiefer-Fotogravur&note=Foto-Check%20(ich%20schicke%20dir%20gleich%20ein%20Foto)">Foto-Check anfragen</a>
+          <a class="btn" href="/leistungen/schiefer/">Schiefer Hub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lb" aria-hidden="true">
+    <div class="lightbox__panel" role="dialog" aria-modal="true" aria-label="Bild vergrößert">
+      <button class="lightbox__close" type="button" data-lb-close aria-label="Schließen">✕</button>
+      <img class="lightbox__img" id="lbImg" alt="">
+      <div class="lightbox__cap" id="lbCap">Tippe daneben oder drücke ESC zum Schließen.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js?v=10"></script>
+  <script>
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    (function(){
+      const lb = document.getElementById('lb');
+      const lbImg = document.getElementById('lbImg');
+
+      function openLB(src, alt){
+        lbImg.src = src;
+        lbImg.alt = alt || 'Bild';
+        lb.setAttribute('aria-hidden','false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeLB(){
+        lb.setAttribute('aria-hidden','true');
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      }
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-lightbox]');
+        if(btn){
+          openLB(btn.getAttribute('data-src'), btn.getAttribute('data-alt'));
+          return;
+        }
+        if(e.target === lb || e.target.closest('[data-lb-close]')) closeLB();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && lb.getAttribute('aria-hidden') === 'false') closeLB();
+      });
+    })();
+  </script>
+</body>
+</html>
