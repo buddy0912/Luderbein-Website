@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Schiefer – Text & Symbole – Luderbein</title>
-  <meta name="description" content="Schiefer Text & Symbole: Sprüche, Koordinaten, Schilder – clean und schnell." />
+  <title>Schiefer – Text & Symbol – Luderbein</title>
+  <meta name="description" content="Schiefer mit Text & Symbol von Luderbein: Widmung, Schild, Koordinaten, Sprüche. Anfrage per WhatsApp oder Mail." />
   <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 <body>
   <header>
@@ -24,7 +25,20 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-        <a href="/leistungen/" aria-current="page">Leistungen</a>
+
+        <!-- Dropdown: Leistungen -->
+        <details class="navdrop" data-navdrop open>
+          <summary class="navdrop__sum" aria-label="Leistungen öffnen">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/acryl-Schilder/" role="menuitem">Acryl-Schilder</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+          </div>
+        </details>
+
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -35,22 +49,51 @@
 
   <main class="wrap">
     <section class="hero">
-      <span class="badge"><i></i> Schiefer → Text & Symbole</span>
-      <h1>Text & Symbole</h1>
+      <span class="badge"><i></i> Leistung – Schiefer</span>
+      <h1>Text & Symbol</h1>
       <p class="lead">
-        Spruch, Koordinaten, Haus-/Werkstattschild – schnell, clean, urban. Kein Foto nötig.
-        Beispiele/Preise bauen wir als Nächstes sauber aus.
+        Widmung, Koordinaten, kurzer Spruch, kleines Icon – dezent, sauber, ohne Kitsch.
       </p>
-
       <div class="cta">
-        <a class="btn primary" href="/tools/kalkulator/?t=schiefer&v=text">Kalkulieren</a>
-        <a class="btn" href="/kontakt/?p=Schiefer%20Text%20%26%20Symbole">Anfragen</a>
-        <a class="btn" href="/leistungen/schiefer/">Zurück (Schiefer)</a>
+        <a class="btn primary" href="/kontakt/?p=Schiefer%20%E2%80%93%20Text%20%26%20Symbol">Anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+        <a class="btn" href="/leistungen/schiefer/">Zurück zu Schiefer</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Was geht?</h2>
+        <p class="small muted">V0: Beispiele folgen – hier erstmal sauberer Rahmen.</p>
       </div>
 
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Tipp:</strong>
-        Skizzen/Screenshots sind sehr willkommen. Schreib dazu: Größe + Text + Wunschsymbol.
+      <div class="grid">
+        <div class="card">
+          <h3>Text</h3>
+          <p>Name, Datum, Koordinaten, kurzer Satz. Lesbar & clean gesetzt.</p>
+        </div>
+        <div class="card">
+          <h3>Symbol</h3>
+          <p>Herz, Pfote, Kreuz, Kompass, kleine Grafik – als Vektor oder sauber freigestellt.</p>
+        </div>
+        <div class="card">
+          <h3>Layout</h3>
+          <p>Rahmen, Spalten, minimalistischer Look. Hauptsache: wirkt hochwertig.</p>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="notice">
+          <strong style="color:var(--text)">Für die Anfrage reicht:</strong><br>
+          Größe (z. B. 10×10) · Text · Symbolwunsch · Stil (minimal/klassisch) · ggf. Foto/Skizze.
+        </div>
+      </div>
+
+      <div class="section" style="margin-top:16px">
+        <div class="cta">
+          <a class="btn primary" href="/kontakt/?p=Schiefer%20%E2%80%93%20Text%20%26%20Symbol&note=Ich%20schicke%20dir%20Text%20und%20Symbolwunsch">Jetzt anfragen</a>
+          <a class="btn" href="/leistungen/">Alle Leistungen</a>
+        </div>
       </div>
     </section>
   </main>
@@ -65,7 +108,8 @@
     </div>
   </footer>
 
-  <script src="/assets/site.js?v=10"></script>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
