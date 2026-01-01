@@ -7,8 +7,8 @@
   <meta name="description" content="Kontakt zu Luderbein: E-Mail, WhatsApp und Instagram." />
   <link rel="stylesheet" href="/assets/style.css" />
 
-  <!-- Dropdown: Leistungen (Desktop Hover + Mobile offen) -->
   <style>
+    /* Dropdown: Leistungen (Desktop Hover + Mobile Toggle) */
     .navdrop{ position:relative; display:inline-flex; align-items:center; }
     .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
     .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
@@ -38,19 +38,27 @@
     .navdrop:hover .navdrop__menu,
     .navdrop:focus-within .navdrop__menu{ display:block; }
 
-    /* Mobile: wenn Menü geöffnet (site.js setzt .nav-open auf <html>) */
-    .nav-open .navdrop{ display:block; }
-    .nav-open .navdrop__top::after{ display:none; }
-    .nav-open .navdrop__menu{
+    /* Mobile: nicht automatisch offen */
+    .menu[data-open="1"] .navdrop{ display:block; width:100%; }
+    .menu[data-open="1"] .navdrop__top{ width:100%; justify-content:space-between; }
+    .menu[data-open="1"] .navdrop__top::after{ content:"▸"; opacity:.75; }
+    .menu[data-open="1"] .navdrop.is-open .navdrop__top::after{ content:"▾"; }
+
+    .menu[data-open="1"] .navdrop:hover .navdrop__menu{ display:none; }
+
+    .menu[data-open="1"] .navdrop__menu{
       position:static;
-      display:block;
+      display:none;
+      min-width:0;
       padding:6px 0 0;
       margin:0;
       border:0;
       background:transparent;
       box-shadow:none;
     }
-    .nav-open .navdrop__menu a{ padding:10px 0; }
+    .menu[data-open="1"] .navdrop.is-open .navdrop__menu{ display:block; }
+    .menu[data-open="1"] .navdrop__menu a{ padding:10px 0; border-radius:0; }
+    .menu[data-open="1"] .navdrop__menu a:hover{ background:transparent; opacity:.9; }
   </style>
 </head>
 <body>
@@ -144,10 +152,50 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
+    // Mobile Toggle für Leistungen-Dropdown (nur wenn Burger-Menü offen)
+    (function(){
+      var nav = document.querySelector('nav.menu[data-nav]');
+      if(!nav) return;
+
+      var drop = nav.querySelector('.navdrop');
+      if(!drop) return;
+
+      var top = drop.querySelector('.navdrop__top');
+      if(!top) return;
+
+      top.setAttribute('aria-haspopup','true');
+      top.setAttribute('aria-expanded','false');
+
+      function isMobileOpen(){
+        return nav.getAttribute('data-open') === '1';
+      }
+      function closeDrop(){
+        drop.classList.remove('is-open');
+        top.setAttribute('aria-expanded','false');
+      }
+
+      top.addEventListener('click', function(e){
+        if(!isMobileOpen()) return;
+        e.preventDefault();
+        var open = drop.classList.toggle('is-open');
+        top.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      document.addEventListener('click', function(e){
+        if(!isMobileOpen()) return;
+        if(drop.contains(e.target)) return;
+        closeDrop();
+      });
+
+      var obs = new MutationObserver(function(){
+        if(!isMobileOpen()) closeDrop();
+      });
+      obs.observe(nav, { attributes:true, attributeFilter:['data-open'] });
+    })();
+
     (function(){
       const params = new URLSearchParams(location.search);
 
-      // Alias-Falle entschärfen: p oder topic akzeptieren
       const pRaw = (params.get('p') || params.get('topic') || '').trim();
       const size = (params.get('size') || '').trim();
       const note = (params.get('note') || '').trim();
@@ -164,7 +212,6 @@
         contextBox.style.display = '';
         contextText.textContent = productLine;
 
-        // Wenn Kontext da ist: WhatsApp wird Primary
         btnWA.classList.add('primary');
         btnMail.classList.remove('primary');
       } else {
