@@ -7,11 +7,8 @@
   <meta name="description" content="Metall bei Luderbein: Gravur auf Edelstahl/Alu, echte Beispiele im Feed + Festprodukte. Anfrage mit Kontext." />
   <link rel="stylesheet" href="/assets/style.css" />
 
-  <!-- Metall-Feed (eigener Slider) -->
+  <!-- Metall-Feed (eigener Slider) – dezenter als Werkstatt-Feed -->
   <style>
-    /* -------------------------------------------------------
-       Metall-Feed: kompakter + dezenter als Werkstatt-Feed
-       ------------------------------------------------------- */
     .reelslider{
       position:relative;
       border-radius:14px;
@@ -19,13 +16,14 @@
       background:rgba(255,255,255,.02);
       padding:10px;
       overflow:hidden;
-      max-width: 920px;       /* kompakter */
-      margin: 0 auto;         /* zentriert */
-    }
 
+      /* kleiner / dezenter */
+      max-width:980px;
+      margin:0 auto;
+    }
     .reeltrack{
       display:flex;
-      gap:12px;               /* etwas tighter */
+      gap:12px;
       overflow:auto;
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
@@ -41,46 +39,43 @@
       overflow:hidden;
       border:1px solid rgba(255,255,255,.08);
       background:rgba(0,0,0,.18);
-      flex:0 0 calc(33.333% - 8px);
+      flex:0 0 calc(30% - 8px);
     }
     .reelslide img{
       width:100%;
-      height:200px;           /* kleiner */
+      height:190px;
       object-fit:cover;
       display:block;
     }
 
     @media (max-width: 860px){
-      .reelslide{flex-basis:calc(50% - 6px)}
-      .reelslide img{height:190px}
+      .reelslide{flex-basis:calc(48% - 6px)}
+      .reelslide img{height:175px}
     }
     @media (max-width: 520px){
-      .reelslider{max-width:none; padding:10px}
-      .reelslide{flex-basis:86%}
-      .reelslide img{height:220px}
+      .reelslide{flex-basis:84%}
+      .reelslide img{height:210px}
     }
 
     .reelbtn{
       position:absolute;
       top:50%;
       transform:translateY(-50%);
-      width:38px;             /* subtiler */
+      width:38px;
       height:38px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.30);
-      color:rgba(255,255,255,.88);
+      background:rgba(0,0,0,.35);
+      color:rgba(255,255,255,.90);
       display:grid;
       place-items:center;
       cursor:pointer;
       z-index:2;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
-      opacity:.9;             /* weniger „schreit“ */
     }
-    .reelbtn:hover{opacity:1}
-    .reelbtn.prev{left:10px}
-    .reelbtn.next{right:10px}
+    .reelbtn.prev{left:8px}
+    .reelbtn.next{right:8px}
     @media (max-width: 520px){.reelbtn{display:none}}
   </style>
 </head>
@@ -113,8 +108,8 @@
 
   <main class="wrap">
 
-    <!-- Metall-Feed (ganz oben) -->
-    <section class="section" id="feed" aria-label="Metall-Feed" style="padding-top:18px">
+    <!-- Metall-Feed GANZ OBEN -->
+    <section class="section" id="feed" aria-label="Metall-Feed">
       <div class="section-head">
         <h2>Metall-Feed</h2>
         <p class="small muted">Echte Jobs. Wischen = weiter. Tap = groß. Läuft automatisch.</p>
@@ -141,7 +136,7 @@
         </div>
       </div>
 
-      <div class="section" style="margin-top:14px; padding-top:0">
+      <div class="section" style="margin-top:14px">
         <div class="cta">
           <a class="btn primary" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage zu Metall</a>
           <a class="btn" href="/tools/kalkulator/?service=metall">Vorher kurz kalkulieren</a>
@@ -150,7 +145,7 @@
       </div>
     </section>
 
-    <!-- Hero / Intro -->
+    <!-- Hero -->
     <section class="hero">
       <span class="badge"><i></i> Metall (V0) – echte Beispiele + Festprodukte</span>
       <h1>Metall</h1>
@@ -160,9 +155,9 @@
       </p>
 
       <div class="cta">
+        <a class="btn primary" href="#feed">Metall-Feed</a>
         <a class="btn" href="/tools/kalkulator/?service=metall">Upgrade Kostenrechnung</a>
         <a class="btn" href="#festprodukte">Festprodukte</a>
-        <a class="btn" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage</a>
       </div>
 
       <div class="notice" style="margin-top:14px">
@@ -264,7 +259,7 @@
       function slideWidth(){
         var first = track.querySelector('.reelslide');
         if(!first) return 320;
-        return first.getBoundingClientRect().width + 12; // gap angepasst
+        return first.getBoundingClientRect().width + 12; // +gap
       }
 
       if(prev) prev.addEventListener('click', function(){
