@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Leistungen – Luderbein</title>
-  <meta name="description" content="Leistungen von Luderbein: Schiefer-Fotogravur, Text/Symbole, Holz, Metall, Acryl und Sonderwünsche – aktuell V0, per Anfrage." />
+  <meta name="description" content="Leistungen von Luderbein: Schiefer (Foto & Text/Symbole), Holz, Metall und Sonderwünsche – aktuell V0, per Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
 
+  <!-- Leistungen Dropdown (Desktop Hover + Mobile Toggle über site.js) -->
   <style>
-    /* Dropdown: Leistungen (Desktop Hover + Mobile Toggle) */
     .navdrop{ position:relative; display:inline-flex; align-items:center; }
     .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
     .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
@@ -35,15 +35,15 @@
     }
     .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
 
+    /* Desktop */
     .navdrop:hover .navdrop__menu,
     .navdrop:focus-within .navdrop__menu{ display:block; }
 
-    /* Mobile (Burger offen): Dropdown NICHT automatisch offen */
+    /* Mobile/Burger offen: Dropdown nicht automatisch */
     .menu[data-open="1"] .navdrop{ display:block; width:100%; }
     .menu[data-open="1"] .navdrop__top{ width:100%; justify-content:space-between; }
     .menu[data-open="1"] .navdrop__top::after{ content:"▸"; opacity:.75; }
     .menu[data-open="1"] .navdrop.is-open .navdrop__top::after{ content:"▾"; }
-
     .menu[data-open="1"] .navdrop:hover .navdrop__menu{ display:none; }
 
     .menu[data-open="1"] .navdrop__menu{
@@ -79,12 +79,11 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
-        <!-- Leistungen Dropdown -->
         <div class="navdrop">
-          <a class="navdrop__top" href="/leistungen/" aria-current="page">Leistungen</a>
+          <a href="/leistungen/" class="navdrop__top" aria-current="page">Leistungen</a>
           <div class="navdrop__menu" aria-label="Leistungen Untermenü">
-            <a href="/leistungen/schiefer/">Schiefer – Fotogravur</a>
-            <a href="/leistungen/schiefer-text/">Schiefer – Text & Symbole</a>
+            <a href="/leistungen/">Alle Leistungen</a>
+            <a href="/leistungen/schiefer/">Schiefer</a>
             <a href="/leistungen/metall/">Metall</a>
             <a href="/schwibboegen/">Holz</a>
             <a href="/kontakt/?p=Custom%20Anfrage">Custom</a>
@@ -106,7 +105,7 @@
       <p class="lead">
         Schwibbögen sind nur ein Teil vom Luderbein-Universum.
         Wir packen nach und nach echte Beispiele rein – ohne Shop-Geraffel.
-        Erst Preise checken, dann Kontakt.
+        Erst grob einordnen, dann Kontakt.
       </p>
 
       <div class="cta">
@@ -123,7 +122,7 @@
     <section class="section">
       <div class="section-head">
         <h2>Jetzt schon live</h2>
-        <p class="small muted">Schiefer ist drin — Premium (Foto) + Fastlane (Text/Symbole). Metall folgt als Nächstes.</p>
+        <p class="small muted">Schiefer ist als ein großer Punkt drin (Foto + Text/Symbole). Metall folgt/lebt gerade über den Feed.</p>
       </div>
 
       <div class="products">
@@ -131,35 +130,21 @@
           <div class="thumb" style="padding:0">
             <a href="/leistungen/schiefer/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
               <img src="/assets/img/schiefer-home.jpg"
-                   alt="Beispiel einer Fotogravur auf Schiefer (20 cm)"
+                   alt="Beispiel einer Gravur auf Schiefer"
                    style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
             </a>
           </div>
           <div class="meta">
-            <span class="price">Schiefer</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
+            <span class="price">ab 9,95 €</span><span>•</span><span>Foto / Text / Symbole</span>
           </div>
-          <h3>Schiefer-Fotogravur</h3>
+          <h3>Schiefer</h3>
           <p class="kicker">
-            Portraits, Haustiere, Erinnerungen – wenig Material, viel Wirkung. Fixpreise vorhanden.
+            Fotogravur (Portrait/Haustier) oder clean: Text, Koordinaten, Schilder.
+            Du wählst die Richtung – ich mach’s passend.
           </p>
           <div class="actions">
-            <a class="btn primary" href="/leistungen/schiefer/">Preise / Details</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Upgrade Kostenrechnung</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta">
-            <span class="price">Schiefer</span><span>•</span><span>Text & Symbole</span><span>•</span><span>Fastlane</span>
-          </div>
-          <h3>Schiefer: Text & Symbole</h3>
-          <p class="kicker">
-            Spruch, Koordinaten, Haus/Werkstatt-Schild — schnell, clean, urban. Kein Foto nötig.
-          </p>
-          <div class="actions">
-            <a class="btn primary" href="/leistungen/schiefer-text/">Preise / Details</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Upgrade Kostenrechnung</a>
+            <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
+            <a class="btn" href="/kontakt/?topic=schiefer">Anfragen</a>
           </div>
         </article>
 
@@ -170,11 +155,11 @@
           </div>
           <h3>Metallgravur</h3>
           <p class="kicker">
-            Tags, Plaketten, Kleinserien – robust, kantig, präzise. Preise kommen als Nächstes.
+            Tags, Plaketten, Kleinserien – robust, kantig, präzise.
           </p>
           <div class="actions">
-            <a class="btn primary" href="/leistungen/metall/">Preise / Details</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Upgrade Kostenrechnung</a>
+            <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
+            <a class="btn" href="/kontakt/?topic=metall">Anfragen</a>
           </div>
         </article>
       </div>
@@ -240,49 +225,6 @@
   </footer>
 
   <script src="/assets/site.js"></script>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Mobile Toggle für Leistungen-Dropdown (nur wenn Burger-Menü offen)
-    (function(){
-      var nav = document.querySelector('nav.menu[data-nav]');
-      if(!nav) return;
-
-      var drop = nav.querySelector('.navdrop');
-      if(!drop) return;
-
-      var top = drop.querySelector('.navdrop__top');
-      if(!top) return;
-
-      top.setAttribute('aria-haspopup','true');
-      top.setAttribute('aria-expanded','false');
-
-      function isMobileOpen(){
-        return nav.getAttribute('data-open') === '1';
-      }
-      function closeDrop(){
-        drop.classList.remove('is-open');
-        top.setAttribute('aria-expanded','false');
-      }
-
-      top.addEventListener('click', function(e){
-        if(!isMobileOpen()) return;
-        e.preventDefault();
-        var open = drop.classList.toggle('is-open');
-        top.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-
-      document.addEventListener('click', function(e){
-        if(!isMobileOpen()) return;
-        if(drop.contains(e.target)) return;
-        closeDrop();
-      });
-
-      var obs = new MutationObserver(function(){
-        if(!isMobileOpen()) closeDrop();
-      });
-      obs.observe(nav, { attributes:true, attributeFilter:['data-open'] });
-    })();
-  </script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
