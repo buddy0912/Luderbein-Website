@@ -1,68 +1,12 @@
-<!-- =========================
-  DATEI 2/2: /leistungen/index.html
-  (Schiefer zusammengeführt)
-========================= -->
 <!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Leistungen – Luderbein</title>
-  <meta name="description" content="Leistungen von Luderbein: Schiefer (Foto/Text/Symbole/Gedenktafeln), Holz, Metall, Acryl und Sonderwünsche – aktuell V0, per Anfrage." />
+  <meta name="description" content="Leistungen von Luderbein: Schiefer-Fotogravur, Text/Symbole, Holz, Metall, Acryl und Sonderwünsche – aktuell V0, per Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
-
-  <style>
-    /* Schiefer-Kachel: Auto-Slideshow im Thumb (ohne Controls) */
-    .thumbslider{
-      position:relative;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      border-radius:inherit;
-      display:block;
-    }
-    .thumbslider img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      opacity:0;
-      transform:scale(1.03);
-      animation: thumbfade 20s infinite;
-    }
-
-    /* 5 Slides à 4s */
-    .thumbslider img:nth-child(1){ animation-delay:0s;  opacity:1; }
-    .thumbslider img:nth-child(2){ animation-delay:4s; }
-    .thumbslider img:nth-child(3){ animation-delay:8s; }
-    .thumbslider img:nth-child(4){ animation-delay:12s; }
-    .thumbslider img:nth-child(5){ animation-delay:16s; }
-
-    @keyframes thumbfade{
-      0%{opacity:0}
-      6%{opacity:1}
-      30%{opacity:1}
-      36%{opacity:0}
-      100%{opacity:0}
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      .thumbslider img{ animation:none; opacity:0; }
-      .thumbslider img:nth-child(1){ opacity:1; }
-    }
-
-    .thumblink{
-      display:block;
-      width:100%;
-      height:100%;
-      border-radius:inherit;
-      position:relative;
-      overflow:hidden;
-      cursor:pointer;
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 <body>
   <header>
@@ -81,7 +25,19 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-        <a href="/leistungen/" aria-current="page">Leistungen</a>
+
+        <!-- Leistungen Dropdown (einheitlich) -->
+        <div class="navdd" data-navdd data-open="0">
+          <a href="/leistungen/" aria-current="page">Leistungen</a>
+          <button class="navddbtn" type="button" data-navdd-toggle aria-label="Leistungen öffnen" aria-expanded="false">▾</button>
+          <div class="navddmenu" data-navdd-menu>
+            <a href="/leistungen/schiefer/">Schiefer</a>
+            <a href="/leistungen/metall/">Metall</a>
+            <a href="/schwibboegen/">Holz</a>
+            <a href="/kontakt/?p=Custom">Custom</a>
+          </div>
+        </div>
+
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -95,14 +51,15 @@
       <span class="badge"><i></i> Leistung – Überblick (V0)</span>
       <h1>Leistungen</h1>
       <p class="lead">
-        Von allgemein zu spezialisiert: du klickst erstmal in die Kategorie rein,
-        und dort wählst du dann Foto / Text / Symbole / Gedenktafel.
-        Keine Shop-Hürde, kein Konfigurator-Stress.
+        Schwibbögen sind nur ein Teil vom Luderbein-Universum.
+        Wir packen nach und nach echte Beispiele rein – ohne Shop-Geraffel.
+        Erst Preise checken, dann Kontakt.
       </p>
 
       <div class="cta">
         <a class="btn primary" href="/kontakt/">Kontakt</a>
-        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kosten grob kalkulieren</a>
+        <!-- WICHTIG: Metall vorauswählen -->
+        <a class="btn" href="/tools/kalkulator/?t=metall">Upgrade Kostenrechnung</a>
       </div>
 
       <div class="notice" style="margin-top:14px">
@@ -114,49 +71,46 @@
     <section class="section">
       <div class="section-head">
         <h2>Jetzt schon live</h2>
-        <p class="small muted">Schiefer ist der Startpunkt (Foto/Text/Symbole/Gedenktafeln). Metall folgt als Nächstes.</p>
+        <p class="small muted">Schiefer ist drin — Premium (Foto) + Fastlane (Text/Symbole). Metall folgt als Nächstes.</p>
       </div>
 
       <div class="products">
-        <!-- SCHIEFER (zusammengeführt) -->
         <article class="productcard">
           <div class="thumb" style="padding:0">
-            <a class="thumblink" href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
-              <span class="thumbslider" aria-hidden="true">
-                <!-- 1) Fotogravur -->
-                <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
-
-                <!-- 2) Text & Symbole (falls noch nicht vorhanden: Fallback) -->
-                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy"
-                     onerror="this.src='/assets/img/schiefer-home.jpg'">
-
-                <!-- 3–5) Gedenktafeln -->
-                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="" loading="lazy"
-                     onerror="this.src='/assets/img/schiefer-home.jpg'">
-                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="" loading="lazy"
-                     onerror="this.src='/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg'">
-                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="" loading="lazy"
-                     onerror="this.src='/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg'">
-              </span>
+            <a href="/leistungen/schiefer/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
+              <img src="/assets/img/schiefer-home.jpg"
+                   alt="Beispiel einer Fotogravur auf Schiefer (20 cm)"
+                   style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
             </a>
           </div>
-
           <div class="meta">
-            <span class="price">ab 9,95 €</span><span>•</span><span>Foto • Text • Symbole • Gedenktafeln</span>
+            <span class="price">Schiefer</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
           </div>
-          <h3>Schiefer</h3>
+          <h3>Schiefer-Fotogravur</h3>
           <p class="kicker">
-            Ein Einstieg – viele Varianten: Fotogravur, Koordinaten/Sprüche, Schilder, Gedenktafeln.
-            Du klickst rein und wählst dort den Typ.
+            Portraits, Haustiere, Erinnerungen – wenig Material, viel Wirkung. Fixpreise vorhanden.
           </p>
           <div class="actions">
-            <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-            <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
+            <a class="btn primary" href="/leistungen/schiefer/">Preise / Details</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Upgrade Kostenrechnung</a>
           </div>
         </article>
 
-        <!-- METALL -->
+        <article class="productcard">
+          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
+          <div class="meta">
+            <span class="price">Schiefer</span><span>•</span><span>Text & Symbole</span><span>•</span><span>Fastlane</span>
+          </div>
+          <h3>Schiefer: Text & Symbole</h3>
+          <p class="kicker">
+            Spruch, Koordinaten, Haus/Werkstatt-Schild — schnell, clean, urban. Kein Foto nötig.
+          </p>
+          <div class="actions">
+            <a class="btn primary" href="/leistungen/schiefer-text/">Preise / Details</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Upgrade Kostenrechnung</a>
+          </div>
+        </article>
+
         <article class="productcard">
           <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
           <div class="meta">
@@ -167,8 +121,8 @@
             Tags, Plaketten, Kleinserien – robust, kantig, präzise. Preise kommen als Nächstes.
           </p>
           <div class="actions">
-            <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
+            <a class="btn primary" href="/leistungen/metall/">Preise / Details</a>
+            <a class="btn" href="/tools/kalkulator/?t=metall">Upgrade Kostenrechnung</a>
           </div>
         </article>
       </div>
@@ -234,6 +188,7 @@
   </footer>
 
   <script src="/assets/site.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
