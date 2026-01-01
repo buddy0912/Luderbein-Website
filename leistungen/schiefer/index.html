@@ -4,130 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Schiefer – Luderbein</title>
-  <meta name="description" content="Schiefer bei Luderbein: Fotogravur (Portrait/Haustier) oder Text & Symbole (Schilder/Koordinaten). Schnell per Anfrage." />
+  <meta name="description" content="Schiefer bei Luderbein: Fotogravur, Text & Symbole, Gedenktafeln. Erst ansehen, dann kalkulieren/anfragen." />
   <link rel="stylesheet" href="/assets/style.css" />
-
-  <!-- Leistungen Dropdown (Desktop Hover + Mobile Toggle über site.js) -->
-  <style>
-    .navdrop{ position:relative; display:inline-flex; align-items:center; }
-    .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
-    .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
-
-    .navdrop__menu{
-      position:absolute;
-      top:calc(100% + 10px);
-      left:0;
-      min-width:240px;
-      padding:10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(10,10,12,.95);
-      box-shadow:0 18px 45px rgba(0,0,0,.45);
-      display:none;
-      z-index:50;
-    }
-    .navdrop__menu a{
-      display:block;
-      padding:10px 12px;
-      border-radius:10px;
-      text-decoration:none;
-      white-space:nowrap;
-    }
-    .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
-
-    .navdrop:hover .navdrop__menu,
-    .navdrop:focus-within .navdrop__menu{ display:block; }
-
-    .menu[data-open="1"] .navdrop{ display:block; width:100%; }
-    .menu[data-open="1"] .navdrop__top{ width:100%; justify-content:space-between; }
-    .menu[data-open="1"] .navdrop__top::after{ content:"▸"; opacity:.75; }
-    .menu[data-open="1"] .navdrop.is-open .navdrop__top::after{ content:"▾"; }
-    .menu[data-open="1"] .navdrop:hover .navdrop__menu{ display:none; }
-
-    .menu[data-open="1"] .navdrop__menu{
-      position:static;
-      display:none;
-      min-width:0;
-      padding:6px 0 0;
-      margin:0;
-      border:0;
-      background:transparent;
-      box-shadow:none;
-    }
-    .menu[data-open="1"] .navdrop.is-open .navdrop__menu{ display:block; }
-    .menu[data-open="1"] .navdrop__menu a{ padding:10px 0; border-radius:0; }
-    .menu[data-open="1"] .navdrop__menu a:hover{ background:transparent; opacity:.9; }
-  </style>
-
-  <!-- Page-only Lightbox -->
-  <style>
-    .thumbbtn{
-      all:unset;
-      cursor:zoom-in;
-      display:block;
-      width:100%;
-      height:100%;
-      border-radius:inherit;
-      position:relative;
-    }
-    .thumbbtn:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
-    .thumbhint{
-      position:absolute;
-      left:10px; bottom:10px;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      color:rgba(255,255,255,.92);
-      background:rgba(0,0,0,.55);
-      border:1px solid rgba(255,255,255,.14);
-      backdrop-filter: blur(6px);
-    }
-    .lightbox{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:16px;
-      background:rgba(0,0,0,.82);
-      z-index:9999;
-    }
-    .lightbox[aria-hidden="false"]{ display:flex; }
-    .lightbox__panel{
-      position:relative;
-      max-width:min(1100px, 100%);
-      width:100%;
-    }
-    .lightbox__img{
-      width:100%;
-      max-height:85vh;
-      object-fit:contain;
-      display:block;
-      border-radius:14px;
-      background:rgba(10,10,10,.55);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: 0 20px 80px rgba(0,0,0,.55);
-    }
-    .lightbox__close{
-      position:absolute;
-      top:10px;
-      right:10px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(0,0,0,.55);
-      color:#fff;
-      border-radius:999px;
-      padding:8px 10px;
-      cursor:pointer;
-      font-size:14px;
-      line-height:1;
-    }
-    .lightbox__cap{
-      margin-top:10px;
-      font-size:13px;
-      color:rgba(255,255,255,.85);
-      text-align:center;
-    }
-  </style>
 </head>
 <body>
   <header>
@@ -146,18 +24,7 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-
-        <div class="navdrop">
-          <a href="/leistungen/" class="navdrop__top" aria-current="page">Leistungen</a>
-          <div class="navdrop__menu" aria-label="Leistungen Untermenü">
-            <a href="/leistungen/">Alle Leistungen</a>
-            <a href="/leistungen/schiefer/">Schiefer</a>
-            <a href="/leistungen/metall/">Metall</a>
-            <a href="/schwibboegen/">Holz</a>
-            <a href="/kontakt/?p=Custom%20Anfrage">Custom</a>
-          </div>
-        </div>
-
+        <a href="/leistungen/" aria-current="page">Leistungen</a>
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -168,124 +35,99 @@
 
   <main class="wrap">
     <section class="hero">
-      <span class="badge"><i></i> Leistung – Schiefer</span>
+      <span class="badge"><i></i> Leistung – Schiefer (Hub)</span>
       <h1>Schiefer</h1>
       <p class="lead">
-        Zwei Wege, ein Material: <strong>Fotogravur</strong> (Portrait/Haustier) oder
-        <strong>Text & Symbole</strong> (Schilder/Koordinaten/Statements).
-        Du sagst „wofür“ – ich sag „so wird’s gut“.
+        Eine Kategorie, mehrere Ausführungen: Fotogravur, Text/Symbole und standardisierte Gedenktafeln.
+        Erst Beispiele anschauen → dann kalkulieren → dann anfragen (wenn’s passt).
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="#foto">Fotogravur</a>
-        <a class="btn" href="#text">Text & Symbole</a>
-        <a class="btn" href="/kontakt/?topic=schiefer">Anfragen</a>
+        <a class="btn primary" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+        <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
+        <a class="btn" href="/leistungen/">Zurück</a>
       </div>
 
       <div class="notice" style="margin-top:14px">
         <strong style="color:var(--text)">Hinweis:</strong>
-        Schiefer ist gnadenlos ehrlich. Gutes Foto = stark. Schlechte Vorlage = Matsch.
-        Ich sag dir vorher, ob’s taugt.
+        Skizzen/Screenshots sind sehr willkommen. Lieber grob und klar als „perfekt“ und unklar.
       </div>
     </section>
 
-    <!-- FOTO -->
-    <section class="section" id="foto" aria-label="Schiefer Fotogravur">
+    <section class="section">
       <div class="section-head">
-        <h2>Fotogravur (Portrait / Haustier)</h2>
-        <p class="small muted">Tippen zum Vergrößern. V0 reicht: echt ist besser als perfekt.</p>
+        <h2>Ausführungen</h2>
+        <p class="small muted">Klick auf eine Ausführung → Details/Beispiele → dann kalkulieren/anfragen.</p>
       </div>
 
       <div class="products">
+        <!-- FOTO -->
         <article class="productcard">
           <div class="thumb" style="padding:0">
-            <button class="thumbbtn" type="button"
-                    data-lightbox
-                    data-src="/assets/img/schiefer-home.jpg"
-                    data-alt="Beispiel einer Fotogravur auf Schiefer (20 cm)">
+            <a href="/leistungen/schiefer/foto/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
               <img src="/assets/img/schiefer-home.jpg"
-                   alt="Beispiel einer Fotogravur auf Schiefer (20 cm)"
+                   alt="Schiefer Fotogravur Beispiel"
                    style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
-              <span class="thumbhint">Tippen zum Vergrößern</span>
-            </button>
+            </a>
           </div>
-
           <div class="meta">
-            <span class="price">ab 9,95 €</span><span>•</span><span>Schiefer</span><span>•</span><span>Fotogravur</span>
+            <span class="price">ab 9,95 €</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
           </div>
-          <h3>Kontrast. Schärfe. Boom.</h3>
-          <p class="kicker">
-            Portraits & Haustiere mit sauberem Finish.
-            Optional: Name/Datum/kurzer Satz (dezent, nicht kitschig).
-          </p>
-
+          <h3>Fotogravur</h3>
+          <p class="kicker">Portraits, Haustiere, Erinnerungen – starkes Ergebnis, wenn das Foto taugt.</p>
           <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Schiefer%20%E2%80%93%20Fotogravur&size=20cm">Anfragen</a>
-            <a class="btn" href="/kontakt/?p=Schiefer%20%E2%80%93%20Foto-Check&note=Ich%20schicke%20dir%20gleich%20ein%20Foto%20zur%20Einsch%C3%A4tzung.">Foto-Check</a>
+            <a class="btn primary" href="/leistungen/schiefer/foto/">Ansehen</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer&v=foto">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Schiefer-Fotogravur">Anfragen</a>
+          </div>
+        </article>
+
+        <!-- TEXT & SYMBOLE -->
+        <article class="productcard">
+          <div class="thumb" style="padding:0">
+            <a href="/leistungen/schiefer/text-symbole/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
+              <img src="/assets/img/schiefer-text.jpg"
+                   onerror="this.src='/assets/img/schiefer-home.jpg'"
+                   alt="Schiefer Text & Symbole Beispiel"
+                   style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
+            </a>
+          </div>
+          <div class="meta">
+            <span class="price">ab 9,95 €</span><span>•</span><span>Text & Symbole</span><span>•</span><span>Fastlane</span>
+          </div>
+          <h3>Text & Symbole</h3>
+          <p class="kicker">Spruch, Koordinaten, Haus-/Werkstattschild – schnell, clean, urban. Kein Foto nötig.</p>
+          <div class="actions">
+            <a class="btn primary" href="/leistungen/schiefer/text-symbole/">Ansehen</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer&v=text">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Schiefer%20Text%20%26%20Symbole">Anfragen</a>
+          </div>
+        </article>
+
+        <!-- GEDENKTAFEL -->
+        <article class="productcard">
+          <div class="thumb" style="padding:0">
+            <a href="/leistungen/schiefer/gedenktafeln/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
+              <img src="/assets/img/schiefer-gedenk.jpg"
+                   onerror="this.src='/assets/img/schiefer-home.jpg'"
+                   alt="Schiefer Gedenktafel Beispiel"
+                   style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
+            </a>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>Gedenktafel</span><span>•</span><span>Standardisiert</span>
+          </div>
+          <h3>Gedenktafeln</h3>
+          <p class="kicker">Kleine Ahnentafeln/Gedenkplatten (z. B. 10×10) – sauber, würdig, nicht kitschig.</p>
+          <div class="actions">
+            <a class="btn primary" href="/leistungen/schiefer/gedenktafeln/">Ansehen</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer&v=gedenk">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Schiefer%20Gedenktafel">Anfragen</a>
           </div>
         </article>
       </div>
-
-      <div class="section" style="margin-top:16px">
-        <div class="notice">
-          <strong style="color:var(--text)">Mini-Check fürs Foto:</strong><br>
-          gut ausgeleuchtet · nicht verwackelt · Augen erkennbar · keine „Screenshot-vom-Screenshot“-Kette.
-        </div>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <!-- TEXT -->
-    <section class="section" id="text" aria-label="Schiefer Text und Symbole">
-      <div class="section-head">
-        <h2>Text & Symbole (Schilder / Koordinaten / Statements)</h2>
-        <p class="small muted">Schnell, clean, urban. Kein Foto nötig.</p>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Koordinaten / Ort / Jahr</h3>
-          <p>Dezent, hochwertig, perfekt als Geschenk oder fürs eigene Zuhause.</p>
-        </div>
-        <div class="card">
-          <h3>Haus / Werkstatt-Schild</h3>
-          <p>Name, Nummer, Icon. Klar lesbar – nicht verspielt.</p>
-        </div>
-        <div class="card">
-          <h3>Spruch / Statement</h3>
-          <p>Frech oder clean. Hauptsache: passt zum Ort, wo’s hängt/steht.</p>
-        </div>
-      </div>
-
-      <div class="section" style="margin-top:16px">
-        <div class="cta">
-          <a class="btn primary" href="/kontakt/?p=Schiefer%20%E2%80%93%20Text%20%26%20Symbole">Anfragen</a>
-          <a class="btn" href="/kontakt/?p=Schiefer%20%E2%80%93%20Text%20%26%20Symbole&note=Ich%20schicke%20dir%20kurz%20Text%2FMa%C3%9Fe%2FIcon-Idee.">Schnell anstoßen</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <section class="section">
-      <h2>Noch was anderes?</h2>
-      <p class="small">Metall, Holz, Acryl, Schmuck – kommt nach und nach rein. Anfrage geht immer.</p>
-      <div class="cta">
-        <a class="btn" href="/leistungen/">Alle Leistungen</a>
-        <a class="btn" href="/kontakt/?p=Allgemeine%20Anfrage">Kontakt</a>
-      </div>
     </section>
   </main>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lb" aria-hidden="true">
-    <div class="lightbox__panel" role="dialog" aria-modal="true" aria-label="Bild vergrößert">
-      <button class="lightbox__close" type="button" data-lb-close aria-label="Schließen">✕</button>
-      <img class="lightbox__img" id="lbImg" alt="">
-      <div class="lightbox__cap" id="lbCap">Tippe daneben oder drücke ESC zum Schließen.</div>
-    </div>
-  </div>
 
   <footer>
     <div class="wrap foot">
@@ -297,40 +139,7 @@
     </div>
   </footer>
 
-  <script src="/assets/site.js"></script>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Lightbox
-    (function(){
-      const lb = document.getElementById('lb');
-      const lbImg = document.getElementById('lbImg');
-
-      function openLB(src, alt){
-        lbImg.src = src;
-        lbImg.alt = alt || 'Bild';
-        lb.setAttribute('aria-hidden','false');
-        document.body.style.overflow = 'hidden';
-      }
-      function closeLB(){
-        lb.setAttribute('aria-hidden','true');
-        lbImg.src = '';
-        document.body.style.overflow = '';
-      }
-
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-lightbox]');
-        if(btn){
-          openLB(btn.getAttribute('data-src'), btn.getAttribute('data-alt'));
-          return;
-        }
-        if(e.target === lb || e.target.closest('[data-lb-close]')) closeLB();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape' && lb.getAttribute('aria-hidden') === 'false') closeLB();
-      });
-    })();
-  </script>
+  <script src="/assets/site.js?v=10"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
