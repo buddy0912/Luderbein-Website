@@ -50,27 +50,33 @@
 
       btn.addEventListener("click", toggleNav);
 
-      // Klick auf Menülink schließt das Menü (mobil)
-      // ABER: "Leistungen"-Dropdown soll im Burger NICHT schließen, sondern toggeln.
+      // Klick-Logik im NAV (Burger offen vs. geschlossen)
       nav.addEventListener("click", (e) => {
-        const a = e.target.closest("a");
-        if (!a) return;
-
         const isBurgerOpen = nav.getAttribute("data-open") === "1";
+
+        // Falls Burger NICHT offen ist: normale Desktop-Navigation
         if (!isBurgerOpen) return;
 
-        const dropTop = a.classList.contains("navdrop__top");
-        if (dropTop) {
-          // Untermenü toggeln statt schließen/navigieren
+        // Wenn Burger offen ist:
+        // - Klick auf Leistungen-Bereich (inkl. Pfeil) soll toggeln, NICHT schließen
+        // - Klick auf Submenu-Link soll navigieren + schließen
+        const drop = e.target.closest(".navdrop");
+        if (drop) {
+          const subLink = e.target.closest(".navdrop__menu a");
+          if (subLink) {
+            closeNav();
+            return;
+          }
+          // Alles andere innerhalb .navdrop toggelt nur
           e.preventDefault();
           e.stopPropagation();
-          const holder = a.closest(".navdrop");
-          if (holder) holder.classList.toggle("is-open");
+          drop.classList.toggle("is-open");
           return;
         }
 
-        // normaler Link -> Burger schließen
-        closeNav();
+        // Normaler Link -> Burger schließen
+        const a = e.target.closest("a");
+        if (a) closeNav();
       });
 
       // ESC schließt Menü
@@ -88,14 +94,18 @@
     }
 
     // ---------- Leistungen Dropdown: Desktop Hover stabil ----------
-    // Problem: Hover-Lücke beim Runterfahren mit Maus -> Dropdown klappt zu.
-    // Lösung: Beim Verlassen kurz offen lassen (Delay), damit man sauber ins Menü kommt.
+    // Fix:
+    // 1) Close-Delay erhöhen (gegen "Hover-Lücke")
+    // 2) Dropdown-Menü selbst "hält offen" (weil absolute Position oft außerhalb Parent-Box liegt)
     (function setupNavDropdowns() {
       const drops = Array.from(document.querySelectorAll(".navdrop"));
       if (!drops.length) return;
 
       drops.forEach((drop) => {
         let t = null;
+
+        const top = drop.querySelector(".navdrop__top");
+        const menu = drop.querySelector(".navdrop__menu");
 
         function clearTimer() {
           if (t) {
@@ -115,39 +125,59 @@
             // nur schließen, wenn Burger NICHT offen ist
             const isBurgerOpen = nav && nav.getAttribute("data-open") === "1";
             if (!isBurgerOpen) drop.classList.remove("is-open");
-          }, 220); // <- “Puffer” gegen Hover-Lücke
+          }, 650); // <- deutlich mehr Puffer, damit iPad-Maus nicht "wegrutscht"
         }
 
-        // Desktop/Pointer Hover: öffnen/schließen mit Delay
-        drop.addEventListener("pointerenter", () => {
-          const isBurgerOpen = nav && nav.getAttribute("data-open") === "1";
-          if (isBurgerOpen) return;
-          openDrop();
-        });
+        function isBurger() {
+          return nav && nav.getAttribute("data-open") === "1";
+        }
 
-        drop.addEventListener("pointerleave", () => {
-          const isBurgerOpen = nav && nav.getAttribute("data-open") === "1";
-          if (isBurgerOpen) return;
-          closeDropDelayed();
-        });
+        // Desktop/Pointer Hover: TOP
+        if (top) {
+          top.addEventListener("pointerenter", () => {
+            if (isBurger()) return;
+            openDrop();
+          });
+          top.addEventListener("pointerleave", () => {
+            if (isBurger()) return;
+            closeDropDelayed();
+          });
 
-        // Keyboard: Fokus innerhalb -> offen
-        drop.addEventListener("focusin", () => {
-          const isBurgerOpen = nav && nav.getAttribute("data-open") === "1";
-          if (isBurgerOpen) return;
-          openDrop();
-        });
+          // Keyboard-Fokus: offen halten
+          top.addEventListener("focusin", () => {
+            if (isBurger()) return;
+            openDrop();
+          });
+          top.addEventListener("focusout", () => {
+            if (isBurger()) return;
+            closeDropDelayed();
+          });
+        }
 
-        drop.addEventListener("focusout", () => {
-          const isBurgerOpen = nav && nav.getAttribute("data-open") === "1";
-          if (isBurgerOpen) return;
-          closeDropDelayed();
-        });
+        // Desktop/Pointer Hover: MENU (wichtig! hält Dropdown offen)
+        if (menu) {
+          menu.addEventListener("pointerenter", () => {
+            if (isBurger()) return;
+            openDrop();
+          });
+          menu.addEventListener("pointerleave", () => {
+            if (isBurger()) return;
+            closeDropDelayed();
+          });
 
-        // Wenn irgendwo anders geklickt wird (Desktop), Dropdown zu
+          menu.addEventListener("focusin", () => {
+            if (isBurger()) return;
+            openDrop();
+          });
+          menu.addEventListener("focusout", () => {
+            if (isBurger()) return;
+            closeDropDelayed();
+          });
+        }
+
+        // Desktop: Klick irgendwo außerhalb -> zu
         document.addEventListener("click", (e) => {
-          const isBurgerOpen = nav && nav.getAttribute("data-open") === "1";
-          if (isBurgerOpen) return;
+          if (isBurger()) return;
           if (e.target.closest(".navdrop")) return;
           drop.classList.remove("is-open");
         });
@@ -163,10 +193,10 @@
 
     // Aktuellen Pfad normalisieren
     let current = window.location.pathname || "/";
-    current = current.replace(/index\.html$/i, ""); // /kontakt/index.html -> /kontakt/
+    current = current.replace(/index\.html$/i, "");
     if (current === "") current = "/";
 
-    // vorhandene aria-current entfernen (wir setzen sauber neu)
+    // vorhandene aria-current entfernen
     links.forEach((a) => a.removeAttribute("aria-current"));
 
     function normPath(p) {
@@ -176,7 +206,6 @@
       return x;
     }
 
-    // Bestes Match = längster passender Pfad (damit "/" nicht alles frisst)
     let best = null;
     let bestLen = -1;
 
@@ -196,10 +225,8 @@
       if (isRoot) {
         matches = current === "/";
       } else if (linkPath.endsWith("/")) {
-        // Verzeichnis-Links matchen alles darunter
         matches = current.startsWith(linkPath);
       } else {
-        // Datei-Links matchen exakt (z.B. /rechtliches/impressum.html)
         matches = current === linkPath;
       }
 
