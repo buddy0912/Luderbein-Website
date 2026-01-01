@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Leistungen – Luderbein</title>
-  <meta name="description" content="Leistungen von Luderbein: Schiefer, Holz, Metall und Sonderwünsche – aktuell V0, per Anfrage." />
+  <meta name="description" content="Leistungen von Luderbein: Schiefer, Metall, Holz und Custom. Erst ansehen, dann kalkulieren/anfragen." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
@@ -25,20 +25,7 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-
-        <!-- Leistungen + Dropdown -->
-        <div class="navdrop" data-navdrop>
-          <a class="navdrop__link" href="/leistungen/" aria-current="page">Leistungen</a>
-          <button class="navdrop__btn" type="button" aria-label="Leistungen Untermenü öffnen" aria-expanded="false" data-navdrop-toggle>
-            ▾
-          </button>
-          <div class="navdrop__menu" role="menu" aria-label="Leistungen Untermenü" data-navdrop-menu>
-            <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
-            <a role="menuitem" href="/leistungen/metall/">Metall</a>
-            <a role="menuitem" href="/kontakt/?p=Custom%20(Anfrage)">Custom</a>
-          </div>
-        </div>
-
+        <a href="/leistungen/" aria-current="page">Leistungen</a>
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -49,47 +36,40 @@
 
   <main class="wrap">
     <section class="hero">
-      <span class="badge"><i></i> Leistung – Überblick (V0)</span>
-      <h1>Leistungen</h1>
+      <span class="badge"><i></i> Leistungen</span>
+      <h1>Von allgemein → spezialisiert.</h1>
       <p class="lead">
-        Von allgemein zu spezialisiert: erst ansehen, dann kalkulieren/anfragen.
-        Schiefer bündeln wir als „ein großes Thema“ (Foto, Text, Symbole, Gedenktafeln).
+        Erst ansehen, dann kalkulieren/anfragen. Kein Shop-Geklicke, sondern kurzer Draht.
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="/kontakt/">Kontakt</a>
-        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren (Schiefer)</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Pro-Tipp:</strong>
-        Erst grob kalkulieren → dann mit den Angaben anfragen. Spart beiden Seiten Zeit.
+        <a class="btn primary" href="/kontakt/?p=Allgemeine%20Anfrage">Allgemein anfragen</a>
+        <a class="btn" href="/tools/kalkulator/">Kalkulator</a>
       </div>
     </section>
 
-    <section class="section" aria-label="Leistungen Kacheln">
+    <section class="section">
       <div class="section-head">
-        <h2>Jetzt schon live</h2>
-        <p class="small muted">Schiefer ist drin. Metall folgt als Nächstes.</p>
+        <h2>Bereiche</h2>
+        <p class="small muted">Schlank halten. V0. Technik zuerst.</p>
       </div>
 
       <div class="products">
-        <!-- SCHIEFER (ein großer Punkt) -->
         <article class="productcard">
           <div class="thumb" style="padding:0">
-            <a href="/leistungen/schiefer/" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative">
-              <img src="/assets/img/schiefer-home.jpg"
-                   alt="Beispiel einer Fotogravur auf Schiefer"
-                   style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
+            <a class="thumblink" href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
+              <span class="thumbslider" aria-hidden="true">
+                <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
+                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
+                <img src="/assets/img/schiefer-gedenk.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
+              </span>
             </a>
           </div>
           <div class="meta">
             <span class="price">ab 9,95 €</span><span>•</span><span>Foto • Text • Symbole • Gedenktafeln</span>
           </div>
           <h3>Schiefer</h3>
-          <p class="kicker">
-            Fotogravur, Widmung, Schilder, Erinnerungsstücke – sauber aufbereitet und versiegelt.
-          </p>
+          <p class="kicker">Fotogravur, Widmung, Schilder, Erinnerungsstücke – sauber & haltbar.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
@@ -97,16 +77,13 @@
           </div>
         </article>
 
-        <!-- METALL -->
         <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
+          <div class="thumb" aria-label="Metall"><span class="thumblabel">Metall</span></div>
           <div class="meta">
             <span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span>
           </div>
           <h3>Metall</h3>
-          <p class="kicker">
-            Tags, Plaketten, Kleinserien – robust, kantig, präzise. Preise kommen als Nächstes.
-          </p>
+          <p class="kicker">Tags, Plaketten, Gravur – robust, kantig, präzise.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
             <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
@@ -114,30 +91,34 @@
           </div>
         </article>
 
-        <!-- CUSTOM -->
         <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
+          <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
+          <div class="meta">
+            <span class="price">ab 69,95 €</span><span>•</span><span>Schwibbögen • Gravur</span>
+          </div>
+          <h3>Holz</h3>
+          <p class="kicker">Schwibbögen, Schilder, Deko – urban & sauber, gern personalisiert.</p>
+          <div class="actions">
+            <a class="btn primary" href="/schwibboegen/">Ansehen</a>
+            <a class="btn" href="/tools/kalkulator/?t=holz">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
+          </div>
+        </article>
+
+        <article class="productcard">
+          <div class="thumb" aria-label="Custom"><span class="thumblabel">Custom</span></div>
           <div class="meta">
             <span class="price">kurzer Draht</span><span>•</span><span>Konzept → Entwurf</span>
           </div>
           <h3>Custom</h3>
-          <p class="kicker">
-            Sonderformate, Kombis, „geht das?“ – wenn’s machbar ist, finden wir ’nen Weg.
-          </p>
+          <p class="kicker">Wenn’s machbar ist, finden wir ’nen Weg. Wenn nicht, sag ich’s dir auch.</p>
           <div class="actions">
-            <a class="btn primary" href="/kontakt/">Kontakt</a>
-            <a class="btn" href="/kontakt/?p=Custom">Anfragen</a>
+            <a class="btn primary" href="/kontakt/?p=Custom">Anfragen</a>
+            <a class="btn" href="/kontakt/">Kontakt</a>
           </div>
         </article>
       </div>
     </section>
-
-    <div class="section">
-      <div class="notice">
-        <strong style="color:var(--text)">V0-Logik:</strong>
-        Erst Vertrauen (echte Beispiele), dann Varianten/Preise sauber ausbauen.
-      </div>
-    </div>
   </main>
 
   <footer>
@@ -153,5 +134,54 @@
   <script src="/assets/site.js"></script>
   <script src="/assets/nav-dropdown.js"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+
+  <!-- Schiefer-Thumbslider (identisch zur Startseite) -->
+  <style>
+    .thumbslider{
+      position:relative;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      border-radius:inherit;
+      display:block;
+    }
+    .thumbslider img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      opacity:0;
+      transform:scale(1.03);
+      animation: thumbfade 12s infinite;
+    }
+    .thumbslider img:nth-child(1){ animation-delay:0s; opacity:1; }
+    .thumbslider img:nth-child(2){ animation-delay:4s; }
+    .thumbslider img:nth-child(3){ animation-delay:8s; }
+
+    @keyframes thumbfade{
+      0%{opacity:0}
+      6%{opacity:1}
+      30%{opacity:1}
+      36%{opacity:0}
+      100%{opacity:0}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .thumbslider img{ animation:none; opacity:0; }
+      .thumbslider img:nth-child(1){ opacity:1; }
+    }
+
+    .thumblink{
+      display:block;
+      width:100%;
+      height:100%;
+      border-radius:inherit;
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+    }
+  </style>
 </body>
 </html>
