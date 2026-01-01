@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Metall – Luderbein</title>
-  <meta name="description" content="Metall bei Luderbein: Gravur auf Edelstahl/Alu, echte Beispiele im Feed + Festprodukte. Anfrage mit Kontext." />
+  <title>Metallgravur – Luderbein</title>
+  <meta name="description" content="Metallgravur von Luderbein: Edelstahl/Alu, Tags, Plaketten, Gravuren. Anfrage per WhatsApp oder Mail." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
-  <!-- Metall-Feed (eigener Slider) -->
   <style>
     .reelslider{
       position:relative;
@@ -17,6 +16,7 @@
       background:rgba(255,255,255,.03);
       padding:14px;
       overflow:hidden;
+      margin-top:10px;
     }
     .reeltrack{
       display:flex;
@@ -44,6 +44,7 @@
       object-fit:cover;
       display:block;
     }
+
     @media (max-width: 860px){
       .reelslide{flex-basis:calc(50% - 7px)}
       .reelslide img{height:220px}
@@ -75,7 +76,6 @@
     @media (max-width: 520px){.reelbtn{display:none}}
   </style>
 </head>
-
 <body>
   <header>
     <div class="wrap nav">
@@ -87,26 +87,13 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button class="navbtn" type="button" data-nav (type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
         <span class="navicon"><span></span></span>
       </button>
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-
-        <!-- Leistungen + Dropdown -->
-        <div class="navdrop" data-navdrop>
-          <a class="navdrop__link" href="/leistungen/">Leistungen</a>
-          <button class="navdrop__btn" type="button" aria-label="Leistungen Untermenü öffnen" aria-expanded="false" data-navdrop-toggle>
-            ▾
-          </button>
-          <div class="navdrop__menu" role="menu" aria-label="Leistungen Untermenü" data-navdrop-menu>
-            <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
-            <a role="menuitem" href="/leistungen/metall/" aria-current="page">Metall</a>
-            <a role="menuitem" href="/kontakt/?p=Custom%20(Anfrage)">Custom</a>
-          </div>
-        </div>
-
+        <a href="/leistungen/">Leistungen</a>
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -117,117 +104,43 @@
 
   <main class="wrap">
     <section class="hero">
-      <span class="badge"><i></i> Metall (V0) – echte Beispiele + Festprodukte</span>
-      <h1>Metall</h1>
+      <span class="badge"><i></i> Leistung – Metall</span>
+      <h1>Metallgravur</h1>
       <p class="lead">
-        Edelstahl/Alu: robust, präzise, urban. Erst Beispiele anschauen, dann entscheiden.
-        Preise sind gerade im Aufbau – bis dahin hilft dir die Upgrade-Kostenrechnung beim Einordnen.
+        Edelstahl / Alu: Tags, Plaketten, Gravuren. Robust, präzise – und wenn’s Quatsch ist, sag ich’s dir auch.
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="#feed">Metall-Feed</a>
-        <a class="btn" href="/tools/kalkulator/?t=metall">Upgrade Kostenrechnung</a>
-        <a class="btn" href="#festprodukte">Festprodukte</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Hinweis:</strong>
-        Skizzen/Ideenbilder sind ausdrücklich willkommen. Lieber grob und ehrlich als „perfekt“ und unklar.
+        <a class="btn primary" href="/kontakt/?p=Metall">Anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
+        <a class="btn" href="/leistungen/">Zurück</a>
       </div>
     </section>
 
-    <!-- Metall-Feed -->
-    <section class="section" id="feed" aria-label="Metall-Feed">
+    <section class="section">
       <div class="section-head">
-        <h2>Metall-Feed</h2>
-        <p class="small muted">Echte Jobs. Wischen = weiter. Tap = groß. Läuft automatisch.</p>
+        <h2>Beispiele</h2>
+        <p class="small muted">Tippen = groß. Wischen = weiter. Autoplay läuft.</p>
       </div>
 
       <div class="reelslider">
         <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
         <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
-        <div class="reeltrack" id="metallTrack" aria-label="Metall Bilder">
-          <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-01.jpg" alt="Metall Bild 01" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-02.jpg" alt="Metall Bild 02" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-03.jpg" alt="Metall Bild 03" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-04.jpg" alt="Metall Bild 04" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-05.jpg" alt="Metall Bild 05" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-06.jpg" alt="Metall Bild 06" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-07.jpg" alt="Metall Bild 07" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-08.jpg" alt="Metall Bild 08" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-09.jpg" alt="Metall Bild 09" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-10.jpg" alt="Metall Bild 10" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-11.jpg" alt="Metall Bild 11" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-12.jpg" alt="Metall Bild 12" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-13.jpg" alt="Metall Bild 13" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-14.jpg" alt="Metall Bild 14" loading="lazy"></a>
+        <div class="reeltrack" id="metalTrack" aria-label="Metall Bilder">
+          <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel 01" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-02.jpg" alt="Metall Beispiel 02" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-03.jpg" alt="Metall Beispiel 03" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-04.jpg" alt="Metall Beispiel 04" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-05.jpg" alt="Metall Beispiel 05" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel 06" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-07.jpg" alt="Metall Beispiel 07" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-08.jpg" alt="Metall Beispiel 08" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-09.jpg" alt="Metall Beispiel 09" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-10.jpg" alt="Metall Beispiel 10" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-11.jpg" alt="Metall Beispiel 11" loading="lazy"></a>
+          <a class="reelslide" href="/assets/metall/metall-reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-12.jpg" alt="Metall Beispiel 12" loading="lazy"></a>
         </div>
-      </div>
-
-      <div class="section" style="margin-top:16px">
-        <div class="cta">
-          <a class="btn primary" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage zu Metall</a>
-          <a class="btn" href="/tools/kalkulator/?t=metall">Vorher kurz kalkulieren</a>
-        </div>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <!-- Festprodukte -->
-    <section class="section" id="festprodukte" aria-label="Metall Festprodukte">
-      <div class="section-head">
-        <h2>Festprodukte</h2>
-        <p class="small muted">
-          Diese Ecke wird zur „klaren Karte“. Preise/Varianten kommen, sobald wir’s im Kalkulationschat sauber festnageln.
-        </p>
-      </div>
-
-      <div class="products">
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Visitenkarten</span><span>•</span><span>Alu / Metall</span></div>
-          <h3>Metall-Visitenkarten</h3>
-          <p class="kicker">Schwarz, clean, kantig. Ideal als „Business“-Upgrade. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?t=metall">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Visitenkarten">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Flaschenöffner</span><span>•</span><span>Gravur</span></div>
-          <h3>Flaschenöffner</h3>
-          <p class="kicker">Geschenkfähig, robust, sofort verstanden. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?t=metall">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Flaschenöffner">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Edelstahl-Schilder</span><span>•</span><span>Werkstatt / Haus</span></div>
-          <h3>Edelstahl-Schilder</h3>
-          <p class="kicker">Koordinaten, Name, Statement, Logo. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?t=metall">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Edelstahl-Schild">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Tags / Plaketten</span><span>•</span><span>Edelstahl / Alu</span></div>
-          <h3>Tags / Plaketten</h3>
-          <p class="kicker">Hundemarken, Geräte-Tags, Seriennummern. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?t=metall">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/%20Plakette">Anfragen</a>
-          </div>
-        </article>
       </div>
     </section>
   </main>
@@ -248,21 +161,11 @@
     document.getElementById('y').textContent = new Date().getFullYear();
 
     (function(){
-      var track = document.getElementById('metallTrack');
+      var track = document.getElementById('metalTrack');
       if(!track) return;
 
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
-
-      // RANDOM: Reihenfolge mischen
-      var slides = Array.prototype.slice.call(track.children);
-      for (var i = slides.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = slides[i];
-        slides[i] = slides[j];
-        slides[j] = tmp;
-      }
-      slides.forEach(function(el){ track.appendChild(el); });
 
       function slideWidth(){
         var first = track.querySelector('.reelslide');
@@ -277,9 +180,8 @@
         track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
       });
 
-      // AUTOPLAY
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) return;
+      if(reduceMotion) return;
 
       var paused = false;
       var AUTOPLAY_MS = 4600;
