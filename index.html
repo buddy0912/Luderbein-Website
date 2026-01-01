@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Luderbein – Gravur & Sonderwünsche</title>
+  <title>Luderbein – Schwibbögen & Gravur</title>
   <meta name="description" content="Luderbein: Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
 
   <link rel="stylesheet" href="/assets/style.css?v=9" />
@@ -75,7 +75,7 @@
     .reelbtn.next{right:10px}
     @media (max-width: 520px){.reelbtn{display:none}}
 
-    /* --- Schiefer-Kachel: Auto-Slideshow (3 Bilder, Vorschau) --- */
+    /* --- Schiefer-Kachel: Rotator (JS) mit weichem Crossfade --- */
     .thumbslider{
       position:relative;
       width:100%;
@@ -83,6 +83,7 @@
       overflow:hidden;
       border-radius:inherit;
       display:block;
+      background:rgba(0,0,0,.15);
     }
     .thumbslider img{
       position:absolute;
@@ -92,24 +93,14 @@
       object-fit:cover;
       display:block;
       opacity:0;
-      transform:scale(1.03);
-      animation: thumbfade 12s infinite;
+      transform:translateZ(0) scale(1.02);
+      transition:opacity 900ms ease;
+      will-change: opacity;
     }
-    .thumbslider img:nth-child(1){ animation-delay:0s; }
-    .thumbslider img:nth-child(2){ animation-delay:4s; }
-    .thumbslider img:nth-child(3){ animation-delay:8s; }
-
-    /* WICHTIG: Startet sichtbar, keine "Dauer-Opacity" auf Bild 1 */
-    @keyframes thumbfade{
-      0%{opacity:1}
-      30%{opacity:1}
-      36%{opacity:0}
-      100%{opacity:0}
-    }
+    .thumbslider img.is-on{ opacity:1; }
 
     @media (prefers-reduced-motion: reduce){
-      .thumbslider img{ animation:none; opacity:0; }
-      .thumbslider img:nth-child(1){ opacity:1; }
+      .thumbslider img{transition:none}
     }
 
     .thumblink{
@@ -153,6 +144,9 @@
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/" role="menuitem">Holz</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+
+            <!-- Ergänzend: Tools -->
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
           </div>
         </div>
 
@@ -190,7 +184,6 @@
           <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12" loading="lazy"></a>
-
           <a class="reelslide" href="/assets/reel/reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-13.jpg" alt="Werkstatt Bild 13" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-14.jpg" alt="Werkstatt Bild 14" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-15.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-15.jpg" alt="Werkstatt Bild 15" loading="lazy"></a>
@@ -212,24 +205,8 @@
         <a class="btn primary" href="/leistungen/">Leistungen ansehen</a>
         <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
       </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Echte Personalisierung</h3>
-          <p>Name/Datum/Koordinaten, Symbole, Foto – passend statt „Text drauf“.</p>
-        </div>
-        <div class="card">
-          <h3>Saubere Fertigung</h3>
-          <p>Laser + Material + Finish. Stabil genug, dass man’s auch anfassen darf.</p>
-        </div>
-        <div class="card">
-          <h3>Fixe Abstimmung</h3>
-          <p>Kurzer Draht per Mail/WhatsApp. Entwurf, Freigabe, fertig.</p>
-        </div>
-      </div>
     </section>
 
-    <!-- Startseite: nur die 4 Kacheln -->
     <section class="section" aria-label="Leistungen Preview">
       <div class="section-head">
         <h2>Leistungen</h2>
@@ -237,16 +214,13 @@
       </div>
 
       <div class="products">
-        <!-- SCHIEFER (3er-Vorschau) -->
+        <!-- SCHIEFER: 3er-Vorschau -->
         <article class="productcard">
           <div class="thumb" style="padding:0">
             <a class="thumblink" href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
-              <span class="thumbslider" aria-hidden="true">
-                <!-- 1) Foto -->
+              <span class="thumbslider" data-thumb-rotator aria-hidden="true">
                 <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
-                <!-- 2) Text & Symbol (wenn Datei fehlt: bleibt leer, KEIN Duplikat-Fallback) -->
                 <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-                <!-- 3) Gedenktafeln -->
                 <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
               </span>
             </a>
@@ -263,7 +237,7 @@
           </div>
         </article>
 
-        <!-- HOLZ (vorerst ohne Foto-Fokus, nur Kategorie) -->
+        <!-- HOLZ -->
         <article class="productcard">
           <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
           <div class="meta">
@@ -342,6 +316,7 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
+    // Werkstatt-Feed Autoplay (wie gehabt)
     (function(){
       var track = document.getElementById('reelTrack');
       if(!track) return;
@@ -349,7 +324,6 @@
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
 
-      // RANDOM: Reihenfolge der Slides mischen
       var slides = Array.prototype.slice.call(track.children);
       for (var i = slides.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -407,6 +381,40 @@
           timer = window.setInterval(tick, AUTOPLAY_MS);
         }
       });
+    })();
+
+    // Schiefer-Thumb Rotator (stabil auf iOS)
+    (function(){
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduceMotion) return;
+
+      var box = document.querySelector('[data-thumb-rotator]');
+      if(!box) return;
+
+      function getImgs(){
+        return Array.prototype.slice.call(box.querySelectorAll('img')).filter(function(img){
+          return img && img.style.display !== 'none';
+        });
+      }
+
+      var imgs = getImgs();
+      if(imgs.length <= 1) {
+        if(imgs[0]) imgs[0].classList.add('is-on');
+        return;
+      }
+
+      var i = 0;
+      imgs.forEach(function(img){ img.classList.remove('is-on'); });
+      imgs[0].classList.add('is-on');
+
+      window.setInterval(function(){
+        imgs = getImgs();
+        if(imgs.length <= 1) return;
+
+        imgs[i].classList.remove('is-on');
+        i = (i + 1) % imgs.length;
+        imgs[i].classList.add('is-on');
+      }, 4200);
     })();
   </script>
 </body>
