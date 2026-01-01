@@ -26,15 +26,16 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
-        <!-- Leistungen Dropdown (einheitlich) -->
-        <div class="navdd" data-navdd data-open="0">
-          <a href="/leistungen/">Leistungen</a>
-          <button class="navddbtn" type="button" data-navdd-toggle aria-label="Leistungen öffnen" aria-expanded="false">▾</button>
-          <div class="navddmenu" data-navdd-menu>
-            <a href="/leistungen/schiefer/">Schiefer</a>
-            <a href="/leistungen/metall/">Metall</a>
-            <a href="/schwibboegen/" aria-current="page">Holz</a>
-            <a href="/kontakt/?p=Custom">Custom</a>
+        <!-- Leistungen + Dropdown -->
+        <div class="navdrop" data-navdrop>
+          <a class="navdrop__link" href="/leistungen/">Leistungen</a>
+          <button class="navdrop__btn" type="button" aria-label="Leistungen Untermenü öffnen" aria-expanded="false" data-navdrop-toggle>
+            ▾
+          </button>
+          <div class="navdrop__menu" role="menu" aria-label="Leistungen Untermenü" data-navdrop-menu>
+            <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
+            <a role="menuitem" href="/leistungen/metall/">Metall</a>
+            <a role="menuitem" href="/kontakt/?p=Custom%20(Anfrage)">Custom</a>
           </div>
         </div>
 
