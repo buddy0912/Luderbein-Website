@@ -1,113 +1,61 @@
 // /assets/nav-dropdown.js
-// Einheitlicher Dropdown: Desktop hover stabil + Mobile tap (ohne Burger-Menü zu schließen)
-// + Active-Link Erkennung (setzt aria-current automatisch)
+// Dropdown-Logik für "Leistungen"
+// Fix iPhone: Tap auf Pfeil klappt Dropdown auf, ohne das Burger-Menü zu schließen
+// Schließt Dropdowns bei Click außerhalb / ESC
 
 (function(){
-  if (window.__lbNavDropdownInit) return;
-  window.__lbNavDropdownInit = true;
-
-  function normPath(p){
-    // "/leistungen" == "/leistungen/"
-    if (!p) return "/";
-    return p.endsWith("/") ? p : (p + "/");
+  function ready(fn){
+    if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
   }
 
-  function markActive(){
-    const path = normPath(location.pathname);
+  ready(function(){
+    var dds = Array.prototype.slice.call(document.querySelectorAll('[data-navdd]'));
+    if(!dds.length) return;
 
-    // 1) Alle aria-current entfernen (wir setzen neu)
-    document.querySelectorAll('[data-nav] a[aria-current="page"]').forEach(a => {
-      a.removeAttribute('aria-current');
-    });
-
-    // 2) Direktmatch: Link dessen href exakt passt
-    const links = Array.from(document.querySelectorAll('[data-nav] a[href]'));
-    const exact = links.find(a => {
-      const href = a.getAttribute("href");
-      if (!href || !href.startsWith("/")) return false;
-      return normPath(href) === path;
-    });
-    if (exact){
-      exact.setAttribute("aria-current", "page");
-      return;
+    function closeAll(except){
+      dds.forEach(function(dd){
+        if(dd !== except) dd.setAttribute('data-open','0');
+        var btn = dd.querySelector('[data-navdd-toggle]');
+        if(btn) btn.setAttribute('aria-expanded', (dd === except && dd.getAttribute('data-open') === '1') ? 'true' : 'false');
+      });
     }
 
-    // 3) Fallback: Leistungen-Unterseiten -> "Leistungen" aktiv
-    if (path.startsWith("/leistungen/")){
-      const leistungen = links.find(a => normPath(a.getAttribute("href")) === "/leistungen/");
-      if (leistungen) leistungen.setAttribute("aria-current", "page");
-      return;
-    }
+    dds.forEach(function(dd){
+      dd.setAttribute('data-open','0');
 
-    // 4) Fallback: Root
-    if (path === "/"){
-      const home = links.find(a => normPath(a.getAttribute("href")) === "/");
-      if (home) home.setAttribute("aria-current", "page");
-    }
-  }
+      var btn = dd.querySelector('[data-navdd-toggle]');
+      var menu = dd.querySelector('[data-navdd-menu]');
+      if(!btn || !menu) return;
 
-  function setupOne(drop){
-    const btn = drop.querySelector('[data-navdrop-toggle]');
-    const menu = drop.querySelector('[data-navdrop-menu]');
-    if (!btn || !menu) return;
+      btn.setAttribute('aria-expanded','false');
 
-    // Mobile/Touch: Toggle per Klick (verhindert Burger-Schließen)
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const open = drop.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      // Wichtig: nur der Pfeil toggelt im Mobile/Burger
+      btn.addEventListener('click', function(e){
+        // verhindert, dass der Click irgendwoanders (z.B. auf den Burger-Handler) durchrutscht
+        e.preventDefault();
+        e.stopPropagation();
+
+        var isOpen = dd.getAttribute('data-open') === '1';
+        closeAll(dd);
+        dd.setAttribute('data-open', isOpen ? '0' : '1');
+        btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      });
+
+      // Klick im Menü soll nicht "außenklick" triggern
+      menu.addEventListener('click', function(e){
+        e.stopPropagation();
+      });
     });
 
-    // Desktop: Close-Delay gegen "Maus zu langsam"
-    let t = null;
-    drop.addEventListener('mouseenter', () => {
-      if (t) { clearTimeout(t); t = null; }
-      drop.classList.add('is-open');
-      btn.setAttribute('aria-expanded', 'true');
+    // Klick außerhalb: alles zu
+    document.addEventListener('click', function(){
+      closeAll(null);
     });
 
-    drop.addEventListener('mouseleave', () => {
-      if (t) clearTimeout(t);
-      t = setTimeout(() => {
-        drop.classList.remove('is-open');
-        btn.setAttribute('aria-expanded', 'false');
-      }, 220);
+    // ESC: alles zu
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeAll(null);
     });
-
-    // Fokus (Tastatur / iPad Trackpad)
-    drop.addEventListener('focusin', () => {
-      drop.classList.add('is-open');
-      btn.setAttribute('aria-expanded', 'true');
-    });
-
-    drop.addEventListener('focusout', () => {
-      if (t) clearTimeout(t);
-      t = setTimeout(() => {
-        if (!drop.contains(document.activeElement)){
-          drop.classList.remove('is-open');
-          btn.setAttribute('aria-expanded', 'false');
-        }
-      }, 120);
-    });
-  }
-
-  function closeAll(except){
-    document.querySelectorAll('[data-navdrop].is-open').forEach(d => {
-      if (d === except) return;
-      d.classList.remove('is-open');
-      const btn = d.querySelector('[data-navdrop-toggle]');
-      if (btn) btn.setAttribute('aria-expanded','false');
-    });
-  }
-
-  document.addEventListener('click', () => closeAll(null));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeAll(null);
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    markActive();
-    document.querySelectorAll('[data-navdrop]').forEach(setupOne);
   });
 })();
