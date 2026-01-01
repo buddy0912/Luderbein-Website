@@ -1,0 +1,148 @@
+/* /assets/nav-dropdown.css
+   Einheitlicher "Leistungen"-Dropdown (Desktop hover + Mobile tap)
+*/
+
+.menu{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+/* Container für den Dropdown-Block */
+.navdrop{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* Link bleibt ein normaler Link */
+.navdrop > a{
+  display:inline-flex;
+  align-items:center;
+}
+
+/* kleiner Pfeil-Button */
+.navdrop-toggle{
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.04);
+  color:rgba(255,255,255,.85);
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  line-height:1;
+  user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.navdrop-toggle:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+
+/* Desktop Dropdown Panel */
+.navdrop-menu{
+  position:absolute;
+  top:calc(100% + 10px);
+  left:0;
+  min-width:260px;
+  padding:10px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(15,15,15,.92);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 24px 90px rgba(0,0,0,.55);
+  display:none;
+  z-index:50;
+}
+
+/* Hover-Puffer, damit Maus nicht "Glückssache" ist */
+.navdrop::after{
+  content:"";
+  position:absolute;
+  left:0;
+  top:100%;
+  width:100%;
+  height:14px;
+}
+
+/* Desktop öffnen: hover oder focus-within oder JS-open */
+.navdrop:hover .navdrop-menu,
+.navdrop:focus-within .navdrop-menu,
+.navdrop.is-open .navdrop-menu{
+  display:block;
+}
+
+/* Links im Dropdown */
+.navdrop-menu a{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  text-decoration:none;
+  color:rgba(255,255,255,.92);
+  border:1px solid transparent;
+  white-space:nowrap;          /* Schrift "auf eine Höhe" / kein Umbruch */
+  line-height:1.1;
+}
+.navdrop-menu a:hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.10);
+}
+.navdrop-menu a small{
+  margin-left:auto;
+  opacity:.65;
+  font-size:12px;
+}
+
+/* Mobile: Dropdown als einklappbarer Block im Burger-Menü */
+@media (max-width: 860px){
+  .menu{
+    display:block; /* deine bestehende Mobile-Menu-Logik bleibt, wir greifen nur Dropdown an */
+  }
+
+  .navdrop{
+    display:block;
+  }
+
+  .navdrop > a{
+    display:inline-block;
+  }
+
+  .navdrop-toggle{
+    position:absolute;
+    right:6px;
+    top:6px;
+  }
+
+  .navdrop-menu{
+    position:static;
+    display:block;
+    min-width:unset;
+    padding:0;
+    margin-top:8px;
+    border:none;
+    background:transparent;
+    box-shadow:none;
+    backdrop-filter:none;
+
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .22s ease;
+  }
+
+  .navdrop.is-open .navdrop-menu{
+    max-height:520px;
+  }
+
+  .navdrop-menu a{
+    padding:10px 10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    margin-bottom:8px;
+  }
+}
