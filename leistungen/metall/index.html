@@ -1,309 +1,72 @@
-<!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Metall – Luderbein</title>
-  <meta name="description" content="Metall bei Luderbein: Gravur auf Edelstahl/Alu, echte Beispiele im Feed + Festprodukte. Anfrage mit Kontext." />
-  <link rel="stylesheet" href="/assets/style.css" />
+<!-- Metall-Feed (eigener Slider) -->
+<style>
+  /* Metall-Feed: dezenter/kleiner als Werkstatt-Feed */
+  .reelslider{
+    position:relative;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.03);
+    padding:8px;          /* kleiner */
+    overflow:hidden;
+    max-width:860px;      /* kleiner/zentrierter */
+    margin:0 auto;        /* zentrieren */
+  }
 
-  <!-- Metall-Feed (eigener Slider) – dezenter als Werkstatt-Feed -->
-  <style>
-    .reelslider{
-      position:relative;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.02);
-      padding:10px;
-      overflow:hidden;
+  .reeltrack{
+    display:flex;
+    gap:10px;             /* kleiner */
+    overflow:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    outline:none;
+  }
+  .reeltrack::-webkit-scrollbar{display:none}
 
-      /* kleiner / dezenter */
-      max-width:980px;
-      margin:0 auto;
-    }
-    .reeltrack{
-      display:flex;
-      gap:12px;
-      overflow:auto;
-      scroll-snap-type:x mandatory;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
-      outline:none;
-    }
-    .reeltrack::-webkit-scrollbar{display:none}
+  .reelslide{
+    scroll-snap-align:start;
+    display:block;
+    border-radius:16px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.20);
+    flex:0 0 calc(33.333% - 10px);
+  }
 
-    .reelslide{
-      scroll-snap-align:start;
-      display:block;
-      border-radius:12px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(0,0,0,.18);
-      flex:0 0 calc(30% - 8px);
-    }
-    .reelslide img{
-      width:100%;
-      height:190px;
-      object-fit:cover;
-      display:block;
-    }
+  .reelslide img{
+    width:100%;
+    height:160px;         /* kleiner */
+    object-fit:cover;
+    display:block;
+  }
 
-    @media (max-width: 860px){
-      .reelslide{flex-basis:calc(48% - 6px)}
-      .reelslide img{height:175px}
-    }
-    @media (max-width: 520px){
-      .reelslide{flex-basis:84%}
-      .reelslide img{height:210px}
-    }
+  @media (max-width: 860px){
+    .reelslide{flex-basis:calc(48% - 6px)}
+    .reelslide img{height:150px}
+  }
+  @media (max-width: 520px){
+    .reelslide{flex-basis:82%}
+    .reelslide img{height:185px}
+  }
 
-    .reelbtn{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      width:38px;
-      height:38px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.35);
-      color:rgba(255,255,255,.90);
-      display:grid;
-      place-items:center;
-      cursor:pointer;
-      z-index:2;
-      user-select:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .reelbtn.prev{left:8px}
-    .reelbtn.next{right:8px}
-    @media (max-width: 520px){.reelbtn{display:none}}
-  </style>
-</head>
-
-<body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
-        </div>
-      </a>
-
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
-
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-        <a href="/">Start</a>
-        <a href="/leistungen/" aria-current="page">Leistungen</a>
-        <a href="/schwibboegen/">Schwibbögen</a>
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap">
-
-    <!-- Metall-Feed GANZ OBEN -->
-    <section class="section" id="feed" aria-label="Metall-Feed">
-      <div class="section-head">
-        <h2>Metall-Feed</h2>
-        <p class="small muted">Echte Jobs. Wischen = weiter. Tap = groß. Läuft automatisch.</p>
-      </div>
-
-      <div class="reelslider">
-        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
-        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
-
-        <div class="reeltrack" id="metallTrack" aria-label="Metall Bilder">
-          <!-- Erwartete Dateien in /assets/metall/ -->
-          <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-01.jpg" alt="Metall Bild 01" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-02.jpg" alt="Metall Bild 02" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-03.jpg" alt="Metall Bild 03" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-04.jpg" alt="Metall Bild 04" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-05.jpg" alt="Metall Bild 05" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-06.jpg" alt="Metall Bild 06" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-07.jpg" alt="Metall Bild 07" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-08.jpg" alt="Metall Bild 08" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-09.jpg" alt="Metall Bild 09" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-10.jpg" alt="Metall Bild 10" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-11.jpg" alt="Metall Bild 11" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-12.jpg" alt="Metall Bild 12" loading="lazy"></a>
-        </div>
-      </div>
-
-      <div class="section" style="margin-top:14px">
-        <div class="cta">
-          <a class="btn primary" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage zu Metall</a>
-          <a class="btn" href="/tools/kalkulator/?service=metall">Vorher kurz kalkulieren</a>
-          <a class="btn" href="#festprodukte">Festprodukte</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Hero -->
-    <section class="hero">
-      <span class="badge"><i></i> Metall (V0) – echte Beispiele + Festprodukte</span>
-      <h1>Metall</h1>
-      <p class="lead">
-        Edelstahl/Alu: robust, präzise, urban. Erst Beispiele anschauen, dann entscheiden.
-        Preise sind gerade im Aufbau – bis dahin hilft dir die Upgrade-Kostenrechnung beim Einordnen.
-      </p>
-
-      <div class="cta">
-        <a class="btn primary" href="#feed">Metall-Feed</a>
-        <a class="btn" href="/tools/kalkulator/?service=metall">Upgrade Kostenrechnung</a>
-        <a class="btn" href="#festprodukte">Festprodukte</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Hinweis:</strong>
-        Skizzen/Ideenbilder sind ausdrücklich willkommen. Lieber grob und ehrlich als „perfekt“ und unklar.
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <!-- Festprodukte -->
-    <section class="section" id="festprodukte" aria-label="Metall Festprodukte">
-      <div class="section-head">
-        <h2>Festprodukte</h2>
-        <p class="small muted">
-          Diese Ecke wird zur „klaren Karte“. Preise/Varianten kommen, sobald wir’s im Kalkulationschat sauber festnageln.
-        </p>
-      </div>
-
-      <div class="products">
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Visitenkarten</span><span>•</span><span>Alu / Metall</span></div>
-          <h3>Metall-Visitenkarten</h3>
-          <p class="kicker">Schwarz, clean, kantig. Ideal als „Business“-Upgrade. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?service=metall&item=visitenkarte">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Visitenkarten">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Flaschenöffner</span><span>•</span><span>Gravur</span></div>
-          <h3>Flaschenöffner</h3>
-          <p class="kicker">Geschenkfähig, robust, sofort verstanden. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?service=metall&item=flaschenoeffner">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Flaschenöffner">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Edelstahl-Schilder</span><span>•</span><span>Werkstatt / Haus</span></div>
-          <h3>Edelstahl-Schilder</h3>
-          <p class="kicker">Koordinaten, Name, Statement, Logo. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?service=metall&item=schild">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Edelstahl-Schild">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
-          <div class="meta"><span class="price">Tags / Plaketten</span><span>•</span><span>Edelstahl / Alu</span></div>
-          <h3>Tags / Plaketten</h3>
-          <p class="kicker">Hundemarken, Geräte-Tags, Seriennummern. Details/Preise folgen.</p>
-          <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?service=metall&item=tag">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/%20Plakette">Anfragen</a>
-          </div>
-        </article>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="/assets/site.js"></script>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    (function(){
-      var track = document.getElementById('metallTrack');
-      if(!track) return;
-
-      var prev = document.querySelector('.reelbtn.prev');
-      var next = document.querySelector('.reelbtn.next');
-
-      // RANDOM: Reihenfolge mischen
-      var slides = Array.prototype.slice.call(track.children);
-      for (var i = slides.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = slides[i];
-        slides[i] = slides[j];
-        slides[j] = tmp;
-      }
-      slides.forEach(function(el){ track.appendChild(el); });
-
-      function slideWidth(){
-        var first = track.querySelector('.reelslide');
-        if(!first) return 320;
-        return first.getBoundingClientRect().width + 12; // +gap
-      }
-
-      if(prev) prev.addEventListener('click', function(){
-        track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
-      });
-      if(next) next.addEventListener('click', function(){
-        track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
-      });
-
-      // AUTOPLAY
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) return;
-
-      var paused = false;
-      var AUTOPLAY_MS = 4600;
-
-      function atEnd(){
-        return (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
-      }
-      function tick(){
-        if(paused) return;
-        if(atEnd()){
-          track.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
-        }
-      }
-
-      var timer = window.setInterval(tick, AUTOPLAY_MS);
-
-      track.addEventListener('mouseenter', function(){ paused = true; });
-      track.addEventListener('mouseleave', function(){ paused = false; });
-      track.addEventListener('touchstart', function(){ paused = true; }, { passive:true });
-      track.addEventListener('touchend', function(){ paused = false; }, { passive:true });
-
-      document.addEventListener('visibilitychange', function(){
-        if(document.hidden){
-          window.clearInterval(timer);
-          timer = null;
-        } else if(!timer){
-          timer = window.setInterval(tick, AUTOPLAY_MS);
-        }
-      });
-    })();
-  </script>
-</body>
-</html>
+  .reelbtn{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:34px;           /* kleiner */
+    height:34px;          /* kleiner */
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.45);
+    color:rgba(255,255,255,.92);
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    z-index:2;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .reelbtn.prev{left:10px}
+  .reelbtn.next{right:10px}
+  @media (max-width: 520px){.reelbtn{display:none}}
+</style>
