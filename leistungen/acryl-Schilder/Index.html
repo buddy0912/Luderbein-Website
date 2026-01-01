@@ -4,64 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Acryl-Schilder – Luderbein</title>
-  <meta name="description" content="Acryl-Schilder: Türschild, Werkstatt, QR/WLAN – clean, urban, robust. Anfrage läuft kurz & direkt." />
+  <meta name="description" content="Acryl-Schilder von Luderbein: clean, kontrastreich, modern. Anfrage per WhatsApp oder Mail." />
   <link rel="stylesheet" href="/assets/style.css" />
-  <style>
-    .thumb.pattern{
-      position:relative;
-      overflow:hidden;
-      padding:0;
-      border-radius:inherit;
-      background:
-        radial-gradient(circle at 20% 25%, rgba(255,255,255,.08) 0 2px, transparent 3px),
-        radial-gradient(circle at 68% 38%, rgba(255,255,255,.06) 0 1px, transparent 2px),
-        radial-gradient(circle at 42% 70%, rgba(255,255,255,.07) 0 2px, transparent 3px),
-        radial-gradient(circle at 86% 78%, rgba(255,255,255,.05) 0 1px, transparent 2px),
-        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,0) 55%),
-        linear-gradient(0deg, rgba(0,0,0,.35), rgba(0,0,0,.15));
-    }
-    .thumb.pattern::before{
-      content:"";
-      position:absolute; inset:-30%;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          rgba(255,255,255,.05) 0 2px,
-          rgba(255,255,255,0) 2px 10px
-        );
-      transform:rotate(-10deg);
-      opacity:.55;
-      mix-blend-mode:screen;
-      pointer-events:none;
-    }
-    .thumb.pattern::after{
-      content:"";
-      position:absolute; inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.55));
-      pointer-events:none;
-    }
-    .patternlabel{
-      position:absolute;
-      left:12px; bottom:12px;
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.16);
-      background:rgba(0,0,0,.45);
-      color:rgba(255,255,255,.92);
-      font-size:12px;
-      letter-spacing:.2px;
-      backdrop-filter: blur(6px);
-    }
-    .patternlabel i{
-      width:8px; height:8px; border-radius:2px;
-      background:rgba(255,255,255,.75);
-      display:inline-block;
-      box-shadow: 0 0 0 2px rgba(255,255,255,.10);
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 <body>
   <header>
@@ -80,7 +25,20 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-        <a href="/leistungen/" aria-current="page">Leistungen</a>
+
+        <!-- Dropdown: Leistungen -->
+        <details class="navdrop" data-navdrop open>
+          <summary class="navdrop__sum" aria-label="Leistungen öffnen">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </summary>
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/acryl-Schilder/" role="menuitem" aria-current="page">Acryl-Schilder</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+          </div>
+        </details>
+
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -94,118 +52,46 @@
       <span class="badge"><i></i> Leistung – Acryl</span>
       <h1>Acryl-Schilder</h1>
       <p class="lead">
-        Türschild, Werkstatt, QR/WLAN — clean, urban, robust.
-        Schnell umsetzbar und perfekt, wenn’s „aufgeräumt“ aussehen soll.
+        Clean, kontrastreich, modern. Kleine Serien oder Einzelstücke – wir klären Material, Größe, Look.
       </p>
-
       <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Acryl-Schilder&note=Typ%3A%20__%20%7C%20Gr%C3%B6%C3%9Fe%3A%20__%20%7C%20Text%2FQR%3A%20__">Anfragen</a>
-        <a class="btn" href="/leistungen/">Alle Leistungen</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">V0-Hinweis:</strong>
-        Preise folgen — aktuell geht’s um schnelle Machbarkeit + sauberen Look.
+        <a class="btn primary" href="/kontakt/?p=Acryl-Schilder">Anfragen</a>
+        <a class="btn" href="/leistungen/">Zurück</a>
       </div>
     </section>
 
     <section class="section">
       <div class="section-head">
-        <h2>Varianten</h2>
-        <p class="small muted">Ohne Foto möglich. Optional mit QR, Icons oder „brösliger“ Typo.</p>
+        <h2>Optionen (V0)</h2>
+        <p class="small muted">Noch ohne Produktkatalog – Anfrage reicht.</p>
       </div>
 
-      <div class="products">
-        <article class="productcard" id="tuerschild">
-          <div class="thumb pattern" aria-label="Pattern">
-            <div class="patternlabel"><i></i> Tür / Klingel</div>
-          </div>
-          <div class="meta">
-            <span class="price">Acryl</span><span>•</span><span>Text</span><span>•</span><span>clean</span>
-          </div>
-          <h3>Türschild / Klingelschild</h3>
-          <p class="kicker">Name, Hausnummer, Zusatz („Bitte klopfen“, „Werkstatt“). Minimal, aber stark.</p>
-          <ul class="bullets">
-            <li>Farben/Look: schwarz/weiß/rot (je nach Material)</li>
-            <li>Option: Abstandshalter / Klebepad</li>
-            <li>Layout: clean oder bewusst „rau“</li>
-          </ul>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl%20T%C3%BCrschild&note=Gr%C3%B6%C3%9Fe%3A%20__%20%7C%20Text%3A%20__%20%7C%20Befestigung%3A%20Kleben%2FAbstandshalter%2F__">Anfragen</a>
-            <a class="btn" href="#ideen">Ideen</a>
-          </div>
-        </article>
-
-        <article class="productcard" id="werkstatt">
-          <div class="thumb pattern" aria-label="Pattern">
-            <div class="patternlabel"><i></i> Werkstatt</div>
-          </div>
-          <div class="meta">
-            <span class="price">Acryl</span><span>•</span><span>Schild</span><span>•</span><span>Industrie</span>
-          </div>
-          <h3>Werkstatt-Schild</h3>
-          <p class="kicker">„No Entry“, „Private“, „Do not touch“ — oder einfach dein Name + Symbol.</p>
-          <ul class="bullets">
-            <li>Optional: Icon (Werkzeug, Warnsymbol, Pfeil)</li>
-            <li>Optional: 2-Layer Look (Kontrast)</li>
-            <li>Robust & gut zu reinigen</li>
-          </ul>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl%20Werkstatt-Schild&note=Gr%C3%B6%C3%9Fe%3A%20__%20%7C%20Text%3A%20__%20%7C%20Icon%20(optional)%3A%20__">Anfragen</a>
-            <a class="btn" href="#ideen">Beispiele</a>
-          </div>
-        </article>
-
-        <article class="productcard" id="qr">
-          <div class="thumb pattern" aria-label="Pattern">
-            <div class="patternlabel"><i></i> QR / WLAN</div>
-          </div>
-          <div class="meta">
-            <span class="price">Acryl</span><span>•</span><span>QR</span><span>•</span><span>praktisch</span>
-          </div>
-          <h3>QR / WLAN Schild</h3>
-          <p class="kicker">WLAN-QR fürs Gästezimmer, Insta/Linktree QR fürs Studio, PayPal-QR fürs Event.</p>
-          <ul class="bullets">
-            <li>QR-Code + Klartext</li>
-            <li>Optional: Logo/Handle</li>
-            <li>Clean, lesbar, kein Zettelchaos</li>
-          </ul>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl%20QR%20%2F%20WLAN&note=Ziel%3A%20WLAN%2FInsta%2FLink%2F__%20%7C%20Text%3A%20__%20%7C%20Link%2FHandle%3A%20__">Anfragen</a>
-            <a class="btn" href="#ideen">Details</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="ideen">
-      <h2>Ideen</h2>
       <div class="grid">
         <div class="card">
-          <h3>Tür</h3>
-          <p>„Luderbein“ · „Werkstatt“ · „Bitte klopfen“ · Hausnummer + Name</p>
+          <h3>Format</h3>
+          <p>Rechteck, rund, Sonderform. Löcher/Abstandshalter nach Bedarf.</p>
         </div>
         <div class="card">
-          <h3>Werkstatt</h3>
-          <p>„NO ENTRY“ · „PRIVATE“ · „DO NOT TOUCH“ · „Safety First“</p>
+          <h3>Look</h3>
+          <p>Gravur, Lackfüllung, Kontrast-Design – je nach Motiv und Einsatz.</p>
         </div>
         <div class="card">
-          <h3>QR</h3>
-          <p>WLAN Gäste · Instagram Handle · Website · Event Payment QR</p>
+          <h3>Einsatz</h3>
+          <p>Beschriftung, Deko, Werkstatt/Studio, Warnhinweise, Labels.</p>
         </div>
       </div>
 
       <div class="section" style="margin-top:16px">
         <div class="notice">
-          <strong style="color:var(--text)">Liefer-Flow:</strong>
-          Du gibst Text/Größe/Look → ich schicke dir einen Entwurf → du sagst „Go“ → ich baue.
+          <strong style="color:var(--text)">Kurz angeben:</strong><br>
+          Größe · Einsatzort · Wunschtext/Logo · ob innen/außen · Befestigung (kleben/schrauben).
         </div>
       </div>
 
       <div class="section" style="margin-top:16px">
         <div class="cta">
-          <a class="btn primary" href="/kontakt/?p=Acryl-Schilder&note=Ich%20will%20ein%20Acrylschild.%20Typ%3A%20__%20%7C%20Gr%C3%B6%C3%9Fe%3A%20__%20%7C%20Text%2FQR%3A%20__">Jetzt anfragen</a>
-          <a class="btn" href="/kontakt/">Kontakt</a>
+          <a class="btn primary" href="/kontakt/?p=Acryl-Schilder&note=Ich%20schicke%20dir%20Text%2FLogo%20und%20Ma%C3%9Fe">Jetzt anfragen</a>
+          <a class="btn" href="/leistungen/">Alle Leistungen</a>
         </div>
       </div>
     </section>
@@ -222,6 +108,7 @@
   </footer>
 
   <script src="/assets/site.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
