@@ -3,14 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Luderbein – Schwibbögen & Gravur</title>
-  <meta name="description" content="Luderbein: Schwibbögen im Erzgebirge-Style – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
+  <title>Luderbein – Gravur & Sonderwünsche</title>
+  <meta name="description" content="Luderbein: Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
 
-  <!-- Cache-Breaker gegen iOS/Cloudflare-Cache -->
   <link rel="stylesheet" href="/assets/style.css?v=9" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
-  <!-- Werkstatt-Feed als Slider -->
   <style>
     .reelslider{
       position:relative;
@@ -77,7 +75,7 @@
     .reelbtn.next{right:10px}
     @media (max-width: 520px){.reelbtn{display:none}}
 
-    /* --- Schiefer-Kachel: Auto-Slideshow im Thumb (ohne Controls) --- */
+    /* --- Schiefer-Kachel: Auto-Slideshow (3 Bilder, Vorschau) --- */
     .thumbslider{
       position:relative;
       width:100%;
@@ -97,13 +95,13 @@
       transform:scale(1.03);
       animation: thumbfade 12s infinite;
     }
-    .thumbslider img:nth-child(1){ animation-delay:0s; opacity:1; }
+    .thumbslider img:nth-child(1){ animation-delay:0s; }
     .thumbslider img:nth-child(2){ animation-delay:4s; }
     .thumbslider img:nth-child(3){ animation-delay:8s; }
 
+    /* WICHTIG: Startet sichtbar, keine "Dauer-Opacity" auf Bild 1 */
     @keyframes thumbfade{
-      0%{opacity:0}
-      6%{opacity:1}
+      0%{opacity:1}
       30%{opacity:1}
       36%{opacity:0}
       100%{opacity:0}
@@ -144,15 +142,17 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/" aria-current="page">Start</a>
 
-        <!-- Leistungen Dropdown (einheitlich) -->
+        <!-- Einheitliches Dropdown: Leistungen -->
         <div class="navdd" data-navdd data-open="0">
-          <a href="/leistungen/">Leistungen</a>
-          <button class="navddbtn" type="button" data-navdd-toggle aria-label="Leistungen öffnen" aria-expanded="false">▾</button>
-          <div class="navddmenu" data-navdd-menu>
-            <a href="/leistungen/schiefer/">Schiefer</a>
-            <a href="/leistungen/metall/">Metall</a>
-            <a href="/schwibboegen/">Holz</a>
-            <a href="/kontakt/?p=Custom">Custom</a>
+          <a class="navdd__link" href="/leistungen/">Leistungen</a>
+          <button class="navdd__toggle" type="button" data-navdd-toggle aria-expanded="false" aria-label="Leistungen öffnen">
+            <span aria-hidden="true">▾</span>
+          </button>
+          <div class="navdd__menu" data-navdd-menu role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/" role="menuitem">Holz</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
           </div>
         </div>
 
@@ -178,7 +178,6 @@
         <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
         <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
-          <!-- reel-01 bis reel-17 -->
           <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03" loading="lazy"></a>
@@ -192,7 +191,6 @@
           <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12" loading="lazy"></a>
 
-          <!-- Metallbilder -->
           <a class="reelslide" href="/assets/reel/reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-13.jpg" alt="Werkstatt Bild 13" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-14.jpg" alt="Werkstatt Bild 14" loading="lazy"></a>
           <a class="reelslide" href="/assets/reel/reel-15.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-15.jpg" alt="Werkstatt Bild 15" loading="lazy"></a>
@@ -204,52 +202,34 @@
 
     <section class="hero">
       <span class="badge"><i></i> Live – V0 (Website im Aufbau)</span>
-      <h1>Schwibbögen, die nicht nach „Standard-Katalog“ schreien.</h1>
+      <h1>Gravur, die nicht nach „Standard-Katalog“ schreit.</h1>
       <p class="lead">
-        Erzgebirge-Feeling, aber mit Luderbein-Kante: sauber gefertigt, gut personalisierbar,
-        und ohne Schnickschnack im Bestellprozess.
+        Sauber gefertigt, gut personalisierbar – und ohne Shop-Schnickschnack.
+        Erst ansehen, dann kalkulieren/anfragen, dann wird gebaut.
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="/schwibboegen/">Schwibbögen ansehen</a>
+        <a class="btn primary" href="/leistungen/">Leistungen ansehen</a>
         <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
       </div>
 
       <div class="grid">
         <div class="card">
           <h3>Echte Personalisierung</h3>
-          <p>Name/Ort/Jahr, Motive, Silhouette – wir machen’s passend, nicht nur „Text drauf“.</p>
+          <p>Name/Datum/Koordinaten, Symbole, Foto – passend statt „Text drauf“.</p>
         </div>
         <div class="card">
           <h3>Saubere Fertigung</h3>
-          <p>Laser + Holz + Feinschliff. Stabil genug, dass man’s auch anfassen darf.</p>
+          <p>Laser + Material + Finish. Stabil genug, dass man’s auch anfassen darf.</p>
         </div>
         <div class="card">
           <h3>Fixe Abstimmung</h3>
-          <p>Kurzer Draht per Mail/WhatsApp. Entwurf, Freigabe, Fertig.</p>
+          <p>Kurzer Draht per Mail/WhatsApp. Entwurf, Freigabe, fertig.</p>
         </div>
       </div>
     </section>
 
-    <section class="signature" aria-label="Luderbein Signature">
-      <div class="sigline" aria-hidden="true"></div>
-      <div class="sigrow">
-        <a class="sigchip is-link" href="/leistungen/schiefer/">
-          <span class="sigk">SCHIEFER</span>
-          <span class="sigv">Foto • Text • Symbole • Gedenktafeln</span>
-        </a>
-        <a class="sigchip is-link" href="/schwibboegen/">
-          <span class="sigk">HOLZ</span>
-          <span class="sigv">Layer • stabil • personalisiert</span>
-        </a>
-        <a class="sigchip is-link" href="/kontakt/">
-          <span class="sigk">CUSTOM</span>
-          <span class="sigv">kurzer Draht • schneller Entwurf</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- Startseite: nur die 4 Kacheln (Schiefer, Holz, Metall, Custom) -->
+    <!-- Startseite: nur die 4 Kacheln -->
     <section class="section" aria-label="Leistungen Preview">
       <div class="section-head">
         <h2>Leistungen</h2>
@@ -257,17 +237,17 @@
       </div>
 
       <div class="products">
-        <!-- SCHIEFER (mit Slideshow im Bild) -->
+        <!-- SCHIEFER (3er-Vorschau) -->
         <article class="productcard">
           <div class="thumb" style="padding:0">
             <a class="thumblink" href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
               <span class="thumbslider" aria-hidden="true">
-                <!-- 1) Fotogravur -->
+                <!-- 1) Foto -->
                 <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
-                <!-- 2) Text & Symbole (wenn Datei fehlt, fallback auf schiefer-home) -->
-                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
-                <!-- 3) Gedenktafel (fallback) -->
-                <img src="/assets/img/schiefer-gedenk.jpg" alt="" loading="lazy" onerror="this.src='/assets/img/schiefer-home.jpg'">
+                <!-- 2) Text & Symbol (wenn Datei fehlt: bleibt leer, KEIN Duplikat-Fallback) -->
+                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+                <!-- 3) Gedenktafeln -->
+                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
               </span>
             </a>
           </div>
@@ -283,16 +263,16 @@
           </div>
         </article>
 
-        <!-- HOLZ -->
+        <!-- HOLZ (vorerst ohne Foto-Fokus, nur Kategorie) -->
         <article class="productcard">
           <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
           <div class="meta">
-            <span class="price">ab 69,95 €</span><span>•</span><span>Schwibbögen • Gravur</span>
+            <span class="price">auf Anfrage</span><span>•</span><span>Gravur • Deko • Sonderteile</span>
           </div>
           <h3>Holz</h3>
-          <p class="kicker">Schwibbögen, Schilder, Deko – urban & sauber, gern personalisiert.</p>
+          <p class="kicker">Schilder, Deko, Gravur – kommt als Nächstes sauber rein.</p>
           <div class="actions">
-            <a class="btn primary" href="/schwibboegen/">Ansehen</a>
+            <a class="btn primary" href="/leistungen/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
           </div>
         </article>
@@ -356,7 +336,6 @@
     </div>
   </footer>
 
-  <!-- Cachebreaker auch für JS -->
   <script src="/assets/site.js?v=10"></script>
   <script src="/assets/nav-dropdown.js"></script>
 
@@ -370,7 +349,7 @@
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
 
-      // --- RANDOM: Reihenfolge der Slides mischen ---
+      // RANDOM: Reihenfolge der Slides mischen
       var slides = Array.prototype.slice.call(track.children);
       for (var i = slides.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -383,7 +362,7 @@
       function slideWidth(){
         var first = track.querySelector('.reelslide');
         if(!first) return 320;
-        return first.getBoundingClientRect().width + 14; // +gap
+        return first.getBoundingClientRect().width + 14;
       }
 
       if(prev) prev.addEventListener('click', function(){
@@ -393,7 +372,6 @@
         track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
       });
 
-      // --- AUTOPLAY (respektiert Reduce Motion) ---
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
 
