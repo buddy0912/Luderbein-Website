@@ -4,25 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Metall – Luderbein</title>
-  <meta name="description" content="Metall bei Luderbein: Gravur auf Edelstahl/Alu, echte Beispiele im Feed + Festprodukte. Erst anschauen, dann entscheiden." />
+  <meta name="description" content="Metall bei Luderbein: Gravur auf Edelstahl/Alu, echte Beispiele im Feed + Festprodukte. Anfrage mit Kontext." />
   <link rel="stylesheet" href="/assets/style.css" />
 
-  <!-- Metall-Feed (eigener Slider) – kleiner/dezenter als Werkstatt-Feed -->
+  <!-- Metall-Feed (eigener Slider) -->
   <style>
     .reelslider{
       position:relative;
       border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.03);
-      padding:8px;            /* kleiner */
+      padding:14px;
       overflow:hidden;
-      max-width:860px;        /* kleiner/zentrierter */
-      margin:0 auto;          /* zentrieren */
     }
-
     .reeltrack{
       display:flex;
-      gap:10px;               /* kleiner */
+      gap:14px;
       overflow:auto;
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
@@ -38,31 +35,29 @@
       overflow:hidden;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(0,0,0,.20);
-      flex:0 0 calc(33.333% - 8px);
+      flex:0 0 calc(33.333% - 10px);
     }
-
     .reelslide img{
       width:100%;
-      height:160px;           /* kleiner */
+      height:240px;
       object-fit:cover;
       display:block;
     }
-
     @media (max-width: 860px){
-      .reelslide{flex-basis:calc(48% - 6px)}
-      .reelslide img{height:150px}
+      .reelslide{flex-basis:calc(50% - 7px)}
+      .reelslide img{height:220px}
     }
     @media (max-width: 520px){
-      .reelslide{flex-basis:82%}
-      .reelslide img{height:185px}
+      .reelslide{flex-basis:86%}
+      .reelslide img{height:240px}
     }
 
     .reelbtn{
       position:absolute;
       top:50%;
       transform:translateY(-50%);
-      width:34px;             /* kleiner */
-      height:34px;            /* kleiner */
+      width:44px;
+      height:44px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.18);
       background:rgba(0,0,0,.45);
@@ -77,6 +72,49 @@
     .reelbtn.prev{left:10px}
     .reelbtn.next{right:10px}
     @media (max-width: 520px){.reelbtn{display:none}}
+
+    /* --- Dropdown: Leistungen (Desktop Hover + Mobile offen) --- */
+    .navdrop{ position:relative; display:inline-flex; align-items:center; }
+    .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
+    .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
+
+    .navdrop__menu{
+      position:absolute;
+      top:calc(100% + 10px);
+      left:0;
+      min-width:240px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,10,12,.95);
+      box-shadow:0 18px 45px rgba(0,0,0,.45);
+      display:none;
+      z-index:50;
+    }
+    .navdrop__menu a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
+
+    .navdrop:hover .navdrop__menu,
+    .navdrop:focus-within .navdrop__menu{ display:block; }
+
+    .nav-open .navdrop{ display:block; }
+    .nav-open .navdrop__top::after{ display:none; }
+    .nav-open .navdrop__menu{
+      position:static;
+      display:block;
+      padding:6px 0 0;
+      margin:0;
+      border:0;
+      background:transparent;
+      box-shadow:none;
+    }
+    .nav-open .navdrop__menu a{ padding:10px 0; }
   </style>
 </head>
 
@@ -97,7 +135,18 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-        <a href="/leistungen/">Leistungen</a>
+
+        <div class="navdrop">
+          <a class="navdrop__top" href="/leistungen/">Leistungen</a>
+          <div class="navdrop__menu" aria-label="Leistungen Untermenü">
+            <a href="/leistungen/schiefer/">Schiefer – Fotogravur</a>
+            <a href="/leistungen/schiefer-text/">Schiefer – Text & Symbole</a>
+            <a href="/leistungen/metall/">Metall</a>
+            <a href="/schwibboegen/">Holz</a>
+            <a href="/kontakt/?p=Custom%20Anfrage">Custom</a>
+          </div>
+        </div>
+
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -107,8 +156,27 @@
   </header>
 
   <main class="wrap">
+    <section class="hero">
+      <span class="badge"><i></i> Metall (V0) – echte Beispiele + Festprodukte</span>
+      <h1>Metall</h1>
+      <p class="lead">
+        Edelstahl/Alu: robust, präzise, urban. Erst Beispiele anschauen, dann entscheiden.
+        Preise sind gerade im Aufbau – bis dahin hilft dir die Upgrade-Kostenrechnung beim Einordnen.
+      </p>
 
-    <!-- Metall-Feed GANZ OBEN -->
+      <div class="cta">
+        <a class="btn primary" href="#feed">Metall-Feed</a>
+        <a class="btn" href="/tools/kalkulator/?service=metall">Upgrade Kostenrechnung</a>
+        <a class="btn" href="#festprodukte">Festprodukte</a>
+      </div>
+
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Hinweis:</strong>
+        Skizzen/Ideenbilder sind ausdrücklich willkommen. Lieber grob und ehrlich als „perfekt“ und unklar.
+      </div>
+    </section>
+
+    <!-- Metall-Feed -->
     <section class="section" id="feed" aria-label="Metall-Feed">
       <div class="section-head">
         <h2>Metall-Feed</h2>
@@ -120,6 +188,7 @@
         <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
         <div class="reeltrack" id="metallTrack" aria-label="Metall Bilder">
+          <!-- Erwartete Dateien in /assets/metall/ -->
           <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-01.jpg" alt="Metall Bild 01" loading="lazy"></a>
           <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-02.jpg" alt="Metall Bild 02" loading="lazy"></a>
           <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-03.jpg" alt="Metall Bild 03" loading="lazy"></a>
@@ -135,31 +204,11 @@
         </div>
       </div>
 
-      <div class="section" style="margin-top:12px">
+      <div class="section" style="margin-top:16px">
         <div class="cta">
           <a class="btn primary" href="/kontakt/?p=Metall%20(Custom%20Anfrage)">Custom Anfrage zu Metall</a>
           <a class="btn" href="/tools/kalkulator/?service=metall">Vorher kurz kalkulieren</a>
         </div>
-      </div>
-    </section>
-
-    <!-- Hero -->
-    <section class="hero" style="margin-top:10px">
-      <span class="badge"><i></i> Metall (V0) – Beispiele + Festprodukte</span>
-      <h1>Metall</h1>
-      <p class="lead">
-        Edelstahl/Alu: robust, präzise, urban. Erst Beispiele anschauen, dann entscheiden.
-        Preise sind im Aufbau – bis dahin hilft dir die Upgrade-Kostenrechnung beim Einordnen.
-      </p>
-
-      <div class="cta">
-        <a class="btn primary" href="/tools/kalkulator/?service=metall">Upgrade Kostenrechnung</a>
-        <a class="btn" href="#festprodukte">Festprodukte</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Hinweis:</strong>
-        Skizzen/Ideenbilder sind ausdrücklich willkommen. Lieber grob und ehrlich als „perfekt“ und unklar.
       </div>
     </section>
 
@@ -169,7 +218,9 @@
     <section class="section" id="festprodukte" aria-label="Metall Festprodukte">
       <div class="section-head">
         <h2>Festprodukte</h2>
-        <p class="small muted">Preise/Varianten kommen, sobald wir’s im Kalkulationschat sauber festnageln.</p>
+        <p class="small muted">
+          Diese Ecke wird zur „klaren Karte“. Preise/Varianten kommen, sobald wir’s im Kalkulationschat sauber festnageln.
+        </p>
       </div>
 
       <div class="products">
@@ -177,7 +228,7 @@
           <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
           <div class="meta"><span class="price">Visitenkarten</span><span>•</span><span>Alu / Metall</span></div>
           <h3>Metall-Visitenkarten</h3>
-          <p class="kicker">Schwarz, clean, kantig. Ideal als „Business“-Upgrade.</p>
+          <p class="kicker">Schwarz, clean, kantig. Ideal als „Business“-Upgrade. Details/Preise folgen.</p>
           <div class="actions">
             <a class="btn primary" href="/tools/kalkulator/?service=metall&item=visitenkarte">Kalkulator</a>
             <a class="btn" href="/kontakt/?p=Metall%20–%20Visitenkarten">Anfragen</a>
@@ -188,7 +239,7 @@
           <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
           <div class="meta"><span class="price">Flaschenöffner</span><span>•</span><span>Gravur</span></div>
           <h3>Flaschenöffner</h3>
-          <p class="kicker">Geschenkfähig, robust, sofort verstanden.</p>
+          <p class="kicker">Geschenkfähig, robust, sofort verstanden. Details/Preise folgen.</p>
           <div class="actions">
             <a class="btn primary" href="/tools/kalkulator/?service=metall&item=flaschenoeffner">Kalkulator</a>
             <a class="btn" href="/kontakt/?p=Metall%20–%20Flaschenöffner">Anfragen</a>
@@ -199,7 +250,7 @@
           <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
           <div class="meta"><span class="price">Edelstahl-Schilder</span><span>•</span><span>Werkstatt / Haus</span></div>
           <h3>Edelstahl-Schilder</h3>
-          <p class="kicker">Koordinaten, Name, Statement, Logo.</p>
+          <p class="kicker">Koordinaten, Name, Statement, Logo. Details/Preise folgen.</p>
           <div class="actions">
             <a class="btn primary" href="/tools/kalkulator/?service=metall&item=schild">Kalkulator</a>
             <a class="btn" href="/kontakt/?p=Metall%20–%20Edelstahl-Schild">Anfragen</a>
@@ -210,10 +261,10 @@
           <div class="thumb" aria-label="Bild folgt in Kürze"><span class="thumblabel">Bild folgt in Kürze</span></div>
           <div class="meta"><span class="price">Tags / Plaketten</span><span>•</span><span>Edelstahl / Alu</span></div>
           <h3>Tags / Plaketten</h3>
-          <p class="kicker">Hundemarken, Geräte-Tags, Seriennummern.</p>
+          <p class="kicker">Hundemarken, Geräte-Tags, Seriennummern. Details/Preise folgen.</p>
           <div class="actions">
             <a class="btn primary" href="/tools/kalkulator/?service=metall&item=tag">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/%20Plakette">Anfragen</a>
+            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/ %20Plakette">Anfragen</a>
           </div>
         </article>
       </div>
@@ -253,8 +304,8 @@
 
       function slideWidth(){
         var first = track.querySelector('.reelslide');
-        if(!first) return 260;
-        return first.getBoundingClientRect().width + 10; // +gap
+        if(!first) return 320;
+        return first.getBoundingClientRect().width + 14;
       }
 
       if(prev) prev.addEventListener('click', function(){
@@ -264,7 +315,7 @@
         track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
       });
 
-      // AUTOPLAY (respektiert Reduce Motion)
+      // AUTOPLAY
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
 
