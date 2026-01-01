@@ -5,6 +5,60 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Datenschutz – Luderbein</title>
   <link rel="stylesheet" href="/assets/style.css" />
+
+  <!-- Leistungen Dropdown (Desktop Hover + Mobile Toggle über site.js) -->
+  <style>
+    .navdrop{ position:relative; display:inline-flex; align-items:center; }
+    .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
+    .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
+
+    .navdrop__menu{
+      position:absolute;
+      top:calc(100% + 10px);
+      left:0;
+      min-width:240px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,10,12,.95);
+      box-shadow:0 18px 45px rgba(0,0,0,.45);
+      display:none;
+      z-index:50;
+    }
+    .navdrop__menu a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
+
+    /* Desktop */
+    .navdrop:hover .navdrop__menu,
+    .navdrop:focus-within .navdrop__menu{ display:block; }
+
+    /* Mobile/Burger offen: Dropdown nicht automatisch */
+    .menu[data-open="1"] .navdrop{ display:block; width:100%; }
+    .menu[data-open="1"] .navdrop__top{ width:100%; justify-content:space-between; }
+    .menu[data-open="1"] .navdrop__top::after{ content:"▸"; opacity:.75; }
+    .menu[data-open="1"] .navdrop.is-open .navdrop__top::after{ content:"▾"; }
+    .menu[data-open="1"] .navdrop:hover .navdrop__menu{ display:none; }
+
+    .menu[data-open="1"] .navdrop__menu{
+      position:static;
+      display:none;
+      min-width:0;
+      padding:6px 0 0;
+      margin:0;
+      border:0;
+      background:transparent;
+      box-shadow:none;
+    }
+    .menu[data-open="1"] .navdrop.is-open .navdrop__menu{ display:block; }
+    .menu[data-open="1"] .navdrop__menu a{ padding:10px 0; border-radius:0; }
+    .menu[data-open="1"] .navdrop__menu a:hover{ background:transparent; opacity:.9; }
+  </style>
 </head>
 <body>
   <header>
@@ -23,7 +77,18 @@
 
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
-        <a href="/leistungen/">Leistungen</a>
+
+        <div class="navdrop">
+          <a href="/leistungen/" class="navdrop__top">Leistungen</a>
+          <div class="navdrop__menu" aria-label="Leistungen Untermenü">
+            <a href="/leistungen/">Alle Leistungen</a>
+            <a href="/leistungen/schiefer/">Schiefer</a>
+            <a href="/leistungen/metall/">Metall</a>
+            <a href="/schwibboegen/">Holz</a>
+            <a href="/kontakt/?p=Custom%20Anfrage">Custom</a>
+          </div>
+        </div>
+
         <a href="/schwibboegen/">Schwibbögen</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -48,7 +113,7 @@
       <div class="small">© <span id="y"></span> Luderbein</div>
       <div class="small">
         <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+        <a href="/rechtliches/datenschutz.html" aria-current="page">Datenschutz</a>
       </div>
     </div>
   </footer>
