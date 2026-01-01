@@ -3,7 +3,7 @@
    - Auto aria-current="page" für die Hauptnavigation
    - Leistungen Dropdown (wird zur Laufzeit in jedem Header erzeugt)
    - Desktop Hover: stabil (großer Close-Delay + kein Hover-Gap)
-   - Mobile (Burger): Leistungen klappt auf / zu, ohne dass Burger schließt
+   - Mobile (Burger): Leistungen klappt auf / zu (iOS-sicher über pointerdown capture)
 */
 
 (function () {
@@ -22,7 +22,6 @@
     const nav = document.querySelector("[data-nav]");
     const menu = document.querySelector('nav[aria-label="Hauptmenü"]');
 
-    // ---------- Helpers ----------
     function isBurgerOpen() {
       return nav && nav.getAttribute("data-open") === "1";
     }
@@ -39,8 +38,6 @@
       btn.setAttribute("aria-expanded", "false");
       nav.setAttribute("data-open", "0");
       document.documentElement.classList.remove("nav-open");
-
-      // alle offenen Submenus einklappen
       document.querySelectorAll(".navdrop.is-open").forEach((el) => el.classList.remove("is-open"));
     }
 
@@ -49,7 +46,7 @@
       isBurgerOpen() ? closeNav() : openNav();
     }
 
-    // ---------- Inject CSS for Dropdown (damit wir nicht an style.css müssen) ----------
+    // ---------- Inject CSS for Dropdown ----------
     (function injectDropdownCSS() {
       const id = "lb-navdrop-css";
       if (document.getElementById(id)) return;
@@ -91,21 +88,15 @@
   border-radius:10px;
   text-decoration:none;
 }
-.navdrop__menu a:hover{
-  background:rgba(255,255,255,.06);
-}
+.navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
 .navdrop.is-open .navdrop__menu{ display:block; }
 
-/* Desktop: Caret optional dezent (bleibt sichtbar, schadet nicht) */
 @media (hover:hover) and (pointer:fine){
   .navdrop__caret{ opacity:.85; }
 }
 
-/* Mobile/Burger: Dropdown wird inline untereinander */
-.nav-open .menu .navdrop{
-  width:100%;
-  display:block;
-}
+/* Mobile/Burger */
+.nav-open .menu .navdrop{ width:100%; display:block; }
 .nav-open .menu .navdrop__toprow{
   display:flex;
   align-items:center;
@@ -129,53 +120,42 @@
       document.head.appendChild(style);
     })();
 
-    // ---------- Build "Leistungen" Dropdown in every header ----------
+    // ---------- Build "Leistungen" Dropdown everywhere ----------
     (function buildLeistungenDropdown() {
       if (!menu) return;
-
-      // Schon vorhanden? Dann nix kaputtmachen.
       if (menu.querySelector(".navdrop")) return;
 
-      // Finde den Leistungen-Link im Menu
       const a = Array.from(menu.querySelectorAll('a[href]')).find((x) => {
         const href = x.getAttribute("href") || "";
         return href === "/leistungen/" || href === "/leistungen";
       });
       if (!a) return;
 
-      // Dropdown Wrapper
       const wrap = document.createElement("div");
       wrap.className = "navdrop";
       wrap.setAttribute("data-navdrop", "leistungen");
 
-      // Toprow (für Burger Layout)
       const topRow = document.createElement("div");
       topRow.className = "navdrop__toprow";
 
-      // Top link (Leistungen bleibt navigierbar)
       const topLink = a.cloneNode(true);
       topLink.className = (topLink.className ? topLink.className + " " : "") + "navdrop__top";
 
-      // Caret Button (Toggle)
       const caret = document.createElement("button");
       caret.type = "button";
       caret.className = "navdrop__caret";
       caret.setAttribute("aria-label", "Leistungen öffnen");
       caret.textContent = "▾";
 
-      // Menu
       const dd = document.createElement("div");
       dd.className = "navdrop__menu";
       dd.setAttribute("role", "menu");
-
-      // Einträge (kannst du später erweitern)
       dd.innerHTML = `
         <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
         <a role="menuitem" href="/leistungen/metall/">Metall</a>
         <a role="menuitem" href="/tools/kalkulator/?t=metall">Kalkulator</a>
       `;
 
-      // Original-Link ersetzen
       a.replaceWith(wrap);
       topRow.appendChild(topLink);
       topRow.appendChild(caret);
@@ -190,24 +170,35 @@
 
       btn.addEventListener("click", toggleNav);
 
-      // Klicklogik im Burger:
-      // - Klick auf Leistungen oder Pfeil toggelt Dropdown, schließt NICHT
-      // - Klick auf Dropdown-Link navigiert + schließt Burger
-      nav.addEventListener("click", (e) => {
-        if (!isBurgerOpen()) return;
+      // iOS-HARTE Lösung:
+      // pointerdown (capture) feuert VOR click -> Dropdown toggeln, bevor irgendwas den Burger schließt
+      nav.addEventListener(
+        "pointerdown",
+        (e) => {
+          if (!isBurgerOpen()) return;
 
-        const drop = e.target.closest(".navdrop");
-        if (drop) {
+          const drop = e.target.closest(".navdrop");
+          if (!drop) return;
+
           const isMenuLink = e.target.closest(".navdrop__menu a");
-          if (isMenuLink) {
-            closeNav();
-            return;
-          }
+          if (isMenuLink) return; // normal navigieren dürfen
 
-          // Alles im navdrop (Toplink / caret / row) toggelt nur
+          // Alles im "Leistungen"-Header toggelt nur (Link/Caret/Row)
           e.preventDefault();
           e.stopPropagation();
           drop.classList.toggle("is-open");
+        },
+        true // CAPTURE!
+      );
+
+      // Click-Handler bleibt für normale Links
+      nav.addEventListener("click", (e) => {
+        if (!isBurgerOpen()) return;
+
+        // Klick im Dropdown-Menü -> schließen
+        const menuLink = e.target.closest(".navdrop__menu a");
+        if (menuLink) {
+          closeNav();
           return;
         }
 
@@ -229,12 +220,12 @@
       });
     }
 
-    // ---------- Desktop Hover: Stabil, kein Glücksspiel ----------
+    // ---------- Desktop Hover: stabil ----------
     (function setupDesktopHover() {
       const drops = Array.from(document.querySelectorAll(".navdrop"));
       if (!drops.length) return;
 
-      const CLOSE_DELAY_MS = 1400; // <- deutlich länger als vorher (iPad Maus-friendly)
+      const CLOSE_DELAY_MS = 1400;
 
       drops.forEach((drop) => {
         let t = null;
@@ -247,7 +238,7 @@
         }
         function openDrop() {
           clearTimer();
-          if (isBurgerOpen()) return; // wenn Burger offen, Desktop-Hover ignorieren
+          if (isBurgerOpen()) return;
           drop.classList.add("is-open");
         }
         function closeDropDelayed() {
@@ -258,26 +249,21 @@
           }, CLOSE_DELAY_MS);
         }
 
-        // Hover-Zone = drop selbst (enthält top + menu)
         drop.addEventListener("mouseenter", openDrop);
         drop.addEventListener("mouseleave", closeDropDelayed);
-
-        // Fokus (Keyboard)
         drop.addEventListener("focusin", openDrop);
         drop.addEventListener("focusout", closeDropDelayed);
 
-        // Caret click (Desktop optional): toggelt
         const caret = drop.querySelector(".navdrop__caret");
         if (caret) {
           caret.addEventListener("click", (e) => {
-            if (isBurgerOpen()) return; // Burger handled oben
+            if (isBurgerOpen()) return;
             e.preventDefault();
             e.stopPropagation();
             drop.classList.toggle("is-open");
           });
         }
 
-        // Klick außerhalb -> zu (Desktop)
         document.addEventListener("click", (e) => {
           if (isBurgerOpen()) return;
           if (e.target.closest(".navdrop")) return;
@@ -287,7 +273,6 @@
     })();
 
     // ---------- Auto aria-current ----------
-    // (bleibt wie gehabt, aber robust)
     if (menu) {
       const links = Array.from(menu.querySelectorAll("a[href]"));
       if (links.length) {
