@@ -7,8 +7,59 @@
   <meta name="description" content="Metall bei Luderbein: Gravur auf Edelstahl/Alu, echte Beispiele im Feed + Festprodukte. Anfrage mit Kontext." />
   <link rel="stylesheet" href="/assets/style.css" />
 
-  <!-- Metall-Feed (eigener Slider) -->
   <style>
+    /* Dropdown: Leistungen (Desktop Hover + Mobile Toggle) */
+    .navdrop{ position:relative; display:inline-flex; align-items:center; }
+    .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
+    .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
+
+    .navdrop__menu{
+      position:absolute;
+      top:calc(100% + 10px);
+      left:0;
+      min-width:240px;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,10,12,.95);
+      box-shadow:0 18px 45px rgba(0,0,0,.45);
+      display:none;
+      z-index:50;
+    }
+    .navdrop__menu a{
+      display:block;
+      padding:10px 12px;
+      border-radius:10px;
+      text-decoration:none;
+      white-space:nowrap;
+    }
+    .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
+
+    .navdrop:hover .navdrop__menu,
+    .navdrop:focus-within .navdrop__menu{ display:block; }
+
+    .menu[data-open="1"] .navdrop{ display:block; width:100%; }
+    .menu[data-open="1"] .navdrop__top{ width:100%; justify-content:space-between; }
+    .menu[data-open="1"] .navdrop__top::after{ content:"▸"; opacity:.75; }
+    .menu[data-open="1"] .navdrop.is-open .navdrop__top::after{ content:"▾"; }
+
+    .menu[data-open="1"] .navdrop:hover .navdrop__menu{ display:none; }
+
+    .menu[data-open="1"] .navdrop__menu{
+      position:static;
+      display:none;
+      min-width:0;
+      padding:6px 0 0;
+      margin:0;
+      border:0;
+      background:transparent;
+      box-shadow:none;
+    }
+    .menu[data-open="1"] .navdrop.is-open .navdrop__menu{ display:block; }
+    .menu[data-open="1"] .navdrop__menu a{ padding:10px 0; border-radius:0; }
+    .menu[data-open="1"] .navdrop__menu a:hover{ background:transparent; opacity:.9; }
+
+    /* Metall-Feed (eigener Slider) */
     .reelslider{
       position:relative;
       border-radius:18px;
@@ -72,49 +123,6 @@
     .reelbtn.prev{left:10px}
     .reelbtn.next{right:10px}
     @media (max-width: 520px){.reelbtn{display:none}}
-
-    /* --- Dropdown: Leistungen (Desktop Hover + Mobile offen) --- */
-    .navdrop{ position:relative; display:inline-flex; align-items:center; }
-    .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
-    .navdrop__top::after{ content:"▾"; font-size:.9em; opacity:.75; }
-
-    .navdrop__menu{
-      position:absolute;
-      top:calc(100% + 10px);
-      left:0;
-      min-width:240px;
-      padding:10px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(10,10,12,.95);
-      box-shadow:0 18px 45px rgba(0,0,0,.45);
-      display:none;
-      z-index:50;
-    }
-    .navdrop__menu a{
-      display:block;
-      padding:10px 12px;
-      border-radius:10px;
-      text-decoration:none;
-      white-space:nowrap;
-    }
-    .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
-
-    .navdrop:hover .navdrop__menu,
-    .navdrop:focus-within .navdrop__menu{ display:block; }
-
-    .nav-open .navdrop{ display:block; }
-    .nav-open .navdrop__top::after{ display:none; }
-    .nav-open .navdrop__menu{
-      position:static;
-      display:block;
-      padding:6px 0 0;
-      margin:0;
-      border:0;
-      background:transparent;
-      box-shadow:none;
-    }
-    .nav-open .navdrop__menu a{ padding:10px 0; }
   </style>
 </head>
 
@@ -136,12 +144,13 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
+        <!-- Leistungen Dropdown -->
         <div class="navdrop">
           <a class="navdrop__top" href="/leistungen/">Leistungen</a>
           <div class="navdrop__menu" aria-label="Leistungen Untermenü">
             <a href="/leistungen/schiefer/">Schiefer – Fotogravur</a>
             <a href="/leistungen/schiefer-text/">Schiefer – Text & Symbole</a>
-            <a href="/leistungen/metall/">Metall</a>
+            <a href="/leistungen/metall/" aria-current="page">Metall</a>
             <a href="/schwibboegen/">Holz</a>
             <a href="/kontakt/?p=Custom%20Anfrage">Custom</a>
           </div>
@@ -176,7 +185,6 @@
       </div>
     </section>
 
-    <!-- Metall-Feed -->
     <section class="section" id="feed" aria-label="Metall-Feed">
       <div class="section-head">
         <h2>Metall-Feed</h2>
@@ -188,7 +196,6 @@
         <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
 
         <div class="reeltrack" id="metallTrack" aria-label="Metall Bilder">
-          <!-- Erwartete Dateien in /assets/metall/ -->
           <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-01.jpg" alt="Metall Bild 01" loading="lazy"></a>
           <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-02.jpg" alt="Metall Bild 02" loading="lazy"></a>
           <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/metall/metall-reel-03.jpg" alt="Metall Bild 03" loading="lazy"></a>
@@ -214,7 +221,6 @@
 
     <div class="hr"></div>
 
-    <!-- Festprodukte -->
     <section class="section" id="festprodukte" aria-label="Metall Festprodukte">
       <div class="section-head">
         <h2>Festprodukte</h2>
@@ -264,7 +270,7 @@
           <p class="kicker">Hundemarken, Geräte-Tags, Seriennummern. Details/Preise folgen.</p>
           <div class="actions">
             <a class="btn primary" href="/tools/kalkulator/?service=metall&item=tag">Kalkulator</a>
-            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/ %20Plakette">Anfragen</a>
+            <a class="btn" href="/kontakt/?p=Metall%20–%20Tag%20/%20Plakette">Anfragen</a>
           </div>
         </article>
       </div>
@@ -285,6 +291,47 @@
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
 
+    // Mobile Toggle für Leistungen-Dropdown (nur wenn Burger-Menü offen)
+    (function(){
+      var nav = document.querySelector('nav.menu[data-nav]');
+      if(!nav) return;
+
+      var drop = nav.querySelector('.navdrop');
+      if(!drop) return;
+
+      var top = drop.querySelector('.navdrop__top');
+      if(!top) return;
+
+      top.setAttribute('aria-haspopup','true');
+      top.setAttribute('aria-expanded','false');
+
+      function isMobileOpen(){
+        return nav.getAttribute('data-open') === '1';
+      }
+      function closeDrop(){
+        drop.classList.remove('is-open');
+        top.setAttribute('aria-expanded','false');
+      }
+
+      top.addEventListener('click', function(e){
+        if(!isMobileOpen()) return;
+        e.preventDefault();
+        var open = drop.classList.toggle('is-open');
+        top.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      document.addEventListener('click', function(e){
+        if(!isMobileOpen()) return;
+        if(drop.contains(e.target)) return;
+        closeDrop();
+      });
+
+      var obs = new MutationObserver(function(){
+        if(!isMobileOpen()) closeDrop();
+      });
+      obs.observe(nav, { attributes:true, attributeFilter:['data-open'] });
+    })();
+
     (function(){
       var track = document.getElementById('metallTrack');
       if(!track) return;
@@ -292,7 +339,6 @@
       var prev = document.querySelector('.reelbtn.prev');
       var next = document.querySelector('.reelbtn.next');
 
-      // RANDOM: Reihenfolge mischen
       var slides = Array.prototype.slice.call(track.children);
       for (var i = slides.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -315,7 +361,6 @@
         track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
       });
 
-      // AUTOPLAY
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduceMotion) return;
 
