@@ -1,94 +1,105 @@
-/* /assets/nav-dropdown.css */
-/* Einheitliches Dropdown für "Leistungen" (Desktop Hover + Mobile Tap) */
+/* /assets/nav-dropdown.css
+   Einheitliches Leistungen-Dropdown (Desktop Hover + Mobile Tap)
+   Fix: iPad/Maus -> Hover bleibt offen (Hover-Brücke)
+   Fix: Burger offen -> Dropdown nur per Tap, nicht per Hover
+*/
 
-.navdrop{
+.menu{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* Dropdown-Wrapper */
+.navdd{
   position:relative;
-  display:inline-flex;
+  display:flex;
   align-items:center;
   gap:6px;
 }
 
-.navdrop > a{
-  white-space:nowrap;
-}
-
-.navdrop-toggle{
-  appearance:none;
+/* Pfeil-Button neben "Leistungen" */
+.navddbtn{
+  width:30px;
+  height:30px;
+  border-radius:10px;
   border:1px solid rgba(255,255,255,.16);
   background:rgba(255,255,255,.06);
-  color:rgba(255,255,255,.85);
-  border-radius:10px;
-  padding:6px 10px;
-  line-height:1;
+  color:rgba(255,255,255,.92);
   cursor:pointer;
+  display:grid;
+  place-items:center;
+  line-height:1;
   user-select:none;
   -webkit-tap-highlight-color:transparent;
 }
+.navddbtn:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
 
-.navdrop-menu{
-  display:none;
+/* Dropdown-Menü */
+.navddmenu{
   position:absolute;
   left:0;
-  top:calc(100% + 10px);
-  min-width:320px;
+  top:100%;
+  margin-top:10px;
+  min-width:240px;
   padding:10px;
   border-radius:14px;
   border:1px solid rgba(255,255,255,.14);
-  background:rgba(10,10,10,.86);
+  background:rgba(10,10,10,.72);
   backdrop-filter: blur(10px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.55);
-  z-index:999;
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  display:none;
+  z-index:9999;
 }
 
-.navdrop.is-open .navdrop-menu{
-  display:block;
+/* iPad/Maus: Hover-Brücke
+   -> verhindert, dass beim Mausweg nach unten der Hover kurz "abbricht"
+*/
+.navdd::after{
+  content:"";
+  position:absolute;
+  left:-8px;
+  right:-8px;
+  top:100%;
+  height:16px; /* Pufferzone */
 }
 
-.navdrop-menu a{
+/* Dropdown-Links sauber ausrichten */
+.navddmenu a{
   display:flex;
-  align-items:baseline;
+  align-items:center;
   justify-content:space-between;
-  gap:14px;
+  gap:12px;
   padding:10px 12px;
   border-radius:12px;
-  white-space:nowrap;
   text-decoration:none;
-  border:1px solid transparent;
+  white-space:nowrap;
 }
-
-.navdrop-menu a:hover{
+.navddmenu a:hover{
   background:rgba(255,255,255,.06);
-  border-color:rgba(255,255,255,.10);
 }
 
-.navdrop-menu a span{
-  font-weight:600;
+/* Desktop: Hover oder Focus hält offen */
+@media (hover:hover){
+  .navdd:hover .navddmenu{ display:block; }
+  .navdd:focus-within .navddmenu{ display:block; }
 }
 
-.navdrop-menu a small{
-  font-size:12px;
-  opacity:.72;
-}
+/* Mobile/Burger: per JS via data-open="1" */
+.navdd[data-open="1"] .navddmenu{ display:block; }
 
-/* Mobile / Burger-Menü: Dropdown innerhalb der Liste ausklappen */
-@media (max-width: 860px){
-  .navdrop{
-    width:100%;
-    display:flex;
-    align-items:center;
-  }
-  .navdrop > a{
-    flex:1;
-  }
-  .navdrop-menu{
-    position:static;
-    min-width:unset;
-    width:100%;
-    margin-top:10px;
-    display:none;
-    box-shadow:none;
-  }
-  .navdrop.is-open .navdrop-menu{
-    display:block;
-  }
+/* Wenn Burger-Menü offen ist (dein site.js setzt data-open="1" auf .menu)
+   -> Dropdown NICHT auf Hover öffnen, nur per Tap/Pfeil
+*/
+.menu[data-open="1"] .navdd:hover .navddmenu{ display:none; }
+.menu[data-open="1"] .navdd:focus-within .navddmenu{ display:none; }
+
+/* Optik: "Leistungen" + Pfeil schön auf eine Höhe */
+.navdd > a{
+  display:inline-flex;
+  align-items:center;
+  line-height:1;
 }
