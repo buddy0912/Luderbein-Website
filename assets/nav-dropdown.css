@@ -1,105 +1,134 @@
 /* /assets/nav-dropdown.css
-   Einheitliches Leistungen-Dropdown (Desktop Hover + Mobile Tap)
-   Fix: iPad/Maus -> Hover bleibt offen (Hover-Brücke)
-   Fix: Burger offen -> Dropdown nur per Tap, nicht per Hover
+   Einheitliches Dropdown für "Leistungen" via <details class="navdrop" data-navdrop> … </details>
+   Fixes:
+   - entfernt den nativen summary-marker ("Punkt/Dreieck")
+   - sorgt für saubere Y-Achsen-Ausrichtung in der Nav
+   - Panel ist standardmäßig zu und öffnet nur, wenn data-open="1"
 */
 
-.menu{
-  display:flex;
-  align-items:center;
-  gap:14px;
+/* 1) Native Marker entfernen (das ist dein "dummer Punkt") */
+.navdrop > summary::-webkit-details-marker { display: none; }
+.navdrop > summary::marker { content: ""; }
+
+/* 2) Nav-Items sauber auf eine Linie zwingen */
+header .nav .menu,
+header .wrap.nav .menu{
+  align-items: center;
 }
 
-/* Dropdown-Wrapper */
-.navdd{
-  position:relative;
-  display:flex;
-  align-items:center;
-  gap:6px;
+header .nav .menu > a,
+header .wrap.nav .menu > a{
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
 }
 
-/* Pfeil-Button neben "Leistungen" */
-.navddbtn{
-  width:30px;
-  height:30px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.06);
-  color:rgba(255,255,255,.92);
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  line-height:1;
-  user-select:none;
-  -webkit-tap-highlight-color:transparent;
-}
-.navddbtn:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:3px;
+/* 3) Details als Nav-Item */
+.navdrop{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  margin: 0;
+  padding: 0;
 }
 
-/* Dropdown-Menü */
-.navddmenu{
-  position:absolute;
-  left:0;
-  top:100%;
-  margin-top:10px;
-  min-width:240px;
-  padding:10px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(10,10,10,.72);
+/* Summary wie ein normaler Nav-Link */
+.navdrop__sum{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+
+  /* gleiche "Höhe" wie die restlichen Links (falls style.css abweicht) */
+  padding: 10px 12px;
+  border-radius: 999px;
+}
+
+/* Hover/Focus dezent */
+.navdrop__sum:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.18);
+}
+
+/* Dein Chevron-Kästchen */
+.navdrop__chev{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 22px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.25);
+}
+
+/* optional: Rotation wenn offen */
+.navdrop[data-open="1"] .navdrop__chev{
+  transform: rotate(180deg);
+}
+
+/* 4) Panel – standardmäßig versteckt */
+.navdrop__panel{
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 220px;
+
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+
+  padding: 10px;
+  border-radius: 14px;
+
+  background: rgba(10,10,12,.92);
+  border: 1px solid rgba(255,255,255,.12);
   backdrop-filter: blur(10px);
-  box-shadow: 0 18px 60px rgba(0,0,0,.45);
-  display:none;
-  z-index:9999;
+  z-index: 999;
 }
 
-/* iPad/Maus: Hover-Brücke
-   -> verhindert, dass beim Mausweg nach unten der Hover kurz "abbricht"
-*/
-.navdd::after{
-  content:"";
-  position:absolute;
-  left:-8px;
-  right:-8px;
-  top:100%;
-  height:16px; /* Pufferzone */
+/* Nur öffnen, wenn JS data-open="1" setzt */
+.navdrop[data-open="1"] .navdrop__panel{
+  display: flex;
 }
 
-/* Dropdown-Links sauber ausrichten */
-.navddmenu a{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:10px 12px;
-  border-radius:12px;
-  text-decoration:none;
-  white-space:nowrap;
-}
-.navddmenu a:hover{
-  background:rgba(255,255,255,.06);
+/* Links im Panel */
+.navdrop__panel a{
+  display: block;
+  padding: 10px 10px;
+  border-radius: 10px;
+  text-decoration: none;
 }
 
-/* Desktop: Hover oder Focus hält offen */
-@media (hover:hover){
-  .navdd:hover .navddmenu{ display:block; }
-  .navdd:focus-within .navddmenu{ display:block; }
+.navdrop__panel a:hover{
+  background: rgba(255,255,255,.08);
 }
 
-/* Mobile/Burger: per JS via data-open="1" */
-.navdd[data-open="1"] .navddmenu{ display:block; }
+/* Trennlinie für "Kalkulator" o.ä. */
+.navdrop__sep{
+  height: 1px;
+  margin: 6px 4px;
+  background: rgba(255,255,255,.10);
+}
 
-/* Wenn Burger-Menü offen ist (dein site.js setzt data-open="1" auf .menu)
-   -> Dropdown NICHT auf Hover öffnen, nur per Tap/Pfeil
-*/
-.menu[data-open="1"] .navdd:hover .navddmenu{ display:none; }
-.menu[data-open="1"] .navdd:focus-within .navddmenu{ display:none; }
-
-/* Optik: "Leistungen" + Pfeil schön auf eine Höhe */
-.navdd > a{
-  display:inline-flex;
-  align-items:center;
-  line-height:1;
+/* 5) Mobile/Burger: Panel nicht absolut, sondern als Liste unter dem Summary */
+@media (max-width: 900px){
+  .navdrop{
+    width: 100%;
+  }
+  .navdrop__sum{
+    width: 100%;
+    justify-content: space-between;
+  }
+  .navdrop__panel{
+    position: static;
+    top: auto;
+    left: auto;
+    min-width: 0;
+    width: 100%;
+    margin-top: 8px;
+  }
 }
