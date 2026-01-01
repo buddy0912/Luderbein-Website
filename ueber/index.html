@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Über – Luderbein</title>
   <meta name="description" content="Über Luderbein: urban, frech, sauber gemacht – mit Liebe zum Detail." />
-  <link rel="stylesheet" href="/assets/style.css" />
-  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <!-- Cache-Breaker gegen iOS/Cloudflare-Cache -->
+  <link rel="stylesheet" href="/assets/style.css?v=9" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css?v=1" />
 </head>
 <body>
   <header>
@@ -138,8 +140,9 @@
     </div>
   </footer>
 
-  <script src="/assets/site.js"></script>
-  <script src="/assets/nav-dropdown.js"></script>
+  <!-- Cachebreaker auch für JS -->
+  <script src="/assets/site.js?v=10"></script>
+  <script src="/assets/nav-dropdown.js?v=1"></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
