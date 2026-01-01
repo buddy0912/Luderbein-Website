@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Schiefer-Fotogravur – Luderbein</title>
-  <meta name="description" content="Schiefer-Fotogravur von Luderbein: Portraits, Haustiere, Erinnerungen. Schnell per Anfrage über WhatsApp oder Mail." />
+  <title>Schiefer – Luderbein</title>
+  <meta name="description" content="Schiefer bei Luderbein: Fotogravur (Portrait/Haustier) oder Text & Symbole (Schilder/Koordinaten). Schnell per Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
 
-  <!-- Dropdown: Leistungen (Desktop Hover + Mobile Toggle) -->
+  <!-- Leistungen Dropdown (Desktop Hover + Mobile Toggle über site.js) -->
   <style>
     .navdrop{ position:relative; display:inline-flex; align-items:center; }
     .navdrop__top{ display:inline-flex; align-items:center; gap:8px; }
@@ -35,20 +35,15 @@
     }
     .navdrop__menu a:hover{ background:rgba(255,255,255,.06); }
 
-    /* Desktop: Hover/Focus zeigt Dropdown */
     .navdrop:hover .navdrop__menu,
     .navdrop:focus-within .navdrop__menu{ display:block; }
 
-    /* Mobile (Burger offen): Dropdown NICHT automatisch offen */
     .menu[data-open="1"] .navdrop{ display:block; width:100%; }
     .menu[data-open="1"] .navdrop__top{ width:100%; justify-content:space-between; }
     .menu[data-open="1"] .navdrop__top::after{ content:"▸"; opacity:.75; }
     .menu[data-open="1"] .navdrop.is-open .navdrop__top::after{ content:"▾"; }
-
-    /* Mobile: Hover soll nix triggern */
     .menu[data-open="1"] .navdrop:hover .navdrop__menu{ display:none; }
 
-    /* Mobile: nur bei is-open sichtbar */
     .menu[data-open="1"] .navdrop__menu{
       position:static;
       display:none;
@@ -64,7 +59,7 @@
     .menu[data-open="1"] .navdrop__menu a:hover{ background:transparent; opacity:.9; }
   </style>
 
-  <!-- Page-only Lightbox (keine anderen Dateien nötig) -->
+  <!-- Page-only Lightbox -->
   <style>
     .thumbbtn{
       all:unset;
@@ -87,7 +82,6 @@
       border:1px solid rgba(255,255,255,.14);
       backdrop-filter: blur(6px);
     }
-
     .lightbox{
       position:fixed;
       inset:0;
@@ -153,12 +147,11 @@
       <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
-        <!-- Leistungen Dropdown -->
         <div class="navdrop">
-          <a class="navdrop__top" href="/leistungen/" aria-current="page">Leistungen</a>
+          <a href="/leistungen/" class="navdrop__top" aria-current="page">Leistungen</a>
           <div class="navdrop__menu" aria-label="Leistungen Untermenü">
-            <a href="/leistungen/schiefer/">Schiefer – Fotogravur</a>
-            <a href="/leistungen/schiefer-text/">Schiefer – Text & Symbole</a>
+            <a href="/leistungen/">Alle Leistungen</a>
+            <a href="/leistungen/schiefer/">Schiefer</a>
             <a href="/leistungen/metall/">Metall</a>
             <a href="/schwibboegen/">Holz</a>
             <a href="/kontakt/?p=Custom%20Anfrage">Custom</a>
@@ -176,28 +169,30 @@
   <main class="wrap">
     <section class="hero">
       <span class="badge"><i></i> Leistung – Schiefer</span>
-      <h1>Schiefer-Fotogravur</h1>
+      <h1>Schiefer</h1>
       <p class="lead">
-        Portraits, Haustiere, Erinnerungen – als echte Gravur auf Schiefer.
-        Du schickst ein Foto, ich sage „taugt / taugt nicht“, dann geht’s los.
+        Zwei Wege, ein Material: <strong>Fotogravur</strong> (Portrait/Haustier) oder
+        <strong>Text & Symbole</strong> (Schilder/Koordinaten/Statements).
+        Du sagst „wofür“ – ich sag „so wird’s gut“.
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Schiefer-Fotogravur&size=20cm">Anfragen</a>
+        <a class="btn primary" href="#foto">Fotogravur</a>
+        <a class="btn" href="#text">Text & Symbole</a>
+        <a class="btn" href="/kontakt/?topic=schiefer">Anfragen</a>
+      </div>
 
-        <a class="btn" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20eine%20Schiefer-Fotogravur%20anfragen.%20%F0%9F%93%B7%0A-%20Durchmesser%2FFormat%3A%2020cm%20(o.%20anders)%0A-%20Motiv%3A%20Portrait%2FHaustier%2Fsonstiges%0A-%20Text%20(optional)%3A%20%0A-%20Foto%20schicke%20ich%20gleich%20mit.%0A" rel="noopener">
-          WhatsApp
-        </a>
-
-        <a class="btn" href="mailto:luderbein_gravur@icloud.com?subject=Anfrage%20Schiefer-Fotogravur%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20eine%20Schiefer-Fotogravur%20anfragen.%0A-%20Durchmesser%2FFormat%3A%2020cm%20(o.%20anders)%0A-%20Motiv%3A%20Portrait%2FHaustier%2Fsonstiges%0A-%20Text%20(optional)%3A%20%0A-%20Foto%20h%C3%A4nge%20ich%20an.%0A%0ADanke!">
-          E-Mail
-        </a>
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Hinweis:</strong>
+        Schiefer ist gnadenlos ehrlich. Gutes Foto = stark. Schlechte Vorlage = Matsch.
+        Ich sag dir vorher, ob’s taugt.
       </div>
     </section>
 
-    <section class="section">
+    <!-- FOTO -->
+    <section class="section" id="foto" aria-label="Schiefer Fotogravur">
       <div class="section-head">
-        <h2>Beispiel</h2>
+        <h2>Fotogravur (Portrait / Haustier)</h2>
         <p class="small muted">Tippen zum Vergrößern. V0 reicht: echt ist besser als perfekt.</p>
       </div>
 
@@ -216,41 +211,19 @@
           </div>
 
           <div class="meta">
-            <span class="price">20 cm</span><span>•</span><span>Schiefer</span><span>•</span><span>Fotogravur</span>
+            <span class="price">ab 9,95 €</span><span>•</span><span>Schiefer</span><span>•</span><span>Fotogravur</span>
           </div>
           <h3>Kontrast. Schärfe. Boom.</h3>
           <p class="kicker">
-            Schiefer ist gnadenlos ehrlich: gutes Foto = starkes Ergebnis.
-            Und wenn’s nicht taugt, sag ich’s dir vorher.
+            Portraits & Haustiere mit sauberem Finish.
+            Optional: Name/Datum/kurzer Satz (dezent, nicht kitschig).
           </p>
 
           <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Schiefer-Fotogravur&size=20cm">Anfragen</a>
-            <a class="btn" href="/leistungen/">Zurück</a>
+            <a class="btn primary" href="/kontakt/?p=Schiefer%20%E2%80%93%20Fotogravur&size=20cm">Anfragen</a>
+            <a class="btn" href="/kontakt/?p=Schiefer%20%E2%80%93%20Foto-Check&note=Ich%20schicke%20dir%20gleich%20ein%20Foto%20zur%20Einsch%C3%A4tzung.">Foto-Check</a>
           </div>
         </article>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Optionen (simpel)</h2>
-        <p class="small muted">Kein Konfigurator-Quatsch. Kurz auswählen, fertig.</p>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>Format</h3>
-          <p>Rund (z. B. 20 cm) oder Platte. Wenn du unsicher bist: Foto schicken, wir klären.</p>
-        </div>
-        <div class="card">
-          <h3>Text (optional)</h3>
-          <p>Name, Datum, kurzer Satz. Dezent – nicht kitschig.</p>
-        </div>
-        <div class="card">
-          <h3>Motiv</h3>
-          <p>Portrait / Haustier / Erinnerung. Hauptsache: gute Lichtquelle & scharf.</p>
-        </div>
       </div>
 
       <div class="section" style="margin-top:16px">
@@ -259,11 +232,36 @@
           gut ausgeleuchtet · nicht verwackelt · Augen erkennbar · keine „Screenshot-vom-Screenshot“-Kette.
         </div>
       </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <!-- TEXT -->
+    <section class="section" id="text" aria-label="Schiefer Text und Symbole">
+      <div class="section-head">
+        <h2>Text & Symbole (Schilder / Koordinaten / Statements)</h2>
+        <p class="small muted">Schnell, clean, urban. Kein Foto nötig.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Koordinaten / Ort / Jahr</h3>
+          <p>Dezent, hochwertig, perfekt als Geschenk oder fürs eigene Zuhause.</p>
+        </div>
+        <div class="card">
+          <h3>Haus / Werkstatt-Schild</h3>
+          <p>Name, Nummer, Icon. Klar lesbar – nicht verspielt.</p>
+        </div>
+        <div class="card">
+          <h3>Spruch / Statement</h3>
+          <p>Frech oder clean. Hauptsache: passt zum Ort, wo’s hängt/steht.</p>
+        </div>
+      </div>
 
       <div class="section" style="margin-top:16px">
         <div class="cta">
-          <a class="btn primary" href="/kontakt/?p=Schiefer-Fotogravur&note=Foto-Check%20(ich%20schicke%20dir%20gleich%20ein%20Foto)">Foto-Check anfragen</a>
-          <a class="btn" href="/leistungen/">Alle Leistungen</a>
+          <a class="btn primary" href="/kontakt/?p=Schiefer%20%E2%80%93%20Text%20%26%20Symbole">Anfragen</a>
+          <a class="btn" href="/kontakt/?p=Schiefer%20%E2%80%93%20Text%20%26%20Symbole&note=Ich%20schicke%20dir%20kurz%20Text%2FMa%C3%9Fe%2FIcon-Idee.">Schnell anstoßen</a>
         </div>
       </div>
     </section>
@@ -272,9 +270,9 @@
 
     <section class="section">
       <h2>Noch was anderes?</h2>
-      <p class="small">Holz, Metall, Acryl, Schmuck – kommt nach und nach rein. Anfrage geht immer.</p>
+      <p class="small">Metall, Holz, Acryl, Schmuck – kommt nach und nach rein. Anfrage geht immer.</p>
       <div class="cta">
-        <a class="btn" href="/leistungen/">Leistungen</a>
+        <a class="btn" href="/leistungen/">Alle Leistungen</a>
         <a class="btn" href="/kontakt/?p=Allgemeine%20Anfrage">Kontakt</a>
       </div>
     </section>
@@ -302,48 +300,6 @@
   <script src="/assets/site.js"></script>
   <script>
     document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Mobile Toggle für Leistungen-Dropdown (nur wenn Burger-Menü offen)
-    (function(){
-      var nav = document.querySelector('nav.menu[data-nav]');
-      if(!nav) return;
-
-      var drop = nav.querySelector('.navdrop');
-      if(!drop) return;
-
-      var top = drop.querySelector('.navdrop__top');
-      if(!top) return;
-
-      top.setAttribute('aria-haspopup','true');
-      top.setAttribute('aria-expanded','false');
-
-      function isMobileOpen(){
-        return nav.getAttribute('data-open') === '1';
-      }
-      function closeDrop(){
-        drop.classList.remove('is-open');
-        top.setAttribute('aria-expanded','false');
-      }
-
-      top.addEventListener('click', function(e){
-        if(!isMobileOpen()) return; // Desktop: normal navigieren
-        e.preventDefault();         // Mobile: togglen statt navigieren
-        var open = drop.classList.toggle('is-open');
-        top.setAttribute('aria-expanded', open ? 'true' : 'false');
-      });
-
-      document.addEventListener('click', function(e){
-        if(!isMobileOpen()) return;
-        if(drop.contains(e.target)) return;
-        closeDrop();
-      });
-
-      // Wenn Burger-Menü schließt -> Dropdown einklappen
-      var obs = new MutationObserver(function(){
-        if(!isMobileOpen()) closeDrop();
-      });
-      obs.observe(nav, { attributes:true, attributeFilter:['data-open'] });
-    })();
 
     // Lightbox
     (function(){
