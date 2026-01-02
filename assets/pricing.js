@@ -11,7 +11,7 @@ window.LUDERBEIN_PRICING = {
 
   shipping: {
     enabled: true,
-    basePrice: 6.95,          // "ab 6,95 €" -> V0: wir rechnen mit 6,95 als Standard
+    basePrice: 6.95,          // V0: Standardversand als Richtwert
     minOrderForShipping: 29.95,
     freeShippingFrom: 80.00,
     label: "Versand (wenn gewünscht)"
@@ -26,8 +26,8 @@ window.LUDERBEIN_PRICING = {
         fotogravur: {
           label: "Fotogravur",
           formats: [
-            { id: "10x10", label: "10×10 cm (eckig)", price: 9.95 },
-            { id: "10r",   label: "10 cm rund",        price: 9.95 },
+            { id: "10x10", label: "10×10 cm (eckig)", price: 14.95 },
+            { id: "10r",   label: "10 cm rund",        price: 14.95 },
 
             { id: "20x20", label: "20×20 cm (eckig)", price: 19.95 },
             { id: "20r",   label: "20 cm rund",       price: 19.95 },
@@ -43,20 +43,18 @@ window.LUDERBEIN_PRICING = {
 
         gedenktafel: {
           label: "Gedenktafel",
-          note: "V0: aktuell nur 10×10 (eckig) / 10 cm rund. Andere Größen vorerst auf Anfrage.",
+          note: "V0: aktuell nur 10×10 (eckig). Rund nur auf Anfrage / Sonderfall.",
           formats: [
-            { id: "10x10", label: "10×10 cm (eckig)", price: 19.95 },
-            { id: "10r",   label: "10 cm rund",        price: 19.95 }
+            { id: "10x10", label: "10×10 cm (eckig)", price: 19.95 }
           ]
         }
       },
 
       upgrades: {
-        widmung:        { label: "Signatur / Widmung", price: 4.95 },
-        standfuss_std:  { label: "3D-gedruckter Standfuß (schwarz)", price: 9.95 },
-        standfuss_prem: { label: "3D-Standfuß Premium (schwarz)", price: 14.95 },
-        wandhalter:     { label: "3D-Wandhalterung (zum Aufhängen)", price: 6.95 },
-        express:        { label: "Express (3 Werktage)", price: 19.95 }
+        widmung:       { label: "Signatur / Widmung", price: 4.95 },
+        standfuss_std: { label: "3D-gedruckter Standfuß (schwarz)", price: 9.95 },
+        wandhalter:    { label: "3D-Wandhalterung (zum Aufhängen)", price: 6.95 },
+        express:       { label: "Express (3 Werktage)", price: 19.95 }
       }
     }
 
