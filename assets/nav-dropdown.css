@@ -1,15 +1,136 @@
-/* Luderbein – nav-dropdown.css v1.1 */
-.navdrop{position:relative;display:inline-block}
-.navdrop__sum{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:inherit;cursor:pointer}
-.navdrop__chev{transition:transform .15s ease;opacity:.85}
-.navdrop[data-open="true"] .navdrop__chev{transform:rotate(180deg)}
-.navdrop__panel{
-  position:absolute;top:calc(100% + 10px);left:0;min-width:220px;
-  background:rgba(10,10,12,.92);border:1px solid rgba(255,255,255,.1);
-  border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.55);
-  padding:10px;opacity:0;pointer-events:none;transform:translateY(-6px);
-  transition:opacity .16s ease,transform .16s ease;z-index:9999;
+/* =========================================================
+   Luderbein – NAVIGATION / DROPDOWN SYSTEM (v1.1)
+   ---------------------------------------------------------
+   - Desktop: Overlay mit Blur + Shadow
+   - Mobile: integriert im Burger-Menü (zentriert)
+   - ARIA & Keyboard accessible
+   ========================================================= */
+
+:root {
+  --navdd-bg: rgba(10,10,12,.92);
+  --navdd-border: rgba(255,255,255,.10);
+  --navdd-shadow: 0 18px 50px rgba(0,0,0,.55);
 }
-.navdrop[data-open="true"] .navdrop__panel{opacity:1;pointer-events:auto;transform:translateY(0)}
-.navdrop__panel a{display:block;padding:10px 12px;border-radius:12px;text-decoration:none;color:inherit}
-.navdrop__panel a:hover{background:rgba(255,255,255,.06)}
+
+/* Container */
+.navdrop {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Trigger-Button */
+.navdrop__sum {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  color: inherit;
+  line-height: 1;
+  background: transparent;
+  border: 0;
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background .15s ease, color .15s ease;
+}
+.navdrop__sum:hover,
+.navdrop[open] .navdrop__sum,
+.navdrop[data-open="true"] .navdrop__sum {
+  background: rgba(255,255,255,.06);
+  color: var(--text, #fff);
+}
+
+/* Chevron */
+.navdrop__chev {
+  display: inline-block;
+  transform-origin: 50% 50%;
+  transition: transform .18s ease;
+  opacity: .85;
+}
+.navdrop[data-open="true"] .navdrop__chev {
+  transform: rotate(180deg);
+}
+
+/* Panel (Dropdown) – Desktop */
+.navdrop__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  max-width: 320px;
+  background: var(--navdd-bg);
+  border: 1px solid var(--navdd-border);
+  border-radius: 14px;
+  box-shadow: var(--navdd-shadow);
+  padding: 10px;
+  z-index: 9999;
+  display: none;
+}
+.navdrop[data-open="true"] .navdrop__panel {
+  display: block;
+}
+
+/* Links */
+.navdrop__panel a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+  transition: background .12s ease;
+}
+.navdrop__panel a:hover,
+.navdrop__panel a:focus {
+  background: rgba(255,255,255,.08);
+  outline: none;
+}
+
+.navdrop__sep {
+  height: 1px;
+  background: rgba(255,255,255,.10);
+  margin: 8px 6px;
+}
+
+/* =========================================================
+   MOBILE (Burger-Menü)
+   ========================================================= */
+@media (max-width: 760px) {
+
+  .menu[data-open="1"] .navdrop {
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu[data-open="1"] .navdrop__sum {
+    justify-content: center;
+    align-items: center;
+    padding: 12px 18px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 18px;
+    background: rgba(255,255,255,.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    width: fit-content;
+    margin: 10px auto 0 auto;
+  }
+
+  .menu[data-open="1"] .navdrop__panel {
+    position: static;
+    display: none;
+    margin: 10px auto 0 auto;
+    min-width: 0;
+    width: min(92vw, 340px);
+    background: rgba(26,26,31,.92);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    box-shadow: var(--navdd-shadow);
+  }
+
+  .menu[data-open="1"] .navdrop[data-open="true"] .navdrop__panel {
+    display: block;
+  }
+}
