@@ -6,6 +6,7 @@
   <title>Luderbein – Schwibbögen & Gravur</title>
   <meta name="description" content="Luderbein – Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail oder WhatsApp." />
 
+  <!-- Styles -->
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
@@ -25,12 +26,12 @@
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav aria-label="Hauptmenü">
+      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <!-- FUNKTIONIERENDES DROPDOWN -->
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button">
+          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
 
@@ -53,27 +54,36 @@
   </header>
 
   <main class="wrap">
+    <!-- HERO -->
     <section class="hero">
-      <span class="badge"><i></i> Live – V1.1 (Website im Aufbau)</span>
+      <span class="badge"><i></i> Live – V1.5 (Website im Aufbau)</span>
       <h1>Gravur, die nicht nach „Standard-Katalog“ schreit.</h1>
-      <p class="lead">Sauber gefertigt, gut personalisiert – und ohne Shop-Schnickschnack. Erst ansehen, dann kalkulieren oder anfragen.</p>
+      <p class="lead">
+        Sauber gefertigt, gut personalisiert – und ohne Shop-Schnickschnack.
+        Erst ansehen, dann kalkulieren oder anfragen.
+      </p>
       <div class="cta">
         <a class="btn primary" href="/leistungen/">Leistungen ansehen</a>
         <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
       </div>
     </section>
 
+    <!-- LEISTUNGEN -->
     <section class="section" aria-label="Leistungen Preview">
       <h2>Leistungen</h2>
+
       <div class="products">
+        <!-- SCHIEFER -->
         <article class="productcard">
           <div class="thumb">
-            <span class="thumbslider">
-              <img src="/assets/img/schiefer-home.jpg" alt="">
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="">
+            <span class="thumbslider" data-thumb-rotator>
+              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel 1">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Schiefer Beispiel 2">
             </span>
           </div>
-          <div class="meta"><span class="price">ab 9,95 €</span><span>•</span><span>Foto • Text • Symbole</span></div>
+          <div class="meta">
+            <span class="price">ab 9,95 €</span><span>•</span><span>Foto • Text • Symbole</span>
+          </div>
           <h3>Schiefer</h3>
           <p class="kicker">Fotogravur, Widmung, Schilder, Erinnerungsstücke – sauber aufbereitet und versiegelt.</p>
           <div class="actions">
@@ -83,6 +93,7 @@
           </div>
         </article>
 
+        <!-- HOLZ -->
         <article class="productcard">
           <div class="thumb"><span class="thumblabel">Holz</span></div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur • Deko</span></div>
@@ -94,6 +105,7 @@
           </div>
         </article>
 
+        <!-- METALL -->
         <article class="productcard">
           <div class="thumb"><span class="thumblabel">Metall</span></div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span></div>
@@ -107,6 +119,7 @@
       </div>
     </section>
 
+    <!-- KONTAKT -->
     <section class="section">
       <h2>Kontakt</h2>
       <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
@@ -115,6 +128,7 @@
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer>
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
@@ -125,11 +139,12 @@
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/thumb-rotator.js"></script>
   <script src="/assets/site.js"></script>
   <script>
-    document.getElementById("y").textContent=new Date().getFullYear();
+    document.getElementById("y").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
