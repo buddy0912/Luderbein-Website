@@ -4,6 +4,7 @@
    - Leistungen Dropdown (wird zur Laufzeit in jedem Header erzeugt)
    - Desktop Hover: stabil (großer Close-Delay + kein Hover-Gap)
    - Mobile (Burger): Leistungen klappt auf / zu (iOS-sicher über pointerdown capture)
+   - ✅ Thumbslider Sync: alle Slideshows laufen synchron (siteweit)
 */
 
 (function () {
@@ -18,6 +19,22 @@
   }
 
   ready(function () {
+    // ✅ THUMBSLIDER SYNC (global, siteweit)
+    (function syncThumbsliders() {
+      try {
+        const root = document.documentElement;
+        const cssCycle = getComputedStyle(root).getPropertyValue("--thumb-cycle").trim();
+        const cycle = parseFloat(cssCycle) || 12; // "12s" -> 12
+
+        const now = Date.now() / 1000; // Sekunden
+        const phase = now % cycle;     // 0..cycle
+        // Negative Delay => Animation wirkt "seit Epoch-Start" laufend
+        root.style.setProperty("--thumb-t0", (-phase).toFixed(3) + "s");
+      } catch (e) {
+        // Wenn was schiefgeht: dann laufen sie halt unsynchron, aber nix bricht.
+      }
+    })();
+
     const btn = document.querySelector("[data-nav-toggle]");
     const nav = document.querySelector("[data-nav]");
     const menu = document.querySelector('nav[aria-label="Hauptmenü"]');
