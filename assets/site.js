@@ -1,29 +1,29 @@
-// Luderbein – site.js v1.1
-(function(){
-"use strict";
-function ready(fn){document.readyState==="loading"?document.addEventListener("DOMContentLoaded",fn):fn();}
-ready(function(){
-  const btn=document.querySelector("[data-nav-toggle]");
-  const nav=document.querySelector("[data-nav]");
-  const menu=document.querySelector('nav[aria-label="Hauptmenü"]');
+// =========================================================
+// Luderbein Site Core v1.2
+// =========================================================
+(function () {
+  "use strict";
 
-  const isOpen=()=>nav?.dataset.open==="true";
-  const setNav=(s)=>{nav.dataset.open=s?"true":"false";btn.setAttribute("aria-expanded",s);};
-  btn&&btn.addEventListener("click",()=>setNav(!isOpen()));
-  document.addEventListener("keydown",e=>e.key==="Escape"&&setNav(false));
-  document.addEventListener("click",e=>{
-    if(e.target.closest("[data-nav]")||e.target.closest("[data-nav-toggle]"))return;
-    setNav(false);
-  });
+  document.addEventListener("DOMContentLoaded", () => {
+    const navBtn = document.querySelector("[data-nav-toggle]");
+    const nav = document.querySelector("[data-nav]");
 
-  // aria-current Auto
-  if(menu){
-    const links=[...menu.querySelectorAll("a[href]")];
-    const current=location.pathname.replace(/index\.html$/i,"")||"/";
-    links.forEach(a=>{
-      const href=new URL(a.getAttribute("href"),location.origin).pathname.replace(/index\.html$/i,"")||"/";
-      if(href!=="/"&&current.startsWith(href))a.setAttribute("aria-current","page");
+    if (navBtn && nav) {
+      navBtn.addEventListener("click", () => {
+        const isOpen = nav.getAttribute("data-open") === "1";
+        nav.setAttribute("data-open", isOpen ? "0" : "1");
+        navBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+      });
+    }
+
+    // Markiere aktiven Menüpunkt
+    const links = document.querySelectorAll("nav.menu a[href]");
+    const path = window.location.pathname.replace(/index\.html$/, "");
+    links.forEach((a) => {
+      const href = a.getAttribute("href").replace(/index\.html$/, "");
+      if (path.startsWith(href) && href !== "/") {
+        a.setAttribute("aria-current", "page");
+      }
     });
-  }
-});
+  });
 })();
