@@ -1,117 +1,142 @@
 /* /assets/nav-dropdown.css */
-/* Einheitliches Dropdown für <details class="navdrop" data-navdrop> in der Hauptnavigation */
+/* Einheitliches Dropdown für "Leistungen" (Safari/iOS/iPad gefixt)
+   - entfernt den nativen details/summary Marker (den "stumpfen Pfeil")
+   - verhindert Layout-Shift: Panel liegt als Overlay (desktop/tablet)
+   - mobile: Optik wie die anderen Menü-Buttons (nicht 100% breit)
+*/
 
-.navdrop {
-  position: relative;
-  display: inline-block;
+:root{
+  --navdd-bg: rgba(10,10,12,.92);
+  --navdd-border: rgba(255,255,255,.10);
+  --navdd-shadow: 0 18px 60px rgba(0,0,0,.55);
 }
 
-/* Summary soll aussehen wie die restlichen Nav-Links */
-.navdrop__sum {
+/* Wichtig: Nichts clippen, sonst wird das Overlay abgeschnitten */
+header, .nav, .menu { overflow: visible; }
+
+/* Details-Wrapper */
+.navdrop{
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Summary wie normaler Nav-Link (desktop/tablet) */
+.navdrop__sum{
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
 
-  /* Optik bewusst nah an "Pill"-Nav gehalten */
-  padding: 10px 14px;
-  border-radius: 999px;
-
-  text-decoration: none;
+  /* reset */
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
   color: inherit;
   font: inherit;
   line-height: 1;
-  white-space: nowrap;
-
-  /* falls deine Links einen Hintergrund/Border haben: */
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.10);
-
-  cursor: pointer;
-  user-select: none;
+  list-style: none;
 }
 
-/* Default Marker/Punkt von <summary> killen */
-.navdrop > summary::-webkit-details-marker { display: none; }
-.navdrop > summary::marker { content: ""; }
-.navdrop__sum { list-style: none; }
+/* Safari/iOS Marker weg (das ist DEIN "stumpfer Pfeil") */
+.navdrop__sum::-webkit-details-marker{ display:none; }
+.navdrop__sum::marker{ content:""; }
 
-/* Chevron */
-.navdrop__chev {
+/* Falls irgendein Browser sich trotzdem "Liste" denkt */
+.navdrop, .navdrop__sum{ list-style: none; }
+
+/* Unser Chevron */
+.navdrop__chev{
   display: inline-block;
-  transform: translateY(0); /* kein Y-Springen */
-  opacity: 0.85;
-  font-size: 0.9em;
+  transform: translateY(1px);
+  opacity: .85;
+  transition: transform .18s ease, opacity .18s ease;
 }
 
-/* Offen -> Chevron drehen */
-.navdrop[open] .navdrop__chev {
-  transform: rotate(180deg);
+.navdrop[open] .navdrop__chev{
+  transform: rotate(180deg) translateY(-1px);
+  opacity: 1;
 }
 
-/* Panel */
-.navdrop__panel {
+/* Panel: Desktop/Tablet als Overlay -> schiebt NICHT nach unten */
+.navdrop__panel{
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-  min-width: 240px;
-  padding: 10px;
-  border-radius: 16px;
-
-  background: rgba(10,10,12,0.86);
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  display: grid;
-  gap: 8px;
   z-index: 9999;
+
+  min-width: 220px;
+  max-width: 340px;
+
+  padding: 10px;
+  border-radius: 14px;
+
+  background: var(--navdd-bg);
+  border: 1px solid var(--navdd-border);
+  box-shadow: var(--navdd-shadow);
+  backdrop-filter: blur(10px);
+
+  display: none;
 }
 
-/* Items im Panel als "Pills" */
-.navdrop__panel a {
+.navdrop[open] .navdrop__panel{ display: block; }
+
+/* Links im Panel */
+.navdrop__panel a{
   display: block;
-  padding: 12px 14px;
-  border-radius: 14px;
+  padding: 10px 12px;
+  border-radius: 12px;
   text-decoration: none;
   color: inherit;
-
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid transparent;
 }
 
-.navdrop__panel a:hover {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.14);
+.navdrop__panel a:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.08);
 }
 
-/* Separator */
-.navdrop__sep {
+/* Trennlinie im Panel */
+.navdrop__sep{
   height: 1px;
-  background: rgba(255,255,255,0.12);
-  margin: 6px 4px;
+  background: rgba(255,255,255,.10);
+  margin: 8px 6px;
 }
 
-/* Mobile / iPad Splitview:
-   Wenn dein Menü in den Burger-Modus geht (meist via style.css),
-   soll das Dropdown-Panel NICHT absolute drüber schweben, sondern im Flow stehen. */
-@media (max-width: 980px) {
-  .navdrop {
-    display: block;
-  }
+/* -----------------------
+   Mobile / Burger-Overlay
+   ----------------------- */
 
-  .navdrop__sum {
-    width: 100%;
-    justify-content: flex-start;
-  }
+/* Wenn dein Burger-Menü offen ist, hat es data-open="1" */
+.menu[data-open="1"] .navdrop{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  .navdrop__panel {
-    position: static;
-    top: auto;
-    left: auto;
-    min-width: 0;
-    margin-top: 10px;
-  }
+/* "Leistungen" Button NICHT full width -> wie Start/Über/Kontakt */
+.menu[data-open="1"] .navdrop__sum{
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  line-height: 1;
+}
+
+/* Mobile Panel soll innerhalb des Menüs aufgehen (ohne Seite zu schieben – die Seite ist eh hinterm Overlay) */
+.menu[data-open="1"] .navdrop__panel{
+  position: static;
+  display: none;
+
+  width: min(420px, calc(100vw - 40px));
+  max-width: none;
+  min-width: 0;
+
+  margin-top: 10px;
+}
+
+.menu[data-open="1"] .navdrop[open] .navdrop__panel{
+  display: block;
 }
