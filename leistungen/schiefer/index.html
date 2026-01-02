@@ -1,8 +1,9 @@
 <!-- =========================
   DATEI: /leistungen/schiefer/index.html
   (Schiefer-Übersicht: Foto / Text / Gedenktafeln)
-  -> Slideshow: Foto (2 Bilder) + Gedenktafeln (3 Bilder)
-  -> Sync erfolgt global über /assets/site.js + /assets/style.css
+  -> Slideshow in Fotokachel (2 Bilder) + Gedenktafel-Kachel (3 Bilder)
+  -> WICHTIG: Alle Slideshows auf der Seite laufen synchron (globaler Takt z.B. alle 3s),
+             egal wie viele Bilder eine Slideshow hat.
 ========================= -->
 <!doctype html>
 <html lang="de">
@@ -13,6 +14,64 @@
   <meta name="description" content="Schiefer von Luderbein: Fotogravur, Text/Symbole und Gedenktafeln. Von allgemein zu spezialisiert – ansehen, kalkulieren, anfragen." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <style>
+    /* =========================================================
+       SYNCHRON-SLIDESHOW (ohne CSS-Animation)
+       - Bilder werden per JS im selben Takt gewechselt
+       - pro Slider beliebig viele Bilder möglich
+       ========================================================= */
+    .thumbslider{
+      position:relative;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      border-radius:inherit;
+      display:block;
+    }
+    .thumbslider img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      opacity:0;
+      transform:scale(1.03);
+      transition: opacity .35s ease;
+      will-change: opacity;
+    }
+    .thumbslider img.is-active{
+      opacity:1;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .thumbslider img{ transition:none; }
+      .thumbslider img{ opacity:0; }
+      .thumbslider img:first-child{ opacity:1; }
+    }
+
+    .thumblink{
+      display:block;
+      width:100%;
+      height:100%;
+      border-radius:inherit;
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+    }
+    .thumbhint{
+      position:absolute;
+      left:10px; bottom:10px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      color:rgba(255,255,255,.92);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(6px);
+    }
+  </style>
 </head>
 
 <body>
@@ -93,13 +152,13 @@
       <!-- FOTO -->
       <article class="productcard" id="kachel-foto">
         <div class="thumb" style="padding:0">
-          <a class="thumblink" href="#foto" aria-label="Schiefer Fotogravur ansehen" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative;overflow:hidden;cursor:pointer;">
-            <span class="thumbslider is-2" aria-hidden="true">
+          <a class="thumblink" href="#foto" aria-label="Schiefer Fotogravur ansehen">
+            <span class="thumbslider" aria-hidden="true">
               <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
               <img src="/assets/img/schiefer-foto-01.jpg" alt="" loading="lazy"
                    onerror="this.src='/assets/img/schiefer-home.jpg'">
             </span>
-            <span class="thumbhint" style="position:absolute;left:10px;bottom:10px;font-size:12px;padding:6px 10px;border-radius:999px;color:rgba(255,255,255,.92);background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter: blur(6px);">Ansehen</span>
+            <span class="thumbhint">Ansehen</span>
           </a>
         </div>
         <div class="meta">
@@ -119,12 +178,12 @@
       <!-- TEXT & SYMBOLE -->
       <article class="productcard" id="kachel-text">
         <div class="thumb" style="padding:0">
-          <a class="thumblink" href="#text" aria-label="Schiefer Text & Symbole ansehen" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative;overflow:hidden;cursor:pointer;">
+          <a class="thumblink" href="#text" aria-label="Schiefer Text & Symbole ansehen">
             <img src="/assets/img/schiefer-text.jpg"
                  alt="Beispiel: Text & Symbole auf Schiefer"
                  style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit"
                  onerror="this.src='/assets/img/schiefer-home.jpg'">
-            <span class="thumbhint" style="position:absolute;left:10px;bottom:10px;font-size:12px;padding:6px 10px;border-radius:999px;color:rgba(255,255,255,.92);background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter: blur(6px);">Ansehen</span>
+            <span class="thumbhint">Ansehen</span>
           </a>
         </div>
         <div class="meta">
@@ -141,11 +200,11 @@
         </div>
       </article>
 
-      <!-- GEDENKTAFELN -->
+      <!-- GEDENKTAFELN (Slideshow) -->
       <article class="productcard" id="kachel-gedenk">
         <div class="thumb" style="padding:0">
-          <a class="thumblink" href="#gedenktafeln" aria-label="Schiefer Gedenktafeln ansehen" style="display:block;width:100%;height:100%;border-radius:inherit;position:relative;overflow:hidden;cursor:pointer;">
-            <span class="thumbslider is-3" aria-hidden="true">
+          <a class="thumblink" href="#gedenktafeln" aria-label="Schiefer Gedenktafeln ansehen">
+            <span class="thumbslider" aria-hidden="true">
               <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="" loading="lazy"
                    onerror="this.src='/assets/img/schiefer-home.jpg'">
               <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="" loading="lazy"
@@ -153,7 +212,7 @@
               <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="" loading="lazy"
                    onerror="this.src='/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg'">
             </span>
-            <span class="thumbhint" style="position:absolute;left:10px;bottom:10px;font-size:12px;padding:6px 10px;border-radius:999px;color:rgba(255,255,255,.92);background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.14);backdrop-filter: blur(6px);">Ansehen</span>
+            <span class="thumbhint">Ansehen</span>
           </a>
         </div>
         <div class="meta">
@@ -284,5 +343,77 @@
 <script src="/assets/site.js"></script>
 <script src="/assets/nav-dropdown.js"></script>
 <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+
+<!-- =========================================================
+     SYNCHRON-SLIDESHOW: globaler Takt für ALLE .thumbslider
+     - alle 3000ms wechseln alle Slider gleichzeitig
+     - Slider mit 2 Bildern laufen im gleichen Takt wie Slider mit 3/5/etc.
+     - prefers-reduced-motion => keine Animation, erstes Bild bleibt
+========================================================= -->
+<script>
+(function () {
+  "use strict";
+
+  var INTERVAL_MS = 3000; // <- hier 2000 oder 3000 einstellen, wie du willst
+
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  } catch (e) {}
+
+  function init() {
+    var sliders = Array.prototype.slice.call(document.querySelectorAll(".thumbslider"));
+    if (!sliders.length) return;
+
+    // Cache: pro Slider die Bilder
+    var entries = sliders.map(function (slider) {
+      var imgs = Array.prototype.slice.call(slider.querySelectorAll("img"));
+      // Startzustand: erstes Bild sichtbar
+      imgs.forEach(function (img, i) { img.classList.toggle("is-active", i === 0); });
+      return { el: slider, imgs: imgs, len: imgs.length, current: 0 };
+    }).filter(function (x) { return x.len > 1; });
+
+    if (!entries.length) return;
+
+    var step = 0;
+    var timer = null;
+
+    function tick() {
+      step++;
+      entries.forEach(function (s) {
+        var next = step % s.len; // <- globaler Schritt, lokal modulo => synchron
+        if (next === s.current) return;
+        if (s.imgs[s.current]) s.imgs[s.current].classList.remove("is-active");
+        if (s.imgs[next]) s.imgs[next].classList.add("is-active");
+        s.current = next;
+      });
+    }
+
+    function start() {
+      if (timer) return;
+      timer = window.setInterval(tick, INTERVAL_MS);
+    }
+
+    function stop() {
+      if (!timer) return;
+      window.clearInterval(timer);
+      timer = null;
+    }
+
+    // Start + Tab-Handling (kein unnötiges Ballern im Hintergrund)
+    start();
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stop();
+      else start();
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+
 </body>
 </html>
