@@ -1,31 +1,32 @@
-/* /assets/nav-dropdown.css */
-/* Einheitliches Dropdown für "Leistungen" (Safari/iOS/iPad gefixt)
-   - entfernt den nativen details/summary Marker (den "stumpfen Pfeil")
-   - verhindert Layout-Shift: Panel liegt als Overlay (desktop/tablet)
-   - mobile: Optik wie die anderen Menü-Buttons (nicht 100% breit)
+/* /assets/nav-dropdown.css (v2) */
+/* Ziel:
+   - iPad/desktop: echtes Dropdown (Overlay unter "Leistungen"), NICHT DropRight
+   - iPhone: "Leistungen" wie die anderen Buttons, zentriert, nicht zu breit
+   - Safari: nativer details/summary Marker weg
 */
 
 :root{
-  --navdd-bg: rgba(10,10,12,.92);
-  --navdd-border: rgba(255,255,255,.10);
-  --navdd-shadow: 0 18px 60px rgba(0,0,0,.55);
+  --dd-bg: rgba(10,10,12,.92);
+  --dd-br: rgba(255,255,255,.10);
+  --dd-sh: 0 18px 60px rgba(0,0,0,.55);
 }
 
-/* Wichtig: Nichts clippen, sonst wird das Overlay abgeschnitten */
+/* nichts clippen */
 header, .nav, .menu { overflow: visible; }
 
-/* Details-Wrapper */
+/* Wrapper */
 .navdrop{
   position: relative;
   display: inline-block;
   vertical-align: middle;
 }
 
-/* Summary wie normaler Nav-Link (desktop/tablet) */
+/* Summary = "Leistungen" */
 .navdrop__sum{
   display: inline-flex;
   align-items: center;
   gap: 6px;
+
   cursor: pointer;
   user-select: none;
 
@@ -40,103 +41,111 @@ header, .nav, .menu { overflow: visible; }
   list-style: none;
 }
 
-/* Safari/iOS Marker weg (das ist DEIN "stumpfer Pfeil") */
+/* Safari marker killen (dein "stumpfer Pfeil") */
 .navdrop__sum::-webkit-details-marker{ display:none; }
 .navdrop__sum::marker{ content:""; }
+.navdrop, .navdrop__sum{ list-style:none; }
 
-/* Falls irgendein Browser sich trotzdem "Liste" denkt */
-.navdrop, .navdrop__sum{ list-style: none; }
-
-/* Unser Chevron */
+/* Chevron */
 .navdrop__chev{
-  display: inline-block;
+  display:inline-block;
   transform: translateY(1px);
-  opacity: .85;
+  opacity:.85;
   transition: transform .18s ease, opacity .18s ease;
 }
-
 .navdrop[open] .navdrop__chev{
   transform: rotate(180deg) translateY(-1px);
   opacity: 1;
 }
 
-/* Panel: Desktop/Tablet als Overlay -> schiebt NICHT nach unten */
+/* =========================
+   DESKTOP / iPAD: Overlay Panel
+   ========================= */
 .navdrop__panel{
   position: absolute;
   top: calc(100% + 10px);
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 9999;
 
+  width: max-content;
   min-width: 220px;
-  max-width: 340px;
+  max-width: min(360px, calc(100vw - 24px));
 
   padding: 10px;
   border-radius: 14px;
-
-  background: var(--navdd-bg);
-  border: 1px solid var(--navdd-border);
-  box-shadow: var(--navdd-shadow);
+  background: var(--dd-bg);
+  border: 1px solid var(--dd-br);
+  box-shadow: var(--dd-sh);
   backdrop-filter: blur(10px);
 
-  display: none;
+  /* HART als Liste – verhindert "DropRight" durch globale Menu/Flex Styles */
+  display: none !important;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.navdrop[open] .navdrop__panel{ display: block; }
+.navdrop[open] .navdrop__panel{
+  display: flex !important;
+}
 
-/* Links im Panel */
+/* Links IM Panel: globales .menu a darf hier NICHT reinfunken */
 .navdrop__panel a{
-  display: block;
+  display: block !important;
+  width: 100%;
   padding: 10px 12px;
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
-  border: 1px solid transparent;
+
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
 }
 
 .navdrop__panel a:hover{
-  background: rgba(255,255,255,.06);
-  border-color: rgba(255,255,255,.08);
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.12);
 }
 
-/* Trennlinie im Panel */
 .navdrop__sep{
   height: 1px;
   background: rgba(255,255,255,.10);
-  margin: 8px 6px;
+  margin: 6px 6px;
 }
 
-/* -----------------------
-   Mobile / Burger-Overlay
-   ----------------------- */
-
-/* Wenn dein Burger-Menü offen ist, hat es data-open="1" */
+/* =========================
+   MOBILE: Burger-Overlay
+   ========================= */
+/* Wenn dein Burger-Menü offen ist (data-open="1") */
 .menu[data-open="1"] .navdrop{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 100%;
+  display: block;
 }
 
-/* "Leistungen" Button NICHT full width -> wie Start/Über/Kontakt */
+/* "Leistungen" soll wie die anderen Pills aussehen & mittig sein */
 .menu[data-open="1"] .navdrop__sum{
   padding: 12px 16px;
   border-radius: 16px;
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(255,255,255,.08);
-  line-height: 1;
+
+  width: fit-content;
+  margin: 0 auto;              /* zentriert */
 }
 
-/* Mobile Panel soll innerhalb des Menüs aufgehen (ohne Seite zu schieben – die Seite ist eh hinterm Overlay) */
+/* Panel im Burger: als Block unter dem Button (im Overlay ok) */
 .menu[data-open="1"] .navdrop__panel{
   position: static;
-  display: none;
+  transform: none;
 
   width: min(420px, calc(100vw - 40px));
   max-width: none;
   min-width: 0;
 
-  margin-top: 10px;
+  margin: 10px auto 0;
+  display: none !important;
 }
 
 .menu[data-open="1"] .navdrop[open] .navdrop__panel{
-  display: block;
+  display: flex !important;
 }
