@@ -87,6 +87,12 @@
         <p class="small muted">Schiefer ist aktiv. Weitere Materialien folgen.</p>
       </div>
 
+      <!-- Preisliste Info -->
+      <div class="notice" id="priceMetaBox" style="display:none;margin-bottom:16px">
+        <strong style="color:var(--text)">Preisliste:</strong>
+        <span id="priceMetaText"></span>
+      </div>
+
       <!-- Kalkulator Box -->
       <div class="calcbox" id="calcBox">
         <!-- Inputs -->
@@ -176,8 +182,30 @@
   <script src="/assets/pricing.js"></script>
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
-    // --- Kalkulator-Logik (dein bestehendes JS bleibt identisch) ---
-    (function(){ /* dein vorhandener Kalkulator-Code unverändert */ })();
+
+    (function(){
+      const P = window.LUDERBEIN_PRICING;
+
+      // === PREISLISTE INFO-BOX ===
+      const $metaBox = document.getElementById('priceMetaBox');
+      const $metaText = document.getElementById('priceMetaText');
+
+      if (P && P.meta) {
+        const { version, updated, note } = P.meta;
+        const parts = [];
+        if (version) parts.push(`v${version}`);
+        if (updated) parts.push(`Stand ${updated}`);
+        if (note) parts.push(note);
+        $metaText.textContent = parts.join(' · ');
+        $metaBox.style.display = 'block';
+      } else {
+        $metaBox.style.display = 'block';
+        $metaText.textContent = 'Preisliste geladen (Stand unbekannt)';
+      }
+
+      if(!P || !P.products) return;
+      // --- Dein vorhandener Kalkulator-Code (aus pricing.js) folgt hier ---
+    })();
   </script>
 </body>
 </html>
