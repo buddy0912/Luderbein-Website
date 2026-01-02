@@ -10,53 +10,53 @@
 </head>
 <body>
   <header>
-  <div class="wrap nav">
-    <a class="brand" href="/">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <strong>Luderbein</strong><br>
-        <span>Schwibbögen • Gravur • Sonderwünsche</span>
-      </div>
-    </a>
-
-    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-      <span class="navicon"><span></span></span>
-    </button>
-
-    <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-      <a href="/">Start</a>
-
-      <!-- EIN Dropdown für Leistungen -->
-      <details class="navdrop" data-navdrop>
-        <summary class="navdrop__sum" aria-label="Leistungen öffnen">
-          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-        </summary>
-
-        <div class="navdrop__panel" role="menu" aria-label="Leistungen">
-          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-          <a href="/leistungen/metall/" role="menuitem">Metall</a>
-          <a href="/leistungen/holz/" role="menuitem">Holz</a>
-          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
-
-          <div class="navdrop__sep" aria-hidden="true"></div>
-
-          <!-- Kalkulator ergänzend -->
-          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-
-          <!-- Routing zur Download-Seite -->
-          <a href="/service/" role="menuitem">Downloads</a>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
         </div>
-      </details>
+      </a>
 
-      <!-- Schwibbögen optional später wieder rein -->
-      <!-- <a href="/schwibboegen/">Schwibbögen</a> -->
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
 
-      <a href="/ueber/">Über</a>
-      <a href="/kontakt/">Kontakt</a>
-      <a href="/rechtliches/impressum.html">Impressum</a>
-    </nav>
-  </div>
-</header>
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+        <a href="/">Start</a>
+
+        <!-- EIN Dropdown für Leistungen -->
+        <details class="navdrop" data-navdrop>
+          <summary class="navdrop__sum" aria-label="Leistungen öffnen">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </summary>
+
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+
+            <div class="navdrop__sep" aria-hidden="true"></div>
+
+            <!-- Kalkulator ergänzend -->
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+
+            <!-- Routing zur Download-Seite -->
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </details>
+
+        <!-- Schwibbögen optional später wieder rein -->
+        <!-- <a href="/schwibboegen/">Schwibbögen</a> -->
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
 
   <main class="wrap">
     <section class="hero">
@@ -92,7 +92,7 @@
           <p class="kicker">Fotogravur, Gedenktafeln, Widmung – sauber aufbereitet und versiegelt.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
-            <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
           </div>
         </article>
 
@@ -103,7 +103,7 @@
           <p class="kicker">Tags, Plaketten, Gravur – robust & präzise.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
-            <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
+            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
           </div>
         </article>
 
@@ -114,11 +114,94 @@
           <p class="kicker">Layer-Look, stabil, personalisierbar.</p>
           <div class="actions">
             <a class="btn primary" href="/schwibboegen/">Ansehen</a>
-            <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
+            <a class="btn" href="/tools/kalkulator/?t=holz">Kalkulieren</a>
           </div>
         </article>
       </div>
     </section>
+
+    <!-- Schiefer-Details: nur sichtbar wenn t=schiefer -->
+    <section class="section" id="schieferConfig" style="display:none">
+      <div class="section-head">
+        <h2>Schiefer – Details</h2>
+        <p class="small muted">Damit du 1:1 die richtige Variante bekommst (rund/eckig pro Größe).</p>
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr; gap: 14px;">
+        <div class="card">
+          <h3>Form</h3>
+          <div class="cta" style="gap:10px; flex-wrap:wrap">
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="shape" value="rund" checked style="margin-right:8px"> rund
+            </label>
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="shape" value="eckig" style="margin-right:8px"> eckig
+            </label>
+          </div>
+          <p class="small muted" style="margin-top:10px">Eckig wird im Text als z. B. „10×10 cm“ ausgegeben.</p>
+        </div>
+
+        <div class="card">
+          <h3>Größe</h3>
+          <div class="cta" style="gap:10px; flex-wrap:wrap">
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="size" value="10" checked style="margin-right:8px"> 10
+            </label>
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="size" value="15" style="margin-right:8px"> 15
+            </label>
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="size" value="20" style="margin-right:8px"> 20
+            </label>
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="size" value="custom" style="margin-right:8px"> anders
+            </label>
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+            <input id="sizeCustom" type="text" inputmode="numeric" placeholder="z. B. 25" style="display:none; max-width:160px" />
+            <span class="small muted" id="sizeUnit" style="display:none">cm</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Art (optional)</h3>
+          <div class="cta" style="gap:10px; flex-wrap:wrap">
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="kind" value="Foto" checked style="margin-right:8px"> Foto
+            </label>
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="kind" value="Text + Symbol" style="margin-right:8px"> Text + Symbol
+            </label>
+            <label class="btn" style="cursor:pointer">
+              <input type="radio" name="kind" value="Gedenktafel" style="margin-right:8px"> Gedenktafel
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Menge (optional)</h3>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+            <input id="qty" type="number" min="1" value="1" style="max-width:120px" />
+            <span class="small muted">Stück</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Text zum Kopieren</h3>
+          <p class="small muted">Das ist der Text, den der Kunde nach der Kalkulation 1:1 schicken kann.</p>
+
+          <textarea id="copyText" rows="7" style="width:100%; resize:vertical"></textarea>
+
+          <div class="cta" style="margin-top:10px; gap:10px; flex-wrap:wrap">
+            <button class="btn" type="button" id="copyBtn">Text kopieren</button>
+            <a class="btn primary" id="waLink2" href="#" rel="noopener">WhatsApp mit Text</a>
+            <a class="btn" id="mailLink2" href="#">E-Mail mit Text</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer>
@@ -138,41 +221,171 @@
 
     (function(){
       const params = new URLSearchParams(location.search);
-      const t = (params.get('t') || '').toLowerCase().trim();
+      let t = (params.get('t') || '').toLowerCase().trim();
 
       const labelMap = { schiefer:'Schiefer', metall:'Metall', holz:'Holz' };
-      if(!labelMap[t]) return;
 
-      // Visuelles Highlight
-      document.querySelectorAll('#choices [data-t]').forEach(card => {
-        if(card.getAttribute('data-t') === t) card.style.outline = '2px solid var(--accent)';
+      // highlight + click behavior
+      const cards = Array.from(document.querySelectorAll('#choices [data-t]'));
+      cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          // nicht die Buttons/Links kapern
+          const tag = (e.target && e.target.tagName || '').toLowerCase();
+          if(tag === 'a' || tag === 'button' || e.target.closest('a,button')) return;
+
+          t = (card.getAttribute('data-t') || '').toLowerCase();
+          params.set('t', t);
+          history.replaceState(null, '', '?' + params.toString());
+          applyMaterial();
+        });
       });
 
-      // Prefill WhatsApp + Mail
-      const material = labelMap[t];
-      const wa = document.getElementById('waLink');
-      const mail = document.getElementById('mailLink');
+      function outlineSelected(){
+        cards.forEach(card => {
+          card.style.outline = (card.getAttribute('data-t') === t) ? '2px solid var(--accent)' : '';
+        });
+      }
 
-      const waText =
-        `Hi Luderbein, ich möchte kalkulieren:\n` +
-        `- Material: ${material}\n` +
-        `- Größe/Format: \n` +
-        `- Motiv/Text: \n` +
-        `- Foto schicke ich gleich mit.\n`;
+      function setBasicLinks(materialLabel){
+        // Prefill WhatsApp + Mail (oben)
+        const wa = document.getElementById('waLink');
+        const mail = document.getElementById('mailLink');
 
-      wa.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(waText);
+        const waText =
+          `Hi Luderbein, ich möchte kalkulieren:\n` +
+          `- Material: ${materialLabel}\n` +
+          `- Größe/Format: \n` +
+          `- Motiv/Text: \n` +
+          `- Foto schicke ich gleich mit.\n`;
 
-      const mailSubject = `Kalkulation ${material} – Luderbein`;
-      const mailBody =
-        `Hi Luderbein,\n\n` +
-        `ich möchte kalkulieren:\n` +
-        `- Material: ${material}\n` +
-        `- Größe/Format: \n` +
-        `- Motiv/Text: \n` +
-        `- Deadline (optional): \n\n` +
-        `Foto hänge ich an.\n\nDanke!`;
+        wa.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(waText);
 
-      mail.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(mailBody);
+        const mailSubject = `Kalkulation ${materialLabel} – Luderbein`;
+        const mailBody =
+          `Hi Luderbein,\n\n` +
+          `ich möchte kalkulieren:\n` +
+          `- Material: ${materialLabel}\n` +
+          `- Größe/Format: \n` +
+          `- Motiv/Text: \n` +
+          `- Deadline (optional): \n\n` +
+          `Foto hänge ich an.\n\nDanke!`;
+
+        mail.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(mailBody);
+      }
+
+      function schieferFormat(shape, size){
+        // size ist Zahl/String (z.B. "10" oder "25")
+        const n = String(size || '').trim();
+        if(!n) return '';
+        if(shape === 'eckig') return `${n}×${n} cm (eckig)`;
+        return `${n} cm (rund)`;
+      }
+
+      function buildSchieferText(){
+        const shape = (document.querySelector('input[name="shape"]:checked')?.value || 'rund');
+        const sizeVal = (document.querySelector('input[name="size"]:checked')?.value || '10');
+        const kind = (document.querySelector('input[name="kind"]:checked')?.value || 'Foto');
+        const qty = (document.getElementById('qty')?.value || '1');
+
+        let size = sizeVal;
+        if(sizeVal === 'custom'){
+          size = (document.getElementById('sizeCustom')?.value || '').trim();
+        }
+
+        const format = schieferFormat(shape, size);
+
+        const text =
+          `Kalkulation – Schiefer\n` +
+          `Form: ${shape}\n` +
+          `Größe/Format: ${format}\n` +
+          `Art: ${kind}\n` +
+          `Menge: ${qty}\n` +
+          `Motiv/Text: \n` +
+          `Hinweis: Foto/Datei sende ich direkt mit.\n`;
+
+        return text;
+      }
+
+      function updateSchieferOutputs(){
+        const txt = buildSchieferText();
+        const ta = document.getElementById('copyText');
+        if(ta) ta.value = txt;
+
+        const wa2 = document.getElementById('waLink2');
+        const mail2 = document.getElementById('mailLink2');
+
+        wa2.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(txt);
+
+        const mailSubject = `Kalkulation Schiefer – Luderbein`;
+        mail2.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(txt);
+      }
+
+      function hookSchieferUI(){
+        const schieferBox = document.getElementById('schieferConfig');
+        if(!schieferBox) return;
+
+        // show/hide custom size input
+        const sizeRadios = Array.from(document.querySelectorAll('input[name="size"]'));
+        const sizeCustom = document.getElementById('sizeCustom');
+        const sizeUnit = document.getElementById('sizeUnit');
+
+        function toggleCustom(){
+          const v = (document.querySelector('input[name="size"]:checked')?.value || '10');
+          const show = (v === 'custom');
+          if(sizeCustom) sizeCustom.style.display = show ? '' : 'none';
+          if(sizeUnit) sizeUnit.style.display = show ? '' : 'none';
+          updateSchieferOutputs();
+        }
+
+        sizeRadios.forEach(r => r.addEventListener('change', toggleCustom));
+        document.querySelectorAll('input[name="shape"], input[name="kind"]').forEach(r => {
+          r.addEventListener('change', updateSchieferOutputs);
+        });
+
+        document.getElementById('qty')?.addEventListener('input', updateSchieferOutputs);
+        sizeCustom?.addEventListener('input', updateSchieferOutputs);
+
+        document.getElementById('copyBtn')?.addEventListener('click', async () => {
+          const ta = document.getElementById('copyText');
+          if(!ta) return;
+          ta.focus();
+          ta.select();
+          try{
+            await navigator.clipboard.writeText(ta.value);
+          }catch(e){
+            document.execCommand('copy');
+          }
+        });
+
+        toggleCustom();
+      }
+
+      function applyMaterial(){
+        outlineSelected();
+
+        const materialLabel = labelMap[t];
+        if(!materialLabel) return;
+
+        setBasicLinks(materialLabel);
+
+        const schieferBox = document.getElementById('schieferConfig');
+        if(schieferBox){
+          const isSchiefer = (t === 'schiefer');
+          schieferBox.style.display = isSchiefer ? '' : 'none';
+          if(isSchiefer){
+            hookSchieferUI();
+            updateSchieferOutputs();
+            // optional: sanft zum Config scrollen
+            setTimeout(() => {
+              schieferBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 50);
+          }
+        }
+      }
+
+      // init
+      if(!labelMap[t]) t = ''; // keine Annahme
+      if(t) applyMaterial();
     })();
   </script>
 </body>
