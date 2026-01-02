@@ -1,72 +1,56 @@
 // /assets/nav-dropdown.js
 // Einheitliche Dropdown-Logik für <details class="navdrop" data-navdrop>
-// Fixes:
-// - entfernt "open" beim Start (damit nix inline aufreißt)
-// - steuert Öffnen/Schließen über data-open (CSS)
-// - stoppt Propagation, damit iPhone/Burger nicht dazwischenfunkt
-// - schließt bei Klick außerhalb / ESC
+// Fix: iOS Tap, schließt bei Außenklick/ESC, nur ein Dropdown gleichzeitig
 
-(function () {
-  function ready(fn) {
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+(function(){
+  function ready(fn){
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
     else fn();
   }
 
-  ready(function () {
-    var dds = Array.prototype.slice.call(document.querySelectorAll("details.navdrop[data-navdrop]"));
-    if (!dds.length) return;
+  ready(function(){
+    var drops = Array.prototype.slice.call(document.querySelectorAll("details[data-navdrop]"));
+    if(!drops.length) return;
 
-    function setOpen(dd, open) {
-      dd.setAttribute("data-open", open ? "1" : "0");
-      if (open) dd.setAttribute("open", "");
-      else dd.removeAttribute("open");
-
-      var sum = dd.querySelector("summary.navdrop__sum");
-      if (sum) sum.setAttribute("aria-expanded", open ? "true" : "false");
-    }
-
-    function closeAll(except) {
-      dds.forEach(function (dd) {
-        if (dd !== except) setOpen(dd, false);
+    function closeAll(except){
+      drops.forEach(function(d){
+        if(d !== except) d.removeAttribute("open");
       });
     }
 
-    // Init: alles zu (wichtig, damit "Schiefer/Metall/..." nicht inline stehen)
-    dds.forEach(function (dd) {
-      setOpen(dd, false);
+    // Toggle über summary-klick (sauber, ohne default-quirks)
+    drops.forEach(function(d){
+      var sum = d.querySelector("summary");
+      if(!sum) return;
 
-      var sum = dd.querySelector("summary.navdrop__sum");
-      var panel = dd.querySelector(".navdrop__panel");
-
-      if (!sum || !panel) return;
-
-      sum.setAttribute("aria-expanded", "false");
-
-      // Toggle nur über Summary-Click
-      sum.addEventListener("click", function (e) {
-        // verhindert native details-toggle + verhindert "Burger schließt" Nebenwirkungen
+      sum.addEventListener("click", function(e){
+        // wir togglen selbst, damit's überall gleich ist
         e.preventDefault();
         e.stopPropagation();
 
-        var isOpen = dd.getAttribute("data-open") === "1";
-        closeAll(dd);
-        setOpen(dd, !isOpen);
+        var willOpen = !d.hasAttribute("open");
+        closeAll(d);
+        if(willOpen) d.setAttribute("open", "");
+        else d.removeAttribute("open");
       });
 
-      // Klick im Panel darf nicht als "außen" zählen
-      panel.addEventListener("click", function (e) {
-        e.stopPropagation();
-      });
+      // Klick im Panel nicht als Außenklick werten
+      var panel = d.querySelector(".navdrop__panel");
+      if(panel){
+        panel.addEventListener("click", function(e){
+          e.stopPropagation();
+        });
+      }
     });
 
-    // Klick außerhalb -> alles zu
-    document.addEventListener("click", function () {
+    // Außenklick => zu
+    document.addEventListener("click", function(){
       closeAll(null);
     });
 
-    // ESC -> alles zu
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeAll(null);
+    // ESC => zu
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape") closeAll(null);
     });
   });
 })();
