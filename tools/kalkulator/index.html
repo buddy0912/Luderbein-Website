@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="V0 Kalkulator: grob auswählen, dann direkt per WhatsApp oder E-Mail anfragen." />
+  <meta name="description" content="V0 Kalkulator: auswählen, Text erzeugen, 1:1 per WhatsApp oder E-Mail schicken." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
@@ -40,16 +40,10 @@
 
             <div class="navdrop__sep" aria-hidden="true"></div>
 
-            <!-- Kalkulator ergänzend -->
-            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-
-            <!-- Routing zur Download-Seite -->
+            <a href="/tools/kalkulator/" role="menuitem" aria-current="page">Kalkulator</a>
             <a href="/service/" role="menuitem">Downloads</a>
           </div>
         </details>
-
-        <!-- Schwibbögen optional später wieder rein -->
-        <!-- <a href="/schwibboegen/">Schwibbögen</a> -->
 
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
@@ -63,145 +57,152 @@
       <span class="badge"><i></i> Tool</span>
       <h1>Kalkulator (V0)</h1>
       <p class="lead">
-        Noch ohne Fancy-Konfigurator: du wählst grob die Richtung – und wir klären den Rest per WhatsApp/Mail.
+        Du wählst grob vor – der Kalkulator erzeugt dir einen fertigen Text.
+        Den schickst du 1:1 per WhatsApp oder Mail. Kein Shop-Gedöns.
       </p>
 
       <div class="notice">
         <strong style="color:var(--text)">Hinweis:</strong><br>
-        “Kalkulieren” heißt hier: schneller Preisrahmen + Rückfragen, keine automatische Endsumme.
+        “Kalkulieren” heißt hier: Preisrahmen + Rückfragen. Kein automatischer Endpreis.
       </div>
 
       <div class="cta" style="margin-top:14px">
-        <a class="btn primary" id="waLink" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20kalkulieren%3A%0A-%20Material%3A%20%0A-%20Gr%C3%B6%C3%9Fe%2FFormat%3A%20%0A-%20Motiv%2FText%3A%20%0A-%20Foto%20schicke%20ich%20gleich%20mit.%0A" rel="noopener">WhatsApp</a>
-
-        <a class="btn" id="mailLink" href="mailto:luderbein_gravur@icloud.com?subject=Kalkulation%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20kalkulieren%3A%0A-%20Material%3A%20%0A-%20Gr%C3%B6%C3%9Fe%2FFormat%3A%20%0A-%20Motiv%2FText%3A%20%0A-%20Deadline%20(optional)%3A%20%0A%0AFoto%20h%C3%A4nge%20ich%20an.%0A%0ADanke!">E-Mail</a>
+        <a class="btn primary" id="waLinkTop" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20kalkulieren%3A%0A" rel="noopener">WhatsApp</a>
+        <a class="btn" id="mailLinkTop" href="mailto:luderbein_gravur@icloud.com?subject=Kalkulation%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20kalkulieren%3A%0A">E-Mail</a>
+        <a class="btn" href="/kontakt/?p=Custom">Sonderanfrage</a>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" aria-label="Kalkulator Auswahl">
       <div class="section-head">
-        <h2>Auswahl</h2>
-        <p class="small muted">Klick = setzt Kontext. Du kannst danach trotzdem alles frei beschreiben.</p>
+        <h2>Kalkulieren</h2>
+        <p class="small muted">Erst Oberkategorie wählen → dann Details. Unten entsteht dein fertiger Text.</p>
       </div>
 
-      <div class="products" id="choices">
-        <article class="productcard" data-t="schiefer">
-          <div class="thumb" aria-label="Schiefer"><span class="thumblabel">Schiefer</span></div>
-          <div class="meta"><span class="price">Foto • Text • Symbole</span></div>
-          <h3>Schiefer</h3>
-          <p class="kicker">Fotogravur, Gedenktafeln, Widmung – sauber aufbereitet und versiegelt.</p>
-          <div class="actions">
-            <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-          </div>
-        </article>
-
-        <article class="productcard" data-t="metall">
-          <div class="thumb" aria-label="Metall"><span class="thumblabel">Metall</span></div>
-          <div class="meta"><span class="price">Edelstahl / Alu</span></div>
-          <h3>Metall</h3>
-          <p class="kicker">Tags, Plaketten, Gravur – robust & präzise.</p>
-          <div class="actions">
-            <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
-          </div>
-        </article>
-
-        <article class="productcard" data-t="holz">
-          <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
-          <div class="meta"><span class="price">Schwibbögen • Deko</span></div>
-          <h3>Holz</h3>
-          <p class="kicker">Layer-Look, stabil, personalisierbar.</p>
-          <div class="actions">
-            <a class="btn primary" href="/schwibboegen/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=holz">Kalkulieren</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- Schiefer-Details: nur sichtbar wenn t=schiefer -->
-    <section class="section" id="schieferConfig" style="display:none">
-      <div class="section-head">
-        <h2>Schiefer – Details</h2>
-        <p class="small muted">Damit du 1:1 die richtige Variante bekommst (rund/eckig pro Größe).</p>
-      </div>
-
-      <div class="grid" style="grid-template-columns: 1fr; gap: 14px;">
+      <div class="grid" style="grid-template-columns: 1fr; gap:14px;">
         <div class="card">
-          <h3>Form</h3>
-          <div class="cta" style="gap:10px; flex-wrap:wrap">
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="shape" value="rund" checked style="margin-right:8px"> rund
-            </label>
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="shape" value="eckig" style="margin-right:8px"> eckig
-            </label>
+          <h3>Oberkategorie</h3>
+
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <select id="material" style="max-width:320px;">
+              <option value="" selected>Bitte wählen…</option>
+              <option value="schiefer">Schiefer</option>
+              <option value="metall">Metall</option>
+              <option value="holz">Holz</option>
+              <option value="custom">Custom / Sonderfall</option>
+            </select>
+
+            <a class="btn" href="/leistungen/">Info-Bereich (Leistungen)</a>
           </div>
-          <p class="small muted" style="margin-top:10px">Eckig wird im Text als z. B. „10×10 cm“ ausgegeben.</p>
+
+          <p class="small muted" style="margin-top:10px">
+            Tipp: Wenn du nur “irgendwas Wildes” willst → Custom wählen.
+          </p>
         </div>
 
-        <div class="card">
-          <h3>Größe</h3>
-          <div class="cta" style="gap:10px; flex-wrap:wrap">
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="size" value="10" checked style="margin-right:8px"> 10
-            </label>
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="size" value="15" style="margin-right:8px"> 15
-            </label>
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="size" value="20" style="margin-right:8px"> 20
-            </label>
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="size" value="custom" style="margin-right:8px"> anders
-            </label>
-          </div>
+        <!-- SCHIEFER (spezial) -->
+        <div class="card" id="schieferBox" style="display:none;">
+          <h3>Schiefer – Details</h3>
 
-          <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap">
-            <input id="sizeCustom" type="text" inputmode="numeric" placeholder="z. B. 25" style="display:none; max-width:160px" />
-            <span class="small muted" id="sizeUnit" style="display:none">cm</span>
+          <div class="grid" style="grid-template-columns: 1fr; gap:12px;">
+            <div>
+              <strong>Form</strong>
+              <div class="cta" style="gap:10px; flex-wrap:wrap; margin-top:10px;">
+                <label class="btn" style="cursor:pointer">
+                  <input type="radio" name="shape" value="rund" checked style="margin-right:8px"> rund
+                </label>
+                <label class="btn" style="cursor:pointer">
+                  <input type="radio" name="shape" value="eckig" style="margin-right:8px"> eckig
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <strong>Größe</strong>
+              <div class="cta" style="gap:10px; flex-wrap:wrap; margin-top:10px;">
+                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="10" checked style="margin-right:8px"> 10</label>
+                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="15" style="margin-right:8px"> 15</label>
+                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="20" style="margin-right:8px"> 20</label>
+                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="custom" style="margin-right:8px"> anders</label>
+              </div>
+
+              <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input id="sizeCustom" type="text" inputmode="numeric" placeholder="z. B. 25" style="display:none; max-width:160px" />
+                <span class="small muted" id="sizeUnit" style="display:none">cm</span>
+              </div>
+            </div>
+
+            <div>
+              <strong>Art (optional)</strong>
+              <div class="cta" style="gap:10px; flex-wrap:wrap; margin-top:10px;">
+                <label class="btn" style="cursor:pointer"><input type="radio" name="kind" value="Foto" checked style="margin-right:8px"> Foto</label>
+                <label class="btn" style="cursor:pointer"><input type="radio" name="kind" value="Text + Symbol" style="margin-right:8px"> Text + Symbol</label>
+                <label class="btn" style="cursor:pointer"><input type="radio" name="kind" value="Gedenktafel" style="margin-right:8px"> Gedenktafel</label>
+              </div>
+            </div>
+
+            <div>
+              <strong>Menge</strong>
+              <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input id="qtySchiefer" type="number" min="1" value="1" style="max-width:120px" />
+                <span class="small muted">Stück</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card">
-          <h3>Art (optional)</h3>
-          <div class="cta" style="gap:10px; flex-wrap:wrap">
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="kind" value="Foto" checked style="margin-right:8px"> Foto
-            </label>
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="kind" value="Text + Symbol" style="margin-right:8px"> Text + Symbol
-            </label>
-            <label class="btn" style="cursor:pointer">
-              <input type="radio" name="kind" value="Gedenktafel" style="margin-right:8px"> Gedenktafel
-            </label>
+        <!-- GENERISCH (Metall/Holz/Custom) -->
+        <div class="card" id="genericBox" style="display:none;">
+          <h3 id="genericTitle">Details</h3>
+
+          <div class="grid" style="grid-template-columns: 1fr; gap:12px;">
+            <div>
+              <strong>Produkt / Artikel</strong>
+              <input id="prodName" type="text" placeholder="z. B. Hundemarke, Visitenkarte, Schild, Schwibbogen…" style="width:100%; margin-top:10px;" />
+            </div>
+
+            <div>
+              <strong>Größe / Format</strong>
+              <input id="format" type="text" placeholder="z. B. 12 mm rund / 80×50 mm / A3 / 20×20 cm" style="width:100%; margin-top:10px;" />
+            </div>
+
+            <div>
+              <strong>Menge</strong>
+              <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input id="qtyGeneric" type="number" min="1" value="1" style="max-width:120px" />
+                <span class="small muted">Stück</span>
+              </div>
+            </div>
+
+            <div>
+              <strong>Motiv / Text / Wunsch</strong>
+              <textarea id="wish" rows="4" style="width:100%; resize:vertical; margin-top:10px;" placeholder="Kurz beschreiben: Text, Motiv, Icon, Stil, ggf. Link/Datei…"></textarea>
+            </div>
+          </div>
+
+          <div class="notice" style="margin-top:12px;">
+            <strong style="color:var(--text)">Wenn du Dateien hast:</strong>
+            Foto/Logo/Skizze direkt mit schicken – spart 2 Runden.
           </div>
         </div>
 
-        <div class="card">
-          <h3>Menge (optional)</h3>
-          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
-            <input id="qty" type="number" min="1" value="1" style="max-width:120px" />
-            <span class="small muted">Stück</span>
-          </div>
-        </div>
+        <!-- OUTPUT -->
+        <div class="card" id="outBox" style="display:none;">
+          <h3>Fertiger Text</h3>
+          <p class="small muted">Das schickst du 1:1 (oder passt es kurz an).</p>
 
-        <div class="card">
-          <h3>Text zum Kopieren</h3>
-          <p class="small muted">Das ist der Text, den der Kunde nach der Kalkulation 1:1 schicken kann.</p>
+          <textarea id="outText" rows="8" style="width:100%; resize:vertical"></textarea>
 
-          <textarea id="copyText" rows="7" style="width:100%; resize:vertical"></textarea>
-
-          <div class="cta" style="margin-top:10px; gap:10px; flex-wrap:wrap">
+          <div class="cta" style="margin-top:10px; gap:10px; flex-wrap:wrap;">
             <button class="btn" type="button" id="copyBtn">Text kopieren</button>
-            <a class="btn primary" id="waLink2" href="#" rel="noopener">WhatsApp mit Text</a>
-            <a class="btn" id="mailLink2" href="#">E-Mail mit Text</a>
+            <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp mit Text</a>
+            <a class="btn" id="mailLink" href="#">E-Mail mit Text</a>
+            <a class="btn" href="/kontakt/?p=Custom">Sonderanfrage</a>
           </div>
         </div>
+
       </div>
     </section>
-
   </main>
 
   <footer>
@@ -221,171 +222,176 @@
 
     (function(){
       const params = new URLSearchParams(location.search);
-      let t = (params.get('t') || '').toLowerCase().trim();
 
-      const labelMap = { schiefer:'Schiefer', metall:'Metall', holz:'Holz' };
+      const material = document.getElementById('material');
 
-      // highlight + click behavior
-      const cards = Array.from(document.querySelectorAll('#choices [data-t]'));
-      cards.forEach(card => {
-        card.addEventListener('click', (e) => {
-          // nicht die Buttons/Links kapern
-          const tag = (e.target && e.target.tagName || '').toLowerCase();
-          if(tag === 'a' || tag === 'button' || e.target.closest('a,button')) return;
+      const schieferBox = document.getElementById('schieferBox');
+      const genericBox = document.getElementById('genericBox');
+      const genericTitle = document.getElementById('genericTitle');
 
-          t = (card.getAttribute('data-t') || '').toLowerCase();
-          params.set('t', t);
-          history.replaceState(null, '', '?' + params.toString());
-          applyMaterial();
-        });
-      });
+      const outBox = document.getElementById('outBox');
+      const outText = document.getElementById('outText');
 
-      function outlineSelected(){
-        cards.forEach(card => {
-          card.style.outline = (card.getAttribute('data-t') === t) ? '2px solid var(--accent)' : '';
-        });
-      }
+      const waLink = document.getElementById('waLink');
+      const mailLink = document.getElementById('mailLink');
 
-      function setBasicLinks(materialLabel){
-        // Prefill WhatsApp + Mail (oben)
-        const wa = document.getElementById('waLink');
-        const mail = document.getElementById('mailLink');
+      const waLinkTop = document.getElementById('waLinkTop');
+      const mailLinkTop = document.getElementById('mailLinkTop');
 
-        const waText =
-          `Hi Luderbein, ich möchte kalkulieren:\n` +
-          `- Material: ${materialLabel}\n` +
-          `- Größe/Format: \n` +
-          `- Motiv/Text: \n` +
-          `- Foto schicke ich gleich mit.\n`;
-
-        wa.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(waText);
-
-        const mailSubject = `Kalkulation ${materialLabel} – Luderbein`;
-        const mailBody =
-          `Hi Luderbein,\n\n` +
-          `ich möchte kalkulieren:\n` +
-          `- Material: ${materialLabel}\n` +
-          `- Größe/Format: \n` +
-          `- Motiv/Text: \n` +
-          `- Deadline (optional): \n\n` +
-          `Foto hänge ich an.\n\nDanke!`;
-
-        mail.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(mailBody);
-      }
+      const sizeCustom = document.getElementById('sizeCustom');
+      const sizeUnit = document.getElementById('sizeUnit');
 
       function schieferFormat(shape, size){
-        // size ist Zahl/String (z.B. "10" oder "25")
         const n = String(size || '').trim();
         if(!n) return '';
         if(shape === 'eckig') return `${n}×${n} cm (eckig)`;
         return `${n} cm (rund)`;
       }
 
-      function buildSchieferText(){
-        const shape = (document.querySelector('input[name="shape"]:checked')?.value || 'rund');
-        const sizeVal = (document.querySelector('input[name="size"]:checked')?.value || '10');
-        const kind = (document.querySelector('input[name="kind"]:checked')?.value || 'Foto');
-        const qty = (document.getElementById('qty')?.value || '1');
+      function getSelected(name){
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? el.value : '';
+      }
 
-        let size = sizeVal;
-        if(sizeVal === 'custom'){
-          size = (document.getElementById('sizeCustom')?.value || '').trim();
+      function buildText(){
+        const m = (material.value || '').trim();
+
+        if(!m) return '';
+
+        if(m === 'schiefer'){
+          const shape = getSelected('shape') || 'rund';
+          const sizeVal = getSelected('size') || '10';
+          const kind = getSelected('kind') || 'Foto';
+          const qty = (document.getElementById('qtySchiefer')?.value || '1');
+
+          let size = sizeVal;
+          if(sizeVal === 'custom'){
+            size = (sizeCustom?.value || '').trim();
+          }
+
+          const format = schieferFormat(shape, size);
+
+          return (
+            `Kalkulation – Schiefer\n` +
+            `Form: ${shape}\n` +
+            `Größe/Format: ${format}\n` +
+            `Art: ${kind}\n` +
+            `Menge: ${qty}\n` +
+            `Motiv/Text: \n` +
+            `Hinweis: Foto/Datei sende ich direkt mit.\n`
+          );
         }
 
-        const format = schieferFormat(shape, size);
+        // generisch
+        const titleMap = { metall:'Metall', holz:'Holz', custom:'Custom / Sonderfall' };
+        const label = titleMap[m] || m;
 
-        const text =
-          `Kalkulation – Schiefer\n` +
-          `Form: ${shape}\n` +
-          `Größe/Format: ${format}\n` +
-          `Art: ${kind}\n` +
+        const prod = (document.getElementById('prodName')?.value || '').trim();
+        const fmt = (document.getElementById('format')?.value || '').trim();
+        const qty = (document.getElementById('qtyGeneric')?.value || '1');
+        const wish = (document.getElementById('wish')?.value || '').trim();
+
+        return (
+          `Kalkulation – ${label}\n` +
+          `Produkt/Artikel: ${prod || ''}\n` +
+          `Größe/Format: ${fmt || ''}\n` +
           `Menge: ${qty}\n` +
-          `Motiv/Text: \n` +
-          `Hinweis: Foto/Datei sende ich direkt mit.\n`;
-
-        return text;
+          `Wunsch: ${wish || ''}\n` +
+          `Hinweis: Dateien (Foto/Logo/Skizze) sende ich direkt mit.\n`
+        );
       }
 
-      function updateSchieferOutputs(){
-        const txt = buildSchieferText();
-        const ta = document.getElementById('copyText');
-        if(ta) ta.value = txt;
+      function setLinks(text){
+        const t = text || 'Hi Luderbein, ich möchte kalkulieren:\n';
 
-        const wa2 = document.getElementById('waLink2');
-        const mail2 = document.getElementById('mailLink2');
+        waLink.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(t);
+        mailLink.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent('Kalkulation – Luderbein') + '&body=' + encodeURIComponent(t);
 
-        wa2.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(txt);
-
-        const mailSubject = `Kalkulation Schiefer – Luderbein`;
-        mail2.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(mailSubject) + '&body=' + encodeURIComponent(txt);
+        // top buttons immer aktiv (mit aktuellem Text, falls vorhanden)
+        waLinkTop.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(t);
+        mailLinkTop.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent('Kalkulation – Luderbein') + '&body=' + encodeURIComponent(t);
       }
 
-      function hookSchieferUI(){
-        const schieferBox = document.getElementById('schieferConfig');
-        if(!schieferBox) return;
+      function render(){
+        const m = (material.value || '').trim();
 
-        // show/hide custom size input
-        const sizeRadios = Array.from(document.querySelectorAll('input[name="size"]'));
-        const sizeCustom = document.getElementById('sizeCustom');
-        const sizeUnit = document.getElementById('sizeUnit');
+        // reset views
+        schieferBox.style.display = 'none';
+        genericBox.style.display = 'none';
 
-        function toggleCustom(){
-          const v = (document.querySelector('input[name="size"]:checked')?.value || '10');
-          const show = (v === 'custom');
-          if(sizeCustom) sizeCustom.style.display = show ? '' : 'none';
-          if(sizeUnit) sizeUnit.style.display = show ? '' : 'none';
-          updateSchieferOutputs();
+        if(!m){
+          outBox.style.display = 'none';
+          setLinks('Hi Luderbein, ich möchte kalkulieren:\n');
+          return;
         }
 
-        sizeRadios.forEach(r => r.addEventListener('change', toggleCustom));
-        document.querySelectorAll('input[name="shape"], input[name="kind"]').forEach(r => {
-          r.addEventListener('change', updateSchieferOutputs);
-        });
+        if(m === 'schiefer'){
+          schieferBox.style.display = '';
+          // custom size input
+          const sizeVal = getSelected('size') || '10';
+          const show = (sizeVal === 'custom');
+          sizeCustom.style.display = show ? '' : 'none';
+          sizeUnit.style.display = show ? '' : 'none';
+        } else {
+          genericBox.style.display = '';
+          const titleMap = { metall:'Metall – Details', holz:'Holz – Details', custom:'Custom – Details' };
+          genericTitle.textContent = titleMap[m] || 'Details';
+        }
 
-        document.getElementById('qty')?.addEventListener('input', updateSchieferOutputs);
-        sizeCustom?.addEventListener('input', updateSchieferOutputs);
+        // output
+        const text = buildText();
+        outText.value = text;
+        outBox.style.display = '';
 
-        document.getElementById('copyBtn')?.addEventListener('click', async () => {
-          const ta = document.getElementById('copyText');
-          if(!ta) return;
-          ta.focus();
-          ta.select();
-          try{
-            await navigator.clipboard.writeText(ta.value);
-          }catch(e){
-            document.execCommand('copy');
-          }
-        });
-
-        toggleCustom();
+        setLinks(text);
       }
 
-      function applyMaterial(){
-        outlineSelected();
-
-        const materialLabel = labelMap[t];
-        if(!materialLabel) return;
-
-        setBasicLinks(materialLabel);
-
-        const schieferBox = document.getElementById('schieferConfig');
-        if(schieferBox){
-          const isSchiefer = (t === 'schiefer');
-          schieferBox.style.display = isSchiefer ? '' : 'none';
-          if(isSchiefer){
-            hookSchieferUI();
-            updateSchieferOutputs();
-            // optional: sanft zum Config scrollen
-            setTimeout(() => {
-              schieferBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 50);
-          }
+      function initFromQuery(){
+        const t = (params.get('t') || '').toLowerCase().trim();
+        if(t === 'schiefer' || t === 'metall' || t === 'holz' || t === 'custom'){
+          material.value = t;
         }
       }
+
+      // events
+      material.addEventListener('change', function(){
+        // URL optional mitziehen (nicht zwingend)
+        if(material.value){
+          params.set('t', material.value);
+          history.replaceState(null, '', '?' + params.toString());
+        } else {
+          params.delete('t');
+          history.replaceState(null, '', params.toString() ? ('?' + params.toString()) : location.pathname);
+        }
+        render();
+      });
+
+      // schiefer listeners
+      document.querySelectorAll('input[name="shape"], input[name="size"], input[name="kind"]').forEach(el => {
+        el.addEventListener('change', render);
+      });
+      document.getElementById('qtySchiefer')?.addEventListener('input', render);
+      sizeCustom?.addEventListener('input', render);
+
+      // generic listeners
+      document.getElementById('prodName')?.addEventListener('input', render);
+      document.getElementById('format')?.addEventListener('input', render);
+      document.getElementById('qtyGeneric')?.addEventListener('input', render);
+      document.getElementById('wish')?.addEventListener('input', render);
+
+      document.getElementById('copyBtn')?.addEventListener('click', async () => {
+        outText.focus();
+        outText.select();
+        try{
+          await navigator.clipboard.writeText(outText.value);
+        }catch(e){
+          document.execCommand('copy');
+        }
+      });
 
       // init
-      if(!labelMap[t]) t = ''; // keine Annahme
-      if(t) applyMaterial();
+      initFromQuery();
+      render();
     })();
   </script>
 </body>
