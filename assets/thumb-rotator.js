@@ -1,9 +1,10 @@
 /* =========================================================
-   Luderbein – Thumb-Rotator & Reel-Feed  (v1.3)
+   Luderbein – Thumb-Rotator (v1.4 Debug Edition)
    ---------------------------------------------------------
-   - Automatisches Crossfading der Thumbnails
-   - Lazy-Loading + Reduced-Motion-Check
-   - Ressourcen-schonend: requestAnimationFrame-Takt
+   - Automatischer Crossfade der Thumbnails
+   - Läuft nur bei Elementen mit data-thumb-rotator
+   - Gibt Statusmeldungen in der Konsole aus
+   - Stromsparend mit requestAnimationFrame
    ========================================================= */
 
 (function () {
@@ -12,18 +13,26 @@
   const INTERVAL_MS = 4200;
   const FADE_MS = 600;
 
-  // Early exit bei "prefers-reduced-motion"
-  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  // Bewegung reduzieren -> alles stoppen
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    console.log("💤 [Luderbein Rotator] Animation deaktiviert (prefers-reduced-motion)");
+    return;
+  }
 
-  // Initialisierung
-  function initRotator(el) {
-    const imgs = Array.from(el.querySelectorAll("img")).filter((i) => i.src && i.style.display !== "none");
+  function initRotator(el, index) {
+    const imgs = Array.from(el.querySelectorAll("img")).filter(
+      (img) => img.src && img.style.display !== "none"
+    );
+
     if (imgs.length <= 1) {
       if (imgs[0]) imgs[0].classList.add("is-on");
+      console.log(`⚠️ [Luderbein Rotator #${index}] Nur ${imgs.length} Bild(er) – nichts zu rotieren.`);
       return;
     }
 
-    // Basis-Stile
+    console.log(`✅ [Luderbein Rotator #${index}] Initialisiert (${imgs.length} Bilder).`);
+
+    // Styles
     imgs.forEach((img) => {
       img.loading = "lazy";
       img.decoding = "async";
@@ -35,6 +44,7 @@
       img.style.transition = `opacity ${FADE_MS}ms ease`;
       img.style.opacity = "0";
     });
+
     imgs[0].style.opacity = "1";
     imgs[0].classList.add("is-on");
 
@@ -46,6 +56,7 @@
         requestAnimationFrame(step);
         return;
       }
+
       lastTick = now;
       const prev = imgs[i];
       i = (i + 1) % imgs.length;
@@ -57,13 +68,22 @@
       prev.style.opacity = "0";
       next.style.opacity = "1";
 
+      console.log(`🔁 [Luderbein Rotator #${index}] Zeige Bild ${i + 1} von ${imgs.length}`);
       requestAnimationFrame(step);
     }
+
     requestAnimationFrame(step);
   }
 
-  // Start, sobald DOM bereit
+  // Start
   document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("[data-thumb-rotator]").forEach(initRotator);
+    const rotators = document.querySelectorAll("[data-thumb-rotator]");
+    if (!rotators.length) {
+      console.warn("⚠️ [Luderbein Rotator] Kein Element mit data-thumb-rotator gefunden.");
+      return;
+    }
+
+    console.log(`🎬 [Luderbein Rotator] Starte ${rotators.length} Rotator(en).`);
+    rotators.forEach((el, idx) => initRotator(el, idx + 1));
   });
 })();
