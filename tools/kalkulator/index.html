@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
-    /* kleiner, sauberer Formular-Look ohne dein CSS zu zerlegen */
     .calcbox{
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.03);
@@ -238,14 +237,6 @@
                   <div class="muted">Standard.</div>
                 </div>
               </div>
-
-              <div class="checkrow">
-                <input type="radio" name="standfuss" id="sf_prem" value="prem">
-                <div>
-                  <div><strong>3D-Standfuß Premium</strong> <span class="muted" id="p_sf_prem"></span></div>
-                  <div class="muted">Wenn’s „noch n Stück“ geiler sein soll.</div>
-                </div>
-              </div>
             </div>
 
             <div style="height:10px"></div>
@@ -345,7 +336,6 @@
 
     const $sfNone = document.getElementById('sf_none');
     const $sfStd  = document.getElementById('sf_std');
-    const $sfPrem = document.getElementById('sf_prem');
 
     const $shipPickup = document.getElementById('ship_pickup');
     const $shipSend   = document.getElementById('ship_send');
@@ -361,7 +351,6 @@
     const $inclPill = document.getElementById('inclPill');
     const $notePill = document.getElementById('notePill');
 
-    // Preislabels
     function euro(n){
       return (Math.round(n*100)/100).toFixed(2).replace('.',',') + ' €';
     }
@@ -407,18 +396,15 @@
         const opt = document.createElement('option');
         opt.value = f.id;
         opt.textContent = `${f.label} – ${euro(f.price)}`;
-        opt.setAttribute('data-price', f.price);
         $format.appendChild(opt);
       });
 
-      // Pills
       $inclPill.textContent = S.includes || 'inkl. …';
-      $notePill.textContent = (V.note ? V.note : P.meta.note || '');
+      $notePill.textContent = (V.note ? V.note : (P.meta.note || ''));
     }
 
     function getSelected(){
       const cat = $cat.value;
-
       if(cat !== 'schiefer') return null;
 
       const S = getSchiefer();
@@ -435,9 +421,8 @@
       const upgrades = [];
       if($widmung.checked) upgrades.push({ key:'widmung', ...U.widmung });
 
-      const standfussVal = ($sfPrem.checked ? 'prem' : ($sfStd.checked ? 'std' : 'none'));
+      const standfussVal = ($sfStd.checked ? 'std' : 'none');
       if(standfussVal === 'std') upgrades.push({ key:'standfuss_std', ...U.standfuss_std });
-      if(standfussVal === 'prem') upgrades.push({ key:'standfuss_prem', ...U.standfuss_prem });
 
       if($wandhalter.checked) upgrades.push({ key:'wandhalter', ...U.wandhalter });
       if($express.checked) upgrades.push({ key:'express', ...U.express });
@@ -457,10 +442,9 @@
       const { S, V, F, qty, upgrades, wantsShipping } = sel;
 
       const base = F.price * qty;
-      const up = upgrades.reduce((a,u)=>a + (u.price||0), 0) * qty; // Upgrades pro Stück (V0)
+      const up = upgrades.reduce((a,u)=>a + (u.price||0), 0) * qty; // V0: Upgrades pro Stück
       let subtotal = base + up;
 
-      // Versandlogik (V0)
       let ship = 0;
       let warnTxt = '';
       let okTxt = '';
@@ -483,7 +467,6 @@
       }
 
       const total = subtotal + ship;
-
       $total.textContent = `Gesamt: ${euro(total)}`;
 
       if(warnTxt){
@@ -502,7 +485,6 @@
         $oknote.textContent = '';
       }
 
-      // Prefill Nachricht
       const lines = [];
       lines.push(`Hi Luderbein, ich möchte kalkulieren/anfragen:`);
       lines.push(`- Material: ${S.label}`);
@@ -526,12 +508,10 @@
 
       const msg = lines.join('\n');
 
-      // WhatsApp
       $wa.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(msg);
 
-      // Mail
       const subject = `Kalkulation ${S.label} – ${V.label} – Luderbein`;
-      const body = msg + '\n\n' + `Danke!`;
+      const body = msg + '\n\nDanke!';
       $mail.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
     }
 
@@ -540,7 +520,6 @@
 
       document.getElementById('p_widmung').textContent = `(+${euro(U.widmung.price)})`;
       document.getElementById('p_sf_std').textContent = `(+${euro(U.standfuss_std.price)})`;
-      document.getElementById('p_sf_prem').textContent = `(+${euro(U.standfuss_prem.price)})`;
       document.getElementById('p_wandhalter').textContent = `(+${euro(U.wandhalter.price)})`;
       document.getElementById('p_express').textContent = `(+${euro(U.express.price)})`;
 
@@ -549,7 +528,6 @@
       }
     }
 
-    // Prefill aus URL: ?t=schiefer&v=gedenktafeln etc.
     function applyUrlPrefill(){
       const params = new URLSearchParams(location.search);
       const t = (params.get('t') || '').toLowerCase().trim();
@@ -557,7 +535,6 @@
 
       if(t === 'schiefer') $cat.value = 'schiefer';
 
-      // Variantenmapping (du kannst später erweitern)
       const vMap = {
         foto: 'fotogravur',
         fotogravur: 'fotogravur',
@@ -568,7 +545,6 @@
 
       const vKey = vMap[v];
       if(vKey){
-        // wird nach fillVariant gesetzt
         setTimeout(() => {
           $variant.value = vKey;
           fillFormat();
@@ -577,19 +553,17 @@
       }
     }
 
-    // Events
     $cat.addEventListener('change', () => { fillVariant(); fillFormat(); calc(); });
     $variant.addEventListener('change', () => { fillFormat(); calc(); });
     $format.addEventListener('change', calc);
     $qty.addEventListener('input', calc);
 
-    [$widmung, $wandhalter, $express, $sfNone, $sfStd, $sfPrem, $shipPickup, $shipSend].forEach(el => {
+    [$widmung, $wandhalter, $express, $sfNone, $sfStd, $shipPickup, $shipSend].forEach(el => {
       el.addEventListener('change', calc);
     });
 
     $note.addEventListener('input', calc);
 
-    // Init
     fillVariant();
     fillFormat();
     bindPriceLabels();
