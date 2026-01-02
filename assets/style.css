@@ -15,11 +15,6 @@
   --shadow: 0 16px 46px rgba(0,0,0,.45);
   --radius: 18px;
   --max: 980px;
-
-  /* ✅ Globaler Thumbslider-Zyklus (alle Slideshow-Kacheln) */
-  --thumb-cycle: 12s;
-  /* Wird von site.js gesetzt (negativer Offset), damit alles synchron ist */
-  --thumb-t0: 0s;
 }
 
 *{box-sizing:border-box}
@@ -369,66 +364,6 @@ h1{
   padding: 10px;
 }
 
-/* ✅ Thumbslider (Kachel-Slideshow) — zentral + synchron */
-.thumbslider{
-  position:relative;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  border-radius:inherit;
-  display:block;
-}
-.thumbslider img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-
-  opacity:0;
-  transform:scale(1.03);
-
-  animation-name: thumbfade;
-  animation-duration: var(--thumb-cycle);
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-
-  /* 🔥 Sync: globaler Offset + individueller Slide-Delay */
-  animation-delay: calc(var(--thumb-t0) + var(--d, 0s));
-}
-
-/* Falls JS mal fehlt: erster Slide sichtbar */
-.thumbslider img:nth-child(1){ opacity:1; }
-
-/* 2 Slides: 0s / 6s (bei 12s Zyklus) */
-.thumbslider.is-2 img:nth-child(1){ --d:0s; opacity:1; }
-.thumbslider.is-2 img:nth-child(2){ --d:6s; }
-
-/* 3 Slides: 0s / 4s / 8s */
-.thumbslider.is-3 img:nth-child(1){ --d:0s; opacity:1; }
-.thumbslider.is-3 img:nth-child(2){ --d:4s; }
-.thumbslider.is-3 img:nth-child(3){ --d:8s; }
-
-/* 4 Slides: 0s / 3s / 6s / 9s */
-.thumbslider.is-4 img:nth-child(1){ --d:0s; opacity:1; }
-.thumbslider.is-4 img:nth-child(2){ --d:3s; }
-.thumbslider.is-4 img:nth-child(3){ --d:6s; }
-.thumbslider.is-4 img:nth-child(4){ --d:9s; }
-
-@keyframes thumbfade{
-  0%{opacity:0}
-  6%{opacity:1}
-  30%{opacity:1}
-  36%{opacity:0}
-  100%{opacity:0}
-}
-
-@media (prefers-reduced-motion: reduce){
-  .thumbslider img{ animation:none; opacity:0; }
-  .thumbslider img:nth-child(1){ opacity:1; }
-}
-
 .thumblabel{
   font-size: .78rem;
   letter-spacing: .16em;
@@ -631,4 +566,44 @@ footer a:hover{color:var(--text)}
 
 @media (max-width: 520px){
   .reelbtn{ display:none; } /* Mobile: wischen statt Buttons */
+}
+
+/* ✅ Thumbslider (Kachel-Slideshow) — global synchron per JS */
+.thumbslider{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  border-radius:inherit;
+  display:block;
+}
+
+.thumbslider img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+
+  opacity:0;
+  transform:scale(1.03);
+  transition: opacity .38s ease, transform .55s ease;
+  will-change: opacity, transform;
+}
+
+/* Fallback: erstes Bild sichtbar, auch ohne JS */
+.thumbslider img:first-child{
+  opacity:1;
+}
+
+/* Aktiv (setzt JS) */
+.thumbslider img.is-active{
+  opacity:1;
+  transform:scale(1.01);
+}
+
+@media (prefers-reduced-motion: reduce){
+  .thumbslider img{ transition:none; transform:none; }
+  .thumbslider img.is-active{ transform:none; }
 }
