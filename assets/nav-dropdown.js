@@ -1,7 +1,9 @@
 // /assets/nav-dropdown.js
 // Dropdown-Logik für <details class="navdrop" data-navdrop>
-// - Nur eins offen
-// - Klick außerhalb / ESC schließt
+// - nur ein Dropdown gleichzeitig offen
+// - schließt bei Click außerhalb
+// - schließt bei ESC
+
 (function () {
   function ready(fn) {
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
@@ -9,30 +11,43 @@
   }
 
   ready(function () {
-    var dds = Array.prototype.slice.call(document.querySelectorAll("details.navdrop[data-navdrop]"));
-    if (!dds.length) return;
+    const drops = Array.from(document.querySelectorAll("details.navdrop[data-navdrop]"));
+    if (!drops.length) return;
 
     function closeAll(except) {
-      dds.forEach(function (dd) {
-        if (dd !== except) dd.removeAttribute("open");
+      drops.forEach((d) => {
+        if (d !== except) d.removeAttribute("open");
       });
     }
 
-    dds.forEach(function (dd) {
-      dd.addEventListener("toggle", function () {
-        if (dd.open) closeAll(dd);
+    // Wenn eins aufgeht -> andere zu
+    drops.forEach((d) => {
+      d.addEventListener("toggle", function () {
+        if (d.open) closeAll(d);
       });
+
+      // Klicks im Panel nicht nach außen "durchstechen" lassen
+      const panel = d.querySelector(".navdrop__panel");
+      if (panel) {
+        panel.addEventListener("click", (e) => e.stopPropagation());
+      }
+
+      const sum = d.querySelector("summary");
+      if (sum) {
+        sum.addEventListener("click", (e) => {
+          // verhindert, dass irgendwelche globalen Click-Handler (z.B. Burger) das direkt wieder zumachen
+          e.stopPropagation();
+        });
+      }
     });
 
-    // Klick außerhalb schließt alle
+    // Klick außerhalb -> alles zu
     document.addEventListener("click", function (e) {
-      var insideAny = dds.some(function (dd) {
-        return dd.contains(e.target);
-      });
-      if (!insideAny) closeAll(null);
+      const inside = e.target.closest("details.navdrop[data-navdrop]");
+      if (!inside) closeAll(null);
     });
 
-    // ESC schließt alle
+    // ESC -> alles zu
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") closeAll(null);
     });
