@@ -1,86 +1,80 @@
-/* /assets/nav-dropdown.css */
-/* Dropdown für <details class="navdrop" data-navdrop> in der Hauptnavigation
-   Ziele:
-   - Safari/iOS Marker (stumpfer Pfeil) entfernen
-   - Desktop/iPad: Panel als Overlay (schiebt Seite NICHT nach unten)
-   - Mobile (Burger offen): "Leistungen" als Pill wie die anderen Nav-Buttons + zentriert
-*/
+/* ===============================
+   Luderbein – Navigation Dropdown v2
+   - Vereinheitlichtes data-open-State
+   - Sanfte Fade-Animation
+   - ARIA-kompatibel, Keyboard-ready
+   =============================== */
 
-:root{
-  --navdd-bg: rgba(10,10,12,.92);
-  --navdd-border: rgba(255,255,255,.10);
-  --navdd-shadow: 0 18px 50px rgba(0,0,0,.55);
+:root {
+  --navdd-bg: rgba(10, 10, 12, 0.92);
+  --navdd-border: rgba(255, 255, 255, 0.1);
+  --navdd-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  --navdd-fade: 0.16s ease;
 }
 
-/* Container */
-.navdrop{
+/* Base Container */
+.navdrop {
   position: relative;
   display: inline-block;
   vertical-align: middle;
 }
 
-/* Summary soll wie ein normaler Nav-Item wirken */
-.navdrop__sum{
+/* Trigger (Summary) */
+.navdrop__sum {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-
   font: inherit;
   color: inherit;
-  line-height: 1;
   background: transparent;
   border: 0;
+  cursor: pointer;
   padding: 0;
   margin: 0;
-
-  cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-
-  list-style: none;
 }
-
-/* Safari / WebKit: Standard-Details-Marker raus */
-.navdrop__sum::-webkit-details-marker{ display:none; }
-.navdrop__sum::marker{ content:""; }
-.navdrop summary{ list-style: none; }
+.navdrop__sum::-webkit-details-marker { display: none; }
+.navdrop__sum::marker { content: ""; }
 
 /* Chevron */
-.navdrop__chev{
+.navdrop__chev {
   display: inline-block;
   transform-origin: 50% 50%;
-  transition: transform .15s ease;
-  opacity: .85;
+  transition: transform var(--navdd-fade);
+  opacity: 0.85;
 }
-.navdrop[open] .navdrop__chev{
+.navdrop[data-open="true"] .navdrop__chev {
   transform: rotate(180deg);
 }
 
-/* Panel: Desktop/iPad als Overlay */
-.navdrop__panel{
+/* Panel (Desktop/iPad overlay) */
+.navdrop__panel {
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
-
   min-width: 220px;
   max-width: 320px;
-
   background: var(--navdd-bg);
   border: 1px solid var(--navdd-border);
   border-radius: 14px;
   box-shadow: var(--navdd-shadow);
-
   padding: 10px;
   z-index: 9999;
 
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition: opacity var(--navdd-fade), transform var(--navdd-fade);
 }
-.navdrop[open] .navdrop__panel{
-  display: block;
+.navdrop[data-open="true"] .navdrop__panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
-/* Links im Panel */
-.navdrop__panel a{
+/* Panel Links */
+.navdrop__panel a {
   display: block;
   padding: 10px 12px;
   border-radius: 12px;
@@ -88,66 +82,48 @@
   color: inherit;
   white-space: nowrap;
 }
-.navdrop__panel a:hover{
-  background: rgba(255,255,255,.06);
+.navdrop__panel a:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.navdrop__sep{
+/* Separator */
+.navdrop__sep {
   height: 1px;
-  background: rgba(255,255,255,.10);
+  background: rgba(255, 255, 255, 0.1);
   margin: 8px 6px;
 }
 
-/* MOBILE: Burger-Menü-Overlay */
-@media (max-width: 760px){
-
-  /* Leistungen als "Pill" wie die anderen Buttons + mittig */
-  .menu[data-open="1"] .navdrop{
+/* Mobile (Burger) */
+@media (max-width: 760px) {
+  .menu[data-open="true"] .navdrop {
     display: block;
     width: 100%;
-  }
-
-  .menu[data-open="1"] .navdrop__sum{
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-
-    /* PILL-OPTIK (Rahmen drum) */
-    padding: 12px 18px;
-    border: 1px solid rgba(255,255,255,.14);
-    border-radius: 18px;
-    background: rgba(255,255,255,.04);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-
-    /* MITTIG wie Start/Über/Kontakt/Impressum */
-    width: fit-content;
-    margin: 10px auto 0 auto;
-
-    /* verhindert “komisch links” */
     text-align: center;
   }
 
-  /* Panel im Burger-Menü: als Block unter der Pill (im Overlay),
-     NICHT als absolutes Overlay über die Seite (sonst fummelig auf iPhone) */
-  .menu[data-open="1"] .navdrop__panel{
+  .menu[data-open="true"] .navdrop__sum {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    width: fit-content;
+    margin: 10px auto 0 auto;
+  }
+
+  .menu[data-open="true"] .navdrop__panel {
     position: static;
-    display: none;
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
     margin: 10px auto 0 auto;
     min-width: 0;
     width: min(92vw, 340px);
-  }
-  .menu[data-open="1"] .navdrop[open] .navdrop__panel{
-    display: block;
-  }
-}
-/* iPhone: Leistungen-Pill wirklich mittig (Safari-safe) */
-@media (max-width: 760px){
-  .menu[data-open="1"] .navdrop{ 
-    text-align: center; 
-  }
-  .menu[data-open="1"] .navdrop__sum{
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    /* zentriert jetzt über text-align vom Parent */
+    background: rgba(26, 26, 31, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 }
