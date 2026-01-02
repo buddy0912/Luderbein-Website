@@ -2,6 +2,7 @@
   DATEI: /leistungen/schiefer/index.html
   (Schiefer-Übersicht: Foto / Text / Gedenktafeln)
   -> Slideshow NUR in der Kachel "Gedenktafeln" mit genau 3 Bildern
+  -> PLUS: Fotokachel bekommt eine 2-Bild-Slideshow (schiefer-home + schiefer-foto-01)
 ========================= -->
 <!doctype html>
 <html lang="de">
@@ -38,6 +39,11 @@
     .thumbslider img:nth-child(1){ animation-delay:0s;  opacity:1; }
     .thumbslider img:nth-child(2){ animation-delay:4s; }
     .thumbslider img:nth-child(3){ animation-delay:8s; }
+
+    /* 2 Slides à 4s (nur Fotogravur-Kachel) */
+    .thumbslider--2 img{ animation-duration: 8s; }
+    .thumbslider--2 img:nth-child(1){ animation-delay:0s; opacity:1; }
+    .thumbslider--2 img:nth-child(2){ animation-delay:4s; }
 
     @keyframes thumbfade{
       0%{opacity:0}
@@ -157,14 +163,16 @@
         <article class="productcard" id="kachel-foto">
           <div class="thumb" style="padding:0">
             <a class="thumblink" href="#foto" aria-label="Schiefer Fotogravur ansehen">
-              <img src="/assets/img/schiefer-home.jpg"
-                   alt="Beispiel: Fotogravur auf Schiefer"
-                   style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit">
+              <span class="thumbslider thumbslider--2" aria-hidden="true">
+                <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
+                <img src="/assets/img/schiefer-foto-01.jpg" alt="" loading="lazy"
+                     onerror="this.src='/assets/img/schiefer-home.jpg'">
+              </span>
               <span class="thumbhint">Ansehen</span>
             </a>
           </div>
           <div class="meta">
-            <span class="price">ab 9,95 €</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
+            <span class="price">ab 14,95 €</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
           </div>
           <h3>Fotogravur</h3>
           <p class="kicker">
