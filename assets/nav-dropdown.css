@@ -1,66 +1,70 @@
-/* /assets/nav-dropdown.css (v2) */
-/* Ziel:
-   - iPad/desktop: echtes Dropdown (Overlay unter "Leistungen"), NICHT DropRight
-   - iPhone: "Leistungen" wie die anderen Buttons, zentriert, nicht zu breit
-   - Safari: nativer details/summary Marker weg
+/* /assets/nav-dropdown.css */
+/* Einheitliches Dropdown für "Leistungen" (Safari/iOS/iPadOS gefixt)
+   - entfernt native details/summary Marker (kein extra Pfeil)
+   - Dropdown-Panel liegt als Overlay (schiebt keine Seite)
+   - iPhone: "Leistungen" wie die anderen Buttons mittig
 */
 
 :root{
-  --dd-bg: rgba(10,10,12,.92);
-  --dd-br: rgba(255,255,255,.10);
-  --dd-sh: 0 18px 60px rgba(0,0,0,.55);
+  --navdd-bg: rgba(10,10,12,.92);
+  --navdd-border: rgba(255,255,255,.12);
+  --navdd-pill: rgba(255,255,255,.06);
+  --navdd-pill-border: rgba(255,255,255,.10);
+  --navdd-shadow: 0 18px 60px rgba(0,0,0,.55);
 }
 
-/* nichts clippen */
-header, .nav, .menu { overflow: visible; }
-
-/* Wrapper */
+/* Container */
 .navdrop{
   position: relative;
   display: inline-block;
-  vertical-align: middle;
 }
 
-/* Summary = "Leistungen" */
+/* Summary = Button */
 .navdrop__sum{
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
 
   cursor: pointer;
   user-select: none;
 
-  /* reset */
-  background: none;
-  border: 0;
-  padding: 0;
-  margin: 0;
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: var(--navdd-pill);
+  border: 1px solid var(--navdd-pill-border);
   color: inherit;
-  font: inherit;
-  line-height: 1;
-  list-style: none;
+
+  /* wichtig: nicht „volle Breite“ werden lassen */
+  width: fit-content;
 }
 
-/* Safari marker killen (dein "stumpfer Pfeil") */
-.navdrop__sum::-webkit-details-marker{ display:none; }
-.navdrop__sum::marker{ content:""; }
-.navdrop, .navdrop__sum{ list-style:none; }
+/* Native Marker/Bullet killen (Safari/iOS) */
+.navdrop__sum{
+  list-style: none;
+}
+.navdrop__sum::-webkit-details-marker{
+  display: none;
+}
+.navdrop__sum::marker{
+  content: "";
+}
 
 /* Chevron */
 .navdrop__chev{
-  display:inline-block;
-  transform: translateY(1px);
-  opacity:.85;
-  transition: transform .18s ease, opacity .18s ease;
-}
-.navdrop[open] .navdrop__chev{
-  transform: rotate(180deg) translateY(-1px);
-  opacity: 1;
+  display: inline-block;
+  line-height: 1;
+  transform: translateY(-1px);
+  opacity: .9;
 }
 
-/* =========================
-   DESKTOP / iPAD: Overlay Panel
-   ========================= */
+/* Aufklapp-Status: Chevron drehen */
+.navdrop[data-open="1"] .navdrop__chev{
+  transform: rotate(180deg) translateY(1px);
+}
+
+/* Panel */
 .navdrop__panel{
   position: absolute;
   top: calc(100% + 10px);
@@ -68,84 +72,74 @@ header, .nav, .menu { overflow: visible; }
   transform: translateX(-50%);
   z-index: 9999;
 
-  width: max-content;
-  min-width: 220px;
-  max-width: min(360px, calc(100vw - 24px));
+  min-width: 240px;
+  max-width: min(92vw, 420px);
 
-  padding: 10px;
-  border-radius: 14px;
-  background: var(--dd-bg);
-  border: 1px solid var(--dd-br);
-  box-shadow: var(--dd-sh);
+  background: var(--navdd-bg);
+  border: 1px solid var(--navdd-border);
+  border-radius: 16px;
+  box-shadow: var(--navdd-shadow);
   backdrop-filter: blur(10px);
 
-  /* HART als Liste – verhindert "DropRight" durch globale Menu/Flex Styles */
-  display: none !important;
-  flex-direction: column;
-  gap: 6px;
+  padding: 10px;
+  display: none;
 }
 
-.navdrop[open] .navdrop__panel{
-  display: flex !important;
-}
-
-/* Links IM Panel: globales .menu a darf hier NICHT reinfunken */
-.navdrop__panel a{
-  display: block !important;
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-.navdrop__panel a:hover{
-  background: rgba(255,255,255,.08);
-  border-color: rgba(255,255,255,.12);
-}
-
-.navdrop__sep{
-  height: 1px;
-  background: rgba(255,255,255,.10);
-  margin: 6px 6px;
-}
-
-/* =========================
-   MOBILE: Burger-Overlay
-   ========================= */
-/* Wenn dein Burger-Menü offen ist (data-open="1") */
-.menu[data-open="1"] .navdrop{
-  width: 100%;
+/* sichtbar wenn offen */
+.navdrop[data-open="1"] .navdrop__panel{
   display: block;
 }
 
-/* "Leistungen" soll wie die anderen Pills aussehen & mittig sein */
-.menu[data-open="1"] .navdrop__sum{
-  padding: 12px 16px;
-  border-radius: 16px;
-  background: rgba(255,255,255,.04);
+/* Links im Panel */
+.navdrop__panel a{
+  display: block;
+  padding: 12px 12px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
   border: 1px solid rgba(255,255,255,.08);
-
-  width: fit-content;
-  margin: 0 auto;              /* zentriert */
+  background: rgba(255,255,255,.04);
 }
 
-/* Panel im Burger: als Block unter dem Button (im Overlay ok) */
-.menu[data-open="1"] .navdrop__panel{
-  position: static;
-  transform: none;
-
-  width: min(420px, calc(100vw - 40px));
-  max-width: none;
-  min-width: 0;
-
-  margin: 10px auto 0;
-  display: none !important;
+.navdrop__panel a + a{
+  margin-top: 8px;
 }
 
-.menu[data-open="1"] .navdrop[open] .navdrop__panel{
-  display: flex !important;
+.navdrop__panel a:hover{
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.12);
+}
+
+/* Separator (falls du ihn nutzt) */
+.navdrop__sep{
+  height: 1px;
+  margin: 10px 6px;
+  background: rgba(255,255,255,.10);
+}
+
+/* -----------------------------
+   iPhone / Burger-Menü Optik
+   Ziel: "Leistungen" exakt wie die anderen Buttons mittig
+-------------------------------- */
+@media (max-width: 760px){
+  /* Details-Container mittig wie die anderen Nav-Buttons */
+  .navdrop{
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Summary mittig */
+  .navdrop__sum{
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Panel soll auf Mobile auch mittig bleiben */
+  .navdrop__panel{
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 420px);
+  }
 }
