@@ -140,3 +140,14 @@
     display: block;
   }
 }
+/* iPhone: Leistungen-Pill wirklich mittig (Safari-safe) */
+@media (max-width: 760px){
+  .menu[data-open="1"] .navdrop{ 
+    text-align: center; 
+  }
+  .menu[data-open="1"] .navdrop__sum{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    /* zentriert jetzt über text-align vom Parent */
+  }
+}
