@@ -299,3 +299,28 @@ footer a:hover{color:var(--text);}
   width:100%;height:220px;object-fit:cover;display:block;
 }
 @media(max-width:520px){.reelitem img{height:180px}}
+/* =========================================================
+   THUMB-ROTATOR (Crossfade)
+   ========================================================= */
+.thumbslider{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  border-radius:inherit;
+}
+.thumbslider img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transform:translateZ(0) scale(1.02);
+  transition:opacity 600ms ease;
+  will-change:opacity;
+}
+.thumbslider img.is-on{opacity:1;}
+@media (prefers-reduced-motion: reduce){
+  .thumbslider img{transition:none}
+}
