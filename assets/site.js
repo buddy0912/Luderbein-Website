@@ -1,12 +1,11 @@
-/* =========================
-  DATEI: /assets/site.js
-  Luderbein – site.js
-  - Mobile Nav Toggle
-  - Auto aria-current="page" für die Hauptnavigation
-  - Leistungen Dropdown (wird zur Laufzeit in jedem Header erzeugt)
-  - Desktop Hover: stabil (großer Close-Delay + kein Hover-Gap)
-  - Mobile (Burger): Leistungen klappt auf / zu (iOS-sicher über pointerdown capture)
-========================= */
+/* Luderbein – site.js
+   - Mobile Nav Toggle
+   - Auto aria-current="page" für die Hauptnavigation
+   - Leistungen Dropdown (wird zur Laufzeit in jedem Header erzeugt)
+   - Desktop Hover: stabil (großer Close-Delay + kein Hover-Gap)
+   - Mobile (Burger): Leistungen klappt auf / zu (iOS-sicher über pointerdown capture)
+   - GLOBAL: Synchrone Thumb-Slideshows (alle wechseln gleichzeitig + weicher Übergang)
+*/
 
 (function () {
   "use strict";
@@ -155,7 +154,11 @@
       dd.innerHTML = `
         <a role="menuitem" href="/leistungen/schiefer/">Schiefer</a>
         <a role="menuitem" href="/leistungen/metall/">Metall</a>
-        <a role="menuitem" href="/tools/kalkulator/?t=metall">Kalkulator</a>
+        <a role="menuitem" href="/leistungen/holz/">Holz</a>
+        <a role="menuitem" href="/kontakt/?p=Custom">Custom</a>
+        <div style="height:1px;margin:8px 0;background:rgba(255,255,255,.10)"></div>
+        <a role="menuitem" href="/tools/kalkulator/">Kalkulator</a>
+        <a role="menuitem" href="/service/">Downloads</a>
       `;
 
       a.replaceWith(wrap);
@@ -319,5 +322,81 @@
         if (best) best.setAttribute("aria-current", "page");
       }
     }
+
+    // =========================================================
+    // GLOBAL: Synchrone Slideshows (alle gleichzeitig, weich)
+    // Nutzung:
+    // - Container: .thumbslider
+    // - Bilder:   <img> als direkte Kinder (beliebig viele)
+    // - Aktiv:    JS setzt .is-active auf genau 1 Bild je Slider
+    // =========================================================
+    (function slideshowSync() {
+      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const sliders = Array.from(document.querySelectorAll(".thumbslider"));
+
+      if (!sliders.length) return;
+
+      // Wenn Reduced Motion: alles statisch auf Slide 0
+      if (prefersReduced) {
+        sliders.forEach((s) => {
+          const imgs = Array.from(s.querySelectorAll("img"));
+          imgs.forEach((img, i) => {
+            img.classList.toggle("is-active", i === 0);
+            // Fallback falls CSS nicht greift:
+            img.style.opacity = i === 0 ? "1" : "0";
+          });
+        });
+        return;
+      }
+
+      // Globaler Takt (alle wechseln zusammen)
+      const STEP_MS = 3000;   // <- 2–3 Sekunden, hier 3s
+      const FADE_MS = 650;    // <- weicher Übergang
+
+      // Prepare: sicherstellen, dass wir weich faden können,
+      // auch wenn die CSS-Regel mal fehlt.
+      sliders.forEach((s) => {
+        const imgs = Array.from(s.querySelectorAll("img"));
+        imgs.forEach((img) => {
+          // Transition als Fallback (CSS kann das auch schon liefern)
+          if (!img.style.transition) {
+            img.style.transition = `opacity ${FADE_MS}ms ease-in-out`;
+          }
+          // Falls nicht via CSS positioniert:
+          if (!img.style.position) {
+            // nur minimal invasiv: wir setzen nichts, wenn CSS es eh macht
+          }
+        });
+      });
+
+      let tick = 0;
+
+      function render() {
+        sliders.forEach((s) => {
+          const imgs = Array.from(s.querySelectorAll("img"));
+          const n = imgs.length;
+          if (!n) return;
+
+          const active = tick % n;
+
+          imgs.forEach((img, i) => {
+            const on = i === active;
+            img.classList.toggle("is-active", on);
+
+            // Fallback (falls du nur opacity steuerst):
+            img.style.opacity = on ? "1" : "0";
+          });
+        });
+      }
+
+      // Start synchron (alle bei 0)
+      render();
+
+      // Takt
+      window.setInterval(() => {
+        tick++;
+        render();
+      }, STEP_MS);
+    })();
   });
 })();
