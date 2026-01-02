@@ -1,62 +1,26 @@
-// /assets/nav-dropdown.js
-// Dropdown-Logik für <details class="navdrop" data-navdrop>
-// - Safari/iOS friendly (Marker wird per CSS entfernt)
-// - Klick: toggelt sauber, schließt andere
-// - Klick außerhalb + ESC: schließt
-(function () {
-  function ready(fn) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn);
-    } else {
-      fn();
-    }
-  }
-
-  ready(function () {
-    var drops = Array.prototype.slice.call(
-      document.querySelectorAll('details.navdrop[data-navdrop]')
-    );
-    if (!drops.length) return;
-
-    function closeAll(except) {
-      drops.forEach(function (dd) {
-        if (dd !== except) dd.open = false;
-        var sum = dd.querySelector(".navdrop__sum");
-        if (sum) sum.setAttribute("aria-expanded", dd.open ? "true" : "false");
-      });
-    }
-
-    drops.forEach(function (dd) {
-      var sum = dd.querySelector(".navdrop__sum");
-      if (!sum) return;
-
-      // Initial state
-      sum.setAttribute("aria-expanded", dd.open ? "true" : "false");
-
-      sum.addEventListener("click", function (e) {
+// Luderbein – nav-dropdown.js v1.1
+(function(){
+  function ready(fn){document.readyState==="loading"?document.addEventListener("DOMContentLoaded",fn):fn();}
+  ready(function(){
+    const drops=[...document.querySelectorAll(".navdrop[data-navdrop]")];
+    drops.forEach(dd=>{
+      const sum=dd.querySelector(".navdrop__sum");
+      const panel=dd.querySelector(".navdrop__panel");
+      if(!sum||!panel)return;
+      const toggle=(state)=>{
+        dd.dataset.open=state?"true":"false";
+        sum.setAttribute("aria-expanded",state);
+      };
+      sum.addEventListener("click",e=>{
         e.preventDefault();
-        e.stopPropagation();
-
-        var willOpen = !dd.open;
-        closeAll(dd);
-        dd.open = willOpen;
-        sum.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        const willOpen=dd.dataset.open!=="true";
+        drops.forEach(o=>o.dataset.open="false");
+        toggle(willOpen);
       });
-
-      var panel = dd.querySelector(".navdrop__panel");
-      if (panel) {
-        panel.addEventListener("click", function (e) {
-          e.stopPropagation();
-        });
-      }
     });
-
-    document.addEventListener("click", function () {
-      closeAll(null);
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeAll(null);
+    document.addEventListener("click",e=>{
+      if(e.target.closest(".navdrop"))return;
+      drops.forEach(dd=>dd.dataset.open="false");
     });
   });
 })();
