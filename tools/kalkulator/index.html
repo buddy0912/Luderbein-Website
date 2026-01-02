@@ -10,29 +10,53 @@
 </head>
 <body>
   <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+  <div class="wrap nav">
+    <a class="brand" href="/">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <strong>Luderbein</strong><br>
+        <span>Schwibbögen • Gravur • Sonderwünsche</span>
+      </div>
+    </a>
+
+    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <span class="navicon"><span></span></span>
+    </button>
+
+    <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+      <a href="/">Start</a>
+
+      <!-- EIN Dropdown für Leistungen -->
+      <details class="navdrop" data-navdrop>
+        <summary class="navdrop__sum" aria-label="Leistungen öffnen">
+          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+          <a href="/leistungen/metall/" role="menuitem">Metall</a>
+          <a href="/leistungen/holz/" role="menuitem">Holz</a>
+          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+
+          <div class="navdrop__sep" aria-hidden="true"></div>
+
+          <!-- Kalkulator ergänzend -->
+          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+
+          <!-- Routing zur Download-Seite -->
+          <a href="/service/" role="menuitem">Downloads</a>
         </div>
-      </a>
+      </details>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
+      <!-- Schwibbögen optional später wieder rein -->
+      <!-- <a href="/schwibboegen/">Schwibbögen</a> -->
 
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-        <a href="/">Start</a>
-        <a href="/leistungen/">Leistungen</a>
-        <a href="/schwibboegen/">Schwibbögen</a>
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
-    </div>
-  </header>
+      <a href="/ueber/">Über</a>
+      <a href="/kontakt/">Kontakt</a>
+      <a href="/rechtliches/impressum.html">Impressum</a>
+    </nav>
+  </div>
+</header>
 
   <main class="wrap">
     <section class="hero">
