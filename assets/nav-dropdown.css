@@ -3,7 +3,7 @@
    Ziele:
    - Safari/iOS Marker (stumpfer Pfeil) entfernen
    - Desktop/iPad: Panel als Overlay (schiebt Seite NICHT nach unten)
-   - Mobile (Burger offen): "Leistungen" wie die anderen Buttons zentriert
+   - Mobile (Burger offen): "Leistungen" als Pill wie die anderen Nav-Buttons + zentriert
 */
 
 :root{
@@ -19,13 +19,12 @@
   vertical-align: middle;
 }
 
-/* Summary soll wie ein normaler Nav-Item wirken (nicht "anders") */
+/* Summary soll wie ein normaler Nav-Item wirken */
 .navdrop__sum{
   display: inline-flex;
   align-items: center;
   gap: 8px;
 
-  /* wichtig: Summary sieht sonst je nach Safari anders aus */
   font: inherit;
   color: inherit;
   line-height: 1;
@@ -38,7 +37,6 @@
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
-  /* killt den "Punkt/Marker" in manchen WebKit-Fällen */
   list-style: none;
 }
 
@@ -88,10 +86,8 @@
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
-
   white-space: nowrap;
 }
-
 .navdrop__panel a:hover{
   background: rgba(255,255,255,.06);
 }
@@ -102,29 +98,41 @@
   margin: 8px 6px;
 }
 
-/* Mobile: Burger-Menü ist Overlay.
-   Hier darf das Dropdown "innen" aufgehen, ohne die Seite zu schieben. */
+/* MOBILE: Burger-Menü-Overlay */
 @media (max-width: 760px){
 
-  /* "Leistungen" wie die anderen Buttons zentrieren */
+  /* Leistungen als "Pill" wie die anderen Buttons + mittig */
   .menu[data-open="1"] .navdrop{
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .menu[data-open="1"] .navdrop__sum{
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center;
+    display: block;
+    width: 100%;
   }
 
-  /* Panel im Burger-Menü: nicht absolute (sonst komische Überlagerungen),
-     sondern als Block unter dem Button – aber nur innerhalb des Burger-Overlays */
+  .menu[data-open="1"] .navdrop__sum{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    /* PILL-OPTIK (Rahmen drum) */
+    padding: 12px 18px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 18px;
+    background: rgba(255,255,255,.04);
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+
+    /* MITTIG wie Start/Über/Kontakt/Impressum */
+    width: fit-content;
+    margin: 10px auto 0 auto;
+
+    /* verhindert “komisch links” */
+    text-align: center;
+  }
+
+  /* Panel im Burger-Menü: als Block unter der Pill (im Overlay),
+     NICHT als absolutes Overlay über die Seite (sonst fummelig auf iPhone) */
   .menu[data-open="1"] .navdrop__panel{
     position: static;
-    display: none; /* wird über [open] eingeschaltet */
-    margin-top: 10px;
+    display: none;
+    margin: 10px auto 0 auto;
     min-width: 0;
     width: min(92vw, 340px);
   }
