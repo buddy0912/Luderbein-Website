@@ -3,92 +3,86 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Service – Downloads – Luderbein</title>
-  <meta name="description" content="Service & Downloads von Luderbein: Formulare und Infos. Hier: Vorbestellformular Schwibbogen „Epidemic Scorn“ als PDF." />
+  <title>Service & Downloads – Luderbein</title>
+  <meta name="description" content="Service & Downloads von Luderbein: Vorbestellformulare, PDF-Infos und Anleitungen rund um Gravur & Sonderwünsche." />
   <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 
 <body>
- <header>
-  <div class="wrap nav">
-    <a class="brand" href="/">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <strong>Luderbein</strong><br>
-        <span>Schwibbögen • Gravur • Sonderwünsche</span>
-      </div>
-    </a>
-
-    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-      <span class="navicon"><span></span></span>
-    </button>
-
-    <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-      <a href="/">Start</a>
-
-      <!-- EIN Dropdown für Leistungen -->
-      <details class="navdrop" data-navdrop>
-        <summary class="navdrop__sum" aria-label="Leistungen öffnen">
-          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-        </summary>
-
-        <div class="navdrop__panel" role="menu" aria-label="Leistungen">
-          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-          <a href="/leistungen/metall/" role="menuitem">Metall</a>
-          <a href="/leistungen/holz/" role="menuitem">Holz</a>
-          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
-
-          <div class="navdrop__sep" aria-hidden="true"></div>
-
-          <!-- Kalkulator ergänzend -->
-          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-
-          <!-- Routing zur Download-Seite -->
-          <a href="/service/" role="menuitem">Downloads</a>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
         </div>
-      </details>
+      </a>
 
-      <!-- Schwibbögen optional später wieder rein -->
-      <!-- <a href="/schwibboegen/">Schwibbögen</a> -->
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
 
-      <a href="/ueber/">Über</a>
-      <a href="/kontakt/">Kontakt</a>
-      <a href="/rechtliches/impressum.html">Impressum</a>
-    </nav>
-  </div>
-</header>
+      <nav class="menu" data-nav aria-label="Hauptmenü">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
 
   <main class="wrap">
     <section class="hero">
       <span class="badge"><i></i> Service</span>
       <h1>Downloads</h1>
       <p class="lead">
-        Hier liegen Dateien, die du schnell brauchst – ohne Suchen, ohne Umwege.
+        Alles, was du brauchst – kompakt und ohne Suchen.  
+        Vorbestellformulare, Info-PDFs und Anleitungen an einem Ort.
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="#downloads">Zum Download</a>
+        <a class="btn primary" href="#downloads">Zum Download-Bereich</a>
         <a class="btn" href="/kontakt/?p=Service%20%2F%20Download">Frage dazu?</a>
       </div>
 
       <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Hinweis:</strong>
-        Falls dein Browser cached: einmal hart neu laden (Shift + Reload) – Cloudflare kann sonst kurz hinterherhinken.
+        <strong style="color:var(--text)">Tipp:</strong>  
+        Wenn dein Browser cached: einmal „hart“ neu laden (Shift + Reload).  
+        Cloudflare braucht manchmal ein paar Sekunden zum Nachziehen.
       </div>
     </section>
 
     <section class="section" id="downloads" aria-label="Downloads">
       <div class="section-head">
         <h2>Vorbestellung – Schwibbogen</h2>
-        <p class="small muted">Für Merch-Stand & spätere Abgabe per Mail. PDF zum Öffnen oder direkt runterladen.</p>
+        <p class="small muted">PDF-Formular für Konzert & Online-Vorbestellung. Einfach öffnen, ausfüllen, fertig.</p>
       </div>
 
       <div class="grid">
         <div class="card">
-          <h3>Epidemic Scorn – Bestellformular (PDF)</h3>
+          <h3>Epidemic Scorn – Bestellformular</h3>
           <p class="small">
-            Vorbestellung (1 Blatt = 1 Bestellung). Anzahlung 20 € pro Schwibbogen.
-            Enthält Upgrades (Dimmer / Wunsch-Deadline / Geschenkset).
+            Eine Seite = eine Bestellung.  
+            Enthält Felder für Varianten, Upgrades (z. B. Dimmer, Geschenkset) und Deadline.
           </p>
 
           <div class="cta" style="margin-top:12px">
@@ -105,16 +99,15 @@
           </div>
 
           <div class="hr" style="margin:16px 0"></div>
-
-          <p class="small muted" style="margin:0">
-            Dateipfad auf der Website: <code>/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf</code>
+          <p class="small muted">
+            Dateipfad: <code>/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf</code>
           </p>
         </div>
 
         <div class="card">
           <h3>Mini-Anleitung</h3>
           <p class="small">
-            Am Merch-Stand ausfüllen & abgeben – oder später per E-Mail schicken.
+            Formular am Merch-Stand ausfüllen & abgeben – oder ausgefüllt per Mail schicken.
           </p>
           <div class="cta" style="margin-top:12px">
             <a class="btn" href="mailto:luderbein_gravur@icloud.com?subject=Vorbestellung%20Schwibbogen%20%E2%80%93%20Epidemic%20Scorn&body=Hi%20Luderbein%2C%0A%0Aanbei%20mein%20ausgef%C3%BClltes%20Bestellformular%20(PDF).%0A%0ADanke!">
@@ -128,9 +121,8 @@
       </div>
 
       <div class="notice" style="margin-top:16px">
-        <strong style="color:var(--text)">Optional:</strong>
-        Wenn du willst, kann ich dir hier später auch eine zweite Download-Kachel einbauen (z. B. „Produktinfos/Preise“),
-        aber fürs Konzert reicht das jetzt absolut.
+        <strong style="color:var(--text)">Ausblick:</strong>  
+        Später folgen hier noch weitere Downloads, z. B. „Foto-Check“, „Preisübersicht Gravur“ oder „Material-Guides“.
       </div>
     </section>
   </main>
@@ -139,13 +131,14 @@
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
       <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/impressum.html">Impressum</a> · 
         <a href="/rechtliches/datenschutz.html">Datenschutz</a>
       </div>
     </div>
   </footer>
 
+  <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
-  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 </body>
 </html>
