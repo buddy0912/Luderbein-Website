@@ -1,55 +1,37 @@
-/* /assets/nav-dropdown.css
-   Einheitliches Dropdown "Leistungen" (details/summary)
-   Fix: kein default Marker (Punkt), saubere Ausrichtung, Panel sauber positioniert
-*/
+/* /assets/nav-dropdown.css */
+/* Dropdown für <details class="navdrop"> in der Hauptnavigation */
 
-.navdrop{
+.navdrop {
   position: relative;
   display: inline-block;
 }
 
-/* summary = wie ein normaler Nav-Link */
-.navdrop__sum{
+/* Summary: Marker/Bullet weg + auf eine Linie bringen */
+.navdrop__sum {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-
-  /* diese 3 Werte sorgen für "nicht springt in Y" */
-  height: 38px;
-  line-height: 38px;
-  vertical-align: middle;
-
+  gap: 6px;
   cursor: pointer;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
 
-  /* damit der default-marker nicht irgendwo Platz frisst */
+  /* Marker entfernen */
   list-style: none;
 }
 
-/* Default Marker killen (Punkt/▶︎ etc.) */
-.navdrop__sum::-webkit-details-marker{ display:none; }
-.navdrop__sum::marker{ content:""; }
+/* Marker entfernen (Browser-spezifisch) */
+.navdrop__sum::-webkit-details-marker { display: none; }
+.navdrop__sum::marker { content: ""; }
 
-/* Optional: falls dein .menu a schon Pills sind,
-   übernimmt summary automatisch das Styling über inherit.
-   Wenn nicht, kannst du hier noch padding/border setzen.
-*/
+/* optional: wenn irgendwo noch Standard-Listenstyles reingrätschen */
+.navdrop summary { list-style: none; }
 
-/* Chevron */
-.navdrop__chev{
-  display:inline-block;
-  transition: transform .15s ease;
-  transform-origin: center;
-  opacity: .9;
-}
-
-.navdrop[open] .navdrop__chev{
+/* Chevron drehen wenn offen */
+.navdrop[open] .navdrop__chev {
   transform: rotate(180deg);
 }
 
 /* Panel */
-.navdrop__panel{
+.navdrop__panel {
   position: absolute;
   top: calc(100% + 10px);
   left: 0;
@@ -59,51 +41,41 @@
   padding: 10px;
   border-radius: 14px;
 
-  background: rgba(10,10,12,.92);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 18px 50px rgba(0,0,0,.45);
+  background: rgba(10, 10, 12, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(10px);
 
-  display: none;
+  display: grid;
+  gap: 6px;
 }
 
-.navdrop[open] .navdrop__panel{
-  display: block;
-}
-
-.navdrop__panel a{
+/* Links im Panel */
+.navdrop__panel a {
   display: block;
   padding: 10px 10px;
   border-radius: 10px;
   text-decoration: none;
-  white-space: nowrap;
 }
 
-.navdrop__panel a:hover{
-  background: rgba(255,255,255,.06);
+.navdrop__panel a:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
-.navdrop__sep{
+/* Separator */
+.navdrop__sep {
   height: 1px;
-  margin: 8px 4px;
-  background: rgba(255,255,255,.10);
+  background: rgba(255, 255, 255, 0.10);
+  margin: 6px 4px;
 }
 
-/* Mobile: Panel soll im Burger-Menü „normal“ untereinander laufen */
-@media (max-width: 860px){
-  .navdrop{
-    width: 100%;
+/* Mobile: Panel soll nicht "aus dem Burger raus" absolut fliegen */
+@media (max-width: 820px) {
+  .navdrop {
+    display: block;
   }
 
-  .navdrop__sum{
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .navdrop__panel{
+  .navdrop__panel {
     position: static;
-    min-width: 0;
-    width: 100%;
     margin-top: 8px;
   }
 }
