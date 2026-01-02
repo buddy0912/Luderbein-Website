@@ -4,395 +4,377 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="V0 Kalkulator: auswählen, Text erzeugen, 1:1 per WhatsApp oder E-Mail schicken." />
+  <meta name="description" content="V0 Kalkulator: auswählen → fertigen Text erzeugen → 1:1 per WhatsApp oder E-Mail anfragen." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <strong>Luderbein</strong><br>
+        <span>Schwibbögen • Gravur • Sonderwünsche</span>
+      </div>
+    </a>
+
+    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <span class="navicon"><span></span></span>
+    </button>
+
+    <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+      <a href="/">Start</a>
+
+      <details class="navdrop" data-navdrop>
+        <summary class="navdrop__sum" aria-label="Leistungen öffnen">
+          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+          <a href="/leistungen/metall/" role="menuitem">Metall</a>
+          <a href="/leistungen/holz/" role="menuitem">Holz</a>
+          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+
+          <div class="navdrop__sep" aria-hidden="true"></div>
+
+          <a href="/tools/kalkulator/" role="menuitem" aria-current="page">Kalkulator</a>
+          <a href="/service/" role="menuitem">Downloads</a>
         </div>
-      </a>
+      </details>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
+      <a href="/ueber/">Über</a>
+      <a href="/kontakt/">Kontakt</a>
+      <a href="/rechtliches/impressum.html">Impressum</a>
+    </nav>
+  </div>
+</header>
 
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-        <a href="/">Start</a>
+<main class="wrap">
+  <section class="hero">
+    <span class="badge"><i></i> Tool</span>
+    <h1>Kalkulator (V0)</h1>
+    <p class="lead">
+      Du wählst grob vor – der Kalkulator baut dir einen fertigen Text.
+      Den schickst du 1:1 per WhatsApp oder Mail. Kein Shop-Gedöns.
+    </p>
 
-        <!-- EIN Dropdown für Leistungen -->
-        <details class="navdrop" data-navdrop>
-          <summary class="navdrop__sum" aria-label="Leistungen öffnen">
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </summary>
-
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-            <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
-
-            <div class="navdrop__sep" aria-hidden="true"></div>
-
-            <a href="/tools/kalkulator/" role="menuitem" aria-current="page">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
-          </div>
-        </details>
-
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
+    <div class="notice">
+      <strong style="color:var(--text)">Hinweis:</strong><br>
+      “Kalkulieren” heißt hier: Preisrahmen + Rückfragen. Kein automatischer Endpreis.
     </div>
-  </header>
 
-  <main class="wrap">
-    <section class="hero">
-      <span class="badge"><i></i> Tool</span>
-      <h1>Kalkulator (V0)</h1>
-      <p class="lead">
-        Du wählst grob vor – der Kalkulator erzeugt dir einen fertigen Text.
-        Den schickst du 1:1 per WhatsApp oder Mail. Kein Shop-Gedöns.
-      </p>
+    <div class="cta" style="margin-top:14px">
+      <a class="btn primary" id="waLink" href="https://wa.me/491725925858?text=" rel="noopener">WhatsApp</a>
+      <a class="btn" id="mailLink" href="mailto:luderbein_gravur@icloud.com?subject=&body=">E-Mail</a>
+      <a class="btn" id="specialBtn" href="/kontakt/?p=Sonderanfrage">Sonderanfrage</a>
+    </div>
+  </section>
 
-      <div class="notice">
-        <strong style="color:var(--text)">Hinweis:</strong><br>
-        “Kalkulieren” heißt hier: Preisrahmen + Rückfragen. Kein automatischer Endpreis.
+  <section class="section" aria-label="Kalkulator">
+    <div class="section-head">
+      <h2>Kalkulieren</h2>
+      <p class="small muted">Erst Oberkategorie wählen → dann Details. Unten entsteht dein fertiger Text.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Oberkategorie</h3>
+        <p class="small muted" style="margin-top:-6px">Wenn du nur “irgendwas Wildes” willst → Custom.</p>
+
+        <label class="small" for="cat" style="display:block;margin-top:10px">Bitte wählen…</label>
+        <select id="cat" style="margin-top:6px;width:100%">
+          <option value="">Bitte wählen…</option>
+          <option value="schiefer">Schiefer</option>
+          <option value="metall">Metall</option>
+          <option value="holz">Holz</option>
+          <option value="custom">Custom / Sonderfall</option>
+        </select>
+
+        <p class="small" style="margin-top:10px">
+          <a href="/leistungen/">Info-Bereich (Leistungen)</a>
+        </p>
       </div>
 
-      <div class="cta" style="margin-top:14px">
-        <a class="btn primary" id="waLinkTop" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20kalkulieren%3A%0A" rel="noopener">WhatsApp</a>
-        <a class="btn" id="mailLinkTop" href="mailto:luderbein_gravur@icloud.com?subject=Kalkulation%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20kalkulieren%3A%0A">E-Mail</a>
-        <a class="btn" href="/kontakt/?p=Custom">Sonderanfrage</a>
-      </div>
-    </section>
+      <div class="card">
+        <h3>Details</h3>
 
-    <section class="section" aria-label="Kalkulator Auswahl">
-      <div class="section-head">
-        <h2>Kalkulieren</h2>
-        <p class="small muted">Erst Oberkategorie wählen → dann Details. Unten entsteht dein fertiger Text.</p>
-      </div>
+        <!-- Schiefer -->
+        <div id="schieferBox" style="display:none;margin-top:10px">
+          <div class="small muted">Schiefer – Details</div>
 
-      <div class="grid" style="grid-template-columns: 1fr; gap:14px;">
-        <div class="card">
-          <h3>Oberkategorie</h3>
+          <div style="margin-top:10px">
+            <div class="small" style="margin-bottom:6px">Form</div>
+            <label style="margin-right:14px">
+              <input type="radio" name="sForm" value="rund" checked> rund
+            </label>
+            <label>
+              <input type="radio" name="sForm" value="eckig"> eckig
+            </label>
+          </div>
 
-          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <select id="material" style="max-width:320px;">
-              <option value="" selected>Bitte wählen…</option>
-              <option value="schiefer">Schiefer</option>
-              <option value="metall">Metall</option>
-              <option value="holz">Holz</option>
-              <option value="custom">Custom / Sonderfall</option>
+          <div style="margin-top:12px">
+            <label class="small" for="sSize" style="display:block;margin-bottom:6px">Größe / Format</label>
+            <select id="sSize" style="width:100%"></select>
+          </div>
+
+          <div style="margin-top:12px">
+            <label class="small" for="sArt" style="display:block;margin-bottom:6px">Art (optional)</label>
+            <select id="sArt" style="width:100%">
+              <option value="">– optional –</option>
+              <option value="Foto">Foto</option>
+              <option value="Text + Symbol">Text + Symbol</option>
+              <option value="Gedenktafel">Gedenktafel</option>
             </select>
-
-            <a class="btn" href="/leistungen/">Info-Bereich (Leistungen)</a>
           </div>
 
-          <p class="small muted" style="margin-top:10px">
-            Tipp: Wenn du nur “irgendwas Wildes” willst → Custom wählen.
-          </p>
-        </div>
-
-        <!-- SCHIEFER (spezial) -->
-        <div class="card" id="schieferBox" style="display:none;">
-          <h3>Schiefer – Details</h3>
-
-          <div class="grid" style="grid-template-columns: 1fr; gap:12px;">
-            <div>
-              <strong>Form</strong>
-              <div class="cta" style="gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <label class="btn" style="cursor:pointer">
-                  <input type="radio" name="shape" value="rund" checked style="margin-right:8px"> rund
-                </label>
-                <label class="btn" style="cursor:pointer">
-                  <input type="radio" name="shape" value="eckig" style="margin-right:8px"> eckig
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <strong>Größe</strong>
-              <div class="cta" style="gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="10" checked style="margin-right:8px"> 10</label>
-                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="15" style="margin-right:8px"> 15</label>
-                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="20" style="margin-right:8px"> 20</label>
-                <label class="btn" style="cursor:pointer"><input type="radio" name="size" value="custom" style="margin-right:8px"> anders</label>
-              </div>
-
-              <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <input id="sizeCustom" type="text" inputmode="numeric" placeholder="z. B. 25" style="display:none; max-width:160px" />
-                <span class="small muted" id="sizeUnit" style="display:none">cm</span>
-              </div>
-            </div>
-
-            <div>
-              <strong>Art (optional)</strong>
-              <div class="cta" style="gap:10px; flex-wrap:wrap; margin-top:10px;">
-                <label class="btn" style="cursor:pointer"><input type="radio" name="kind" value="Foto" checked style="margin-right:8px"> Foto</label>
-                <label class="btn" style="cursor:pointer"><input type="radio" name="kind" value="Text + Symbol" style="margin-right:8px"> Text + Symbol</label>
-                <label class="btn" style="cursor:pointer"><input type="radio" name="kind" value="Gedenktafel" style="margin-right:8px"> Gedenktafel</label>
-              </div>
-            </div>
-
-            <div>
-              <strong>Menge</strong>
-              <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <input id="qtySchiefer" type="number" min="1" value="1" style="max-width:120px" />
-                <span class="small muted">Stück</span>
-              </div>
+          <div style="margin-top:12px">
+            <label class="small" for="qty" style="display:block;margin-bottom:6px">Menge</label>
+            <div style="display:flex;gap:10px;align-items:center">
+              <input id="qty" type="number" min="1" value="1" style="width:90px">
+              <span class="small muted">Stück</span>
             </div>
           </div>
         </div>
 
-        <!-- GENERISCH (Metall/Holz/Custom) -->
-        <div class="card" id="genericBox" style="display:none;">
-          <h3 id="genericTitle">Details</h3>
-
-          <div class="grid" style="grid-template-columns: 1fr; gap:12px;">
-            <div>
-              <strong>Produkt / Artikel</strong>
-              <input id="prodName" type="text" placeholder="z. B. Hundemarke, Visitenkarte, Schild, Schwibbogen…" style="width:100%; margin-top:10px;" />
-            </div>
-
-            <div>
-              <strong>Größe / Format</strong>
-              <input id="format" type="text" placeholder="z. B. 12 mm rund / 80×50 mm / A3 / 20×20 cm" style="width:100%; margin-top:10px;" />
-            </div>
-
-            <div>
-              <strong>Menge</strong>
-              <div style="margin-top:10px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <input id="qtyGeneric" type="number" min="1" value="1" style="max-width:120px" />
-                <span class="small muted">Stück</span>
-              </div>
-            </div>
-
-            <div>
-              <strong>Motiv / Text / Wunsch</strong>
-              <textarea id="wish" rows="4" style="width:100%; resize:vertical; margin-top:10px;" placeholder="Kurz beschreiben: Text, Motiv, Icon, Stil, ggf. Link/Datei…"></textarea>
-            </div>
+        <!-- Metall -->
+        <div id="metallBox" style="display:none;margin-top:10px">
+          <div class="small muted">Metall – Details (V0)</div>
+          <div style="margin-top:12px">
+            <label class="small" for="mKind" style="display:block;margin-bottom:6px">Artikel</label>
+            <select id="mKind" style="width:100%">
+              <option value="">Bitte wählen…</option>
+              <option value="Hundemarke / Tag">Hundemarke / Tag</option>
+              <option value="Plakette / Schild">Plakette / Schild</option>
+              <option value="Sonstiges">Sonstiges</option>
+            </select>
           </div>
-
-          <div class="notice" style="margin-top:12px;">
-            <strong style="color:var(--text)">Wenn du Dateien hast:</strong>
-            Foto/Logo/Skizze direkt mit schicken – spart 2 Runden.
+          <div style="margin-top:12px">
+            <label class="small" for="mNote" style="display:block;margin-bottom:6px">Größe/Info (optional)</label>
+            <input id="mNote" type="text" placeholder="z.B. 30×20 mm, schwarz, 2-seitig…" style="width:100%">
           </div>
         </div>
 
-        <!-- OUTPUT -->
-        <div class="card" id="outBox" style="display:none;">
-          <h3>Fertiger Text</h3>
-          <p class="small muted">Das schickst du 1:1 (oder passt es kurz an).</p>
-
-          <textarea id="outText" rows="8" style="width:100%; resize:vertical"></textarea>
-
-          <div class="cta" style="margin-top:10px; gap:10px; flex-wrap:wrap;">
-            <button class="btn" type="button" id="copyBtn">Text kopieren</button>
-            <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp mit Text</a>
-            <a class="btn" id="mailLink" href="#">E-Mail mit Text</a>
-            <a class="btn" href="/kontakt/?p=Custom">Sonderanfrage</a>
+        <!-- Holz -->
+        <div id="holzBox" style="display:none;margin-top:10px">
+          <div class="small muted">Holz – Details (V0)</div>
+          <div style="margin-top:12px">
+            <label class="small" for="hKind" style="display:block;margin-bottom:6px">Artikel</label>
+            <select id="hKind" style="width:100%">
+              <option value="">Bitte wählen…</option>
+              <option value="Schwibbogen">Schwibbogen</option>
+              <option value="Schild / Deko">Schild / Deko</option>
+              <option value="Sonstiges">Sonstiges</option>
+            </select>
+          </div>
+          <div style="margin-top:12px">
+            <label class="small" for="hNote" style="display:block;margin-bottom:6px">Info (optional)</label>
+            <input id="hNote" type="text" placeholder="z.B. Breite, Motiv, Text…" style="width:100%">
           </div>
         </div>
 
+        <!-- Custom -->
+        <div id="customBox" style="display:none;margin-top:10px">
+          <div class="small muted">Custom / Sonderfall</div>
+          <div class="notice" style="margin-top:10px">
+            Kurz beschreiben, was du willst (Material/Idee/Deadline). Ich sag dir schnell: geht / geht nicht.
+          </div>
+        </div>
+
+        <div class="notice" style="margin-top:14px">
+          Wenn du Dateien hast: Foto/Logo/Skizze direkt mitschicken – spart 2 Runden.
+        </div>
       </div>
-    </section>
-  </main>
 
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      <div class="card">
+        <h3>Fertiger Text</h3>
+        <p class="small muted">Das schickst du 1:1 (oder passt es kurz an).</p>
+
+        <textarea id="out" rows="10" style="width:100%;margin-top:10px" placeholder="Wähle oben eine Oberkategorie…"></textarea>
+
+        <div class="cta" style="margin-top:12px">
+          <button class="btn" type="button" id="copyBtn">Text kopieren</button>
+          <a class="btn primary" id="waBtn" href="https://wa.me/491725925858?text=" rel="noopener">WhatsApp mit Text</a>
+          <a class="btn" id="mailBtn" href="mailto:luderbein_gravur@icloud.com?subject=&body=">E-Mail mit Text</a>
+        </div>
       </div>
     </div>
-  </footer>
+  </section>
+</main>
 
-  <script src="/assets/site.js"></script>
-  <script src="/assets/nav-dropdown.js"></script>
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
+<footer>
+  <div class="wrap foot">
+    <div class="small">© <span id="y"></span> Luderbein</div>
+    <div class="small">
+      <a href="/rechtliches/impressum.html">Impressum</a> ·
+      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+    </div>
+  </div>
+</footer>
 
-    (function(){
-      const params = new URLSearchParams(location.search);
+<script src="/assets/site.js"></script>
+<script src="/assets/nav-dropdown.js"></script>
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
 
-      const material = document.getElementById('material');
+  // ---- Schiefer-Formate (deine Liste) ----
+  const SCHIEFER_SIZES = {
+    rund: [
+      { v:'10 cm rund',  l:'10 cm (rund)' },
+      { v:'20 cm rund',  l:'20 cm (rund)' },
+      { v:'30 cm rund',  l:'30 cm (rund)' }
+    ],
+    eckig: [
+      { v:'10×10 cm eckig', l:'10×10 cm (eckig)' },
+      { v:'20×20 cm eckig', l:'20×20 cm (eckig)' },
+      { v:'25×25 cm eckig', l:'25×25 cm (eckig)' },
+      { v:'38×13 cm rechteck', l:'38×13 cm (rechteck)' },
+      { v:'45×30 cm rechteck', l:'45×30 cm (rechteck)' }
+    ]
+  };
 
-      const schieferBox = document.getElementById('schieferBox');
-      const genericBox = document.getElementById('genericBox');
-      const genericTitle = document.getElementById('genericTitle');
+  const elCat = document.getElementById('cat');
+  const out = document.getElementById('out');
 
-      const outBox = document.getElementById('outBox');
-      const outText = document.getElementById('outText');
+  const schieferBox = document.getElementById('schieferBox');
+  const metallBox   = document.getElementById('metallBox');
+  const holzBox     = document.getElementById('holzBox');
+  const customBox   = document.getElementById('customBox');
 
-      const waLink = document.getElementById('waLink');
-      const mailLink = document.getElementById('mailLink');
+  const sSize = document.getElementById('sSize');
+  const sArt  = document.getElementById('sArt');
+  const qty   = document.getElementById('qty');
 
-      const waLinkTop = document.getElementById('waLinkTop');
-      const mailLinkTop = document.getElementById('mailLinkTop');
+  const mKind = document.getElementById('mKind');
+  const mNote = document.getElementById('mNote');
 
-      const sizeCustom = document.getElementById('sizeCustom');
-      const sizeUnit = document.getElementById('sizeUnit');
+  const hKind = document.getElementById('hKind');
+  const hNote = document.getElementById('hNote');
 
-      function schieferFormat(shape, size){
-        const n = String(size || '').trim();
-        if(!n) return '';
-        if(shape === 'eckig') return `${n}×${n} cm (eckig)`;
-        return `${n} cm (rund)`;
-      }
+  const waLink   = document.getElementById('waLink');
+  const mailLink = document.getElementById('mailLink');
+  const waBtn    = document.getElementById('waBtn');
+  const mailBtn  = document.getElementById('mailBtn');
 
-      function getSelected(name){
-        const el = document.querySelector(`input[name="${name}"]:checked`);
-        return el ? el.value : '';
-      }
+  function showOnly(which){
+    schieferBox.style.display = (which==='schiefer') ? 'block' : 'none';
+    metallBox.style.display   = (which==='metall')   ? 'block' : 'none';
+    holzBox.style.display     = (which==='holz')     ? 'block' : 'none';
+    customBox.style.display   = (which==='custom')   ? 'block' : 'none';
+  }
 
-      function buildText(){
-        const m = (material.value || '').trim();
+  function getSchieferForm(){
+    const r = document.querySelector('input[name="sForm"]:checked');
+    return r ? r.value : 'rund';
+  }
 
-        if(!m) return '';
+  function fillSchieferSizes(){
+    const form = getSchieferForm();
+    const list = SCHIEFER_SIZES[form] || [];
+    sSize.innerHTML = '';
+    list.forEach((o) => {
+      const opt = document.createElement('option');
+      opt.value = o.v;
+      opt.textContent = o.l;
+      sSize.appendChild(opt);
+    });
+    const optOther = document.createElement('option');
+    optOther.value = 'anders';
+    optOther.textContent = 'anders / Sondermaß';
+    sSize.appendChild(optOther);
+  }
 
-        if(m === 'schiefer'){
-          const shape = getSelected('shape') || 'rund';
-          const sizeVal = getSelected('size') || '10';
-          const kind = getSelected('kind') || 'Foto';
-          const qty = (document.getElementById('qtySchiefer')?.value || '1');
+  function buildText(){
+    const cat = (elCat.value || '').trim();
+    if(!cat){
+      out.value = '';
+      syncLinks('');
+      return;
+    }
 
-          let size = sizeVal;
-          if(sizeVal === 'custom'){
-            size = (sizeCustom?.value || '').trim();
-          }
+    let text = 'Hi Luderbein, ich möchte kalkulieren:\n';
 
-          const format = schieferFormat(shape, size);
+    if(cat === 'schiefer'){
+      const form = getSchieferForm();
+      const size = (sSize.value || '').trim();
+      const art  = (sArt.value || '').trim();
+      const q    = Math.max(1, parseInt(qty.value || '1', 10));
 
-          return (
-            `Kalkulation – Schiefer\n` +
-            `Form: ${shape}\n` +
-            `Größe/Format: ${format}\n` +
-            `Art: ${kind}\n` +
-            `Menge: ${qty}\n` +
-            `Motiv/Text: \n` +
-            `Hinweis: Foto/Datei sende ich direkt mit.\n`
-          );
-        }
+      text += `- Oberkategorie: Schiefer\n`;
+      text += `- Form: ${form}\n`;
+      text += `- Größe/Format: ${size}\n`;
+      if(art) text += `- Art: ${art}\n`;
+      text += `- Menge: ${q} Stück\n`;
+      text += `- Motiv/Text/Wunsch: \n`;
+      text += `\nWenn ich Dateien habe (Foto/Logo/Skizze), schicke ich die direkt mit.\n`;
+    }
 
-        // generisch
-        const titleMap = { metall:'Metall', holz:'Holz', custom:'Custom / Sonderfall' };
-        const label = titleMap[m] || m;
+    if(cat === 'metall'){
+      const k = (mKind.value || '').trim();
+      const n = (mNote.value || '').trim();
+      text += `- Oberkategorie: Metall\n`;
+      if(k) text += `- Artikel: ${k}\n`;
+      if(n) text += `- Größe/Info: ${n}\n`;
+      text += `- Motiv/Text/Wunsch: \n`;
+    }
 
-        const prod = (document.getElementById('prodName')?.value || '').trim();
-        const fmt = (document.getElementById('format')?.value || '').trim();
-        const qty = (document.getElementById('qtyGeneric')?.value || '1');
-        const wish = (document.getElementById('wish')?.value || '').trim();
+    if(cat === 'holz'){
+      const k = (hKind.value || '').trim();
+      const n = (hNote.value || '').trim();
+      text += `- Oberkategorie: Holz\n`;
+      if(k) text += `- Artikel: ${k}\n`;
+      if(n) text += `- Info: ${n}\n`;
+      text += `- Motiv/Text/Wunsch: \n`;
+    }
 
-        return (
-          `Kalkulation – ${label}\n` +
-          `Produkt/Artikel: ${prod || ''}\n` +
-          `Größe/Format: ${fmt || ''}\n` +
-          `Menge: ${qty}\n` +
-          `Wunsch: ${wish || ''}\n` +
-          `Hinweis: Dateien (Foto/Logo/Skizze) sende ich direkt mit.\n`
-        );
-      }
+    if(cat === 'custom'){
+      text += `- Oberkategorie: Custom / Sonderfall\n`;
+      text += `- Idee/Material/Deadline: \n`;
+      text += `- Budgetrahmen (optional): \n`;
+    }
 
-      function setLinks(text){
-        const t = text || 'Hi Luderbein, ich möchte kalkulieren:\n';
+    out.value = text;
+    syncLinks(text);
+  }
 
-        waLink.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(t);
-        mailLink.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent('Kalkulation – Luderbein') + '&body=' + encodeURIComponent(t);
+  function syncLinks(text){
+    const wa = 'https://wa.me/491725925858?text=' + encodeURIComponent(text || '');
+    const subject = 'Kalkulation – Luderbein';
+    const mail = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text || '');
 
-        // top buttons immer aktiv (mit aktuellem Text, falls vorhanden)
-        waLinkTop.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(t);
-        mailLinkTop.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent('Kalkulation – Luderbein') + '&body=' + encodeURIComponent(t);
-      }
+    waLink.href = wa;
+    waBtn.href  = wa;
 
-      function render(){
-        const m = (material.value || '').trim();
+    mailLink.href = mail;
+    mailBtn.href  = mail;
+  }
 
-        // reset views
-        schieferBox.style.display = 'none';
-        genericBox.style.display = 'none';
+  // init
+  fillSchieferSizes();
+  buildText();
 
-        if(!m){
-          outBox.style.display = 'none';
-          setLinks('Hi Luderbein, ich möchte kalkulieren:\n');
-          return;
-        }
+  // events
+  elCat.addEventListener('change', () => { showOnly(elCat.value); buildText(); });
 
-        if(m === 'schiefer'){
-          schieferBox.style.display = '';
-          // custom size input
-          const sizeVal = getSelected('size') || '10';
-          const show = (sizeVal === 'custom');
-          sizeCustom.style.display = show ? '' : 'none';
-          sizeUnit.style.display = show ? '' : 'none';
-        } else {
-          genericBox.style.display = '';
-          const titleMap = { metall:'Metall – Details', holz:'Holz – Details', custom:'Custom – Details' };
-          genericTitle.textContent = titleMap[m] || 'Details';
-        }
+  document.querySelectorAll('input[name="sForm"]').forEach(r => {
+    r.addEventListener('change', () => { fillSchieferSizes(); buildText(); });
+  });
 
-        // output
-        const text = buildText();
-        outText.value = text;
-        outBox.style.display = '';
+  [sSize, sArt, qty, mKind, mNote, hKind, hNote].forEach(el => {
+    if(!el) return;
+    el.addEventListener('input', buildText);
+    el.addEventListener('change', buildText);
+  });
 
-        setLinks(text);
-      }
-
-      function initFromQuery(){
-        const t = (params.get('t') || '').toLowerCase().trim();
-        if(t === 'schiefer' || t === 'metall' || t === 'holz' || t === 'custom'){
-          material.value = t;
-        }
-      }
-
-      // events
-      material.addEventListener('change', function(){
-        // URL optional mitziehen (nicht zwingend)
-        if(material.value){
-          params.set('t', material.value);
-          history.replaceState(null, '', '?' + params.toString());
-        } else {
-          params.delete('t');
-          history.replaceState(null, '', params.toString() ? ('?' + params.toString()) : location.pathname);
-        }
-        render();
-      });
-
-      // schiefer listeners
-      document.querySelectorAll('input[name="shape"], input[name="size"], input[name="kind"]').forEach(el => {
-        el.addEventListener('change', render);
-      });
-      document.getElementById('qtySchiefer')?.addEventListener('input', render);
-      sizeCustom?.addEventListener('input', render);
-
-      // generic listeners
-      document.getElementById('prodName')?.addEventListener('input', render);
-      document.getElementById('format')?.addEventListener('input', render);
-      document.getElementById('qtyGeneric')?.addEventListener('input', render);
-      document.getElementById('wish')?.addEventListener('input', render);
-
-      document.getElementById('copyBtn')?.addEventListener('click', async () => {
-        outText.focus();
-        outText.select();
-        try{
-          await navigator.clipboard.writeText(outText.value);
-        }catch(e){
-          document.execCommand('copy');
-        }
-      });
-
-      // init
-      initFromQuery();
-      render();
-    })();
-  </script>
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    try{
+      await navigator.clipboard.writeText(out.value || '');
+    }catch(e){
+      out.select();
+      document.execCommand('copy');
+    }
+  });
+</script>
 </body>
 </html>
