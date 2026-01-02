@@ -4,210 +4,59 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Luderbein – Schwibbögen & Gravur</title>
-  <meta name="description" content="Luderbein: Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail/WhatsApp, Website im Aufbau." />
+  <meta name="description" content="Luderbein – Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail oder WhatsApp." />
 
-  <link rel="stylesheet" href="/assets/style.css?v=9" />
+  <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
-
-  <style>
-    .reelslider{
-      position:relative;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      padding:14px;
-      overflow:hidden;
-    }
-    .reeltrack{
-      display:flex;
-      gap:14px;
-      overflow:auto;
-      scroll-snap-type:x mandatory;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
-      outline:none;
-    }
-    .reeltrack::-webkit-scrollbar{display:none}
-
-    .reelslide{
-      scroll-snap-align:start;
-      display:block;
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.20);
-      flex:0 0 calc(33.333% - 10px);
-    }
-    .reelslide img{
-      width:100%;
-      height:240px;
-      object-fit:cover;
-      display:block;
-    }
-
-    @media (max-width: 860px){
-      .reelslide{flex-basis:calc(50% - 7px)}
-      .reelslide img{height:220px}
-    }
-    @media (max-width: 520px){
-      .reelslide{flex-basis:86%}
-      .reelslide img{height:240px}
-    }
-
-    .reelbtn{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      width:44px;
-      height:44px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background:rgba(0,0,0,.45);
-      color:rgba(255,255,255,.92);
-      display:grid;
-      place-items:center;
-      cursor:pointer;
-      z-index:2;
-      user-select:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .reelbtn.prev{left:10px}
-    .reelbtn.next{right:10px}
-    @media (max-width: 520px){.reelbtn{display:none}}
-
-    /* --- Schiefer-Kachel: Rotator (JS) mit weichem Crossfade --- */
-    .thumbslider{
-      position:relative;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      border-radius:inherit;
-      display:block;
-      background:rgba(0,0,0,.15);
-    }
-    .thumbslider img{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      opacity:0;
-      transform:translateZ(0) scale(1.02);
-      transition:opacity 900ms ease;
-      will-change: opacity;
-    }
-    .thumbslider img.is-on{ opacity:1; }
-
-    @media (prefers-reduced-motion: reduce){
-      .thumbslider img{transition:none}
-    }
-
-    .thumblink{
-      display:block;
-      width:100%;
-      height:100%;
-      border-radius:inherit;
-      position:relative;
-      overflow:hidden;
-      cursor:pointer;
-    }
-  </style>
 </head>
 
 <body>
   <header>
-  <div class="wrap nav">
-    <a class="brand" href="/">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <strong>Luderbein</strong><br>
-        <span>Schwibbögen • Gravur • Sonderwünsche</span>
-      </div>
-    </a>
-
-    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-      <span class="navicon"><span></span></span>
-    </button>
-
-    <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
-      <a href="/">Start</a>
-
-      <!-- EIN Dropdown für Leistungen -->
-      <details class="navdrop" data-navdrop>
-        <summary class="navdrop__sum" aria-label="Leistungen öffnen">
-          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-        </summary>
-
-        <div class="navdrop__panel" role="menu" aria-label="Leistungen">
-          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-          <a href="/leistungen/metall/" role="menuitem">Metall</a>
-          <a href="/leistungen/holz/" role="menuitem">Holz</a>
-          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
-
-          <div class="navdrop__sep" aria-hidden="true"></div>
-
-          <!-- Kalkulator ergänzend -->
-          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-
-          <!-- Routing zur Download-Seite -->
-          <a href="/service/" role="menuitem">Downloads</a>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
         </div>
-      </details>
+      </a>
 
-      <!-- Schwibbögen optional später wieder rein -->
-      <!-- <a href="/schwibboegen/">Schwibbögen</a> -->
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
 
-      <a href="/ueber/">Über</a>
-      <a href="/kontakt/">Kontakt</a>
-      <a href="/rechtliches/impressum.html">Impressum</a>
-    </nav>
-  </div>
-</header>
+      <nav class="menu" data-nav aria-label="Hauptmenü">
+        <a href="/">Start</a>
+
+        <!-- FUNKTIONIERENDES DROPDOWN -->
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" type="button">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
 
   <main class="wrap">
-
-    <!-- Werkstatt-Feed GANZ OBEN -->
-    <section class="section" aria-label="Werkstatt-Feed">
-      <div class="section-head">
-        <h2>Werkstatt-Feed</h2>
-        <p class="small muted">Echt, nicht geschniegelt. Wischen = weiter. Tap = groß. Läuft automatisch durch.</p>
-      </div>
-
-      <div class="reelslider">
-        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
-        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
-
-        <div class="reeltrack" id="reelTrack" aria-label="Werkstatt Bilder">
-          <a class="reelslide" href="/assets/reel/reel-01.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-01.jpg" alt="Werkstatt Bild 01" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-02.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-02.jpg" alt="Werkstatt Bild 02" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-03.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-03.jpg" alt="Werkstatt Bild 03" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-04.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-04.jpg" alt="Werkstatt Bild 04" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-05.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-05.jpg" alt="Werkstatt Bild 05" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-06.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-06.jpg" alt="Werkstatt Bild 06" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-07.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-07.jpg" alt="Werkstatt Bild 07" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-08.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-08.jpg" alt="Werkstatt Bild 08" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-09.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-09.jpg" alt="Werkstatt Bild 09" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-10.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-10.jpg" alt="Werkstatt Bild 10" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-11.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-11.jpg" alt="Werkstatt Bild 11" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-12.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-12.jpg" alt="Werkstatt Bild 12" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-13.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-13.jpg" alt="Werkstatt Bild 13" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-14.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-14.jpg" alt="Werkstatt Bild 14" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-15.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-15.jpg" alt="Werkstatt Bild 15" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-16.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-16.jpg" alt="Werkstatt Bild 16" loading="lazy"></a>
-          <a class="reelslide" href="/assets/reel/reel-17.jpg" target="_blank" rel="noopener"><img src="/assets/reel/reel-17.jpg" alt="Werkstatt Bild 17" loading="lazy"></a>
-        </div>
-      </div>
-    </section>
-
     <section class="hero">
-      <span class="badge"><i></i> Live – V0 (Website im Aufbau)</span>
+      <span class="badge"><i></i> Live – V1.1 (Website im Aufbau)</span>
       <h1>Gravur, die nicht nach „Standard-Katalog“ schreit.</h1>
-      <p class="lead">
-        Sauber gefertigt, gut personalisierbar – und ohne Shop-Schnickschnack.
-        Erst ansehen, dann kalkulieren/anfragen, dann wird gebaut.
-      </p>
-
+      <p class="lead">Sauber gefertigt, gut personalisiert – und ohne Shop-Schnickschnack. Erst ansehen, dann kalkulieren oder anfragen.</p>
       <div class="cta">
         <a class="btn primary" href="/leistungen/">Leistungen ansehen</a>
         <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
@@ -215,26 +64,16 @@
     </section>
 
     <section class="section" aria-label="Leistungen Preview">
-      <div class="section-head">
-        <h2>Leistungen</h2>
-        <p class="small muted">Von allgemein zu spezialisiert: erst ansehen, dann kalkulieren/anfragen.</p>
-      </div>
-
+      <h2>Leistungen</h2>
       <div class="products">
-        <!-- SCHIEFER: 3er-Vorschau -->
         <article class="productcard">
-          <div class="thumb" style="padding:0">
-            <a class="thumblink" href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
-              <span class="thumbslider" data-thumb-rotator aria-hidden="true">
-                <img src="/assets/img/schiefer-home.jpg" alt="" loading="lazy">
-                <img src="/assets/img/schiefer-text.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-                <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
-              </span>
-            </a>
+          <div class="thumb">
+            <span class="thumbslider">
+              <img src="/assets/img/schiefer-home.jpg" alt="">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="">
+            </span>
           </div>
-          <div class="meta">
-            <span class="price">ab 9,95 €</span><span>•</span><span>Foto • Text • Symbole • Gedenktafeln</span>
-          </div>
+          <div class="meta"><span class="price">ab 9,95 €</span><span>•</span><span>Foto • Text • Symbole</span></div>
           <h3>Schiefer</h3>
           <p class="kicker">Fotogravur, Widmung, Schilder, Erinnerungsstücke – sauber aufbereitet und versiegelt.</p>
           <div class="actions">
@@ -244,12 +83,9 @@
           </div>
         </article>
 
-        <!-- HOLZ -->
         <article class="productcard">
-          <div class="thumb" aria-label="Holz"><span class="thumblabel">Holz</span></div>
-          <div class="meta">
-            <span class="price">auf Anfrage</span><span>•</span><span>Gravur • Deko • Sonderteile</span>
-          </div>
+          <div class="thumb"><span class="thumblabel">Holz</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur • Deko</span></div>
           <h3>Holz</h3>
           <p class="kicker">Schilder, Deko, Gravur – kommt als Nächstes sauber rein.</p>
           <div class="actions">
@@ -258,46 +94,18 @@
           </div>
         </article>
 
-        <!-- METALL -->
         <article class="productcard">
-          <div class="thumb" aria-label="Metall"><span class="thumblabel">Metall</span></div>
-          <div class="meta">
-            <span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span>
-          </div>
+          <div class="thumb"><span class="thumblabel">Metall</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span></div>
           <h3>Metall</h3>
           <p class="kicker">Tags, Plaketten, Gravur – robust, kantig, präzise.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
-            <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
-          </div>
-        </article>
-
-        <!-- CUSTOM -->
-        <article class="productcard">
-          <div class="thumb" aria-label="Custom"><span class="thumblabel">Custom</span></div>
-          <div class="meta">
-            <span class="price">kurzer Draht</span><span>•</span><span>Konzept → Entwurf</span>
-          </div>
-          <h3>Custom</h3>
-          <p class="kicker">Wenn’s machbar ist, finden wir ’nen Weg. Wenn nicht, sag ich’s dir auch.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/">Kontakt</a>
-            <a class="btn" href="/kontakt/?p=Custom">Anfragen</a>
           </div>
         </article>
       </div>
     </section>
-
-    <div class="section">
-      <h2>Aktuell (V0)</h2>
-      <div class="notice">
-        Diese Website startet bewusst schlank. Der Shop-Flow läuft erstmal über Anfrage/Bestellung.
-        Schritt für Schritt kommen Fotos, Produktseiten und ein sauberer Varianten-Flow dazu.
-      </div>
-    </div>
-
-    <div class="hr"></div>
 
     <section class="section">
       <h2>Kontakt</h2>
@@ -311,118 +119,17 @@
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
       <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/impressum.html">Impressum</a> · 
         <a href="/rechtliches/datenschutz.html">Datenschutz</a>
       </div>
     </div>
   </footer>
 
-  <script src="/assets/site.js?v=10"></script>
   <script src="/assets/nav-dropdown.js"></script>
-
+  <script src="/assets/thumb-rotator.js"></script>
+  <script src="/assets/site.js"></script>
   <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Werkstatt-Feed Autoplay (wie gehabt)
-    (function(){
-      var track = document.getElementById('reelTrack');
-      if(!track) return;
-
-      var prev = document.querySelector('.reelbtn.prev');
-      var next = document.querySelector('.reelbtn.next');
-
-      var slides = Array.prototype.slice.call(track.children);
-      for (var i = slides.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var tmp = slides[i];
-        slides[i] = slides[j];
-        slides[j] = tmp;
-      }
-      slides.forEach(function(el){ track.appendChild(el); });
-
-      function slideWidth(){
-        var first = track.querySelector('.reelslide');
-        if(!first) return 320;
-        return first.getBoundingClientRect().width + 14;
-      }
-
-      if(prev) prev.addEventListener('click', function(){
-        track.scrollBy({ left: -slideWidth(), behavior: 'smooth' });
-      });
-      if(next) next.addEventListener('click', function(){
-        track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
-      });
-
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduceMotion) return;
-
-      var paused = false;
-      var AUTOPLAY_MS = 4600;
-
-      function atEnd(){
-        return (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
-      }
-
-      function tick(){
-        if(paused) return;
-        if(atEnd()){
-          track.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          track.scrollBy({ left: slideWidth(), behavior: 'smooth' });
-        }
-      }
-
-      var timer = window.setInterval(tick, AUTOPLAY_MS);
-
-      track.addEventListener('mouseenter', function(){ paused = true; });
-      track.addEventListener('mouseleave', function(){ paused = false; });
-
-      track.addEventListener('touchstart', function(){ paused = true; }, { passive:true });
-      track.addEventListener('touchend', function(){ paused = false; }, { passive:true });
-
-      document.addEventListener('visibilitychange', function(){
-        if(document.hidden){
-          window.clearInterval(timer);
-          timer = null;
-        } else if(!timer){
-          timer = window.setInterval(tick, AUTOPLAY_MS);
-        }
-      });
-    })();
-
-    // Schiefer-Thumb Rotator (stabil auf iOS)
-    (function(){
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if(reduceMotion) return;
-
-      var box = document.querySelector('[data-thumb-rotator]');
-      if(!box) return;
-
-      function getImgs(){
-        return Array.prototype.slice.call(box.querySelectorAll('img')).filter(function(img){
-          return img && img.style.display !== 'none';
-        });
-      }
-
-      var imgs = getImgs();
-      if(imgs.length <= 1) {
-        if(imgs[0]) imgs[0].classList.add('is-on');
-        return;
-      }
-
-      var i = 0;
-      imgs.forEach(function(img){ img.classList.remove('is-on'); });
-      imgs[0].classList.add('is-on');
-
-      window.setInterval(function(){
-        imgs = getImgs();
-        if(imgs.length <= 1) return;
-
-        imgs[i].classList.remove('is-on');
-        i = (i + 1) % imgs.length;
-        imgs[i].classList.add('is-on');
-      }, 4200);
-    })();
+    document.getElementById("y").textContent=new Date().getFullYear();
   </script>
 </body>
 </html>
