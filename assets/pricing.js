@@ -1,90 +1,90 @@
 /*
- * Luderbein Preisliste / Kalkulator – V1.3
- * Gültig ab: Januar 2026
- * Verwendung: /tools/kalkulator/
+ * Luderbein Preisliste / Kalkulator
+ * V1.4 – Stand Januar 2026
+ * Basierend auf: JL7 Preisliste (Schiefer Fotogravur)
+ * Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen
  */
 
 window.LUDERBEIN_PRICING = {
   meta: {
-    version: "1.3",
+    version: "1.4",
     updated: "01/2026",
-    note: "Schieferpreise aktiv · Weitere Materialien bitte anfragen"
+    note: "Schieferpreise aktiv (Fotogravur JL7 + Gedenktafel). Weitere Materialien bitte anfragen."
   },
 
   // === Versandregeln ===
   shipping: {
     enabled: true,
-    basePrice: 5.90,             // Standard-Versandkosten
-    minOrderForShipping: 29.95,  // Mindestbestellwert für Versand
-    freeShippingFrom: 80.00      // Versandkostenfrei ab
+    basePrice: 6.95,
+    minOrderForShipping: 29.95,
+    freeShippingFrom: 80.00
   },
 
   // === PRODUKTE ===
   products: {
 
-    // --- SCHIEFER (aktiv) ---
+    // ===============================
+    // 🔹 SCHIEFER (aktiv)
+    // ===============================
     schiefer: {
       label: "Schiefer",
-      includes: "Versiegelung, Grunddesign, Verpackung",
+      includes: "Fotoaufbereitung, Gravur, Klarlack-Versiegelung",
 
-      // Varianten
       variants: {
         fotogravur: {
-          label: "Fotogravur / Widmung",
-          note: "Ideal für Gedenktafeln, Bilder, Textgravuren.",
+          label: "Fotogravur (JL7)",
+          note: "inkl. Fotoaufbereitung, Gravur & Versiegelung.",
           formats: [
-            { id: "s-10x10", label: "10×10 cm", price: 9.95 },
-            { id: "s-15x15", label: "15×15 cm", price: 14.95 },
-            { id: "s-20x15", label: "20×15 cm", price: 17.95 },
-            { id: "s-25x20", label: "25×20 cm", price: 21.95 },
-            { id: "s-30x20", label: "30×20 cm", price: 26.95 },
-            { id: "s-30r",   label: "30 cm rund", price: 28.95 }
+            { id: "jl7-10x10", label: "10 × 10 cm (eckig)", price: 14.95 },
+            { id: "jl7-10r",   label: "10 cm rund",         price: 14.95 },
+            { id: "jl7-20x20", label: "20 × 20 cm (eckig)", price: 19.95 },
+            { id: "jl7-20r",   label: "20 cm rund",         price: 19.95 },
+            { id: "jl7-25x25", label: "25 × 25 cm (eckig)", price: 39.95 },
+            { id: "jl7-30r",   label: "30 cm rund",         price: 44.95 },
+            { id: "jl7-38x13", label: "38 × 13 cm (Langtafel)", price: 34.95 },
+            { id: "jl7-45x30", label: "45 × 30 cm (A70 Max)",   price: 89.95 }
           ]
         },
 
-        gedenktafeln: {
-          label: "Gedenktafeln / Memorial",
-          note: "Mit oder ohne Foto. Sauber gelasert, lichtecht versiegelt.",
+        gedenktafel: {
+          label: "Gedenktafel / Memorial",
+          note: "Bild, Spruch, Name, Daten, optional Symbol oder Widmung.",
           formats: [
-            { id: "g-15x10", label: "15×10 cm", price: 12.95 },
-            { id: "g-20x15", label: "20×15 cm", price: 16.95 },
-            { id: "g-25x20", label: "25×20 cm", price: 22.95 },
-            { id: "g-30x20", label: "30×20 cm", price: 26.95 },
-            { id: "g-35x25", label: "35×25 cm", price: 32.95 }
+            { id: "ged-10x10", label: "10 × 10 cm (Quadratisch)", price: 19.95 }
           ]
         },
 
-        schilder: {
-          label: "Schilder / Deko",
-          note: "Einfache Motive, Hausnummern, Schriftzüge.",
+        textsymbol: {
+          label: "Text / Symbol (einfach)",
+          note: "Kleine Gravuren, kurze Widmung oder Symbol.",
           formats: [
-            { id: "d-10x5",  label: "10×5 cm",  price: 8.50 },
-            { id: "d-15x7",  label: "15×7 cm",  price: 9.95 },
-            { id: "d-20x10", label: "20×10 cm", price: 12.50 },
-            { id: "d-30x10", label: "30×10 cm", price: 15.95 }
+            { id: "txt-6x6", label: "6 × 6 cm", price: 6.95 }
           ]
         }
       },
 
-      // Upgrades (werden in allen Varianten verwendet)
       upgrades: {
-        widmung:       { label: "Widmung / Signatur", price: 3.50 },
-        standfuss_std: { label: "3D-Standfuß (schwarz)", price: 4.95 },
-        wandhalter:    { label: "3D-Wandhalterung", price: 5.50 },
-        express:       { label: "Express (3 Werktage)", price: 8.00 }
+        widmung:       { label: "Signatur / Widmung",        price: 4.95 },
+        standfuss_std: { label: "3D-Standfuß (schwarz)",      price: 9.95 },
+        wandhalter:    { label: "3D-Wandhalterung (Aufhängen)", price: 6.95 },
+        express:       { label: "Express (3 Werktage)",       price: 19.95 }
       }
     },
 
-    // --- METALL (vorbereitet, noch deaktiviert) ---
+    // ===============================
+    // ⚫ METALL (noch deaktiviert)
+    // ===============================
     metall: {
       label: "Metall",
-      note: "Derzeit in Vorbereitung – bitte per Mail oder WhatsApp anfragen.",
+      note: "In Vorbereitung – bitte aktuell per WhatsApp oder Mail anfragen.",
       active: false,
       variants: {},
       upgrades: {}
     },
 
-    // --- HOLZ (vorbereitet, noch deaktiviert) ---
+    // ===============================
+    // 🪵 HOLZ (noch deaktiviert)
+    // ===============================
     holz: {
       label: "Holz",
       note: "Kommt als Nächstes. Laserbearbeitung bis 850 × 800 mm möglich.",
@@ -93,10 +93,12 @@ window.LUDERBEIN_PRICING = {
       upgrades: {}
     },
 
-    // --- ACRYL (vorbereitet, noch deaktiviert) ---
+    // ===============================
+    // 🔷 ACRYL (noch deaktiviert)
+    // ===============================
     acryl: {
       label: "Acryl",
-      note: "Noch in Vorbereitung – individuelle Anfragen gern per Mail.",
+      note: "Noch in Vorbereitung – individuelle Anfragen bitte per Mail.",
       active: false,
       variants: {},
       upgrades: {}
