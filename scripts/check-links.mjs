@@ -99,10 +99,73 @@ function detectCaseCollisions(allRelFiles) {
   }
 
   const collisions = [];
-  for (const [k, arr] of map.entries()) {
-    if (arr.length > 1) collisions.push({ key: k, paths: arr });
+  for (const [, arr] of map.entries()) {
+    if (arr.length > 1) collisions.push({ paths: arr });
   }
   return collisions;
+}
+
+/**
+ * Process a single internal URL and record missing/case-mismatch/warnings.
+ */
+function checkOneTarget({ fromFile, url, kind }, state) {
+  // Ignore protocol-relative
+  if (url.startsWith("//")) return;
+
+  const { target, fallbackTarget } = resolveInternal(url);
+
+  // 1) exact match exists
+  if (existsRel(target)) return;
+
+  // 2) case-insensitive match exists but case mismatch -> fail
+  const ci = findCaseInsensitiveMatch(target);
+  if (ci && ci.actualRel && ci.hasCaseMismatch) {
+    state.caseMismatch.push({
+      from: fromFile,
+      kind,
+      url,
+      expected: target,
+      actual: ci.actualRel,
+    });
+    return;
+  }
+
+  // 3) /dir (no slash) but /dir/index.html exists -> warn only (for href/src mainly)
+  // For data-reel-src (JSON), this is harmless and unlikely, but keeping it consistent is OK.
+  if (fallbackTarget && existsRel(fallbackTarget)) {
+    state.trailingSlashWarnings.push({
+      from: fromFile,
+      kind,
+      url,
+      suggestion: "/" + target + "/",
+      resolvesTo: fallbackTarget,
+    });
+    return;
+  }
+
+  // 4) case-insensitive match for fallback target
+  if (fallbackTarget) {
+    const ciFallback = findCaseInsensitiveMatch(fallbackTarget);
+    if (ciFallback && ciFallback.actualRel && ciFallback.hasCaseMismatch) {
+      state.caseMismatch.push({
+        from: fromFile,
+        kind,
+        url,
+        expected: fallbackTarget,
+        actual: ciFallback.actualRel,
+      });
+      return;
+    }
+  }
+
+  // 5) missing
+  state.missing.push({
+    from: fromFile,
+    kind,
+    url,
+    expected: target,
+    alsoTried: fallbackTarget,
+  });
 }
 
 // --- Main scan ---
@@ -117,66 +180,37 @@ const htmlFiles = allFilesAbs.filter((f) => f.endsWith(".html"));
 // Match only absolute internal URLs: href="/..." or src="/..."
 const urlRegex = /\b(?:href|src)\s*=\s*["'](\/[^"']+)["']/gi;
 
-const missing = [];
-const caseMismatch = [];
-const trailingSlashWarnings = [];
+// NEW: match internal reel JSON sources: data-reel-src="/assets/..."
+const dataReelSrcRegex = /\bdata-reel-src\s*=\s*["'](\/[^"']+)["']/gi;
+
+const state = {
+  missing: [],
+  caseMismatch: [],
+  trailingSlashWarnings: [],
+};
 
 for (const file of htmlFiles) {
   const relFile = path.relative(repoRoot, file).replaceAll("\\", "/");
   const content = read(file);
 
-  let m;
-  while ((m = urlRegex.exec(content)) !== null) {
-    const url = m[1];
-
-    // Ignore special cases that still begin with "/" but aren't real file targets
-    // (rare, but safe)
-    if (url.startsWith("//")) continue;
-
-    const { target, fallbackTarget } = resolveInternal(url);
-
-    // First try exact match
-    if (existsRel(target)) continue;
-
-    // If exact doesn't exist, check if it exists with different case
-    const ci = findCaseInsensitiveMatch(target);
-    if (ci && ci.actualRel && ci.hasCaseMismatch) {
-      caseMismatch.push({
-        from: relFile,
-        url,
-        expected: target,
-        actual: ci.actualRel,
-      });
-      continue;
+  // href/src
+  {
+    let m;
+    while ((m = urlRegex.exec(content)) !== null) {
+      const url = m[1];
+      if (!url || !url.startsWith("/")) continue;
+      checkOneTarget({ fromFile: relFile, url, kind: "href/src" }, state);
     }
+  }
 
-    // If /dir (no slash) but /dir/index.html exists -> warn, but don't fail
-    if (fallbackTarget && existsRel(fallbackTarget)) {
-      trailingSlashWarnings.push({
-        from: relFile,
-        url,
-        suggestion: "/" + target + "/",
-        resolvesTo: fallbackTarget,
-      });
-      continue;
+  // data-reel-src
+  {
+    let m;
+    while ((m = dataReelSrcRegex.exec(content)) !== null) {
+      const url = m[1];
+      if (!url || !url.startsWith("/")) continue;
+      checkOneTarget({ fromFile: relFile, url, kind: "data-reel-src" }, state);
     }
-
-    // Also try case-insensitive match for fallbackTarget
-    if (fallbackTarget) {
-      const ciFallback = findCaseInsensitiveMatch(fallbackTarget);
-      if (ciFallback && ciFallback.actualRel && ciFallback.hasCaseMismatch) {
-        caseMismatch.push({
-          from: relFile,
-          url,
-          expected: fallbackTarget,
-          actual: ciFallback.actualRel,
-        });
-        continue;
-      }
-    }
-
-    // Otherwise: missing
-    missing.push({ from: relFile, url, expected: target, alsoTried: fallbackTarget });
   }
 }
 
@@ -193,31 +227,31 @@ if (collisions.length) {
   console.error("");
 }
 
-if (caseMismatch.length) {
+if (state.caseMismatch.length) {
   failed = true;
-  console.error("❌ Case mismatch in internal links (will break on case-sensitive hosting like Cloudflare Pages):");
-  for (const x of caseMismatch) {
-    console.error(`- ${x.from} -> ${x.url}`);
+  console.error("❌ Case mismatch in internal targets (will break on case-sensitive hosting like Cloudflare Pages):");
+  for (const x of state.caseMismatch) {
+    console.error(`- [${x.kind}] ${x.from} -> ${x.url}`);
     console.error(`  expected: ${x.expected}`);
     console.error(`  actual:   ${x.actual}`);
   }
   console.error("");
 }
 
-if (missing.length) {
+if (state.missing.length) {
   failed = true;
   console.error("❌ Missing internal targets:");
-  for (const x of missing) {
+  for (const x of state.missing) {
     const extra = x.alsoTried ? ` (also tried: ${x.alsoTried})` : "";
-    console.error(`- ${x.from} -> ${x.url} (expected: ${x.expected})${extra}`);
+    console.error(`- [${x.kind}] ${x.from} -> ${x.url} (expected: ${x.expected})${extra}`);
   }
   console.error("");
 }
 
-if (trailingSlashWarnings.length) {
+if (state.trailingSlashWarnings.length) {
   console.log("⚠️ Links to directories without trailing slash (works sometimes via redirect, but not guaranteed everywhere):");
-  for (const x of trailingSlashWarnings) {
-    console.log(`- ${x.from} -> ${x.url} (suggest: ${x.suggestion}, resolves to: ${x.resolvesTo})`);
+  for (const x of state.trailingSlashWarnings) {
+    console.log(`- [${x.kind}] ${x.from} -> ${x.url} (suggest: ${x.suggestion}, resolves to: ${x.resolvesTo})`);
   }
   console.log("");
 }
@@ -225,5 +259,5 @@ if (trailingSlashWarnings.length) {
 if (failed) {
   process.exit(1);
 } else {
-  console.log("✅ All internal /href + /src targets exist (and no case issues found).");
+  console.log("✅ All internal targets exist (href/src + data-reel-src) and no case issues found.");
 }
