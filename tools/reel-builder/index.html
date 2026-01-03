@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Reel Builder | Luderbein</title>
-  <meta name="description" content="Interner Reel Builder: JSON-Einträge für Schiefer/Metall/Holz erstellen – ohne externen Embed." />
+  <meta name="description" content="Interner Reel Builder: JSON-Einträge für Reels erstellen – ohne externen Embed." />
   <meta name="robots" content="noindex, nofollow" />
 
   <link rel="stylesheet" href="/assets/style.css" />
@@ -21,7 +21,7 @@
     }
     .rb-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
     .rb-row label { font-size: .95rem; color: var(--muted); }
-    .rb-row input, .rb-row textarea, .rb-row select {
+    .rb-row input, .rb-row textarea {
       width: 100%;
       padding: 10px 12px;
       border-radius: 12px;
@@ -63,8 +63,6 @@
 </head>
 
 <body>
-
-  <!-- Header wie Startseite -->
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -110,34 +108,32 @@
     <section class="hero">
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
-      <p class="lead">
-        Erstellt JSON-Einträge für interne Reels (ohne Instagram/Embed). Du kopierst nur den Output in die passende
-        <code>assets/reel-*.json</code>.
-      </p>
-
-      <div class="rb-hint">
-        Tipp: Bilder zuerst ins Repo hochladen (z.B. <code>/assets/metall/...</code>) und dann hier Pfad + Text eintragen.
-      </div>
+      <p class="lead">Einträge für <code>assets/reel-*.json</code> erstellen – inkl. optionalem <code>tag</code> (Badge).</p>
+      <div class="rb-hint">Tipp: <code>tag</code> ist optional. Leer lassen = kein Badge (oder Default-Tag greift).</div>
     </section>
 
     <div class="rb-grid">
-      <!-- Builder -->
       <section class="rb-card" aria-label="Neuen Reel-Eintrag erstellen">
         <h2>Neuen Reel-Eintrag erstellen</h2>
 
         <div class="rb-row">
           <label for="src">Bildpfad (muss mit <code>/assets/</code> beginnen)</label>
-          <input id="src" type="text" placeholder="/assets/metall/metall-reel-13.jpg" autocomplete="off" />
+          <input id="src" type="text" placeholder="/assets/werkstatt/01.jpg" autocomplete="off" />
         </div>
 
         <div class="rb-row">
           <label for="cap">Caption (kurzer Text)</label>
-          <input id="cap" type="text" placeholder="Metall (Beispiel)" autocomplete="off" />
+          <input id="cap" type="text" placeholder="Einblick aus der Werkstatt" autocomplete="off" />
         </div>
 
         <div class="rb-row">
           <label for="alt">Alt-Text (kurz beschreiben)</label>
-          <input id="alt" type="text" placeholder="Metall Beispiel 13" autocomplete="off" />
+          <input id="alt" type="text" placeholder="Werkstatt Aufnahme" autocomplete="off" />
+        </div>
+
+        <div class="rb-row">
+          <label for="tag">Tag/Badge (optional)</label>
+          <input id="tag" type="text" placeholder="Werkstatt / Laser / Finish / Material" autocomplete="off" />
         </div>
 
         <div class="rb-actions">
@@ -152,25 +148,17 @@
           <img id="previewImg" alt="" />
         </div>
 
-        <div class="rb-hint">
-          Output ist ein einzelnes JSON-Objekt (3 Felder: <code>src</code>, <code>alt</code>, <code>cap</code>).
-        </div>
-
         <div class="rb-out" id="outEntry" aria-label="JSON Eintrag Output"></div>
       </section>
 
-      <!-- JSON Updater -->
       <section class="rb-card" aria-label="JSON-Liste aktualisieren">
         <h2>JSON-Liste aktualisieren</h2>
-        <p class="rb-hint">
-          Hier kannst du deine bestehende <code>assets/reel-*.json</code> reinpaste-n, dann einen neuen Eintrag hinzufügen
-          und dir die komplette Datei neu ausgeben lassen.
-        </p>
+        <p class="rb-hint">Bestehende JSON reinpaste-n → Eintrag hinzufügen → komplette JSON kopieren.</p>
 
         <div class="rb-row">
           <label for="jsonIn">Bestehende JSON (Array) – optional</label>
           <textarea id="jsonIn" placeholder='[
-  {"src":"/assets/...","alt":"...","cap":"..."}
+  {"src":"/assets/...","alt":"...","cap":"...","tag":"..."}
 ]'></textarea>
         </div>
 
@@ -181,11 +169,6 @@
         </div>
 
         <div class="rb-out" id="outJson" aria-label="JSON Gesamt-Output"></div>
-
-        <p class="rb-hint">
-          Dateien zum Editieren (GitHub):<br />
-          <code>/assets/reel-schiefer.json</code> · <code>/assets/reel-metall.json</code>
-        </p>
       </section>
     </div>
   </main>
