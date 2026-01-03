@@ -3,26 +3,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Schiefergravur | Luderbein</title>
-  <meta name="description" content="Schiefergravur: Fotogravur, Text & Symbole. Beispiele ansehen, kalkulieren oder direkt anfragen.">
+  <title>Schiefer | Luderbein</title>
+  <meta name="description" content="Schiefergravur: Fotogravur sowie Text & Symbole. Beispiele ansehen, Preis kalkulieren oder direkt anfragen.">
 
   <link rel="stylesheet" href="/assets/style.css">
   <link rel="stylesheet" href="/assets/nav-dropdown.css">
 </head>
 
 <body>
-  <header class="siteheader">
-    <div class="wrap headerrow">
+  <!-- HEADER: exakt wie auf index.html, damit CSS/JS greifen -->
+  <header>
+    <div class="wrap nav">
       <a class="brand" href="/">
-        <span class="brandmark" aria-hidden="true">LB</span>
-        <span class="brandtext">
-          <strong>Luderbein</strong>
-          <span class="small muted">Schilder · Gravur · Sonderwünsche</span>
-        </span>
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
       </a>
 
-      <nav class="topnav" aria-label="Navigation">
-        <a href="/leistungen/">Leistungen</a>
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+        <a href="/leistungen/" aria-current="page">Leistungen</a>
 
         <div class="navdrop" data-navdrop>
           <button class="navdrop__btn" type="button" aria-haspopup="true" aria-expanded="false">
@@ -30,7 +36,7 @@
           </button>
 
           <div class="navdrop__menu" role="menu">
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/schiefer/" role="menuitem" aria-current="page">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
@@ -49,103 +55,124 @@
   </header>
 
   <main class="wrap">
-    <section class="hero" aria-label="Schiefer Header">
+    <section class="hero">
       <h1>Schiefer</h1>
       <p class="lead">Natürlich, robust, zeitlos – perfekt für Gedenktafeln, Hausnummern und Schilder.</p>
 
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Schiefer">Anfragen</a>
-        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-        <a class="btn" href="/leistungen/">Zurück</a>
-      </div>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Ablauf:</strong> Beispiel ansehen → Motiv/Format klären → Anfrage oder Kalkulation.
+      <div class="actions">
+        <a class="btn" href="/tools/kalkulator/?t=schiefer">Preis kalkulieren</a>
+        <a class="btn primary" href="/kontakt/?p=Schiefer">Anfrage senden</a>
       </div>
     </section>
 
-    <section class="section" aria-label="Schiefer Varianten">
+    <section>
       <h2>Varianten</h2>
-      <p class="small muted">Tippe oder klicke auf eine Kachel für Details.</p>
+      <p class="muted">Tippe oder klicke auf eine Kachel für Details.</p>
 
       <div class="products">
-        <!-- FOTO -->
+        <!-- Fotogravur -->
         <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+          <div class="thumb">
             <span class="thumbslider" data-thumb-rotator>
-              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel Fotogravur 1">
-              <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Beispiel Fotogravur 2">
+              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Fotogravur Beispiel 1">
+              <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Fotogravur Beispiel 2">
             </span>
           </div>
+
           <div class="meta">
-            <span class="price">ab 14,95 €</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
+            <span class="price">ab 14,95 €</span> • <span>Fotogravur</span> • <span>Premium</span>
           </div>
+
           <h3>Fotogravur</h3>
           <p class="kicker">Portraits, Haustiere, Erinnerungen – Schiefer zeigt, was das Foto taugt.</p>
+
           <div class="actions">
-            <a class="btn primary" href="#foto">Ansehen</a>
+            <a class="btn primary" href="#beispiele">Ansehen</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Fotogravur">Anfragen</a>
           </div>
         </article>
 
-        <!-- TEXT / SYMBOLE -->
+        <!-- Text & Symbole -->
         <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1; position:relative;">
-            <!-- FIX: vorher /assets/img/schiefer-text.jpg (fehlte) -->
-            <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Beispiel Text & Symbole" style="width:100%;height:100%;object-fit:cover;">
+          <div class="thumb">
+            <!-- FIX: kein schiefer-text.jpg nötig -->
+            <img src="/assets/img/schiefer-foto-01.jpg"
+                 alt="Schiefer Text & Symbole Beispiel"
+                 style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
           </div>
+
           <div class="meta">
-            <span class="price">ab 9,95 €</span><span>•</span><span>Text &amp; Symbole</span><span>•</span><span>Fastlane</span>
+            <span class="price">ab 9,95 €</span> • <span>Text &amp; Symbole</span> • <span>Fastlane</span>
           </div>
+
           <h3>Text &amp; Symbole</h3>
-          <p class="kicker">Koordinaten, Spruch, Schild, Logo – schnell, clean, präzise.</p>
+          <p class="kicker">Schrift, Icons, kleine Motive – wir helfen bei Lesbarkeit &amp; Layout.</p>
+
           <div class="actions">
-            <a class="btn primary" href="#text">Ansehen</a>
+            <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-            <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
           </div>
         </article>
       </div>
     </section>
 
-    <section class="section" id="foto" aria-label="Schiefer Fotogravur Beispiele">
+    <section id="beispiele" style="margin-top: 22px;">
       <h2>Fotogravur Beispiele</h2>
-      <p class="small muted">Hinweis: Qualität hängt stark vom Ausgangsfoto ab – wir helfen beim Optimieren.</p>
+      <p class="muted">Hinweis: Qualität hängt stark vom Ausgangsfoto ab – wir helfen beim Optimieren.</p>
 
-      <div class="gallery">
-        <a class="thumb" href="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg">
-          <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Schiefer Beispiel 1" loading="lazy">
-        </a>
-        <a class="thumb" href="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg">
-          <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Schiefer Beispiel 2" loading="lazy">
-        </a>
-        <a class="thumb" href="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg">
-          <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Schiefer Beispiel 3" loading="lazy">
-        </a>
+      <!-- WICHTIG: .thumb muss auf einem div sitzen (Block), nicht auf <a> -->
+      <div class="products">
+        <article class="productcard">
+          <a href="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" style="text-decoration:none; color:inherit;">
+            <div class="thumb">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg"
+                   alt="Schiefer Beispiel 1"
+                   loading="lazy"
+                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="meta"><span>Beispiel 1</span></div>
+          </a>
+        </article>
+
+        <article class="productcard">
+          <a href="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" style="text-decoration:none; color:inherit;">
+            <div class="thumb">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg"
+                   alt="Schiefer Beispiel 2"
+                   loading="lazy"
+                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="meta"><span>Beispiel 2</span></div>
+          </a>
+        </article>
+
+        <article class="productcard">
+          <a href="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" style="text-decoration:none; color:inherit;">
+            <div class="thumb">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg"
+                   alt="Schiefer Beispiel 3"
+                   loading="lazy"
+                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="meta"><span>Beispiel 3</span></div>
+          </a>
+        </article>
       </div>
 
-      <div class="cta" style="margin-top:16px">
+      <div class="actions" style="margin-top: 14px;">
         <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Fotogravur">Fotogravur anfragen</a>
-        <a class="btn" href="/tools/kalkulator/?t=schiefer">Preis kalkulieren</a>
-      </div>
-    </section>
-
-    <section class="section" id="text" aria-label="Text und Symbole">
-      <h2>Text &amp; Symbole</h2>
-      <p>Schrift, Icons, kleine Motive – wir helfen bei Lesbarkeit &amp; Layout.</p>
-
-      <div class="cta" style="margin-top:16px">
-        <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Text &amp; Symbole anfragen</a>
         <a class="btn" href="/tools/kalkulator/?t=schiefer">Preis kalkulieren</a>
       </div>
     </section>
   </main>
 
-  <footer class="sitefooter">
-    <div class="wrap footerrow">
-      <div class="small muted">© <span id="y">2026</span> Luderbein</div>
-      <div class="footerlinks">
+  <footer>
+    <div class="wrap foot">
+      <div class="small">
+        <span>© <span id="y">2026</span> Luderbein</span>
+      </div>
+      <div class="links">
         <a href="/rechtliches/impressum.html">Impressum</a>
         <a href="/rechtliches/datenschutz.html">Datenschutz</a>
       </div>
