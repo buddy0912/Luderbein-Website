@@ -10,6 +10,9 @@
   const elTagCustomOn = $("tagCustomOn");
   const elTagCustom = $("tagCustom");
 
+  const btnUseLastTag = $("btnUseLastTag");
+  const elLockTag = $("lockTag");
+
   const outEntry = $("outEntry");
   const outJson = $("outJson");
   const status = $("status");
@@ -17,10 +20,10 @@
   const previewBox = $("previewBox");
   const previewImg = $("previewImg");
 
-  // Last tag memory + lock (persistiert auf iPad)
+  // Persistenz (iPad-friendly)
   const LS_KEY = "reelBuilder.lastTag";
   const LS_KEY_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
-  const LS_KEY_LOCK = "reelBuilder.lockTag"; // "1" | "0"
+  const LS_KEY_LOCK = "reelBuilder.lockTag";     // "1" | "0"
 
   function getSaved(key, fallback = "") {
     try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
@@ -38,24 +41,25 @@
     return { ok: true, msg: "OK" };
   }
 
-  function currentTag() {
-    const useCustom = !!elTagCustomOn.checked;
-    if (useCustom) return safeTrim(elTagCustom.value);
-    return safeTrim(elTagPreset.value);
-  }
-
   function syncTagUI() {
     const useCustom = !!elTagCustomOn.checked;
     elTagCustom.disabled = !useCustom;
     if (!useCustom) elTagCustom.value = "";
   }
 
-  function saveLastTagFromUI() {
+  function currentTag() {
     const useCustom = !!elTagCustomOn.checked;
+    if (useCustom) return safeTrim(elTagCustom.value);
+    return safeTrim(elTagPreset.value);
+  }
+
+  function saveLastTagFromUI() {
     const tag = currentTag();
     if (!tag) return;
+
+    const mode = elTagCustomOn.checked ? "custom" : "preset";
     setSaved(LS_KEY, tag);
-    setSaved(LS_KEY_MODE, useCustom ? "custom" : "preset");
+    setSaved(LS_KEY_MODE, mode);
   }
 
   function applyLastTag() {
@@ -79,6 +83,7 @@
       if (opt) {
         elTagPreset.value = last;
       } else {
+        // Fallback: wenn Preset nicht existiert, nutze Custom
         elTagCustomOn.checked = true;
         syncTagUI();
         elTagCustom.value = last;
@@ -149,8 +154,7 @@
     return parsed;
   }
 
-  // --- Events ---
-
+  // --- Buttons / Events ---
   $("btnEntry").addEventListener("click", () => buildEntry());
 
   $("btnCopyEntry").addEventListener("click", async () => {
@@ -161,7 +165,6 @@
       : `<span class="rb-bad">✖ Konnte nicht kopieren (Clipboard blockiert).</span>`;
   });
 
-  // NEW: Nur Bildpfad leeren
   $("btnClearSrc").addEventListener("click", () => {
     elSrc.value = "";
     elSrc.focus();
@@ -184,7 +187,7 @@
     $("jsonIn").value = "";
     status.textContent = "";
     previewBox.style.display = "none";
-    // Lock bleibt als Preference bewusst erhalten
+    // Lock bleibt bewusst erhalten
   });
 
   $("btnAddToJson").addEventListener("click", () => {
@@ -209,6 +212,10 @@
     outJson.textContent = JSON.stringify(arr, null, 2);
     status.innerHTML = `<span class="rb-ok">✔ Zur JSON hinzugefügt (unten kopieren).</span>`;
 
+    // Speed: Bildpfad leeren und Fokus setzen
+    elSrc.value = "";
+    elSrc.focus();
+
     // Wenn Tag NICHT gesperrt: Tag zurücksetzen
     if (!isLockTagOn()) {
       elTagPreset.value = "";
@@ -217,9 +224,6 @@
       syncTagUI();
     }
 
-    // Speed: nur Bildpfad leeren und Fokus setzen
-    elSrc.value = "";
-    elSrc.focus();
     buildEntry();
   });
 
@@ -247,6 +251,18 @@
     }
   });
 
+  // Tag tools
+  btnUseLastTag.addEventListener("click", () => {
+    applyLastTag();
+    buildEntry();
+  });
+
+  // Lock persists
+  elLockTag.checked = getSaved(LS_KEY_LOCK, "0") === "1";
+  elLockTag.addEventListener("change", () => {
+    setSaved(LS_KEY_LOCK, elLockTag.checked ? "1" : "0");
+  });
+
   // Live preview
   elSrc.addEventListener("input", () => buildEntry());
   elCap.addEventListener("input", () => buildEntry());
@@ -260,13 +276,4 @@
   syncTagUI();
   outEntry.textContent = "";
   outJson.textContent = "";
-
-  // Restore lock preference if you later add the lock UI (optional)
-  // Keeping it harmless here:
-  const lock = getSaved(LS_KEY_LOCK, "");
-  if (lock !== "") setSaved(LS_KEY_LOCK, lock);
-
-  // Small helper: “Letztes Tag übernehmen” via keyboard is not required; keep function available
-  // If you want the button back in UI later, we already have applyLastTag() ready.
-  window.__reelBuilderApplyLastTag = applyLastTag;
 })();
