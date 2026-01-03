@@ -1,15 +1,16 @@
 // =========================================================
-// Luderbein Site Core v1.4.4
+// Luderbein Site Core v1.4.5
 // - Nav Toggle
 // - Active Nav Marker
 // - Kontakt: CTA Autofill (WhatsApp + Mail) aus URL params
 //   Params: p (Produkt), v (Variante), f (Format) | size (Fallback), note
-// - FIX: Safari/BFCache/Stale href -> CTAs werden beim KLICK live aus URL gebaut
+// - Fix: Safari/BFCache/Stale href -> CTAs beim KLICK live aus URL
+// - Fix: doppelte Query-Params -> wir nehmen IMMER den letzten Wert + kanonisieren URL
 // =========================================================
 (function () {
   "use strict";
 
-  const VERSION = "1.4.4";
+  const VERSION = "1.4.5";
   if (window.__lbSiteCoreLoadedVersion === VERSION) return;
   window.__lbSiteCoreLoadedVersion = VERSION;
 
@@ -24,7 +25,6 @@
     const nav = document.querySelector("[data-nav]");
     if (!navBtn || !nav) return;
 
-    // Doppel-Binding vermeiden
     if (navBtn.dataset.lbBound === "1") return;
     navBtn.dataset.lbBound = "1";
 
@@ -53,14 +53,13 @@
     if (!pathname.startsWith("/kontakt")) return;
 
     // 1) Initial einmal setzen
-    applyKontaktAutofill();
+    applyKontaktAutofill(true);
 
     // 2) BFCache / History: nochmal setzen
-    window.addEventListener("pageshow", () => applyKontaktAutofill());
-    window.addEventListener("popstate", () => applyKontaktAutofill());
+    window.addEventListener("pageshow", () => applyKontaktAutofill(false));
+    window.addEventListener("popstate", () => applyKontaktAutofill(false));
 
     // 3) Killer-Fix: beim KLICK live aus aktueller URL bauen
-    //    (Safari kann href im DOM "stale" lassen; wir rechnen daher on-demand)
     if (document.documentElement.dataset.lbCtaDelegated === "1") return;
     document.documentElement.dataset.lbCtaDelegated = "1";
 
@@ -70,47 +69,70 @@
         const a = e.target && e.target.closest ? e.target.closest("a") : null;
         if (!a) return;
 
-        // Nur Hero-CTAs anfassen (nicht Direktlinks unten)
         const inHeroCta = !!a.closest(".hero .cta");
         if (!inHeroCta) return;
 
         const href = (a.getAttribute("href") || "").trim();
         const isWa = href.includes("wa.me/");
         const isMail = href.startsWith("mailto:");
-
         if (!isWa && !isMail) return;
 
-        // Immer zuerst sauber neu berechnen + href aktualisieren
-        const { waHref, mailHref } = applyKontaktAutofill();
+        // immer live neu berechnen (aus AKTUELLER URL)
+        const { waHref, mailHref } = applyKontaktAutofill(false);
 
-        // Bei modifier clicks (neuer Tab etc.) nur aktualisieren, nicht abwürgen
+        // modifier clicks: nur href aktualisieren
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
 
-        // Normaler Klick: wir verhindern Default und navigieren gezielt
-        // -> garantiert, dass wirklich der neue Link benutzt wird
         e.preventDefault();
-
-        if (isWa && waHref) {
-          window.location.href = waHref;
-          return;
-        }
-        if (isMail && mailHref) {
-          window.location.href = mailHref;
-        }
+        if (isWa && waHref) window.location.href = waHref;
+        if (isMail && mailHref) window.location.href = mailHref;
       },
       true
     );
   }
 
-  function applyKontaktAutofill() {
+  // Nimmt immer den LETZTEN Param-Wert (wichtig bei doppelten Params)
+  function getLastParam(sp, key) {
+    const all = sp.getAll(key);
+    if (!all || !all.length) return "";
+    return (all[all.length - 1] || "").trim();
+  }
+
+  // Kanonisiert die URL auf /kontakt/:
+  // - p/v/f/note jeweils nur 1x (letzter gewinnt)
+  // - size wird entfernt, wenn f existiert
+  function canonicalizeKontaktUrl(st) {
+    const url = new URL(window.location.href);
+    const sp = new URLSearchParams();
+
+    if (st.p) sp.set("p", st.p);
+    if (st.v) sp.set("v", st.v);
+    if (st.f) sp.set("f", st.f);
+    if (st.note) sp.set("note", st.note);
+
+    const next = url.pathname + (sp.toString() ? `?${sp.toString()}` : "");
+    const current = url.pathname + (url.search || "");
+
+    if (next !== current) {
+      window.history.replaceState({}, "", next);
+    }
+  }
+
+  function applyKontaktAutofill(doCanonicalize) {
     const sp = new URLSearchParams(window.location.search);
 
-    const p = (sp.get("p") || "").trim();
-    const v = (sp.get("v") || "").trim();
-    const f = (sp.get("f") || sp.get("size") || "").trim();
-    const note = (sp.get("note") || "").trim();
+    // Letzter gewinnt (bei doppelten Params)
+    const p = getLastParam(sp, "p");
+    const v = getLastParam(sp, "v");
+    const f = (getLastParam(sp, "f") || getLastParam(sp, "size")).trim();
+    const note = getLastParam(sp, "note");
 
-    const labelParts = [p, v, f].filter(Boolean);
+    const state = { p, v, f, note };
+
+    // URL bereinigen (nur auf /kontakt/)
+    if (doCanonicalize) canonicalizeKontaktUrl(state);
+
+    const labelParts = [state.p, state.v, state.f].filter(Boolean);
     const label = labelParts.length ? labelParts.join(" • ") : "Allgemeine Anfrage";
 
     // WhatsApp Text (dein Stil: Kurzinfos)
@@ -118,8 +140,8 @@
     waLines.push(`Hi Luderbein, ich möchte anfragen: ${label}`);
     waLines.push("");
     waLines.push("Kurzinfos:");
-    waLines.push(`- Motiv/Text: ${note || ""}`);
-    waLines.push(`- Größe/Format: ${f || ""}`);
+    waLines.push(`- Motiv/Text: ${state.note || ""}`);
+    waLines.push(`- Größe/Format: ${state.f || ""}`);
     waLines.push("- Deadline (optional): ");
     waLines.push("");
     waLines.push("Foto/Skizze schicke ich gleich mit.");
@@ -132,10 +154,10 @@
     mailLines.push("Hi Luderbein,");
     mailLines.push("");
     mailLines.push("ich möchte anfragen:");
-    if (p) mailLines.push(`- Produkt: ${p}`);
-    if (v) mailLines.push(`- Variante: ${v}`);
-    if (f) mailLines.push(`- Größe/Format: ${f}`);
-    mailLines.push(`- Motiv/Text: ${note || ""}`);
+    if (state.p) mailLines.push(`- Produkt: ${state.p}`);
+    if (state.v) mailLines.push(`- Variante: ${state.v}`);
+    if (state.f) mailLines.push(`- Größe/Format: ${state.f}`);
+    mailLines.push(`- Motiv/Text: ${state.note || ""}`);
     mailLines.push("- Deadline (optional): ");
     mailLines.push("");
     mailLines.push("Foto/Skizze schicke ich gleich mit.");
@@ -179,7 +201,7 @@
 
     const preview = document.getElementById("lbCtaPreview");
     if (preview) {
-      preview.textContent = `Wird gesendet: ${label}${note ? ` — Notiz: ${note}` : ""}`;
+      preview.textContent = `Wird gesendet: ${label}${state.note ? ` — Notiz: ${state.note}` : ""}`;
     }
 
     return { waHref: waHrefOut, mailHref: mailHrefOut };
