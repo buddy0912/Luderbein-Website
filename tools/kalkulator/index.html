@@ -180,11 +180,16 @@
         <div class="grid">
           <div class="card" style="margin:0">
             <h3 style="margin-top:0">Upgrades</h3>
+
             <div class="checkrow">
               <input type="checkbox" id="widmung">
-              <div><div><strong>Signatur / Widmung</strong> <span class="muted" id="p_widmung"></span></div></div>
+              <div>
+                <div><strong>Signatur / Widmung</strong> <span class="muted" id="p_widmung"></span></div>
+              </div>
             </div>
+
             <div style="height:10px"></div>
+
             <div class="radioStack" aria-label="Standfuß Auswahl">
               <div class="checkrow">
                 <input type="radio" name="standfuss" id="sf_none" value="none" checked>
@@ -195,12 +200,16 @@
                 <div><div><strong>3D-Standfuß (schwarz)</strong> <span class="muted" id="p_sf_std"></span></div></div>
               </div>
             </div>
+
             <div style="height:10px"></div>
+
             <div class="checkrow">
               <input type="checkbox" id="wandhalter">
               <div><div><strong>3D-Wandhalterung</strong> <span class="muted" id="p_wandhalter"></span></div></div>
             </div>
+
             <div style="height:10px"></div>
+
             <div class="checkrow">
               <input type="checkbox" id="express">
               <div><div><strong>Express (3 Werktage)</strong> <span class="muted" id="p_express"></span></div></div>
@@ -209,6 +218,7 @@
 
           <div class="card" style="margin:0">
             <h3 style="margin-top:0">Versand / Abholung</h3>
+
             <div class="radioStack">
               <div class="checkrow">
                 <input type="radio" name="ship" id="ship_pickup" value="pickup" checked>
@@ -219,18 +229,24 @@
                 <div><div><strong>Versand</strong> <span class="muted" id="p_ship"></span></div></div>
               </div>
             </div>
+
             <div class="hr" style="margin:14px 0"></div>
+
             <div class="total" id="total">Gesamt: —</div>
             <div class="warn" id="warn"></div>
             <div class="oknote" id="oknote"></div>
+
             <div class="section" style="margin-top:14px">
               <label class="smalllab" for="note">Notiz (optional)</label>
               <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
+
             <div class="cta" style="margin-top:12px">
               <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp</a>
               <a class="btn" id="mailLink" href="#">E-Mail</a>
             </div>
+
+            <div class="oknote" id="fallbackNote"></div>
           </div>
         </div>
       </div>
@@ -253,14 +269,17 @@
 <script src="/assets/pricing.js?v=1.4.0"></script>
 
 <script>
-document.getElementById('y').textContent = new Date().getFullYear();
-console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
+  document.getElementById('y').textContent = new Date().getFullYear();
+  console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
 </script>
 
 <script>
 (function(){
   const P = window.LUDERBEIN_PRICING;
-  if(!P || !P.products){console.warn("Pricing data missing");return;}
+  if(!P || !P.products){
+    console.warn("Pricing data missing");
+    return;
+  }
 
   const $cat=document.getElementById('cat'),
         $variant=document.getElementById('variant'),
@@ -280,72 +299,211 @@ console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
         $mail=document.getElementById('mailLink'),
         $note=document.getElementById('note'),
         $inclPill=document.getElementById('inclPill'),
-        $notePill=document.getElementById('notePill');
+        $notePill=document.getElementById('notePill'),
+        $upgradesBox=document.getElementById('upgradesBox'),
+        $fallbackNote=document.getElementById('fallbackNote');
 
-  function euro(n){return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';}
-  function getSchiefer(){return P.products.schiefer;}
+  function euro(n){
+    return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';
+  }
+  function getSchiefer(){
+    return P.products.schiefer;
+  }
+  function isSchiefer(){
+    return ($cat.value === 'schiefer');
+  }
+
+  function setFallbackLinks(catKey){
+    // Für nicht-aktive Kategorien: direkt zum Anfrage-Builder
+    const prod = P.products[catKey];
+    const pLabel = prod?.label || catKey;
+    const url = '/kontakt/?p=' + encodeURIComponent(pLabel);
+
+    $wa.href = url;
+    $mail.href = url;
+
+    if($fallbackNote){
+      $fallbackNote.style.display = 'block';
+      $fallbackNote.textContent = 'Für ' + pLabel + ' läuft aktuell alles über Anfrage (Kontakt).';
+    }
+  }
+
+  function clearFallbackNote(){
+    if($fallbackNote){
+      $fallbackNote.style.display = 'none';
+      $fallbackNote.textContent = '';
+    }
+  }
 
   function fillVariant(){
     const cat=$cat.value;
     $variant.innerHTML='';
-    if(!P.products[cat]||cat!=='schiefer'){
+    $format.innerHTML='';
+
+    if(!P.products[cat] || cat !== 'schiefer'){
       const opt=document.createElement('option');
+      opt.value="";
       opt.textContent="Nur auf Anfrage";
       $variant.appendChild(opt);
-      $variant.disabled=true;$format.disabled=true;return;
+
+      const opt2=document.createElement('option');
+      opt2.value="";
+      opt2.textContent="—";
+      $format.appendChild(opt2);
+
+      $variant.disabled=true;
+      $format.disabled=true;
+
+      // Upgrades ausblenden, weil nicht kalkulierbar
+      if($upgradesBox) $upgradesBox.style.opacity = ".55";
+
+      setFallbackLinks(cat);
+      $total.textContent='Gesamt: —';
+      $warn.style.display='none';
+      $oknote.style.display='block';
+      $oknote.textContent='Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
+      return;
     }
+
+    clearFallbackNote();
+    if($upgradesBox) $upgradesBox.style.opacity = "1";
     $variant.disabled=false;
+    $format.disabled=false;
+
     const S=getSchiefer();
-    Object.keys(S.variants).forEach(k=>{
-      const v=S.variants[k],opt=document.createElement('option');
-      opt.value=k;opt.textContent=v.label;
+    const keys = Object.keys(S.variants);
+
+    keys.forEach((k)=>{
+      const v=S.variants[k];
+      const opt=document.createElement('option');
+      opt.value=k;
+      opt.textContent=v.label;
       $variant.appendChild(opt);
     });
+
+    // Default: erstes Element
+    if(keys.length){
+      $variant.value = keys[0];
+    }
   }
 
   function fillFormat(){
-    const cat=$cat.value;if(cat!=='schiefer')return;
-    const S=getSchiefer(),vKey=$variant.value,V=S.variants[vKey];
+    if(!isSchiefer()) return;
+
+    const S=getSchiefer();
+    const vKey=$variant.value;
+    const V=S.variants[vKey];
+
     $format.innerHTML='';
-    V.formats.forEach(f=>{
+
+    if(!V || !Array.isArray(V.formats) || !V.formats.length){
       const opt=document.createElement('option');
-      opt.value=f.id;opt.textContent=f.label+' – '+euro(f.price);
+      opt.value="";
+      opt.textContent="—";
+      $format.appendChild(opt);
+      return;
+    }
+
+    V.formats.forEach((f)=>{
+      const opt=document.createElement('option');
+      opt.value=f.id;
+      opt.textContent=f.label+' – '+euro(f.price);
       $format.appendChild(opt);
     });
-    $inclPill.textContent=S.includes||'inkl. …';
-    $notePill.textContent=V.note||P.meta.note;
+
+    $inclPill.textContent = S.includes || 'inkl. …';
+    $notePill.textContent = V.note || P.meta.note;
   }
 
   function getSelected(){
-    const cat=$cat.value;if(cat!=='schiefer')return null;
-    const S=getSchiefer(),V=S.variants[$variant.value],
-          F=V.formats.find(x=>x.id===$format.value),
-          qty=Math.max(1,parseInt($qty.value||'1',10)),
-          U=S.upgrades,ups=[];
-    if($widmung.checked)ups.push(U.widmung);
-    if($sfStd.checked)ups.push(U.standfuss_std);
-    if($wandhalter.checked)ups.push(U.wandhalter);
-    if($express.checked)ups.push(U.express);
+    if(!isSchiefer()) return null;
+
+    const S=getSchiefer();
+    const V=S.variants[$variant.value];
+    const F=V?.formats?.find(x=>x.id===$format.value);
+    const qty=Math.max(1,parseInt($qty.value||'1',10));
+
+    const U=S.upgrades;
+    const ups=[];
+    if($widmung.checked) ups.push(U.widmung);
+    if($sfStd.checked) ups.push(U.standfuss_std);
+    if($wandhalter.checked) ups.push(U.wandhalter);
+    if($express.checked) ups.push(U.express);
+
     const wantsShip=$shipSend.checked;
+
     return {S,V,F,qty,ups,wantsShip};
+  }
+
+  function bindPrices(){
+    const S=getSchiefer();
+    const U=S.upgrades;
+
+    const set = (id, txt) => {
+      const el = document.getElementById(id);
+      if(el) el.textContent = txt;
+    };
+
+    set('p_widmung', '('+euro(U.widmung.price)+')');
+    set('p_sf_std', '('+euro(U.standfuss_std.price)+')');
+    set('p_wandhalter', '('+euro(U.wandhalter.price)+')');
+    set('p_express', '('+euro(U.express.price)+')');
+
+    if(P.shipping?.enabled){
+      set('p_ship', '('+euro(P.shipping.basePrice)+')');
+    } else {
+      set('p_ship', '(deaktiviert)');
+      // Versand-Option deaktivieren, falls Shipping aus
+      $shipSend.disabled = true;
+      $shipPickup.checked = true;
+    }
   }
 
   function calc(){
     const sel=getSelected();
-    if(!sel||!sel.F){$total.textContent='Gesamt: —';return;}
-    const {S,V,F,qty,ups,wantsShip}=sel;
-    const base=F.price*qty,up=ups.reduce((a,u)=>a+(u.price||0),0)*qty;
-    let subtotal=base+up,ship=0,warn='',ok='';
-    if(wantsShip&&P.shipping.enabled){
-      const min=P.shipping.minOrderForShipping,free=P.shipping.freeShippingFrom;
-      if(subtotal>=free){ok=`Versandkostenfrei ab ${euro(free)} erreicht.`;}
-      else{ship=P.shipping.basePrice;ok=`Versand: ${euro(ship)}`;}
-      if(subtotal<min){warn=`Mindestbestellwert für Versand: ${euro(min)}.`;}
+    if(!sel || !sel.F){
+      $total.textContent='Gesamt: —';
+      return;
     }
+
+    const {S,V,F,qty,ups,wantsShip}=sel;
+
+    const base=F.price*qty;
+    const up=(ups.reduce((a,u)=>a+(u.price||0),0))*qty;
+
+    let subtotal=base+up;
+    let ship=0;
+    let warn='';
+    let ok='';
+
+    if(wantsShip && P.shipping?.enabled){
+      const min=P.shipping.minOrderForShipping;
+      const free=P.shipping.freeShippingFrom;
+
+      if(subtotal>=free){
+        ok=`Versandkostenfrei ab ${euro(free)} erreicht.`;
+      } else {
+        ship=P.shipping.basePrice;
+        ok=`Versand: ${euro(ship)}`;
+      }
+
+      if(subtotal<min){
+        warn=`Mindestbestellwert für Versand: ${euro(min)}.`;
+      }
+    }
+
     const total=subtotal+ship;
+
     $total.textContent='Gesamt: '+euro(total);
-    $warn.style.display=warn?'block':'none';$warn.textContent=warn;
-    $oknote.style.display=ok?'block':'none';$oknote.textContent=ok;
+    $warn.style.display=warn?'block':'none';
+    $warn.textContent=warn;
+
+    $oknote.style.display=ok?'block':'none';
+    $oknote.textContent=ok;
+
+    const upgradesTxt = ups.length
+      ? ups.map(u=>`${u.label} (${euro(u.price)})`).join(', ')
+      : 'keine';
 
     const lines=[
       "Hi Luderbein, ich möchte kalkulieren/anfragen:",
@@ -353,18 +511,72 @@ console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
       `- Ausführung: ${V.label}`,
       `- Format: ${F.label}`,
       `- Stückzahl: ${qty}`,
-      `- Upgrades: ${ups.length?ups.map(u=>`${u.label} (${euro(u.price)})`).join(', '):'keine'}`,
+      `- Upgrades: ${upgradesTxt}`,
       `- Versand: ${wantsShip?'ja':'nein'}`,
       `- Gesamt (V0): ${euro(total)} (${P.meta.note})`
     ];
-    if($note.value.trim())lines.push(`- Notiz: ${$note.value.trim()}`);
+
+    if($note.value.trim()){
+      lines.push(`- Notiz: ${$note.value.trim()}`);
+    }
     lines.push("Foto/Infos schicke ich gleich mit.");
+
     const msg=lines.join('\n');
+
     $wa.href='https://wa.me/491725925858?text='+encodeURIComponent(msg);
+
     const subj=`Kalkulation ${S.label} – ${V.label}`;
     $mail.href='mailto:luderbein_gravur@icloud.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg+'\n\nDanke!');
   }
 
-  function bindPrices(){
-    const U=getSchiefer().upgrades;
-    document.getElementById('p_widmung').text
+  function wire(){
+    // Change Events
+    $cat.addEventListener('change', ()=>{
+      fillVariant();
+      fillFormat();
+      if(isSchiefer()){
+        bindPrices();
+        $oknote.style.display='none';
+        $warn.style.display='none';
+      }
+      calc();
+    });
+
+    $variant.addEventListener('change', ()=>{
+      fillFormat();
+      calc();
+    });
+
+    $format.addEventListener('change', calc);
+    $qty.addEventListener('input', calc);
+
+    $widmung.addEventListener('change', calc);
+    $wandhalter.addEventListener('change', calc);
+    $express.addEventListener('change', calc);
+
+    $sfNone.addEventListener('change', calc);
+    $sfStd.addEventListener('change', calc);
+
+    $shipPickup.addEventListener('change', calc);
+    $shipSend.addEventListener('change', calc);
+
+    $note.addEventListener('input', calc);
+  }
+
+  // INIT
+  fillVariant();
+  fillFormat();
+
+  if(isSchiefer()){
+    bindPrices();
+    $oknote.style.display='none';
+    $warn.style.display='none';
+  }
+
+  wire();
+  calc();
+})();
+</script>
+
+</body>
+</html>
