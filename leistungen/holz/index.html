@@ -20,21 +20,41 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/holz/" role="menuitem" aria-current="page">Holz</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -49,19 +69,23 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="content">
     <section class="hero">
       <span class="badge"><i></i> Leistung – Holz</span>
       <h1>Holzgravur</h1>
       <p class="lead">
-        Schilder, Deko, Sonderteile – natürlich, präzise und mit Charakter.  
+        Schilder, Deko, Sonderteile – natürlich, präzise und mit Charakter.
         Gravur, Fräsung oder Laser-Schnitt: du sagst, was das Holz werden soll.
       </p>
 
+      <!-- Clean: 1 CTA -->
       <div class="cta">
         <a class="btn primary" href="/kontakt/?p=Holz">Anfragen</a>
-        <a class="btn" href="/leistungen/">Zurück</a>
       </div>
+
+      <p class="small muted" style="margin-top:.75rem;">
+        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+      </p>
     </section>
 
     <section class="section" aria-label="Holz Varianten">
@@ -107,7 +131,7 @@
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Laser bis 850×800 mm</span></div>
           <h3>Sonderteile</h3>
           <p class="kicker">
-            Exotisch groß: Laser-Bearbeitung bis 850 × 800 mm.  
+            Exotisch groß: Laser-Bearbeitung bis 850 × 800 mm.
             Ideal für Frontplatten, Prototypen oder präzise Einzelanfertigungen.
           </p>
           <div class="actions">
@@ -122,7 +146,7 @@
     <section class="section">
       <h2>Status</h2>
       <div class="notice">
-        Die Holz-Sektion wird gerade vorbereitet.  
+        Die Holz-Sektion wird gerade vorbereitet.
         Inhalte, Bilder und Kalkulator folgen – Anfragen sind aber jederzeit willkommen.
       </div>
     </section>
@@ -140,6 +164,8 @@
 
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
