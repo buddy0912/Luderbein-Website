@@ -55,7 +55,8 @@
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <!-- SAFE: Acryl-URL existiert nach deiner Aussage nur als /acryl-schilder/ -->
+            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -109,19 +110,28 @@
           </p>
 
           <div class="cta" style="margin-top:12px">
+            <!-- Download versuchen: ohne target blank -->
             <a
               class="btn primary"
               href="/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf?v=1"
-              target="_blank"
-              rel="noopener noreferrer"
               download="Bestellformular_Schwibbogen_Epidemic_Scorn.pdf"
             >
-              PDF öffnen
+              Download versuchen
+            </a>
+
+            <!-- Im Tab öffnen -->
+            <a
+              class="btn"
+              href="/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf?v=1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Im Tab öffnen
             </a>
           </div>
 
           <p class="small muted" style="margin-top:.75rem;">
-            Download: Rechtsklick → „Link speichern unter…“ (Desktop) oder im PDF-Menü „Teilen/Download“ (Mobile).
+            Wenn Safari nur öffnet: im PDF-Menü „Teilen“ → „In Dateien sichern“.
           </p>
 
           <div class="hr" style="margin:16px 0"></div>
