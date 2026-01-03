@@ -1,9 +1,9 @@
 // =========================================================
-// Luderbein Site Core v1.5
+// Luderbein Site Core v1.6
 // - Mobile Nav Toggle
 // - Active Nav Link
 // - CTA Autofill (WhatsApp + Mail)
-//   via ?p= &v= &f=  (plus legacy: size=, note=)
+//   via ?p= &v= &f=  (plus legacy: size=, note=, and "p=Produkt – Variante")
 // =========================================================
 (function () {
   "use strict";
@@ -29,13 +29,38 @@
     return "";
   }
 
+  // Split legacy: "Produkt – Variante" (nur wenn mit Leerzeichen um den Trenner)
+  function splitLegacyProductVariant(product, variant) {
+    const p = norm(product);
+    const v = norm(variant);
+    if (!p || v) return { product: p, variant: v };
+
+    const seps = [" – ", " - ", " — "]; // en dash, hyphen, em dash (mit spaces)
+    for (const sep of seps) {
+      const idx = p.indexOf(sep);
+      if (idx > 0) {
+        const left = norm(p.slice(0, idx));
+        const right = norm(p.slice(idx + sep.length));
+        if (left && right) return { product: left, variant: right };
+      }
+    }
+    return { product: p, variant: v };
+  }
+
   function getQueryContext() {
     const sp = new URLSearchParams(window.location.search || "");
 
-    const product = pickFirst(sp.get("p"), sp.get("product"));
-    const variant = pickFirst(sp.get("v"), sp.get("variant"));
-    const format = pickFirst(sp.get("f"), sp.get("format"), sp.get("size")); // legacy support
-    const note = pickFirst(sp.get("note"), sp.get("n")); // legacy support
+    let product = pickFirst(sp.get("p"), sp.get("product"));
+    let variant = pickFirst(sp.get("v"), sp.get("variant"));
+
+    // legacy support
+    const format = pickFirst(sp.get("f"), sp.get("format"), sp.get("size"));
+    const note = pickFirst(sp.get("note"), sp.get("n"));
+
+    // if p contains "Produkt – Variante" and v is empty => split
+    const split = splitLegacyProductVariant(product, variant);
+    product = split.product;
+    variant = split.variant;
 
     return { product, variant, format, note };
   }
@@ -97,12 +122,17 @@
       if (!type) return;
 
       // pro Link optional überschreiben (data-product / data-variant / data-format / data-note)
-      const ctx = {
+      let ctx = {
         product: pickFirst(a.getAttribute("data-product"), baseCtx.product),
         variant: pickFirst(a.getAttribute("data-variant"), baseCtx.variant),
         format: pickFirst(a.getAttribute("data-format"), baseCtx.format),
         note: pickFirst(a.getAttribute("data-note"), baseCtx.note),
       };
+
+      // allow legacy split also on per-link overrides (falls jemand data-product="X – Y" setzt)
+      const split = splitLegacyProductVariant(ctx.product, ctx.variant);
+      ctx.product = split.product;
+      ctx.variant = split.variant;
 
       if (type === "wa" || type === "whatsapp") {
         const text = buildWhatsAppText(ctx);
