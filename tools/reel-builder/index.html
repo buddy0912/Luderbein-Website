@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Reel Builder | Luderbein</title>
   <meta name="description" content="Interner Reel Builder: JSON-Einträge für Schiefer/Metall/Holz erstellen – ohne externen Embed." />
-  <meta name="robots" content="noindex, nofollow">
-  
+  <meta name="robots" content="noindex, nofollow" />
+
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
@@ -58,6 +58,7 @@
     }
     .rb-preview img { width: 100%; height: 240px; object-fit: cover; display: block; }
     .rb-small { font-size: .9rem; color: var(--muted); margin-top: 8px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
   </style>
 </head>
 
@@ -109,7 +110,10 @@
     <section class="hero">
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
-      <p class="lead">Erstellt JSON-Einträge für interne Reels (ohne Instagram/Embed). Du kopierst nur den Output in die passende <code>assets/reel-*.json</code>.</p>
+      <p class="lead">
+        Erstellt JSON-Einträge für interne Reels (ohne Instagram/Embed). Du kopierst nur den Output in die passende
+        <code>assets/reel-*.json</code>.
+      </p>
 
       <div class="rb-hint">
         Tipp: Bilder zuerst ins Repo hochladen (z.B. <code>/assets/metall/...</code>) und dann hier Pfad + Text eintragen.
@@ -158,7 +162,10 @@
       <!-- JSON Updater -->
       <section class="rb-card" aria-label="JSON-Liste aktualisieren">
         <h2>JSON-Liste aktualisieren</h2>
-        <p class="rb-hint">Hier kannst du deine bestehende <code>assets/reel-*.json</code> reinpaste-n, dann einen neuen Eintrag hinzufügen und dir die komplette Datei neu ausgeben lassen.</p>
+        <p class="rb-hint">
+          Hier kannst du deine bestehende <code>assets/reel-*.json</code> reinpaste-n, dann einen neuen Eintrag hinzufügen
+          und dir die komplette Datei neu ausgeben lassen.
+        </p>
 
         <div class="rb-row">
           <label for="jsonIn">Bestehende JSON (Array) – optional</label>
