@@ -104,6 +104,33 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+
+    /* ======================================
+       Preview-Thumb Placeholder (ohne Overlap)
+       ====================================== */
+    .thumb { position: relative; }
+    .thumb .thumbsoon {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: .85rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      pointer-events: none;
+      user-select: none;
+      max-width: calc(100% - 28px);
+      text-align: center;
+      white-space: normal;
+    }
   </style>
 </head>
 
@@ -210,11 +237,13 @@
 
         <!-- HOLZ -->
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Holz</span></div>
+          <div class="thumb">
+            <span class="thumblabel">Holz</span>
+            <span class="thumbsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur • Deko</span></div>
           <h3>Holz</h3>
           <p class="kicker">Schilder, Deko, Gravur – kommt als Nächstes sauber rein.</p>
-          <p class="small muted" style="margin-top:.35rem;">Bilder folgen in Kürze.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/holz/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
@@ -223,11 +252,13 @@
 
         <!-- METALL -->
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Metall</span></div>
+          <div class="thumb">
+            <span class="thumblabel">Metall</span>
+            <span class="thumbsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span></div>
           <h3>Metall</h3>
           <p class="kicker">Tags, Plaketten, Gravur – robust, kantig, präzise.</p>
-          <p class="small muted" style="margin-top:.35rem;">Bilder folgen in Kürze.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
@@ -236,11 +267,13 @@
 
         <!-- ACRYL -->
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Acryl</span></div>
+          <div class="thumb">
+            <span class="thumblabel">Acryl</span>
+            <span class="thumbsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Schilder • Labels</span></div>
           <h3>Acryl</h3>
-          <p class="kicker">Clean, kontrastreich, modern. Ideal für Beschriftung und kleine Serien.</p>
-          <p class="small muted" style="margin-top:.35rem;">Bilder folgen in Kürze.</p>
+          <p class="kicker">Clean, kontrastreich, modern – Beschriftung, Labels, kleine Serien.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/acryl/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Acryl">Anfragen</a>
