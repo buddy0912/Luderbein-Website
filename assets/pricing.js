@@ -42,7 +42,7 @@ window.LUDERBEIN_PRICING = {
             { id: "jl7-25x25", label: "25 × 25 cm (eckig)", price: 39.95 },
             { id: "jl7-30r",   label: "30 cm rund",         price: 44.95 },
             { id: "jl7-38x13", label: "38 × 13 cm (Langtafel)", price: 34.95 },
-            { id: "jl7-45x30", label: "45 × 30 cm (A70 Max)",   price: 89.95 }
+            { id: "jl7-45x30", label: "45 × 30 cm",             price: 89.95 }
           ]
         },
 
@@ -53,17 +53,13 @@ window.LUDERBEIN_PRICING = {
             { id: "ged-10x10", label: "10 × 10 cm (Quadratisch)", price: 19.95 }
           ]
         }
-
-        // NOTE:
-        // textsymbol entfernt, weil 6×6 bei dir nicht existiert
-        // und 6,95 € sonst mit Versand/Wandhalter kollidiert.
       },
 
       upgrades: {
-        widmung:       { label: "Signatur / Widmung",        price: 4.95 },
-        standfuss_std: { label: "3D-Standfuß (schwarz)",      price: 9.95 },
-        wandhalter:    { label: "Wandhalterung",             price: 6.95 },
-        express:       { label: "Express (3 Werktage)",       price: 19.95 }
+        widmung:       { label: "Signatur / Widmung",   price: 4.95 },
+        standfuss_std: { label: "3D-Standfuß (schwarz)", price: 9.95 },
+        wandhalter:    { label: "Wandhalterung",        price: 6.95 },
+        express:       { label: "Express (3 Werktage)",  price: 19.95 }
       }
     },
 
