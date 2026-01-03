@@ -17,8 +17,7 @@
   const previewBox = $("previewBox");
   const previewImg = $("previewImg");
 
-  // --- NEW: last tag memory + lock ---
-  // Stored in localStorage so it survives refresh on iPad
+  // Last tag memory + lock (persistiert auf iPad)
   const LS_KEY = "reelBuilder.lastTag";
   const LS_KEY_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
   const LS_KEY_LOCK = "reelBuilder.lockTag"; // "1" | "0"
@@ -51,69 +50,10 @@
     if (!useCustom) elTagCustom.value = "";
   }
 
-  // --- NEW UI: inject buttons + lock under tag area ---
-  function ensureTagTools() {
-    // Create a small tool row after the custom input row
-    const customRow = elTagCustom?.closest(".rb-row");
-    if (!customRow) return;
-
-    if (document.getElementById("tagToolsRow")) return;
-
-    const toolsRow = document.createElement("div");
-    toolsRow.className = "rb-inline";
-    toolsRow.id = "tagToolsRow";
-    toolsRow.style.marginTop = "6px";
-
-    const btnUseLast = document.createElement("button");
-    btnUseLast.type = "button";
-    btnUseLast.className = "btn";
-    btnUseLast.id = "btnUseLastTag";
-    btnUseLast.textContent = "Letztes Tag übernehmen";
-
-    const lockLabel = document.createElement("label");
-    lockLabel.className = "rb-check";
-    lockLabel.htmlFor = "lockTag";
-
-    const lockInput = document.createElement("input");
-    lockInput.type = "checkbox";
-    lockInput.id = "lockTag";
-
-    const lockText = document.createElement("span");
-    lockText.textContent = "Tag sperren (bleibt beim Hinzufügen)";
-
-    lockLabel.appendChild(lockInput);
-    lockLabel.appendChild(lockText);
-
-    const hint = document.createElement("span");
-    hint.className = "rb-small";
-    hint.textContent = "Ideal für Serien: Bildpfad wechseln, Tag bleibt.";
-
-    toolsRow.appendChild(btnUseLast);
-    toolsRow.appendChild(lockLabel);
-    toolsRow.appendChild(hint);
-
-    customRow.insertAdjacentElement("afterend", toolsRow);
-
-    // Restore lock state
-    lockInput.checked = getSaved(LS_KEY_LOCK, "0") === "1";
-
-    lockInput.addEventListener("change", () => {
-      setSaved(LS_KEY_LOCK, lockInput.checked ? "1" : "0");
-    });
-
-    btnUseLast.addEventListener("click", () => {
-      applyLastTag();
-      buildEntry();
-    });
-  }
-
   function saveLastTagFromUI() {
     const useCustom = !!elTagCustomOn.checked;
     const tag = currentTag();
-
-    // Save only if there is a tag (otherwise keep last)
     if (!tag) return;
-
     setSaved(LS_KEY, tag);
     setSaved(LS_KEY_MODE, useCustom ? "custom" : "preset");
   }
@@ -131,12 +71,10 @@
       elTagCustomOn.checked = true;
       syncTagUI();
       elTagCustom.value = last;
-      // Keep preset untouched
     } else {
       elTagCustomOn.checked = false;
       syncTagUI();
 
-      // If the preset exists, select it, otherwise fall back to custom
       const opt = Array.from(elTagPreset.options).find(o => o.value === last);
       if (opt) {
         elTagPreset.value = last;
@@ -177,8 +115,6 @@
     if (tag) obj.tag = tag;
 
     outEntry.textContent = JSON.stringify(obj, null, 2);
-
-    // NEW: remember last tag as you work (only when tag exists)
     saveLastTagFromUI();
 
     return { obj, snippet: JSON.stringify(obj), valid: v.ok };
@@ -213,7 +149,8 @@
     return parsed;
   }
 
-  // Buttons
+  // --- Events ---
+
   $("btnEntry").addEventListener("click", () => buildEntry());
 
   $("btnCopyEntry").addEventListener("click", async () => {
@@ -222,6 +159,14 @@
     status.innerHTML = ok
       ? `<span class="rb-ok">✔ Eintrag kopiert.</span>`
       : `<span class="rb-bad">✖ Konnte nicht kopieren (Clipboard blockiert).</span>`;
+  });
+
+  // NEW: Nur Bildpfad leeren
+  $("btnClearSrc").addEventListener("click", () => {
+    elSrc.value = "";
+    elSrc.focus();
+    buildEntry();
+    status.innerHTML = `<span class="rb-ok">✔ Bildpfad geleert.</span>`;
   });
 
   $("btnClear").addEventListener("click", () => {
@@ -239,8 +184,7 @@
     $("jsonIn").value = "";
     status.textContent = "";
     previewBox.style.display = "none";
-
-    // Lock stays as user preference (intentional)
+    // Lock bleibt als Preference bewusst erhalten
   });
 
   $("btnAddToJson").addEventListener("click", () => {
@@ -265,7 +209,7 @@
     outJson.textContent = JSON.stringify(arr, null, 2);
     status.innerHTML = `<span class="rb-ok">✔ Zur JSON hinzugefügt (unten kopieren).</span>`;
 
-    // NEW: If tag lock is on, keep the current tag; else clear it for speed
+    // Wenn Tag NICHT gesperrt: Tag zurücksetzen
     if (!isLockTagOn()) {
       elTagPreset.value = "";
       elTagCustomOn.checked = false;
@@ -273,8 +217,9 @@
       syncTagUI();
     }
 
-    // Helpful: clear only the src so you can paste next image quickly
+    // Speed: nur Bildpfad leeren und Fokus setzen
     elSrc.value = "";
+    elSrc.focus();
     buildEntry();
   });
 
@@ -313,10 +258,15 @@
 
   // Init
   syncTagUI();
-  ensureTagTools();
-
-  // If there is a last tag saved, gently prefill the button behavior (no auto-apply)
-  // Also keep lock preference already restored in ensureTagTools
   outEntry.textContent = "";
   outJson.textContent = "";
+
+  // Restore lock preference if you later add the lock UI (optional)
+  // Keeping it harmless here:
+  const lock = getSaved(LS_KEY_LOCK, "");
+  if (lock !== "") setSaved(LS_KEY_LOCK, lock);
+
+  // Small helper: “Letztes Tag übernehmen” via keyboard is not required; keep function available
+  // If you want the button back in UI later, we already have applyLastTag() ready.
+  window.__reelBuilderApplyLastTag = applyLastTag;
 })();
