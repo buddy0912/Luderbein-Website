@@ -42,9 +42,9 @@ for (const file of htmlFiles) {
     const seen = new Map();
     let m;
     while ((m = scriptSrcRegex.exec(content)) !== null) {
-      const src = m[1];
-      const key = src.trim();
-      seen.set(key, (seen.get(key) || 0) + 1);
+      const src = (m[1] || "").trim();
+      if (!src) continue;
+      seen.set(src, (seen.get(src) || 0) + 1);
     }
     for (const [k, count] of seen.entries()) {
       if (count > 1) duplicateLoads.push({ file: relFile, type: "script", url: k, count });
@@ -56,9 +56,9 @@ for (const file of htmlFiles) {
     const seen = new Map();
     let m;
     while ((m = cssHrefRegex.exec(content)) !== null) {
-      const href = m[1];
-      const key = href.trim();
-      seen.set(key, (seen.get(key) || 0) + 1);
+      const href = (m[1] || "").trim();
+      if (!href) continue;
+      seen.set(href, (seen.get(href) || 0) + 1);
     }
     for (const [k, count] of seen.entries()) {
       if (count > 1) duplicateLoads.push({ file: relFile, type: "css", url: k, count });
@@ -70,10 +70,12 @@ for (const file of htmlFiles) {
     let m;
     while ((m = urlRegex.exec(content)) !== null) {
       const url = m[1];
+      if (!url) continue;
+
       // ignore protocol-relative
       if (url.startsWith("//")) continue;
 
-      // Only collect the "rooted" ones. (This is what breaks on subpath hosting.)
+      // Root-absolute links are OK for pages.dev root, risky for future subpath.
       if (url.startsWith("/")) {
         absoluteRootLinks.push({ file: relFile, url });
       }
@@ -93,9 +95,8 @@ if (duplicateLoads.length) {
 }
 
 if (absoluteRootLinks.length) {
-  // Don’t spam endlessly: show summary + a few examples
   const total = absoluteRootLinks.length;
-  const examples = absoluteRootLinks.slice(0, 20);
+  const examples = absoluteRootLinks.slice(0, 25);
 
   console.log("ℹ️ Absolute root paths detected (OK for pages.dev root, risk for future subpath hosting):");
   console.log(`   Found ${total} occurrences. Examples:`);
