@@ -3,47 +3,90 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Seite nicht gefunden | Luderbein Gravur</title>
+  <title>404 – Seite nicht gefunden | Luderbein</title>
 
-  <!-- gleiche Assets wie auf der Site -->
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
-  <meta name="robots" content="noindex" />
+  <meta name="robots" content="noindex, nofollow" />
 </head>
+
 <body>
-  <header class="site-header">
-    <a href="/" class="logo-link" aria-label="Zur Startseite">
-      <span>Luderbein Gravur</span>
-    </a>
-    <nav class="site-nav">
-      <a href="/leistungen/">Leistungen</a>
-      <a href="/tools/kalkulator/">Kalkulator</a>
-      <a href="/service/">Service</a>
-      <a href="/kontakt/">Kontakt</a>
-    </nav>
+  <!-- HEADER: wie index.html -->
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="content" style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem;">
-    <h1>404 – Seite nicht gefunden</h1>
-    <p>
-      Die angeforderte Seite existiert leider nicht (mehr).
-      Bitte nutze die Navigation oder gehe zurück zur Startseite.
-    </p>
+  <main>
+    <section class="wrap" style="padding: 3rem 1rem;">
+      <h1>404 – Seite nicht gefunden</h1>
+      <p>Die angeforderte Seite existiert leider nicht (mehr) oder die URL ist falsch.</p>
 
-    <p style="margin-top: 1.25rem;">
-      <a href="/" class="button">Zur Startseite</a>
-      <a href="/kontakt/" class="button">Kontakt</a>
-    </p>
+      <div style="margin-top: 1.5rem; display: flex; gap: .75rem; flex-wrap: wrap;">
+        <a class="btn" href="/">Zur Startseite</a>
+        <a class="btn" href="/leistungen/">Zu den Leistungen</a>
+        <a class="btn" href="/kontakt/">Kontakt</a>
+      </div>
 
-    <hr style="margin: 2rem 0;" />
-
-    <p style="opacity: 0.8;">
-      Tipp: Prüfe die URL auf Tippfehler oder starte über
-      <a href="/leistungen/">Leistungen</a>.
-    </p>
+      <p style="margin-top: 1.75rem; opacity: .8;">
+        Tipp: Prüfe die Schreibweise in der URL (Groß-/Kleinschreibung ist relevant).
+      </p>
+    </section>
   </main>
 
+  <!-- FOOTER: wie index.html -->
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
   <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/thumb-rotator.js"></script>
+  <script src="/assets/site.js"></script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
