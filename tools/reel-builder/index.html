@@ -65,7 +65,6 @@
     .rb-small { font-size: .9rem; color: var(--muted); margin-top: 8px; }
     code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 
-    /* Tag UI */
     .rb-tagGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
     .rb-inline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .rb-check {
@@ -180,6 +179,18 @@
             <div class="rb-row" style="margin-top:0;">
               <label for="tagCustom" class="rb-small">Eigenes Tag</label>
               <input id="tagCustom" type="text" placeholder="z.B. Gravur / Schleifen / QA" autocomplete="off" disabled />
+            </div>
+
+            <!-- Sichtbar: Letztes Tag + Lock -->
+            <div class="rb-inline" style="margin-top:6px;">
+              <button class="btn" type="button" id="btnUseLastTag">Letztes Tag übernehmen</button>
+
+              <label class="rb-check" for="lockTag">
+                <input id="lockTag" type="checkbox" />
+                Tag sperren (bleibt beim Hinzufügen)
+              </label>
+
+              <span class="rb-small">Ideal für Serien.</span>
             </div>
           </div>
         </div>
