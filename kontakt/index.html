@@ -60,8 +60,19 @@
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20was%20anfragen%3A%20" rel="noopener">WhatsApp</a>
-        <a class="btn" href="mailto:luderbein_gravur@icloud.com?subject=Anfrage%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20folgendes%20anfragen%3A%0A-%20Material%3A%20Schiefer%20%2F%20Holz%20%2F%20Metall%20%2F%20Custom%0A-%20Gr%C3%B6%C3%9Fe%2FFormat%3A%20%0A-%20Motiv%2FText%3A%20%0A-%20Deadline%20(optional)%3A%20%0A%0AAnhang%2FFoto%20schicke%20ich%20mit.%0A%0ADanke!">E-Mail</a>
+        <!-- Fallback hrefs bleiben drin, site.js überschreibt diese automatisch -->
+        <a
+          class="btn primary"
+          data-lb-cta="wa"
+          href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20was%20anfragen%3A%20"
+          rel="noopener"
+        >WhatsApp</a>
+
+        <a
+          class="btn"
+          data-lb-cta="mail"
+          href="mailto:luderbein_gravur@icloud.com?subject=Anfrage%20%E2%80%93%20Luderbein&body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20folgendes%20anfragen%3A%0A-%20Material%3A%20Schiefer%20%2F%20Holz%20%2F%20Metall%20%2F%20Custom%0A-%20Gr%C3%B6%C3%9Fe%2FFormat%3A%20%0A-%20Motiv%2FText%3A%20%0A-%20Deadline%20(optional)%3A%20%0A%0AAnhang%2FFoto%20schicke%20ich%20mit.%0A%0ADanke!"
+        >E-Mail</a>
       </div>
     </section>
 
