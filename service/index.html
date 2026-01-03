@@ -20,26 +20,46 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav aria-label="Hauptmenü">
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
+            <a href="/service/" role="menuitem" aria-current="page">Downloads</a>
           </div>
         </div>
 
@@ -50,23 +70,27 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="content">
     <section class="hero">
       <span class="badge"><i></i> Service</span>
       <h1>Downloads</h1>
       <p class="lead">
-        Alles, was du brauchst – kompakt und ohne Suchen.  
+        Alles, was du brauchst – kompakt und ohne Suchen.
         Vorbestellformulare, Info-PDFs und Anleitungen an einem Ort.
       </p>
 
+      <!-- Clean: 1 CTA -->
       <div class="cta">
         <a class="btn primary" href="#downloads">Zum Download-Bereich</a>
-        <a class="btn" href="/kontakt/?p=Service%20%2F%20Download">Frage dazu?</a>
       </div>
 
+      <p class="small muted" style="margin-top:.75rem;">
+        Frage dazu? <a href="/kontakt/?p=Service%20%2F%20Download">Schreib mir kurz</a>
+      </p>
+
       <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Tipp:</strong>  
-        Wenn dein Browser cached: einmal „hart“ neu laden (Shift + Reload).  
+        <strong style="color:var(--text)">Tipp:</strong>
+        Wenn dein Browser cached: einmal „hart“ neu laden (Shift + Reload).
         Cloudflare braucht manchmal ein paar Sekunden zum Nachziehen.
       </div>
     </section>
@@ -81,22 +105,23 @@
         <div class="card">
           <h3>Epidemic Scorn – Bestellformular</h3>
           <p class="small">
-            Eine Seite = eine Bestellung.  
+            Eine Seite = eine Bestellung.
             Enthält Felder für Varianten, Upgrades (z. B. Dimmer, Geschenkset) und Deadline.
           </p>
 
           <div class="cta" style="margin-top:12px">
-            <a class="btn primary"
-               href="/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf?v=1"
-               download>
+            <a
+              class="btn primary"
+              href="/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf?v=1"
+              download
+            >
               Download (PDF)
             </a>
-            <a class="btn"
-               href="/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf?v=1"
-               target="_blank" rel="noopener">
-              Im Browser öffnen
-            </a>
           </div>
+
+          <p class="small muted" style="margin-top:.75rem;">
+            Alternativ: <a href="/assets/downloads/Bestellformular_Schwibbogen_Epidemic_Scorn.pdf?v=1" target="_blank" rel="noopener noreferrer">im Browser öffnen</a>
+          </p>
 
           <div class="hr" style="margin:16px 0"></div>
           <p class="small muted">
@@ -109,19 +134,24 @@
           <p class="small">
             Formular am Merch-Stand ausfüllen & abgeben – oder ausgefüllt per Mail schicken.
           </p>
+
           <div class="cta" style="margin-top:12px">
-            <a class="btn" href="mailto:luderbein_gravur@icloud.com?subject=Vorbestellung%20Schwibbogen%20%E2%80%93%20Epidemic%20Scorn&body=Hi%20Luderbein%2C%0A%0Aanbei%20mein%20ausgef%C3%BClltes%20Bestellformular%20(PDF).%0A%0ADanke!">
+            <a
+              class="btn primary"
+              href="mailto:luderbein_gravur@icloud.com?subject=Vorbestellung%20Schwibbogen%20%E2%80%93%20Epidemic%20Scorn&body=Hi%20Luderbein%2C%0A%0Aanbei%20mein%20ausgef%C3%BClltes%20Bestellformular%20(PDF).%0A%0ADanke!"
+            >
               Per Mail schicken
             </a>
-            <a class="btn" href="/kontakt/?p=Schwibbogen%20%E2%80%93%20Vorbestellung">
-              Kontaktseite
-            </a>
           </div>
+
+          <p class="small muted" style="margin-top:.75rem;">
+            Oder: <a href="/kontakt/?p=Schwibbogen%20%E2%80%93%20Vorbestellung">Kontaktseite öffnen</a>
+          </p>
         </div>
       </div>
 
       <div class="notice" style="margin-top:16px">
-        <strong style="color:var(--text)">Ausblick:</strong>  
+        <strong style="color:var(--text)">Ausblick:</strong>
         Später folgen hier noch weitere Downloads, z. B. „Foto-Check“, „Preisübersicht Gravur“ oder „Material-Guides“.
       </div>
     </section>
@@ -131,7 +161,7 @@
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
       <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> · 
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
         <a href="/rechtliches/datenschutz.html">Datenschutz</a>
       </div>
     </div>
@@ -139,6 +169,8 @@
 
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
