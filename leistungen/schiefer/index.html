@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Schiefer | Luderbein</title>
-  <meta name="description" content="Schiefergravur: Fotogravur sowie Text & Symbole. Preis kalkulieren oder direkt anfragen.">
+  <meta name="description" content="Schiefergravur: Fotogravur, Gedenktafeln sowie Text & Symbole. Preis kalkulieren oder direkt anfragen.">
 
   <link rel="stylesheet" href="/assets/style.css">
   <link rel="stylesheet" href="/assets/nav-dropdown.css">
@@ -127,6 +127,31 @@
           </div>
         </article>
 
+        <!-- Gedenktafel (wieder drin) -->
+        <article class="productcard">
+          <div class="thumb">
+            <img
+              src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg"
+              alt="Schiefer Gedenktafel Beispiel"
+              loading="lazy"
+              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"
+            >
+          </div>
+
+          <div class="meta">
+            <span class="price">ab 49,95 €</span> • <span>Gedenktafel</span> • <span>Lasergravur</span>
+          </div>
+
+          <h3>Gedenktafel</h3>
+          <p class="kicker">Würdige Erinnerung – Text &amp; Symbole möglich, witterungsbeständig.</p>
+
+          <div class="actions">
+            <a class="btn primary" href="#reel">Reel</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Gedenktafel">Anfragen</a>
+          </div>
+        </article>
+
         <!-- Text & Symbole -->
         <article class="productcard">
           <div class="thumb">
@@ -134,6 +159,7 @@
             <img
               src="/assets/img/schiefer-foto-01.jpg"
               alt="Schiefer Text & Symbole Beispiel"
+              loading="lazy"
               style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"
             >
           </div>
@@ -154,12 +180,12 @@
       </div>
     </section>
 
-    <!-- REEL / FEED (ersetzt die plumpen Fotogravur-Beispiele) -->
+    <!-- REEL / FEED -->
     <section id="reel" style="margin-top: 22px;">
       <h2>Schiefer Reel</h2>
-      <p class="muted">Swipe nach rechts für mehr Beispiele.</p>
+      <p class="muted">Läuft automatisch – du kannst jederzeit swipen/scrollen.</p>
 
-      <div class="reel" aria-label="Schiefer Beispiele Reel">
+      <div class="reel" aria-label="Schiefer Beispiele Reel" data-auto-reel>
         <a class="reel__item" href="/assets/img/schiefer-home.jpg">
           <img class="reel__img" src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel – Fotogravur" loading="lazy">
           <div class="reel__cap">Fotogravur (Beispiel)</div>
@@ -208,6 +234,57 @@
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/thumb-rotator.js"></script>
   <script src="/assets/site.js"></script>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  <script>
+    // Year
+    const y = document.getElementById("y");
+    if (y) y.textContent = new Date().getFullYear();
+
+    // Auto-Reel: sanftes Scrollen, pausiert bei User-Interaktion, respektiert Reduced Motion
+    (function () {
+      const reel = document.querySelector("[data-auto-reel]");
+      if (!reel) return;
+
+      const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+
+      let pausedUntil = 0;
+      let last = 0;
+      const speed = 0.35; // px pro frame (~20px/s bei 60fps)
+
+      function pause(ms) {
+        pausedUntil = Date.now() + ms;
+      }
+
+      // Wenn User scrollt/tippt: pausieren
+      reel.addEventListener("scroll", () => pause(1500), { passive: true });
+      reel.addEventListener("pointerdown", () => pause(2500), { passive: true });
+      reel.addEventListener("touchstart", () => pause(2500), { passive: true });
+
+      function tick(ts) {
+        if (!last) last = ts;
+        const dt = ts - last;
+        last = ts;
+
+        if (Date.now() < pausedUntil) {
+          requestAnimationFrame(tick);
+          return;
+        }
+
+        // Schritt proportional zur Zeit
+        reel.scrollLeft += speed * (dt / 16.67);
+
+        // Loop: wenn am Ende, zurück zum Anfang
+        const max = reel.scrollWidth - reel.clientWidth;
+        if (max > 0 && reel.scrollLeft >= max - 1) {
+          reel.scrollLeft = 0;
+          pause(400);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
 </body>
 </html>
