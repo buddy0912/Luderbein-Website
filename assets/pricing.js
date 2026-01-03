@@ -52,21 +52,17 @@ window.LUDERBEIN_PRICING = {
           formats: [
             { id: "ged-10x10", label: "10 × 10 cm (Quadratisch)", price: 19.95 }
           ]
-        },
-
-        textsymbol: {
-          label: "Text / Symbol (einfach)",
-          note: "Kleine Gravuren, kurze Widmung oder Symbol.",
-          formats: [
-            { id: "txt-6x6", label: "6 × 6 cm", price: 6.95 }
-          ]
         }
+
+        // NOTE:
+        // textsymbol entfernt, weil 6×6 bei dir nicht existiert
+        // und 6,95 € sonst mit Versand/Wandhalter kollidiert.
       },
 
       upgrades: {
         widmung:       { label: "Signatur / Widmung",        price: 4.95 },
         standfuss_std: { label: "3D-Standfuß (schwarz)",      price: 9.95 },
-        wandhalter:    { label: "3D-Wandhalterung (Aufhängen)", price: 6.95 },
+        wandhalter:    { label: "Wandhalterung",             price: 6.95 },
         express:       { label: "Express (3 Werktage)",       price: 19.95 }
       }
     },
