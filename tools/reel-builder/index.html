@@ -66,17 +66,8 @@
     code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 
     /* Tag UI */
-    .rb-tagGrid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .rb-inline {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .rb-tagGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .rb-inline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .rb-check {
       display: inline-flex;
       align-items: center;
@@ -86,9 +77,6 @@
       user-select: none;
     }
     .rb-check input { width: auto; }
-    .rb-disabled {
-      opacity: .6;
-    }
   </style>
 </head>
 
@@ -199,6 +187,7 @@
         <div class="rb-actions">
           <button class="btn primary" type="button" id="btnEntry">Eintrag generieren</button>
           <button class="btn" type="button" id="btnCopyEntry">Eintrag kopieren</button>
+          <button class="btn" type="button" id="btnClearSrc">Nur Bildpfad leeren</button>
           <button class="btn" type="button" id="btnClear">Leeren</button>
         </div>
 
