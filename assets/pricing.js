@@ -30,9 +30,23 @@ window.LUDERBEIN_PRICING = {
       label: "Schiefer",
       includes: "Fotoaufbereitung, Gravur, Klarlack-Versiegelung",
 
+      // Reihenfolge = Dropdown-Reihenfolge im Kalkulator
       variants: {
+
+        // 1) Schnell & häufig
+        textsymbol: {
+          label: "Text / Symbol",
+          tag: "Fastlane",
+          note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean, ohne Kitsch.",
+          formats: [
+            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 }
+          ]
+        },
+
+        // 2) Premium-Look
         fotogravur: {
           label: "Fotogravur",
+          tag: "Premium",
           note: "inkl. Fotoaufbereitung, Gravur & Versiegelung.",
           formats: [
             { id: "jl7-10x10", label: "10 × 10 cm (eckig)", price: 14.95 },
@@ -46,19 +60,13 @@ window.LUDERBEIN_PRICING = {
           ]
         },
 
+        // 3) Würdig / memorial
         gedenktafel: {
           label: "Gedenktafel / Memorial",
+          tag: "Memorial",
           note: "Bild, Spruch, Name, Daten, optional Symbol oder Widmung.",
           formats: [
             { id: "ged-10x10", label: "10 × 10 cm (Quadratisch)", price: 19.95 }
-          ]
-        },
-
-        textsymbol: {
-          label: "Text / Symbol",
-          note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean, ohne Kitsch.",
-          formats: [
-            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 }
           ]
         }
       },
