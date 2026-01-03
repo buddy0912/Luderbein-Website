@@ -12,13 +12,28 @@
     };
   }
 
+  function showInlineError(reel, message) {
+    let el = reel.querySelector("[data-reel-error]");
+    if (!el) {
+      el = document.createElement("div");
+      el.setAttribute("data-reel-error", "1");
+      el.style.cssText =
+        "flex:0 0 auto; padding:10px 12px; border-radius:12px; " +
+        "border:1px dashed rgba(64,62,65,.55); color:inherit; opacity:.85;";
+      reel.appendChild(el);
+    }
+    el.textContent = message;
+  }
+
   function initAutoScroll(reel) {
+    const forceAuto = reel.getAttribute("data-force-auto") === "1";
     const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return; // Accessibility first
+
+    // Accessibility first, unless explicitly forced for this reel
+    if (reduce && !forceAuto) return;
 
     const ctrl = pauseController();
 
-    // pause on interaction
     reel.addEventListener("scroll", () => ctrl.pause(1500), { passive: true });
     reel.addEventListener("pointerdown", () => ctrl.pause(2500), { passive: true });
     reel.addEventListener("touchstart", () => ctrl.pause(2500), { passive: true });
@@ -30,10 +45,8 @@
 
       const w = first.getBoundingClientRect().width;
       const cs = window.getComputedStyle(reel);
-      // gap may be like "14px" or "14px 14px"
       const gapStr = (cs.gap || cs.columnGap || "0").split(" ")[0];
       const gap = px(gapStr);
-
       return w + gap;
     }
 
@@ -48,7 +61,6 @@
       const max = reel.scrollWidth - reel.clientWidth;
       if (max <= 0) return;
 
-      // near end -> back to start
       if (reel.scrollLeft >= max - (step * 0.6)) {
         reel.scrollTo({ left: 0, behavior: "smooth" });
         ctrl.pause(600);
@@ -65,10 +77,17 @@
 
     try {
       const res = await fetch(src, { cache: "no-store" });
-      if (!res.ok) throw new Error("Fetch failed: " + res.status);
-      const items = await res.json();
+      if (!res.ok) throw new Error("Fetch failed (" + res.status + "): " + src);
 
-      // Clear existing content (in case)
+      let items;
+      try {
+        items = await res.json();
+      } catch {
+        throw new Error("JSON parse error in " + src);
+      }
+
+      if (!Array.isArray(items)) throw new Error("JSON must be an array in " + src);
+
       reel.innerHTML = "";
 
       for (const it of items) {
@@ -92,10 +111,14 @@
         reel.appendChild(fig);
       }
 
+      if (!reel.querySelector(".reel__item")) {
+        showInlineError(reel, "Reel: JSON geladen, aber keine Items gefunden (prüfe src-Felder).");
+        return;
+      }
+
       initAutoScroll(reel);
     } catch (e) {
-      // Keep it quiet, but helpful:
-      console.warn("[reel] Could not load JSON:", e);
+      showInlineError(reel, "Reel-Fehler: " + (e && e.message ? e.message : "unbekannt"));
     }
   }
 
