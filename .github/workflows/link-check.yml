@@ -22,3 +22,6 @@ jobs:
 
       - name: Check footer consistency
         run: node scripts/check-footers.mjs
+
+      - name: Check HTML hygiene (report only)
+        run: node scripts/check-hygiene.mjs
