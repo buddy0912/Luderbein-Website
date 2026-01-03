@@ -21,7 +21,7 @@
     }
     .rb-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
     .rb-row label { font-size: .95rem; color: var(--muted); }
-    .rb-row input, .rb-row textarea {
+    .rb-row input, .rb-row textarea, .rb-row select {
       width: 100%;
       padding: 10px 12px;
       border-radius: 12px;
@@ -30,7 +30,12 @@
       color: var(--text);
       outline: none;
     }
-    .rb-row textarea { min-height: 140px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: .9rem; line-height: 1.35; }
+    .rb-row textarea {
+      min-height: 140px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: .9rem;
+      line-height: 1.35;
+    }
     .rb-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
     .rb-hint { color: var(--muted); font-size: .92rem; line-height: 1.35; margin-top: 8px; }
     .rb-out {
@@ -59,6 +64,31 @@
     .rb-preview img { width: 100%; height: 240px; object-fit: cover; display: block; }
     .rb-small { font-size: .9rem; color: var(--muted); margin-top: 8px; }
     code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+    /* Tag UI */
+    .rb-tagGrid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .rb-inline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .rb-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .95rem;
+      user-select: none;
+    }
+    .rb-check input { width: auto; }
+    .rb-disabled {
+      opacity: .6;
+    }
   </style>
 </head>
 
@@ -109,7 +139,7 @@
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
       <p class="lead">Einträge für <code>assets/reel-*.json</code> erstellen – inkl. optionalem <code>tag</code> (Badge).</p>
-      <div class="rb-hint">Tipp: <code>tag</code> ist optional. Leer lassen = kein Badge (oder Default-Tag greift).</div>
+      <div class="rb-hint">Tag ist optional. Leer lassen = kein Badge (oder Default-Tag auf der Seite greift).</div>
     </section>
 
     <div class="rb-grid">
@@ -132,8 +162,38 @@
         </div>
 
         <div class="rb-row">
-          <label for="tag">Tag/Badge (optional)</label>
-          <input id="tag" type="text" placeholder="Werkstatt / Laser / Finish / Material" autocomplete="off" />
+          <label>Tag/Badge (optional)</label>
+
+          <div class="rb-tagGrid">
+            <div class="rb-row" style="margin-top:0;">
+              <label for="tagPreset" class="rb-small">Vorgaben</label>
+              <select id="tagPreset">
+                <option value="">– kein Tag –</option>
+                <option value="Werkstatt">Werkstatt</option>
+                <option value="Laser">Laser</option>
+                <option value="Finish">Finish</option>
+                <option value="Material">Material</option>
+                <option value="Detail">Detail</option>
+                <option value="Verpackung">Verpackung</option>
+                <option value="Versand">Versand</option>
+                <option value="Montage">Montage</option>
+                <option value="Testdruck">Testdruck</option>
+              </select>
+            </div>
+
+            <div class="rb-inline">
+              <label class="rb-check" for="tagCustomOn">
+                <input id="tagCustomOn" type="checkbox" />
+                Eigenes Tag schreiben
+              </label>
+              <span class="rb-small">Wenn aktiv, überschreibt es die Vorgabe.</span>
+            </div>
+
+            <div class="rb-row" style="margin-top:0;">
+              <label for="tagCustom" class="rb-small">Eigenes Tag</label>
+              <input id="tagCustom" type="text" placeholder="z.B. Gravur / Schleifen / QA" autocomplete="off" disabled />
+            </div>
+          </div>
         </div>
 
         <div class="rb-actions">
