@@ -1,2 +1,2 @@
 User-agent: *
-Disallow: /tools/reel-builder/
+Disallow: /tools/
