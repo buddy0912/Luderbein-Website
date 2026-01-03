@@ -85,18 +85,27 @@
           { value: "custom", label: "Andere Größe (nach Maß)" },
         ],
       },
+
       Metall: {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß / Rohling" }],
       },
+
       Holz: {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
-      "Acryl-Schilder": {
-        variants: [{ value: "Allgemein", label: "Allgemein" }],
+
+      // ✅ Neu: Acryl als eigenes Material (ohne "Schilder" im Namen)
+      Acryl: {
+        variants: [
+          { value: "Schilder", label: "Schilder" },
+          { value: "Labels", label: "Labels / Tags" },
+          { value: "Serie", label: "Kleine Serien" },
+        ],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
+
       Custom: {
         variants: [{ value: "Sonderwunsch", label: "Sonderwunsch" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
@@ -107,7 +116,11 @@
     // URL Prefill (?p=...&v=...&f=...&note=...)
     // ---------------------------------
     const params = new URLSearchParams(window.location.search);
-    const preMat = safeText(params.get("p"));
+
+    // ✅ Backward-Compat: alte Links ?p=Acryl-Schilder werden zu Acryl gemappt
+    let preMat = safeText(params.get("p"));
+    if (preMat === "Acryl-Schilder") preMat = "Acryl";
+
     const preVar = safeText(params.get("v"));
     const preFmt = safeText(params.get("f"));
     const preNote = safeText(params.get("note"));
