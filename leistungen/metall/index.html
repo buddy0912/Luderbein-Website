@@ -5,82 +5,50 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Metallgravur – Luderbein</title>
   <meta name="description" content="Metallgravur von Luderbein: Edelstahl, Aluminium, Tags, Plaketten, Gravuren – präzise, robust und ehrlich." />
+
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
     /* =========================================================
-       METALL – HORIZONTAL REEL SLIDER
+       METALL – INTERNAL REEL (JSON driven, no external embeds)
        ========================================================= */
-    .reelslider {
-      position: relative;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 14px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    .reeltrack {
+    .reel {
       display: flex;
       gap: 14px;
-      overflow: auto;
+      overflow-x: auto;
+      padding: 8px 2px 18px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      outline: none;
     }
-    .reeltrack::-webkit-scrollbar { display: none; }
-
-    .reelslide {
+    .reel__item {
+      flex: 0 0 280px;
       scroll-snap-align: start;
-      flex: 0 0 calc(33.333% - 10px);
       border-radius: 16px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      box-shadow: var(--shadow);
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      display: block;
+      color: inherit;
+      margin: 0;
     }
-    .reelslide img {
+    .reel__img {
+      display: block;
       width: 100%;
-      height: 240px;
+      height: 220px;
       object-fit: cover;
-      display: block;
     }
-
-    .reelbtn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.45);
-      color: rgba(255,255,255,.92);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      z-index: 2;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .reelbtn.prev { left: 10px; }
-    .reelbtn.next { right: 10px; }
-
-    @media (max-width: 860px) {
-      .reelslide { flex-basis: calc(50% - 7px); }
-      .reelslide img { height: 220px; }
-    }
-    @media (max-width: 520px) {
-      .reelslide { flex-basis: 86%; }
-      .reelslide img { height: 240px; }
-      .reelbtn { display: none; }
+    .reel__cap {
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.35;
     }
   </style>
 </head>
 
 <body>
+
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -95,17 +63,19 @@
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
           <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
+
           <div class="navdrop__panel" role="menu" aria-label="Leistungen">
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -127,50 +97,37 @@
       <p class="lead">Edelstahl, Aluminium, Plaketten, Tags – präzise, robust und ohne unnötigen Firlefanz.</p>
 
       <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Metall">Anfragen</a>
+        <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Gravur">Anfragen</a>
         <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
         <a class="btn" href="/leistungen/">Zurück</a>
       </div>
     </section>
 
-    <section class="section" aria-label="Metall-Beispiele">
-      <h2>Beispiele</h2>
-      <p class="small muted">Tippen zum Vergrößern – oder wischen für mehr. Läuft automatisch weiter.</p>
+    <section id="reel" class="section" aria-label="Metall-Reel">
+      <h2>Metall Reel</h2>
+      <p class="small muted">Läuft automatisch – du kannst jederzeit swipen/scrollen.</p>
 
-      <div class="reelslider">
-        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
-        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
+      <div
+        class="reel"
+        aria-label="Metall Beispiele Reel"
+        data-reel
+        data-reel-src="/assets/reel-metall.json"
+        data-interval="4500"
+      ></div>
 
-        <div class="reeltrack" id="metalTrack" aria-label="Metallgalerie">
-          <!-- 12 Beispielbilder -->
-          <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank"><img src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel 01" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank"><img src="/assets/metall/metall-reel-02.jpg" alt="Metall Beispiel 02" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank"><img src="/assets/metall/metall-reel-03.jpg" alt="Metall Beispiel 03" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-04.jpg" target="_blank"><img src="/assets/metall/metall-reel-04.jpg" alt="Metall Beispiel 04" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-05.jpg" target="_blank"><img src="/assets/metall/metall-reel-05.jpg" alt="Metall Beispiel 05" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-06.jpg" target="_blank"><img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel 06" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-07.jpg" target="_blank"><img src="/assets/metall/metall-reel-07.jpg" alt="Metall Beispiel 07" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-08.jpg" target="_blank"><img src="/assets/metall/metall-reel-08.jpg" alt="Metall Beispiel 08" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-09.jpg" target="_blank"><img src="/assets/metall/metall-reel-09.jpg" alt="Metall Beispiel 09" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-10.jpg" target="_blank"><img src="/assets/metall/metall-reel-10.jpg" alt="Metall Beispiel 10" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-11.jpg" target="_blank"><img src="/assets/metall/metall-reel-11.jpg" alt="Metall Beispiel 11" loading="lazy"></a>
-          <a class="reelslide" href="/assets/metall/metall-reel-12.jpg" target="_blank"><img src="/assets/metall/metall-reel-12.jpg" alt="Metall Beispiel 12" loading="lazy"></a>
-        </div>
-      </div>
+      <noscript>
+        <p class="small muted">Hinweis: Für den internen Reel muss JavaScript aktiv sein.</p>
+      </noscript>
     </section>
 
-    <section class="section" style="margin-top:30px;">
+    <section class="section" aria-label="Anwendung & Hinweise">
       <h2>Anwendung & Hinweise</h2>
-      <div class="grid">
-        <div class="card"><h3>Materialien</h3><p>Edelstahl (V2A/V4A) oder Aluminium eloxiert. Robust und sauber gravierbar.</p></div>
-        <div class="card"><h3>Einsatz</h3><p>Maschinen-Tags, Werkstatt-Labels, Outdoor-Plaketten, personalisierte Deko.</p></div>
-        <div class="card"><h3>Finish</h3><p>Optional mattiert oder glänzend – Gravur bleibt dauerhaft sichtbar.</p></div>
-      </div>
-
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Metall">Anfragen</a>
-        <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
-      </div>
+      <ul class="bullets">
+        <li><strong>Einsatz:</strong> Schilder, Plaketten, Typenschilder, Tags, Frontplatten.</li>
+        <li><strong>Material:</strong> Edelstahl & Aluminium (weitere auf Anfrage).</li>
+        <li><strong>Lesbarkeit:</strong> Kontrast (z.B. schwarz/weiß) hängt von Oberfläche & Gravur ab.</li>
+        <li><strong>Upload:</strong> Logo/Datei als PNG/SVG hilft – wir prüfen das vorab.</li>
+      </ul>
     </section>
   </main>
 
@@ -186,59 +143,10 @@
 
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
+  <script src="/assets/reel-internal.js"></script>
   <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-
-    // ======================================
-    // Metall Reel – Autoplay + Buttons
-    // ======================================
-    (function(){
-      const track = document.getElementById("metalTrack");
-      if (!track) return;
-
-      const prev = document.querySelector(".reelbtn.prev");
-      const next = document.querySelector(".reelbtn.next");
-
-      const slideWidth = () => {
-        const first = track.querySelector(".reelslide");
-        return first ? first.getBoundingClientRect().width + 14 : 320;
-      };
-
-      prev?.addEventListener("click", () => {
-        track.scrollBy({ left: -slideWidth(), behavior: "smooth" });
-      });
-      next?.addEventListener("click", () => {
-        track.scrollBy({ left: slideWidth(), behavior: "smooth" });
-      });
-
-      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
-
-      let paused = false;
-      const AUTOPLAY_MS = 4600;
-
-      const atEnd = () => (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
-
-      function tick() {
-        if (paused) return;
-        if (atEnd()) track.scrollTo({ left: 0, behavior: "smooth" });
-        else track.scrollBy({ left: slideWidth(), behavior: "smooth" });
-      }
-
-      let timer = setInterval(tick, AUTOPLAY_MS);
-
-      ["mouseenter","touchstart"].forEach(e =>
-        track.addEventListener(e, () => paused = true, { passive:true })
-      );
-      ["mouseleave","touchend"].forEach(e =>
-        track.addEventListener(e, () => paused = false, { passive:true })
-      );
-
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) { clearInterval(timer); timer = null; }
-        else if (!timer) timer = setInterval(tick, AUTOPLAY_MS);
-      });
-    })();
+    const y = document.getElementById("y");
+    if (y) y.textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
