@@ -1,22 +1,22 @@
 // =========================================================
-// Luderbein Site Core v1.4.3
+// Luderbein Site Core v1.4.4
 // - Nav Toggle
 // - Active Nav Marker
 // - Kontakt: CTA Autofill (WhatsApp + Mail) aus URL params
 //   Params: p (Produkt), v (Variante), f (Format) | size (Fallback), note
-// - Fix: iOS/Safari BFCache (pageshow) + popstate => CTAs immer aktuell
+// - FIX: Safari/BFCache/Stale href -> CTAs werden beim KLICK live aus URL gebaut
 // =========================================================
 (function () {
   "use strict";
 
-  const VERSION = "1.4.3";
+  const VERSION = "1.4.4";
   if (window.__lbSiteCoreLoadedVersion === VERSION) return;
   window.__lbSiteCoreLoadedVersion = VERSION;
 
   document.addEventListener("DOMContentLoaded", () => {
     initNavToggle();
     markActiveNav();
-    initKontaktCtaAutofill();
+    initKontaktCtas();
   });
 
   function initNavToggle() {
@@ -45,117 +45,143 @@
     });
   }
 
-  function initKontaktCtaAutofill() {
+  // =========================================================
+  // KONTAKT CTAs
+  // =========================================================
+  function initKontaktCtas() {
     const pathname = window.location.pathname || "";
     if (!pathname.startsWith("/kontakt")) return;
 
-    // Ziel-CTAs finden:
-    // 1) Bevorzugt: .hero .cta a (dein Layout)
-    // 2) Fallback: alle .cta a (aber wir greifen nur wa.me und mailto an)
-    function getCtaAnchors() {
-      const hero = Array.from(document.querySelectorAll(".hero .cta a"));
-      const scope = hero.length ? hero : Array.from(document.querySelectorAll(".cta a"));
-      const waAnchors = scope.filter((a) => (a.getAttribute("href") || "").includes("wa.me/"));
-      const mailAnchors = scope.filter((a) => (a.getAttribute("href") || "").startsWith("mailto:"));
-      return { waAnchors, mailAnchors };
-    }
+    // 1) Initial einmal setzen
+    applyKontaktAutofill();
+
+    // 2) BFCache / History: nochmal setzen
+    window.addEventListener("pageshow", () => applyKontaktAutofill());
+    window.addEventListener("popstate", () => applyKontaktAutofill());
+
+    // 3) Killer-Fix: beim KLICK live aus aktueller URL bauen
+    //    (Safari kann href im DOM "stale" lassen; wir rechnen daher on-demand)
+    if (document.documentElement.dataset.lbCtaDelegated === "1") return;
+    document.documentElement.dataset.lbCtaDelegated = "1";
+
+    document.addEventListener(
+      "click",
+      (e) => {
+        const a = e.target && e.target.closest ? e.target.closest("a") : null;
+        if (!a) return;
+
+        // Nur Hero-CTAs anfassen (nicht Direktlinks unten)
+        const inHeroCta = !!a.closest(".hero .cta");
+        if (!inHeroCta) return;
+
+        const href = (a.getAttribute("href") || "").trim();
+        const isWa = href.includes("wa.me/");
+        const isMail = href.startsWith("mailto:");
+
+        if (!isWa && !isMail) return;
+
+        // Immer zuerst sauber neu berechnen + href aktualisieren
+        const { waHref, mailHref } = applyKontaktAutofill();
+
+        // Bei modifier clicks (neuer Tab etc.) nur aktualisieren, nicht abwürgen
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+
+        // Normaler Klick: wir verhindern Default und navigieren gezielt
+        // -> garantiert, dass wirklich der neue Link benutzt wird
+        e.preventDefault();
+
+        if (isWa && waHref) {
+          window.location.href = waHref;
+          return;
+        }
+        if (isMail && mailHref) {
+          window.location.href = mailHref;
+        }
+      },
+      true
+    );
+  }
+
+  function applyKontaktAutofill() {
+    const sp = new URLSearchParams(window.location.search);
+
+    const p = (sp.get("p") || "").trim();
+    const v = (sp.get("v") || "").trim();
+    const f = (sp.get("f") || sp.get("size") || "").trim();
+    const note = (sp.get("note") || "").trim();
+
+    const labelParts = [p, v, f].filter(Boolean);
+    const label = labelParts.length ? labelParts.join(" • ") : "Allgemeine Anfrage";
+
+    // WhatsApp Text (dein Stil: Kurzinfos)
+    const waLines = [];
+    waLines.push(`Hi Luderbein, ich möchte anfragen: ${label}`);
+    waLines.push("");
+    waLines.push("Kurzinfos:");
+    waLines.push(`- Motiv/Text: ${note || ""}`);
+    waLines.push(`- Größe/Format: ${f || ""}`);
+    waLines.push("- Deadline (optional): ");
+    waLines.push("");
+    waLines.push("Foto/Skizze schicke ich gleich mit.");
+    const waText = waLines.join("\n");
+
+    // Mail
+    const mailSubject = `Anfrage – ${label} – Luderbein`;
+
+    const mailLines = [];
+    mailLines.push("Hi Luderbein,");
+    mailLines.push("");
+    mailLines.push("ich möchte anfragen:");
+    if (p) mailLines.push(`- Produkt: ${p}`);
+    if (v) mailLines.push(`- Variante: ${v}`);
+    if (f) mailLines.push(`- Größe/Format: ${f}`);
+    mailLines.push(`- Motiv/Text: ${note || ""}`);
+    mailLines.push("- Deadline (optional): ");
+    mailLines.push("");
+    mailLines.push("Foto/Skizze schicke ich gleich mit.");
+    mailLines.push("");
+    mailLines.push("Danke!");
+    const mailBody = mailLines.join("\n");
+
+    // Nur Hero-CTA Buttons updaten
+    const heroAnchors = Array.from(document.querySelectorAll(".hero .cta a"));
+    const waAnchors = heroAnchors.filter((a) => (a.getAttribute("href") || "").includes("wa.me/"));
+    const mailAnchors = heroAnchors.filter((a) => (a.getAttribute("href") || "").startsWith("mailto:"));
 
     function extractWaNumber(href) {
       const m = (href || "").match(/wa\.me\/(\d+)/);
       return (m && m[1]) ? m[1] : "491725925858";
     }
-
     function extractMailAddress(href) {
       const raw = (href || "mailto:luderbein_gravur@icloud.com").trim();
       const addr = raw.replace(/^mailto:/, "").split("?")[0].trim();
       return addr || "luderbein_gravur@icloud.com";
     }
 
-    function buildState() {
-      const sp = new URLSearchParams(window.location.search);
-      const p = (sp.get("p") || "").trim();
-      const v = (sp.get("v") || "").trim();
-      const f = (sp.get("f") || sp.get("size") || "").trim();
-      const note = (sp.get("note") || "").trim();
-      return { p, v, f, note };
-    }
+    let waHrefOut = "";
+    let mailHrefOut = "";
 
-    function buildLabel(st) {
-      const parts = [st.p, st.v, st.f].filter(Boolean);
-      return parts.length ? parts.join(" • ") : "Allgemeine Anfrage";
-    }
-
-    function applyAutofill() {
-      const st = buildState();
-      const label = buildLabel(st);
-
-      // WhatsApp Text (dein Stil: Kurzinfos)
-      const waLines = [];
-      waLines.push(`Hi Luderbein, ich möchte anfragen: ${label}`);
-      waLines.push("");
-      waLines.push("Kurzinfos:");
-      waLines.push(`- Motiv/Text: ${st.note || ""}`);
-      waLines.push(`- Größe/Format: ${st.f || ""}`);
-      waLines.push("- Deadline (optional): ");
-      waLines.push("");
-      waLines.push("Foto/Skizze schicke ich gleich mit.");
-      const waText = waLines.join("\n");
-
-      // Mail
-      const mailSubject = `Anfrage – ${label} – Luderbein`;
-
-      const mailLines = [];
-      mailLines.push("Hi Luderbein,");
-      mailLines.push("");
-      mailLines.push("ich möchte anfragen:");
-      if (st.p) mailLines.push(`- Produkt: ${st.p}`);
-      if (st.v) mailLines.push(`- Variante: ${st.v}`);
-      if (st.f) mailLines.push(`- Größe/Format: ${st.f}`);
-      mailLines.push(`- Motiv/Text: ${st.note || ""}`);
-      mailLines.push("- Deadline (optional): ");
-      mailLines.push("");
-      mailLines.push("Foto/Skizze schicke ich gleich mit.");
-      mailLines.push("");
-      mailLines.push("Danke!");
-      const mailBody = mailLines.join("\n");
-
-      const { waAnchors, mailAnchors } = getCtaAnchors();
-
-      // WhatsApp CTA(s)
-      waAnchors.forEach((a) => {
-        const old = a.getAttribute("href") || "";
-        const num = extractWaNumber(old);
-        a.setAttribute("href", `https://wa.me/${num}?text=${encodeURIComponent(waText)}`);
-      });
-
-      // Mail CTA(s)
-      mailAnchors.forEach((a) => {
-        const old = a.getAttribute("href") || "mailto:luderbein_gravur@icloud.com";
-        const mail = extractMailAddress(old);
-        a.setAttribute(
-          "href",
-          `mailto:${mail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`
-        );
-      });
-
-      // Optional Preview (falls vorhanden)
-      const preview = document.getElementById("lbCtaPreview");
-      if (preview) {
-        preview.textContent = `Wird gesendet: ${label}${st.note ? ` — Notiz: ${st.note}` : ""}`;
-      }
-    }
-
-    // 1) Initial
-    applyAutofill();
-
-    // 2) BFCache Fix: beim Zurück/Vor (Safari iOS) wird oft kein DOMContentLoaded gefeuert
-    window.addEventListener("pageshow", () => {
-      applyAutofill();
+    waAnchors.forEach((a) => {
+      const old = a.getAttribute("href") || "";
+      const num = extractWaNumber(old);
+      const newHref = `https://wa.me/${num}?text=${encodeURIComponent(waText)}`;
+      a.setAttribute("href", newHref);
+      waHrefOut = newHref;
     });
 
-    // 3) Wenn History-States genutzt werden (z.B. URL ändert sich ohne Reload)
-    window.addEventListener("popstate", () => {
-      applyAutofill();
+    mailAnchors.forEach((a) => {
+      const old = a.getAttribute("href") || "mailto:luderbein_gravur@icloud.com";
+      const mail = extractMailAddress(old);
+      const newHref = `mailto:${mail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+      a.setAttribute("href", newHref);
+      mailHrefOut = newHref;
     });
+
+    const preview = document.getElementById("lbCtaPreview");
+    if (preview) {
+      preview.textContent = `Wird gesendet: ${label}${note ? ` — Notiz: ${note}` : ""}`;
+    }
+
+    return { waHref: waHrefOut, mailHref: mailHrefOut };
   }
 })();
