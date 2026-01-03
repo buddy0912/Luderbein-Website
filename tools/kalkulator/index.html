@@ -87,6 +87,33 @@
       color:rgba(255,255,255,.86);
     }
     .radioStack{display:grid;gap:10px}
+
+    /* CTA Split am Ende */
+    .ctaSplit{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width:760px){.ctaSplit{grid-template-columns:1fr}}
+    .ctaCard{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.18);
+      border-radius:16px;
+      padding:12px;
+    }
+    .ctaCard h4{
+      margin:0 0 6px 0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .ctaCard p{
+      margin:0 0 10px 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .ctaCard .cta{margin-top:8px}
   </style>
 </head>
 
@@ -136,7 +163,7 @@
     </p>
     <div class="notice">
       <strong style="color:var(--text)">Hinweis:</strong><br>
-      Nur Schiefer ist aktuell aktiv. Metall/Holz/Acryl folgen – bitte bei Bedarf einfach anfragen.
+      Kein Shop: Du schickst mir die fertige Nachricht – ich bestätige kurz Preis & Machbarkeit, dann geht’s los.
     </div>
   </section>
 
@@ -183,9 +210,7 @@
 
             <div class="checkrow">
               <input type="checkbox" id="widmung">
-              <div>
-                <div><strong>Signatur / Widmung</strong> <span class="muted" id="p_widmung"></span></div>
-              </div>
+              <div><div><strong>Signatur / Widmung</strong> <span class="muted" id="p_widmung"></span></div></div>
             </div>
 
             <div style="height:10px"></div>
@@ -241,9 +266,28 @@
               <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
 
-            <div class="cta" style="margin-top:12px">
-              <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp</a>
-              <a class="btn" id="mailLink" href="#">E-Mail</a>
+            <!-- Split: Anfrage vs Auftrag -->
+            <div class="ctaSplit" aria-label="Nächster Schritt">
+              <div class="ctaCard">
+                <h4>Option A – Erstmal anfragen</h4>
+                <p>
+                  Du bist noch unsicher? Schick mir kurz die Daten – ich sag dir, was sinnvoll ist (und ob’s machbar ist).
+                </p>
+                <div class="cta">
+                  <a class="btn" id="contactLink" href="/kontakt/">Zur Anfrage (Kontakt)</a>
+                </div>
+              </div>
+
+              <div class="ctaCard">
+                <h4>Option B – Preis fixieren & Auftrag starten</h4>
+                <p>
+                  Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.
+                </p>
+                <div class="cta">
+                  <a class="btn primary" id="waLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
+                  <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
+                </div>
+              </div>
             </div>
 
             <div class="oknote" id="fallbackNote"></div>
@@ -297,6 +341,7 @@
         $oknote=document.getElementById('oknote'),
         $wa=document.getElementById('waLink'),
         $mail=document.getElementById('mailLink'),
+        $contact=document.getElementById('contactLink'),
         $note=document.getElementById('note'),
         $inclPill=document.getElementById('inclPill'),
         $notePill=document.getElementById('notePill'),
@@ -313,10 +358,34 @@
     return ($cat.value === 'schiefer');
   }
 
+  function buildContactUrlFromSelection(sel){
+    // Kontakt-Konfigurator/Seite bekommt die Auswahl als Query-Params.
+    // Auch wenn Kontaktseite (noch) nicht alles nutzt: Link bleibt gültig & safe.
+    try{
+      const qs = new URLSearchParams();
+      if(sel?.S?.label) qs.set('p', sel.S.label);
+      if(sel?.V?.label) qs.set('v', sel.V.label);
+      if(sel?.F?.label) qs.set('f', sel.F.label);
+      if(sel?.qty) qs.set('qty', String(sel.qty));
+      const n = ($note?.value || '').trim();
+      if(n) qs.set('note', n);
+      const q = qs.toString();
+      return '/kontakt/' + (q ? ('?' + q) : '');
+    }catch(e){
+      return '/kontakt/';
+    }
+  }
+
   function setFallbackLinks(catKey){
     const prod = P.products[catKey];
     const pLabel = prod?.label || catKey;
-    const url = '/kontakt/?p=' + encodeURIComponent(pLabel);
+
+    const qs = new URLSearchParams();
+    qs.set('p', pLabel);
+
+    const url = '/kontakt/?' + qs.toString();
+
+    if($contact) $contact.href = url;
     $wa.href = url;
     $mail.href = url;
 
@@ -459,8 +528,16 @@
 
   function calc(){
     const sel=getSelected();
+
+    // Kontakt-Link immer aktuell halten (auch wenn was fehlt)
+    if($contact){
+      $contact.href = buildContactUrlFromSelection(sel);
+    }
+
     if(!sel || !sel.F){
       $total.textContent='Gesamt: —';
+      // Fallback: Kontakt ohne Details
+      if($contact) $contact.href = '/kontakt/';
       return;
     }
 
@@ -504,7 +581,7 @@
       : 'keine';
 
     const lines=[
-      "Hi Luderbein, ich möchte kalkulieren/anfragen:",
+      "Hi Luderbein, ich möchte Preis fixieren & den Auftrag starten:",
       `- Material: ${S.label}`,
       `- Ausführung: ${V.label}`,
       `- Format: ${F.label}`,
@@ -523,7 +600,7 @@
 
     $wa.href='https://wa.me/491725925858?text='+encodeURIComponent(msg);
 
-    const subj=`Kalkulation ${S.label} – ${V.label}`;
+    const subj=`Auftrag ${S.label} – ${V.label}`;
     $mail.href='mailto:luderbein_gravur@icloud.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg+'\n\nDanke!');
   }
 
