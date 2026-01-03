@@ -1,0 +1,27 @@
+[
+  {
+    "src": "/assets/img/schiefer-home.jpg",
+    "alt": "Schiefer Beispiel – Fotogravur",
+    "cap": "Fotogravur (Beispiel)"
+  },
+  {
+    "src": "/assets/img/schiefer-foto-01.jpg",
+    "alt": "Schiefer Beispiel – Fotogravur Detail",
+    "cap": "Fotogravur (Detail)"
+  },
+  {
+    "src": "/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg",
+    "alt": "Schiefer Gedenktafel Beispiel 1",
+    "cap": "Gedenktafel"
+  },
+  {
+    "src": "/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg",
+    "alt": "Schiefer Gedenktafel Beispiel 2",
+    "cap": "Gedenktafel"
+  },
+  {
+    "src": "/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg",
+    "alt": "Schiefer Gedenktafel Beispiel 3",
+    "cap": "Gedenktafel"
+  }
+]
