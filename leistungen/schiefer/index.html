@@ -20,20 +20,39 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
 
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem" aria-current="page">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
@@ -50,7 +69,7 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap" id="content">
     <section class="hero">
       <span class="badge"><i></i> Leistung – Schiefer</span>
       <h1>Schiefer</h1>
@@ -59,8 +78,11 @@
       <div class="cta">
         <a class="btn primary" href="/kontakt/?p=Schiefer">Anfragen</a>
         <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-        <a class="btn" href="/leistungen/">Zurück</a>
       </div>
+
+      <p class="small muted" style="margin-top:.75rem;">
+        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+      </p>
 
       <div class="notice" style="margin-top:14px">
         <strong style="color:var(--text)">Ablauf:</strong> Beispiel ansehen → Motiv/Format klären → Anfrage oder Kalkulation.
@@ -76,8 +98,8 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative;">
             <span class="thumbslider" data-thumb-rotator>
-              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel Fotogravur 1">
-              <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Beispiel Fotogravur 2">
+              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel Fotogravur 1" loading="lazy">
+              <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Beispiel Fotogravur 2" loading="lazy">
             </span>
           </div>
           <div class="meta">
@@ -95,7 +117,7 @@
         <!-- TEXT / SYMBOLE -->
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative;">
-            <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Text & Symbole Beispiel" style="width:100%;height:100%;object-fit:cover;">
+            <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Text & Symbole Beispiel" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
           </div>
           <div class="meta">
             <span class="price">ab 9,95 €</span><span>•</span><span>Text &amp; Symbole</span><span>•</span><span>Fastlane</span>
@@ -113,9 +135,9 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative;">
             <span class="thumbslider" data-thumb-rotator>
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Gedenktafel 1">
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Gedenktafel 2">
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Gedenktafel 3">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Gedenktafel 1" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Gedenktafel 2" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Gedenktafel 3" loading="lazy">
             </span>
           </div>
           <div class="meta">
