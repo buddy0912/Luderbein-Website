@@ -1,17 +1,19 @@
 [
-  {
-    "src": "/assets/img/schiefer-home.jpg",
-    "alt": "Werkstatt – Schiefer Beispiel",
-    "cap": "Schiefer – Fotogravur (Beispiel)"
-  },
-  {
-    "src": "/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg",
-    "alt": "Werkstatt – Gedenktafel Beispiel",
-    "cap": "Schiefer – Gedenktafel"
-  },
-  {
-    "src": "/assets/img/schiefer-foto-01.jpg",
-    "alt": "Werkstatt – Fotogravur Detail",
-    "cap": "Fotogravur – Detail"
-  }
+  { "src": "/assets/reel/reel-01.jpg", "alt": "Werkstatt – Reel 01", "cap": "Werkstatt – Reel 01" },
+  { "src": "/assets/reel/reel-02.jpg", "alt": "Werkstatt – Reel 02", "cap": "Werkstatt – Reel 02" },
+  { "src": "/assets/reel/reel-03.jpg", "alt": "Werkstatt – Reel 03", "cap": "Werkstatt – Reel 03" },
+  { "src": "/assets/reel/reel-04.jpg", "alt": "Werkstatt – Reel 04", "cap": "Werkstatt – Reel 04" },
+  { "src": "/assets/reel/reel-05.jpg", "alt": "Werkstatt – Reel 05", "cap": "Werkstatt – Reel 05" },
+  { "src": "/assets/reel/reel-06.jpg", "alt": "Werkstatt – Reel 06", "cap": "Werkstatt – Reel 06" },
+  { "src": "/assets/reel/reel-07.jpg", "alt": "Werkstatt – Reel 07", "cap": "Werkstatt – Reel 07" },
+  { "src": "/assets/reel/reel-08.jpg", "alt": "Werkstatt – Reel 08", "cap": "Werkstatt – Reel 08" },
+  { "src": "/assets/reel/reel-09.jpg", "alt": "Werkstatt – Reel 09", "cap": "Werkstatt – Reel 09" },
+  { "src": "/assets/reel/reel-10.jpg", "alt": "Werkstatt – Reel 10", "cap": "Werkstatt – Reel 10" },
+  { "src": "/assets/reel/reel-11.jpg", "alt": "Werkstatt – Reel 11", "cap": "Werkstatt – Reel 11" },
+  { "src": "/assets/reel/reel-12.jpg", "alt": "Werkstatt – Reel 12", "cap": "Werkstatt – Reel 12" },
+  { "src": "/assets/reel/reel-13.jpg", "alt": "Werkstatt – Reel 13", "cap": "Werkstatt – Reel 13" },
+  { "src": "/assets/reel/reel-14.jpg", "alt": "Werkstatt – Reel 14", "cap": "Werkstatt – Reel 14" },
+  { "src": "/assets/reel/reel-15.jpg", "alt": "Werkstatt – Reel 15", "cap": "Werkstatt – Reel 15" },
+  { "src": "/assets/reel/reel-16.jpg", "alt": "Werkstatt – Reel 16", "cap": "Werkstatt – Reel 16" },
+  { "src": "/assets/reel/reel-17.jpg", "alt": "Werkstatt – Reel 17", "cap": "Werkstatt – Reel 17" }
 ]
