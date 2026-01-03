@@ -11,38 +11,98 @@
 
   <!-- Werkstatt-Feed (additiv, nur Startseite) -->
   <style>
+    /* Wrapper für Fade-Ränder */
+    .reelwrap {
+      position: relative;
+      margin-top: 10px;
+    }
+    .reelwrap::before,
+    .reelwrap::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 34px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: .85;
+    }
+    .reelwrap::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reelwrap::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+
+    /* Reel Basis */
     .reel {
       display: flex;
       gap: 14px;
       overflow-x: auto;
-      padding: 8px 2px 18px;
+      padding: 10px 6px 18px;
       scroll-snap-type: x mandatory;
+      scroll-padding-left: 10px;
+      scroll-padding-right: 10px;
       -webkit-overflow-scrolling: touch;
-      min-height: 260px;
-      align-items: stretch;
     }
+
+    /* Card (edler, responsive “Peek”) */
     .reel__item {
-      flex: 0 0 320px;
+      flex: 0 0 clamp(260px, 72vw, 440px);
       scroll-snap-align: start;
-      border-radius: 16px;
+      border-radius: 18px;
       border: 1px solid rgba(64,62,65,.55);
       background: rgba(26,26,31,.72);
       box-shadow: var(--shadow);
       overflow: hidden;
       color: inherit;
       margin: 0;
+      position: relative;
+      text-decoration: none;
+      transform: translateZ(0);
     }
+
+    /* 16:9 Look */
     .reel__img {
       display: block;
       width: 100%;
-      height: 220px;
+      aspect-ratio: 16/9;
+      height: auto;
       object-fit: cover;
+      filter: saturate(1.03) contrast(1.02);
     }
+
+    /* Caption als Overlay */
     .reel__cap {
-      padding: 10px 12px;
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.35;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 12px 12px;
+      color: rgba(255,255,255,.92);
+      font-size: .95rem;
+      line-height: 1.3;
+      background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+    }
+
+    /* Desktop Hover – nur kosmetisch */
+    @media (hover:hover) and (pointer:fine) {
+      .reel__item:hover {
+        transform: translateY(-2px);
+        border-color: rgba(160,120,140,.55);
+      }
+    }
+
+    /* Kleine Überschrift-Zeile schöner */
+    .sectionHead {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
   </style>
 </head>
@@ -100,6 +160,29 @@
       </div>
     </section>
 
+    <!-- WERKSTATT-FEED (nach oben gerückt) -->
+    <section class="section" aria-label="Werkstatt-Feed">
+      <div class="sectionHead">
+        <h2>Werkstatt-Feed</h2>
+      </div>
+      <p class="muted">Einblicke in die Werkstatt und den Alltag.</p>
+
+      <div class="reelwrap">
+        <div
+          class="reel"
+          aria-label="Werkstatt-Feed Reel"
+          data-reel
+          data-reel-src="/assets/reel-werkstatt.json"
+          data-interval="4500"
+        ></div>
+      </div>
+
+      <div class="actions" style="margin-top: 14px;">
+        <a class="btn primary" href="/leistungen/">Mehr Beispiele</a>
+        <a class="btn" href="/kontakt/">Anfrage senden</a>
+      </div>
+    </section>
+
     <section class="section" aria-label="Leistungen Preview">
       <h2>Leistungen</h2>
 
@@ -147,25 +230,6 @@
             <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
           </div>
         </article>
-      </div>
-    </section>
-
-    <!-- WERKSTATT-FEED (intern) -->
-    <section class="section" aria-label="Werkstatt-Feed">
-      <h2>Werkstatt-Feed</h2>
-      <p class="muted">Einblicke in die Werkstatt und den Alltag.</p>
-
-      <div
-        class="reel"
-        aria-label="Werkstatt-Feed Reel"
-        data-reel
-        data-reel-src="/assets/reel-werkstatt.json"
-        data-interval="4500"
-      ></div>
-
-      <div class="actions" style="margin-top: 14px;">
-        <a class="btn primary" href="/leistungen/">Mehr Beispiele</a>
-        <a class="btn" href="/kontakt/">Anfrage senden</a>
       </div>
     </section>
 
