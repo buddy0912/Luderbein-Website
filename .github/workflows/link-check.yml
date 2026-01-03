@@ -19,3 +19,6 @@ jobs:
 
       - name: Check header consistency
         run: node scripts/check-headers.mjs
+
+      - name: Check footer consistency
+        run: node scripts/check-footers.mjs
