@@ -50,11 +50,9 @@
     let product = pickFirst(sp.get("p"), sp.get("product"));
     let variant = pickFirst(sp.get("v"), sp.get("variant"));
 
-    // optional
     const format = pickFirst(sp.get("f"), sp.get("format"), sp.get("size"));
     const note = pickFirst(sp.get("note"), sp.get("n"));
 
-    // split legacy p="X – Y" if v is empty
     const split = splitLegacyProductVariant(product, variant);
     product = split.product;
     variant = split.variant;
@@ -73,19 +71,21 @@
       ? "Hi Luderbein, ich möchte anfragen: " + title
       : "Hi Luderbein, ich möchte was anfragen:";
 
-    const noteLine = ctx.note ? "\n- Notiz: " + ctx.note : "";
+    const lines = [
+      head,
+      "",
+      "Kurzinfos:",
+      "- Motiv/Text: ",
+      "- Größe/Format: " + (ctx.format ? ctx.format : ""),
+      "- Deadline (optional): ",
+    ];
 
-    return (
-      head +
-      "\n\n" +
-      "Kurzinfos:\n" +
-      "- Motiv/Text: \n" +
-      "- Größe/Format: " + (ctx.format ? ctx.format : "") + "\n" +
-      "- Deadline (optional): " +
-      noteLine +
-      "\n\n" +
-      "Foto/Skizze schicke ich gleich mit."
-    );
+    if (ctx.note) lines.push("- Notiz: " + ctx.note);
+
+    lines.push("");
+    lines.push("Foto/Skizze schicke ich gleich mit.");
+
+    return lines.join("\n");
   }
 
   function buildMailSubject(ctx) {
@@ -94,23 +94,28 @@
   }
 
   function buildMailBody(ctx) {
-    const noteBlock = ctx.note ? "\n- Notiz: " + ctx.note + "\n" : "\n";
+    const lines = [
+      "Hi Luderbein,",
+      "",
+      "ich möchte folgendes anfragen:",
+      "- Produkt: " + (ctx.product || ""),
+      "- Variante: " + (ctx.variant || ""),
+      "- Format/Größe: " + (ctx.format || ""),
+    ];
 
-    return (
-      "Hi Luderbein,\n\n" +
-      "ich möchte folgendes anfragen:\n" +
-      "- Produkt: " + (ctx.product || "") + "\n" +
-      "- Variante: " + (ctx.variant || "") + "\n" +
-      "- Format/Größe: " + (ctx.format || "") +
-      noteBlock +
-      "- Motiv/Text: \n" +
-      "- Deadline (optional): \n\n" +
-      "Anhang/Foto schicke ich mit.\n\n" +
-      "Danke!"
-    );
+    if (ctx.note) lines.push("- Notiz: " + ctx.note);
+
+    lines.push("- Motiv/Text: ");
+    lines.push("- Deadline (optional): ");
+    lines.push("");
+    lines.push("Anhang/Foto schicke ich mit.");
+    lines.push("");
+    lines.push("Danke!");
+
+    return lines.join("\n");
   }
 
-  // Überschreibt nur markierte CTAs (sicherer, keine Überraschungen)
+  // Überschreibt nur markierte CTAs (sicher, kein Side-Effect)
   function applyCtasFromContext(baseCtx) {
     const ctas = document.querySelectorAll("a[data-lb-cta]");
     if (!ctas.length) return;
@@ -119,7 +124,6 @@
       const type = norm(a.getAttribute("data-lb-cta")).toLowerCase();
       if (!type) return;
 
-      // per Link optional überschreiben
       let ctx = {
         product: pickFirst(a.getAttribute("data-product"), baseCtx.product),
         variant: pickFirst(a.getAttribute("data-variant"), baseCtx.variant),
@@ -127,7 +131,6 @@
         note: pickFirst(a.getAttribute("data-note"), baseCtx.note),
       };
 
-      // legacy split auch für data-product
       const split = splitLegacyProductVariant(ctx.product, ctx.variant);
       ctx.product = split.product;
       ctx.variant = split.variant;
@@ -156,7 +159,6 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    // Mobile Nav Toggle
     const navBtn = document.querySelector("[data-nav-toggle]");
     const nav = document.querySelector("[data-nav]");
 
@@ -168,15 +170,13 @@
       });
     }
 
-    // Markiere aktiven Menüpunkt
+    // Aktiver Menüpunkt
     const links = document.querySelectorAll("nav.menu a[href]");
     const path = window.location.pathname.replace(/index\.html$/, "");
     links.forEach((a) => {
       const href = (a.getAttribute("href") || "").replace(/index\.html$/, "");
       if (!href || href === "/") return;
-      if (path.startsWith(href)) {
-        a.setAttribute("aria-current", "page");
-      }
+      if (path.startsWith(href)) a.setAttribute("aria-current", "page");
     });
 
     // CTA Autofill
