@@ -1,7 +1,6 @@
 /*
  * Luderbein Preisliste / Kalkulator
  * V1.4 – Stand Januar 2026
- * Basierend auf: JL7 Preisliste (Schiefer Fotogravur)
  * Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen
  */
 
@@ -17,12 +16,11 @@ window.LUDERBEIN_PRICING = {
     enabled: true,
     basePrice: 6.95,
     minOrderForShipping: 29.95,
-    freeShippingFrom: 80.00
+    freeShippingFrom: 80.0
   },
 
   // === PRODUKTE ===
   products: {
-
     // ===============================
     // 🔹 SCHIEFER (aktiv)
     // ===============================
@@ -30,23 +28,9 @@ window.LUDERBEIN_PRICING = {
       label: "Schiefer",
       includes: "Fotoaufbereitung, Gravur, Klarlack-Versiegelung",
 
-      // Reihenfolge = Dropdown-Reihenfolge im Kalkulator
       variants: {
-
-        // 1) Schnell & häufig
-        textsymbol: {
-          label: "Text / Symbol",
-          tag: "Fastlane",
-          note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean, ohne Kitsch.",
-          formats: [
-            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 }
-          ]
-        },
-
-        // 2) Premium-Look
         fotogravur: {
           label: "Fotogravur",
-          tag: "Premium",
           note: "inkl. Fotoaufbereitung, Gravur & Versiegelung.",
           formats: [
             { id: "jl7-10x10", label: "10 × 10 cm (eckig)", price: 14.95 },
@@ -60,13 +44,19 @@ window.LUDERBEIN_PRICING = {
           ]
         },
 
-        // 3) Würdig / memorial
         gedenktafel: {
           label: "Gedenktafel / Memorial",
-          tag: "Memorial",
           note: "Bild, Spruch, Name, Daten, optional Symbol oder Widmung.",
           formats: [
             { id: "ged-10x10", label: "10 × 10 cm (Quadratisch)", price: 19.95 }
+          ]
+        },
+
+        textsymbol: {
+          label: "Text / Symbol",
+          note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean & schnell.",
+          formats: [
+            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 }
           ]
         }
       },
@@ -74,7 +64,7 @@ window.LUDERBEIN_PRICING = {
       upgrades: {
         widmung:       { label: "Signatur / Widmung",   price: 4.95 },
         standfuss_std: { label: "3D-Standfuß (schwarz)", price: 9.95 },
-        wandhalter:    { label: "Wandhalterung",        price: 6.95 },
+        wandhalter:    { label: "Wandhalterung",         price: 6.95 },
         express:       { label: "Express (3 Werktage)",  price: 19.95 }
       }
     },
