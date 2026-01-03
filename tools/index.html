@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tools | Luderbein</title>
+  <meta name="description" content="Interne Tools von Luderbein: Kalkulator & Werkzeuge für Reels/Feeds.">
+
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/nav-dropdown.css">
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Tools</h1>
+      <p class="lead">Interne Werkzeuge – praktisch, schlank, ohne Shop-Kram.</p>
+
+      <div class="cta">
+        <a class="btn primary" href="/tools/kalkulator/">Kalkulator öffnen</a>
+        <a class="btn" href="/tools/reel-builder/">Reel Builder öffnen</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Was findest du hier?</h2>
+      <div class="products">
+        <article class="productcard">
+          <div class="thumb"><span class="thumblabel">Kalkulator</span></div>
+          <div class="meta"><span class="price">Tool</span><span>•</span><span>Preise grob kalkulieren</span></div>
+          <h3>Kalkulator</h3>
+          <p class="kicker">Schnell eine Richtung bekommen – und dann im Kontakt sauber finalisieren.</p>
+          <div class="actions">
+            <a class="btn primary" href="/tools/kalkulator/">Öffnen</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Schiefer</a>
+            <a class="btn" href="/tools/kalkulator/?t=metall">Metall</a>
+          </div>
+        </article>
+
+        <article class="productcard">
+          <div class="thumb"><span class="thumblabel">Reel Builder</span></div>
+          <div class="meta"><span class="price">Tool</span><span>•</span><span>Feed intern pflegen</span></div>
+          <h3>Reel Builder</h3>
+          <p class="kicker">Erstellt JSON für Reels/Feeds (inkl. optionaler Tags/Badges) – ohne Instagram.</p>
+          <div class="actions">
+            <a class="btn primary" href="/tools/reel-builder/">Öffnen</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+  <script>
+    const y = document.getElementById("y");
+    if (y) y.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
