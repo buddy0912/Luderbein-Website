@@ -1,9 +1,11 @@
 (function () {
   function $(id) { return document.getElementById(id); }
+  function safeTrim(v) { return String(v || "").trim(); }
 
   const elSrc = $("src");
   const elCap = $("cap");
   const elAlt = $("alt");
+  const elTag = $("tag");
 
   const outEntry = $("outEntry");
   const outJson = $("outJson");
@@ -12,12 +14,9 @@
   const previewBox = $("previewBox");
   const previewImg = $("previewImg");
 
-  function safeTrim(v) { return String(v || "").trim(); }
-
   function validateSrc(src) {
     if (!src) return { ok: false, msg: "Bitte Bildpfad eintragen." };
     if (!src.startsWith("/assets/")) return { ok: false, msg: "Bildpfad muss mit /assets/ beginnen." };
-    // simple extension check
     const lower = src.toLowerCase();
     const okExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].some((e) => lower.endsWith(e));
     if (!okExt) return { ok: false, msg: "Tipp: Endung sollte .jpg/.png/.webp sein." };
@@ -28,15 +27,13 @@
     const src = safeTrim(elSrc.value);
     const cap = safeTrim(elCap.value);
     const alt = safeTrim(elAlt.value);
+    const tag = safeTrim(elTag.value);
 
     const v = validateSrc(src);
-    if (!v.ok) {
-      status.innerHTML = `<span class="rb-bad">✖ ${v.msg}</span>`;
-    } else {
-      status.innerHTML = `<span class="rb-ok">✔ ${v.msg}</span>`;
-    }
+    status.innerHTML = v.ok
+      ? `<span class="rb-ok">✔ ${v.msg}</span>`
+      : `<span class="rb-bad">✖ ${v.msg}</span>`;
 
-    // preview (best effort)
     if (src) {
       previewImg.src = src;
       previewImg.alt = alt || "";
@@ -45,20 +42,12 @@
       previewBox.style.display = "none";
     }
 
-    const obj = {
-      src: src,
-      alt: alt,
-      cap: cap
-    };
+    const obj = { src, alt, cap };
+    if (tag) obj.tag = tag; // nur setzen, wenn gefüllt
 
-    // compact snippet (copy-friendly)
-    const snippet = JSON.stringify(obj);
-    // pretty (readable)
-    const pretty = JSON.stringify(obj, null, 2);
+    outEntry.textContent = JSON.stringify(obj, null, 2);
 
-    outEntry.textContent = pretty;
-
-    return { obj, snippet, pretty, valid: v.ok };
+    return { obj, snippet: JSON.stringify(obj), valid: v.ok };
   }
 
   async function copyText(text) {
@@ -66,7 +55,6 @@
       await navigator.clipboard.writeText(text);
       return true;
     } catch {
-      // fallback
       try {
         const ta = document.createElement("textarea");
         ta.value = text;
@@ -91,15 +79,7 @@
     return parsed;
   }
 
-  function formatJson(text) {
-    const arr = parseJsonArray(text);
-    return JSON.stringify(arr, null, 2);
-  }
-
-  // Buttons
-  $("btnEntry").addEventListener("click", () => {
-    buildEntry();
-  });
+  $("btnEntry").addEventListener("click", () => buildEntry());
 
   $("btnCopyEntry").addEventListener("click", async () => {
     const { snippet } = buildEntry();
@@ -113,6 +93,7 @@
     elSrc.value = "";
     elCap.value = "";
     elAlt.value = "";
+    elTag.value = "";
     outEntry.textContent = "";
     outJson.textContent = "";
     $("jsonIn").value = "";
@@ -133,15 +114,13 @@
       return;
     }
 
-    // basic guard: ignore empty src
     if (!safeTrim(obj.src)) {
       status.innerHTML = `<span class="rb-bad">✖ Bitte zuerst einen gültigen Bildpfad eintragen.</span>`;
       return;
     }
 
     arr.push(obj);
-    const pretty = JSON.stringify(arr, null, 2);
-    outJson.textContent = pretty;
+    outJson.textContent = JSON.stringify(arr, null, 2);
     status.innerHTML = `<span class="rb-ok">✔ Zur JSON hinzugefügt (unten kopieren).</span>`;
   });
 
@@ -160,8 +139,8 @@
   $("btnFormatJson").addEventListener("click", () => {
     const inBox = $("jsonIn");
     try {
-      const pretty = formatJson(inBox.value);
-      outJson.textContent = pretty;
+      const arr = parseJsonArray(inBox.value);
+      outJson.textContent = JSON.stringify(arr, null, 2);
       status.innerHTML = `<span class="rb-ok">✔ JSON formatiert.</span>`;
     } catch (e) {
       outJson.textContent = "";
@@ -169,12 +148,9 @@
     }
   });
 
-  // Convenience: live preview + enter auto-build
+  // Live preview
   elSrc.addEventListener("input", () => buildEntry());
   elCap.addEventListener("input", () => buildEntry());
   elAlt.addEventListener("input", () => buildEntry());
-
-  // Initial empty state
-  outEntry.textContent = "";
-  outJson.textContent = "";
+  elTag.addEventListener("input", () => buildEntry());
 })();
