@@ -9,18 +9,12 @@
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
-  <!-- Werkstatt-Feed (additiv, nur Startseite) -->
   <style>
-    .reelwrap {
-      position: relative;
-      margin-top: 10px;
-    }
-    .reelwrap::before,
-    .reelwrap::after {
+    .reelwrap { position: relative; margin-top: 10px; }
+    .reelwrap::before, .reelwrap::after {
       content: "";
       position: absolute;
-      top: 0;
-      bottom: 0;
+      top: 0; bottom: 0;
       width: 34px;
       pointer-events: none;
       z-index: 2;
@@ -61,7 +55,6 @@
       transform: translateZ(0);
     }
 
-    /* Badge */
     .reel__tag {
       position: absolute;
       top: 12px;
@@ -91,9 +84,7 @@
 
     .reel__cap {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      left: 0; right: 0; bottom: 0;
       padding: 12px 12px 12px;
       color: rgba(255,255,255,.92);
       font-size: .95rem;
@@ -103,10 +94,7 @@
     }
 
     @media (hover:hover) and (pointer:fine) {
-      .reel__item:hover {
-        transform: translateY(-2px);
-        border-color: rgba(160,120,140,.55);
-      }
+      .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
     }
 
     .sectionHead {
@@ -172,7 +160,6 @@
       </div>
     </section>
 
-    <!-- WERKSTATT-FEED (oben) -->
     <section class="section" aria-label="Werkstatt-Feed">
       <div class="sectionHead">
         <h2>Werkstatt-Feed</h2>
@@ -186,6 +173,7 @@
           data-reel
           data-reel-src="/assets/reel-werkstatt.json"
           data-interval="4500"
+          data-reel-default-tag="Werkstatt"
         ></div>
       </div>
 
