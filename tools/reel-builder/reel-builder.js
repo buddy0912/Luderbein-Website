@@ -5,7 +5,10 @@
   const elSrc = $("src");
   const elCap = $("cap");
   const elAlt = $("alt");
-  const elTag = $("tag");
+
+  const elTagPreset = $("tagPreset");
+  const elTagCustomOn = $("tagCustomOn");
+  const elTagCustom = $("tagCustom");
 
   const outEntry = $("outEntry");
   const outJson = $("outJson");
@@ -23,11 +26,23 @@
     return { ok: true, msg: "OK" };
   }
 
+  function currentTag() {
+    const useCustom = !!elTagCustomOn.checked;
+    if (useCustom) return safeTrim(elTagCustom.value);
+    return safeTrim(elTagPreset.value);
+  }
+
+  function syncTagUI() {
+    const useCustom = !!elTagCustomOn.checked;
+    elTagCustom.disabled = !useCustom;
+    if (!useCustom) elTagCustom.value = "";
+  }
+
   function buildEntry() {
     const src = safeTrim(elSrc.value);
     const cap = safeTrim(elCap.value);
     const alt = safeTrim(elAlt.value);
-    const tag = safeTrim(elTag.value);
+    const tag = currentTag();
 
     const v = validateSrc(src);
     status.innerHTML = v.ok
@@ -43,7 +58,7 @@
     }
 
     const obj = { src, alt, cap };
-    if (tag) obj.tag = tag; // nur setzen, wenn gefüllt
+    if (tag) obj.tag = tag;
 
     outEntry.textContent = JSON.stringify(obj, null, 2);
 
@@ -79,6 +94,7 @@
     return parsed;
   }
 
+  // Buttons
   $("btnEntry").addEventListener("click", () => buildEntry());
 
   $("btnCopyEntry").addEventListener("click", async () => {
@@ -93,7 +109,12 @@
     elSrc.value = "";
     elCap.value = "";
     elAlt.value = "";
-    elTag.value = "";
+
+    elTagPreset.value = "";
+    elTagCustomOn.checked = false;
+    elTagCustom.value = "";
+    syncTagUI();
+
     outEntry.textContent = "";
     outJson.textContent = "";
     $("jsonIn").value = "";
@@ -152,5 +173,13 @@
   elSrc.addEventListener("input", () => buildEntry());
   elCap.addEventListener("input", () => buildEntry());
   elAlt.addEventListener("input", () => buildEntry());
-  elTag.addEventListener("input", () => buildEntry());
+
+  elTagPreset.addEventListener("change", () => buildEntry());
+  elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry(); });
+  elTagCustom.addEventListener("input", () => buildEntry());
+
+  // Init
+  syncTagUI();
+  outEntry.textContent = "";
+  outJson.textContent = "";
 })();
