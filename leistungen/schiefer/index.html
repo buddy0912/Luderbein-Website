@@ -1,53 +1,15 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Schiefer | Luderbein</title>
-  <meta name="description" content="Schiefergravur: Fotogravur, Gedenktafeln sowie Text & Symbole. Preis kalkulieren oder direkt anfragen.">
-
-  <link rel="stylesheet" href="/assets/style.css">
-  <link rel="stylesheet" href="/assets/nav-dropdown.css">
-
-  <!-- Nur für das Reel (additiv, keine globalen CSS-Änderungen) -->
-  <style>
-    .reel {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding: 8px 2px 18px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-    }
-    .reel__item {
-      flex: 0 0 280px;
-      scroll-snap-align: start;
-      border-radius: 16px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(26,26,31,.72);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      color: inherit;
-      margin: 0; /* figure reset */
-    }
-    .reel__img {
-      display: block;
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-    }
-    .reel__cap {
-      padding: 10px 12px;
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.35;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Schiefer – Luderbein</title>
+  <meta name="description" content="Schiefer von Luderbein: Fotogravur, Text/Symbole und Gedenktafeln – ehrlich, individuell, hochwertig. Ansehen, kalkulieren, anfragen." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 
 <body>
-
-  <!-- HEADER: 1:1 aus index.html (Startseite) -->
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -62,7 +24,7 @@
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
@@ -74,7 +36,6 @@
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -91,120 +52,151 @@
 
   <main class="wrap">
     <section class="hero">
+      <span class="badge"><i></i> Leistung – Schiefer</span>
       <h1>Schiefer</h1>
-      <p class="lead">Natürlich, robust, zeitlos – perfekt für Gedenktafeln, Hausnummern und Schilder.</p>
+      <p class="lead">Von allgemein zu spezialisiert – Foto, Text/Symbole oder Gedenktafel. Kein Shop-Klickirrsinn, sondern ehrliche Handarbeit.</p>
 
       <div class="cta">
-        <a class="btn" href="/tools/kalkulator/?t=schiefer">Preis kalkulieren</a>
-        <a class="btn primary" href="/kontakt/?p=Schiefer">Anfrage senden</a>
+        <a class="btn primary" href="/kontakt/?p=Schiefer">Anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+        <a class="btn" href="/leistungen/">Zurück</a>
+      </div>
+
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Ablauf:</strong> Beispiel ansehen → Motiv/Format klären → Anfrage oder Kalkulation.
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" aria-label="Schiefer Varianten">
       <h2>Varianten</h2>
-      <p class="muted">Tippe oder klicke auf eine Kachel für Details.</p>
+      <p class="small muted">Tippe oder klicke auf eine Kachel für Details.</p>
 
       <div class="products">
-        <!-- Fotogravur -->
+        <!-- FOTO -->
         <article class="productcard">
-          <div class="thumb">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative;">
             <span class="thumbslider" data-thumb-rotator>
-              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Fotogravur Beispiel 1">
-              <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Fotogravur Beispiel 2">
+              <img src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel Fotogravur 1">
+              <img src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Beispiel Fotogravur 2">
             </span>
           </div>
-
           <div class="meta">
-            <span class="price">ab 14,95 €</span> • <span>Fotogravur</span> • <span>Premium</span>
+            <span class="price">ab 14,95 €</span><span>•</span><span>Fotogravur</span><span>•</span><span>Premium</span>
           </div>
-
           <h3>Fotogravur</h3>
           <p class="kicker">Portraits, Haustiere, Erinnerungen – Schiefer zeigt, was das Foto taugt.</p>
-
           <div class="actions">
-            <a class="btn primary" href="#reel">Reel</a>
+            <a class="btn primary" href="#foto">Ansehen</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Fotogravur">Anfragen</a>
           </div>
         </article>
 
-        <!-- Gedenktafel -->
+        <!-- TEXT / SYMBOLE -->
         <article class="productcard">
-          <div class="thumb">
-            <img
-              src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg"
-              alt="Schiefer Gedenktafel Beispiel"
-              loading="lazy"
-              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"
-            >
+          <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+            <img src="/assets/img/schiefer-text.jpg" alt="Schiefer Textgravur Beispiel" style="width:100%;height:100%;object-fit:cover;">
           </div>
-
           <div class="meta">
-            <span class="price">ab 49,95 €</span> • <span>Gedenktafel</span> • <span>Lasergravur</span>
+            <span class="price">ab 9,95 €</span><span>•</span><span>Text &amp; Symbole</span><span>•</span><span>Fastlane</span>
           </div>
-
-          <h3>Gedenktafel</h3>
-          <p class="kicker">Würdige Erinnerung – Text &amp; Symbole möglich, witterungsbeständig.</p>
-
-          <div class="actions">
-            <a class="btn primary" href="#reel">Reel</a>
-            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
-            <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Gedenktafel">Anfragen</a>
-          </div>
-        </article>
-
-        <!-- Text & Symbole -->
-        <article class="productcard">
-          <div class="thumb">
-            <img
-              src="/assets/img/schiefer-foto-01.jpg"
-              alt="Schiefer Text & Symbole Beispiel"
-              loading="lazy"
-              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"
-            >
-          </div>
-
-          <div class="meta">
-            <span class="price">ab 9,95 €</span> • <span>Text &amp; Symbole</span> • <span>Fastlane</span>
-          </div>
-
           <h3>Text &amp; Symbole</h3>
-          <p class="kicker">Schrift, Icons, kleine Motive – wir helfen bei Lesbarkeit &amp; Layout.</p>
-
+          <p class="kicker">Koordinaten, Spruch, Schild, Logo – schnell, clean, präzise.</p>
           <div class="actions">
-            <a class="btn primary" href="#reel">Reel</a>
+            <a class="btn primary" href="#text">Ansehen</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
           </div>
         </article>
+
+        <!-- GEDENKTAFEL -->
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+            <span class="thumbslider" data-thumb-rotator>
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Gedenktafel 1">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Gedenktafel 2">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Gedenktafel 3">
+            </span>
+          </div>
+          <div class="meta">
+            <span class="price">ab 19,95 €</span><span>•</span><span>Gedenktafel</span><span>•</span><span>10×10 cm</span>
+          </div>
+          <h3>Gedenktafel</h3>
+          <p class="kicker">Foto + Name + Symbol – würdig, reduziert, langlebig.</p>
+          <div class="actions">
+            <a class="btn primary" href="#gedenktafeln">Ansehen</a>
+            <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Gedenktafel">Anfragen</a>
+          </div>
+        </article>
       </div>
     </section>
 
-    <!-- REEL / FEED (INTERN, AUS JSON, AUTO) -->
-    <section id="reel" class="section">
-      <h2>Schiefer Reel</h2>
-      <p class="muted">Läuft automatisch – du kannst jederzeit swipen/scrollen.</p>
+    <div class="hr"></div>
 
-      <div
-        class="reel"
-        aria-label="Schiefer Beispiele Reel"
-        data-reel
-        data-reel-src="/assets/reel-schiefer.json"
-        data-interval="4500"
-      ></div>
+    <section class="section" id="foto">
+      <h2>Fotogravur</h2>
+      <p class="small muted">Premium-Look mit Tiefenwirkung – sauberes Foto = starkes Ergebnis.</p>
 
-      <noscript>
-        <p class="muted">Hinweis: Für den internen Reel muss JavaScript aktiv sein.</p>
-      </noscript>
+      <div class="grid">
+        <div class="card"><h3>Foto-Check</h3><p>Gutes Licht, scharf, kein Screenshot. Je besser das Foto, desto feiner das Ergebnis.</p></div>
+        <div class="card"><h3>Text</h3><p>Optional: Name, Datum oder kurzer Satz – dezent, nicht kitschig.</p></div>
+        <div class="card"><h3>Finish</h3><p>Aufbereitung + Versiegelung je nach Einsatz (drinnen / draußen).</p></div>
+      </div>
 
-      <div class="actions" style="margin-top: 14px;">
-        <a class="btn primary" href="/kontakt/?p=Schiefer">Schiefer anfragen</a>
-        <a class="btn" href="/tools/kalkulator/?t=schiefer">Preis kalkulieren</a>
+      <div class="cta" style="margin-top:16px;">
+        <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Fotogravur&amp;note=Foto-Check">Foto-Check anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="section" id="text">
+      <h2>Text &amp; Symbole</h2>
+      <p class="small muted">Koordinaten, Sprüche oder Schilder – minimalistisch, klar, robust.</p>
+
+      <div class="grid">
+        <div class="card"><h3>Typisch</h3><p>Koordinaten, Hausnummer, Spruch, Symbol.</p></div>
+        <div class="card"><h3>Schrift</h3><p>Lesbar &gt; verspielt. Auswahl passend zum Motiv.</p></div>
+        <div class="card"><h3>Tempo</h3><p>Kein Foto nötig – schneller fertig.</p></div>
+      </div>
+
+      <div class="cta" style="margin-top:16px;">
+        <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="section" id="gedenktafeln">
+      <h2>Gedenktafeln</h2>
+      <p class="small muted">Würdig, klar und wetterfest – ideal für Erinnerung oder Außenbereich.</p>
+
+      <div class="notice">
+        <strong>Hinweis:</strong> Finish &amp; Versiegelung werden passend zum Einsatz (Deko, Grab, Outdoor) gewählt.
+      </div>
+
+      <div class="cta" style="margin-top:16px;">
+        <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Gedenktafel&amp;f=10x10">Anfragen</a>
+        <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+        <a class="btn" href="/leistungen/">Alle Leistungen</a>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="section">
+      <h2>Mehr Materialien</h2>
+      <p class="small">Metall, Holz, Acryl, Schmuck – folgt schrittweise. Anfrage jederzeit möglich.</p>
+      <div class="cta">
+        <a class="btn" href="/leistungen/">Leistungen</a>
+        <a class="btn" href="/kontakt/?p=Allgemeine%20Anfrage">Kontakt</a>
       </div>
     </section>
   </main>
 
-  <!-- FOOTER: 1:1 aus index.html -->
   <footer>
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
@@ -218,11 +210,6 @@
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/thumb-rotator.js"></script>
   <script src="/assets/site.js"></script>
-  <script src="/assets/reel-internal.js"></script>
-
-  <script>
-    const y = document.getElementById("y");
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 </body>
 </html>
