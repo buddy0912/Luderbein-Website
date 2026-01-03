@@ -1,8 +1,9 @@
 // =========================================================
-// Luderbein Site Core v1.4
+// Luderbein Site Core v1.5
 // - Mobile Nav Toggle
 // - Active Nav Link
-// - CTA Autofill (WhatsApp + Mail) via ?p= &v= &f=
+// - CTA Autofill (WhatsApp + Mail)
+//   via ?p= &v= &f=  (plus legacy: size=, note=)
 // =========================================================
 (function () {
   "use strict";
@@ -30,11 +31,13 @@
 
   function getQueryContext() {
     const sp = new URLSearchParams(window.location.search || "");
-    // kurz & kompatibel: p/v/f
+
     const product = pickFirst(sp.get("p"), sp.get("product"));
     const variant = pickFirst(sp.get("v"), sp.get("variant"));
-    const format = pickFirst(sp.get("f"), sp.get("format"));
-    return { product, variant, format };
+    const format = pickFirst(sp.get("f"), sp.get("format"), sp.get("size")); // legacy support
+    const note = pickFirst(sp.get("note"), sp.get("n")); // legacy support
+
+    return { product, variant, format, note };
   }
 
   function buildTitle(ctx) {
@@ -44,14 +47,21 @@
 
   function buildWhatsAppText(ctx) {
     const title = buildTitle(ctx);
-    const head = title ? `Hi Luderbein, ich möchte anfragen: ${title}` : "Hi Luderbein, ich möchte was anfragen:";
+    const head = title
+      ? `Hi Luderbein, ich möchte anfragen: ${title}`
+      : "Hi Luderbein, ich möchte was anfragen:";
+
+    const noteLine = ctx.note ? `\n- Notiz: ${ctx.note}` : "";
+
     return (
       head +
       "\n\n" +
       "Kurzinfos:\n" +
       "- Motiv/Text: \n" +
       "- Größe/Format: " + (ctx.format ? ctx.format : "") + "\n" +
-      "- Deadline (optional): \n\n" +
+      "- Deadline (optional): " +
+      noteLine +
+      "\n\n" +
       "Foto/Skizze schicke ich gleich mit."
     );
   }
@@ -62,12 +72,15 @@
   }
 
   function buildMailBody(ctx) {
+    const noteBlock = ctx.note ? `\n- Notiz: ${ctx.note}\n` : "\n";
+
     return (
       "Hi Luderbein,\n\n" +
       "ich möchte folgendes anfragen:\n" +
       `- Produkt: ${ctx.product || ""}\n` +
       `- Variante: ${ctx.variant || ""}\n` +
-      `- Format/Größe: ${ctx.format || ""}\n` +
+      `- Format/Größe: ${ctx.format || ""}` +
+      noteBlock +
       "- Motiv/Text: \n" +
       "- Deadline (optional): \n\n" +
       "Anhang/Foto schicke ich mit.\n\n" +
@@ -83,11 +96,12 @@
       const type = norm(a.getAttribute("data-lb-cta")).toLowerCase();
       if (!type) return;
 
-      // pro Link optional überschreiben (data-product / data-variant / data-format)
+      // pro Link optional überschreiben (data-product / data-variant / data-format / data-note)
       const ctx = {
         product: pickFirst(a.getAttribute("data-product"), baseCtx.product),
         variant: pickFirst(a.getAttribute("data-variant"), baseCtx.variant),
         format: pickFirst(a.getAttribute("data-format"), baseCtx.format),
+        note: pickFirst(a.getAttribute("data-note"), baseCtx.note),
       };
 
       if (type === "wa" || type === "whatsapp") {
@@ -130,7 +144,7 @@
       if (path.startsWith(href)) a.setAttribute("aria-current", "page");
     });
 
-    // CTA Autofill
+    // CTA Autofill (Kontaktseite)
     const ctx = getQueryContext();
     applyCtasFromContext(ctx);
   });
