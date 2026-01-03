@@ -20,18 +20,38 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
@@ -55,13 +75,19 @@
       <span class="badge"><i></i> Überblick</span>
       <h1>Leistungen</h1>
       <p class="lead">
-        Von allgemein zu spezialisiert: erst ansehen, dann kalkulieren oder anfragen.  
+        Von allgemein zu spezialisiert: erst ansehen, dann kalkulieren oder anfragen.
         Kein Shop-Geraffel – kurzer Draht, sauberer Entwurf, Freigabe, fertig.
       </p>
+
+      <!-- Regel: pro Bereich genau 1 CTA -->
       <div class="cta">
         <a class="btn primary" href="/kontakt/?p=Allgemeine%20Anfrage">Anfragen</a>
-        <a class="btn" href="/tools/kalkulator/">Kalkulator</a>
       </div>
+
+      <!-- Kalkulator bleibt erreichbar, aber nicht als 2. CTA-Button -->
+      <p class="small muted" style="margin-top:.75rem;">
+        Schiefer direkt kalkulieren: <a href="/tools/kalkulator/">Kalkulator öffnen</a>
+      </p>
     </section>
 
     <section class="section" aria-label="Leistungsübersicht">
@@ -164,6 +190,8 @@
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/thumb-rotator.js"></script>
   <script src="/assets/site.js"></script>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
