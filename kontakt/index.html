@@ -62,16 +62,67 @@
       <div class="cta">
         <a
           class="btn primary"
-          data-lb-cta="wa"
-          href="https://wa.me/491725925858?text=Hi%20Luderbein%2C%20ich%20m%C3%B6chte%20was%20anfragen%3A%20"
+          data-lb-cta="whatsapp"
+          data-lb-wa="491725925858"
+          href="https://wa.me/491725925858?text="
           rel="noopener"
         >WhatsApp</a>
 
         <a
           class="btn"
-          data-lb-cta="mail"
-          href="mailto:luderbein_gravur@icloud.com?subject=Anfrage%20%E2%80%93%20Luderbein&amp;body=Hi%20Luderbein%2C%0A%0Aich%20m%C3%B6chte%20folgendes%20anfragen%3A%0A-%20Material%3A%20Schiefer%20%2F%20Holz%20%2F%20Metall%20%2F%20Custom%0A-%20Gr%C3%B6%C3%9Fe%2FFormat%3A%20%0A-%20Motiv%2FText%3A%20%0A-%20Deadline%20(optional)%3A%20%0A%0AAnhang%2FFoto%20schicke%20ich%20mit.%0A%0ADanke!"
+          data-lb-cta="email"
+          data-lb-mail="luderbein_gravur@icloud.com"
+          href="mailto:luderbein_gravur@icloud.com"
         >E-Mail</a>
+      </div>
+
+      <p class="small muted" id="lbCtaPreview" style="margin-top:10px"></p>
+
+      <div class="notice" style="margin-top:14px">
+        <strong style="color:var(--text)">Anfrage-Details (optional)</strong><br>
+        <span class="small muted">Klick dir Material/Format zusammen oder tippe eine Notiz. Wird automatisch in WhatsApp &amp; Mail übernommen.</span>
+
+        <div class="grid" style="margin-top:12px">
+          <div class="card">
+            <h3>Material</h3>
+            <div class="actions">
+              <button class="btn" type="button" data-lb-set="p" data-lb-val="Schiefer">Schiefer</button>
+              <button class="btn" type="button" data-lb-set="p" data-lb-val="Metall">Metall</button>
+              <button class="btn" type="button" data-lb-set="p" data-lb-val="Holz">Holz</button>
+              <button class="btn" type="button" data-lb-set="p" data-lb-val="Acryl">Acryl</button>
+              <button class="btn" type="button" data-lb-set="p" data-lb-val="Custom">Custom</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Format</h3>
+            <div class="actions">
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="10x10">10×10</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="20x20">20×20</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="25x25">25×25</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="20 rund">20 rund</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="30 rund">30 rund</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="38x13">38×13</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="45x30">45×30</button>
+              <button class="btn" type="button" data-lb-set="f" data-lb-val="">egal</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Notiz</h3>
+            <label class="small muted" for="lbNote">Kurz reinballern (z. B. Text, Motiv, Deadline):</label>
+            <textarea
+              id="lbNote"
+              rows="3"
+              style="margin-top:8px;width:100%;border-radius:14px;border:1px solid rgba(64,62,65,.65);background:rgba(42,45,51,.22);color:var(--text);padding:10px 12px;font:inherit;resize:vertical;"
+              placeholder="z.B. 'Hundemarke: Roxy, Tel hinten' oder 'Gedenktafel mit Foto + Name'…"
+            ></textarea>
+
+            <div class="actions" style="margin-top:10px">
+              <button class="btn" type="button" data-lb-clear>Zurücksetzen</button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -84,7 +135,7 @@
       <div class="grid">
         <div class="card">
           <h3>1 – Material</h3>
-          <p>Schiefer · Holz · Metall · Acryl · Custom</p>
+          <p>Schiefer · Holz · Metall · Custom</p>
         </div>
         <div class="card">
           <h3>2 – Größe</h3>
