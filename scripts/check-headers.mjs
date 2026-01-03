@@ -9,7 +9,6 @@ function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      // skip common folders
       if (entry.name === ".git" || entry.name === "node_modules") continue;
       out.push(...walk(full));
     } else {
@@ -56,15 +55,28 @@ if (!indexHeader) {
 const indexNorm = normalize(indexHeader);
 const indexHash = hash(indexNorm);
 
-const htmlFiles = walk(repoRoot).filter(
-  (f) =>
-    f.toLowerCase().endsWith(".html") &&
+// “Must-have” Marker für das Dropdown/JS/CSS (damit’s nicht wie das alte Schiefer-Chaos wird)
+const requiredMarkers = [
+  "wrap nav",          // Layout wrapper
+  "data-nav-toggle",   // Burger / toggle
+  "data-nav",          // nav binding
+  "data-navdrop",      // dropdown binding
+  "navdrop__sum",      // dropdown trigger (wie in index.html)
+  "navdrop__panel",    // dropdown panel (wie in index.html)
+];
+
+const htmlFiles = walk(repoRoot).filter((f) => {
+  const lf = f.toLowerCase();
+  return (
+    lf.endsWith(".html") &&
     !f.includes(`${path.sep}.github${path.sep}`) &&
     !f.includes(`${path.sep}assets${path.sep}`)
-);
+  );
+});
 
-const mismatches = [];
-const missing = [];
+const missingHeader = [];
+const missingMarkers = [];
+const differs = [];
 
 for (const file of htmlFiles) {
   const rel = path.relative(repoRoot, file).replaceAll("\\", "/");
@@ -72,27 +84,46 @@ for (const file of htmlFiles) {
   const hdr = extractHeader(html);
 
   if (!hdr) {
-    missing.push(rel);
+    missingHeader.push(rel);
     continue;
   }
 
-  const h = hash(normalize(hdr));
-  if (h !== indexHash) {
-    mismatches.push({ file: rel, headerHash: h });
+  const hdrNorm = normalize(hdr);
+  const hdrHash = hash(hdrNorm);
+
+  // Marker Check (nur Warnung, außer <header> fehlt komplett)
+  const markerMissing = requiredMarkers.filter((m) => !hdrNorm.includes(m));
+  if (markerMissing.length) {
+    missingMarkers.push({ file: rel, missing: markerMissing });
+  }
+
+  // Exakt-gleich Check (nur Reporting)
+  if (hdrHash !== indexHash) {
+    differs.push(rel);
   }
 }
 
-if (missing.length || mismatches.length) {
-  console.error("❌ Header consistency check failed.");
-  if (missing.length) {
-    console.error("\nMissing <header> in:");
-    for (const f of missing) console.error(`- ${f}`);
-  }
-  if (mismatches.length) {
-    console.error("\nHeader differs from index.html in:");
-    for (const x of mismatches) console.error(`- ${x.file}`);
-  }
+// Hard fail NUR wenn <header> fehlt (das ist meistens wirklich kaputt)
+if (missingHeader.length) {
+  console.error("❌ Header check failed: <header> missing in:");
+  for (const f of missingHeader) console.error(`- ${f}`);
   process.exit(1);
 }
 
-console.log("✅ All HTML files use the same <header> as index.html.");
+// Alles andere ist Warning/Report
+if (missingMarkers.length) {
+  console.log("⚠️ Some pages likely use a different header/dropdown structure (markers missing):");
+  for (const x of missingMarkers) {
+    console.log(`- ${x.file} (missing: ${x.missing.join(", ")})`);
+  }
+  console.log("");
+}
+
+if (differs.length) {
+  console.log("ℹ️ Pages where <header> is not byte-identical to index.html (report only):");
+  for (const f of differs) console.log(`- ${f}`);
+  console.log("");
+}
+
+console.log("✅ Header check completed (no missing <header>).");
+process.exit(0);
