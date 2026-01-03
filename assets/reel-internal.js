@@ -1,128 +1,148 @@
 (function () {
-  function px(val) {
-    const n = parseFloat(String(val || "").replace(",", "."));
-    return Number.isFinite(n) ? n : 0;
+  const reels = Array.from(document.querySelectorAll("[data-reel]"));
+  if (!reels.length) return;
+
+  const prefersReduced =
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function el(tag, attrs = {}, children = []) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v === null || v === undefined) continue;
+      if (k === "class") node.className = v;
+      else if (k === "text") node.textContent = v;
+      else node.setAttribute(k, String(v));
+    }
+    for (const c of children) node.appendChild(c);
+    return node;
   }
 
-  function pauseController() {
-    let pausedUntil = 0;
+  function normalizeItem(it) {
+    if (!it || typeof it !== "object") return null;
+
+    const src = it.src || it.image || it.img;
+    if (!src) return null;
+
     return {
-      pause(ms) { pausedUntil = Date.now() + ms; },
-      isPaused() { return Date.now() < pausedUntil; }
+      src,
+      alt: it.alt || it.title || "Beispiel",
+      cap: it.cap || it.caption || it.text || "",
+      href: it.href || it.link || null,
+      tag: it.tag || it.badge || ""
     };
   }
 
-  function showInlineError(reel, message) {
-    let el = reel.querySelector("[data-reel-error]");
-    if (!el) {
-      el = document.createElement("div");
-      el.setAttribute("data-reel-error", "1");
-      el.style.cssText =
-        "flex:0 0 auto; padding:10px 12px; border-radius:12px; " +
-        "border:1px dashed rgba(64,62,65,.55); color:inherit; opacity:.85;";
-      reel.appendChild(el);
-    }
-    el.textContent = message;
+  function showError(container, msg) {
+    container.innerHTML = "";
+    container.appendChild(
+      el("div", { class: "muted", text: msg })
+    );
   }
 
-  function initAutoScroll(reel) {
-    const forceAuto = reel.getAttribute("data-force-auto") === "1";
-    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function buildCard(item) {
+    const cardTag = item.href ? "a" : "div";
 
-    // Accessibility first, unless explicitly forced for this reel
-    if (reduce && !forceAuto) return;
+    const card = el(cardTag, {
+      class: "reel__item",
+      href: item.href || null
+    });
 
-    const ctrl = pauseController();
-
-    reel.addEventListener("scroll", () => ctrl.pause(1500), { passive: true });
-    reel.addEventListener("pointerdown", () => ctrl.pause(2500), { passive: true });
-    reel.addEventListener("touchstart", () => ctrl.pause(2500), { passive: true });
-    reel.addEventListener("wheel", () => ctrl.pause(2500), { passive: true });
-
-    function stepSize() {
-      const first = reel.querySelector(".reel__item");
-      if (!first) return 0;
-
-      const w = first.getBoundingClientRect().width;
-      const cs = window.getComputedStyle(reel);
-      const gapStr = (cs.gap || cs.columnGap || "0").split(" ")[0];
-      const gap = px(gapStr);
-      return w + gap;
+    if (item.tag) {
+      card.appendChild(el("span", { class: "reel__tag", text: item.tag }));
     }
 
-    const interval = Number(reel.getAttribute("data-interval")) || 4500;
+    const img = el("img", {
+      class: "reel__img",
+      src: item.src,
+      alt: item.alt,
+      loading: "lazy"
+    });
 
-    setInterval(() => {
-      if (ctrl.isPaused()) return;
+    card.appendChild(img);
 
-      const step = stepSize();
-      if (!step) return;
+    if (item.cap) {
+      card.appendChild(el("div", { class: "reel__cap", text: item.cap }));
+    }
 
-      const max = reel.scrollWidth - reel.clientWidth;
+    return card;
+  }
+
+  function setupAutoScroll(container, intervalMs) {
+    // Nur wenn überhaupt Overflow da ist (iPad hochkant kann sonst "stehen")
+    const canScroll = () => container.scrollWidth > container.clientWidth + 2;
+
+    // Respektiere Reduced Motion
+    if (prefersReduced) return;
+
+    let pausedUntil = 0;
+    const pause = (ms) => (pausedUntil = Date.now() + ms);
+
+    container.addEventListener("scroll", () => pause(1500), { passive: true });
+    container.addEventListener("pointerdown", () => pause(2500), { passive: true });
+    container.addEventListener("touchstart", () => pause(2500), { passive: true });
+
+    function nextStep() {
+      if (!canScroll()) return;
+
+      const first = container.querySelector(".reel__item");
+      const step = first ? first.getBoundingClientRect().width + 14 : 320;
+
+      const max = container.scrollWidth - container.clientWidth;
       if (max <= 0) return;
 
-      if (reel.scrollLeft >= max - (step * 0.6)) {
-        reel.scrollTo({ left: 0, behavior: "smooth" });
-        ctrl.pause(600);
-        return;
+      if (container.scrollLeft >= max - 2) {
+        container.scrollTo({ left: 0, behavior: "auto" });
+        pause(400);
+      } else {
+        container.scrollBy({ left: step, behavior: "smooth" });
       }
+    }
 
-      reel.scrollBy({ left: step, behavior: "smooth" });
-    }, interval);
+    // Start-Delay, damit Layout/Images da sind
+    setTimeout(() => {
+      // Wenn kein Scroll möglich: nix tun (kein “komisches” Verhalten)
+      if (!canScroll()) return;
+
+      setInterval(() => {
+        if (Date.now() < pausedUntil) return;
+        nextStep();
+      }, intervalMs);
+    }, 600);
   }
 
-  async function buildReelFromJson(reel) {
-    const src = reel.getAttribute("data-reel-src");
-    if (!src) return;
+  async function initOne(container) {
+    const src = container.getAttribute("data-reel-src");
+    const interval = Number(container.getAttribute("data-interval") || "4500");
+
+    if (!src) {
+      showError(container, "Reel konnte nicht geladen werden (data-reel-src fehlt).");
+      return;
+    }
 
     try {
-      const res = await fetch(src, { cache: "no-store" });
-      if (!res.ok) throw new Error("Fetch failed (" + res.status + "): " + src);
+      const r = await fetch(src, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
 
-      let items;
-      try {
-        items = await res.json();
-      } catch {
-        throw new Error("JSON parse error in " + src);
-      }
+      const raw = await r.json();
+      if (!Array.isArray(raw)) throw new Error("JSON ist kein Array");
 
-      if (!Array.isArray(items)) throw new Error("JSON must be an array in " + src);
-
-      reel.innerHTML = "";
-
-      for (const it of items) {
-        if (!it || !it.src) continue;
-
-        const fig = document.createElement("figure");
-        fig.className = "reel__item";
-
-        const img = document.createElement("img");
-        img.className = "reel__img";
-        img.loading = "lazy";
-        img.src = it.src;
-        img.alt = it.alt || "";
-
-        const cap = document.createElement("figcaption");
-        cap.className = "reel__cap";
-        cap.textContent = it.cap || "";
-
-        fig.appendChild(img);
-        fig.appendChild(cap);
-        reel.appendChild(fig);
-      }
-
-      if (!reel.querySelector(".reel__item")) {
-        showInlineError(reel, "Reel: JSON geladen, aber keine Items gefunden (prüfe src-Felder).");
+      const items = raw.map(normalizeItem).filter(Boolean);
+      if (!items.length) {
+        showError(container, "Reel ist leer (JSON hat keine gültigen Einträge).");
         return;
       }
 
-      initAutoScroll(reel);
+      container.innerHTML = "";
+      for (const it of items) container.appendChild(buildCard(it));
+
+      setupAutoScroll(container, Number.isFinite(interval) ? interval : 4500);
     } catch (e) {
-      showInlineError(reel, "Reel-Fehler: " + (e && e.message ? e.message : "unbekannt"));
+      showError(container, "Reel konnte nicht geladen werden (JSON/Case prüfen).");
+      // Optional für Debug lokal:
+      // console.error(e);
     }
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("[data-reel]").forEach(buildReelFromJson);
-  });
+  for (const c of reels) initOne(c);
 })();
