@@ -4,9 +4,113 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kontakt – Luderbein</title>
-  <meta name="description" content="Kontakt zu Luderbein: WhatsApp oder E-Mail. Direkt, ehrlich, unkompliziert – so geht Gravur mit Haltung." />
+  <meta name="description" content="Kontakt zu Luderbein: Anfrage-Builder für WhatsApp oder E-Mail. Direkt, ehrlich, unkompliziert – so geht Gravur mit Haltung." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <style>
+    /* =========================================================
+       KONTAKT – ANFRAGE-BUILDER (isoliert, safe)
+       ========================================================= */
+    .cfg {
+      margin-top: 14px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.62);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .cfg h2 { margin: 0 0 6px; font-size: 1.05rem; }
+    .cfg .hint { color: var(--muted); font-size: .92rem; margin: 0 0 12px; }
+
+    .cfg .step { margin-top: 12px; }
+    .cfg .steptitle {
+      font-weight: 700;
+      letter-spacing: .02em;
+      margin: 0 0 8px;
+    }
+
+    .cfg .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .cfg .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(42,45,51,.22);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cfg .chip input { display: none; }
+    .cfg .chip b { font-weight: 700; }
+    .cfg .chip.is-on {
+      border-color: rgba(219,16,33,.62);
+      background: linear-gradient(180deg, rgba(219,16,33,.18), rgba(70,18,22,.14));
+      box-shadow: 0 14px 34px rgba(219,16,33,.10);
+    }
+
+    .cfg .fields {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .cfg label {
+      display: block;
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .cfg select,
+    .cfg input[type="text"],
+    .cfg textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(14,6,11,.35);
+      color: var(--text);
+      padding: 12px 12px;
+      outline: none;
+    }
+    .cfg textarea { min-height: 84px; resize: vertical; }
+
+    .cfg .summary {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.20);
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .cfg .summary strong { color: var(--text); }
+
+    .cfg .cta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .cfg .cta .btn { flex: 1 1 160px; }
+
+    /* Visuell disabled (ohne JS-Abhängigkeit) */
+    .cfg a[data-disabled="1"] {
+      opacity: .55;
+      pointer-events: none;
+      filter: grayscale(.4);
+    }
+
+    @media (min-width: 760px) {
+      .cfg .fields { grid-template-columns: 1fr 1fr; }
+      .cfg .fields .full { grid-column: 1 / -1; }
+    }
+  </style>
 </head>
 
 <body>
@@ -55,72 +159,69 @@
       <span class="badge"><i></i> Kontakt</span>
       <h1>Kurzer Draht.</h1>
       <p class="lead">
-        WhatsApp oder Mail – direkt, ehrlich, unkompliziert.  
+        Kein Shop-Klickirrsinn. Du stellst dir deine Anfrage zusammen → WhatsApp oder Mail → fertig.  
         Idee, Skizze oder Foto dazu? Perfekt. Ich sag dir schnell, ob’s taugt und was sinnvoll ist.
       </p>
 
-      <div class="cta">
-        <a
-          class="btn primary"
-          data-lb-cta="whatsapp"
-          data-lb-wa="491725925858"
-          href="https://wa.me/491725925858?text="
-          rel="noopener"
-        >WhatsApp</a>
+      <!-- ======================================
+           Anfrage-Builder (statt "Konfigurator")
+           ====================================== -->
+      <div class="cfg" data-contact-config>
+        <h2>Anfrage-Builder</h2>
+        <p class="hint">1) Material wählen → 2) Variante/Format → 3) abschicken. (Format wird erst nach Material sichtbar.)</p>
 
-        <a
-          class="btn"
-          data-lb-cta="email"
-          data-lb-mail="luderbein_gravur@icloud.com"
-          href="mailto:luderbein_gravur@icloud.com"
-        >E-Mail</a>
-      </div>
+        <div class="step" aria-label="Schritt 1 – Material">
+          <p class="steptitle">Schritt 1 – Material</p>
+          <div class="chips" role="radiogroup" aria-label="Material auswählen">
+            <label class="chip"><input type="radio" name="cfg-mat" value="Schiefer"><span><b>Schiefer</b></span></label>
+            <label class="chip"><input type="radio" name="cfg-mat" value="Metall"><span><b>Metall</b></span></label>
+            <label class="chip"><input type="radio" name="cfg-mat" value="Holz"><span><b>Holz</b></span></label>
+            <label class="chip"><input type="radio" name="cfg-mat" value="Acryl-Schilder"><span><b>Acryl</b></span></label>
+            <label class="chip"><input type="radio" name="cfg-mat" value="Custom"><span><b>Custom</b></span></label>
+          </div>
+        </div>
 
-      <p class="small muted" id="lbCtaPreview" style="margin-top:10px"></p>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Anfrage-Details (optional)</strong><br>
-        <span class="small muted">Klick dir Material/Format zusammen oder tippe eine Notiz. Wird automatisch in WhatsApp &amp; Mail übernommen.</span>
-
-        <div class="grid" style="margin-top:12px">
-          <div class="card">
-            <h3>Material</h3>
-            <div class="actions">
-              <button class="btn" type="button" data-lb-set="p" data-lb-val="Schiefer">Schiefer</button>
-              <button class="btn" type="button" data-lb-set="p" data-lb-val="Metall">Metall</button>
-              <button class="btn" type="button" data-lb-set="p" data-lb-val="Holz">Holz</button>
-              <button class="btn" type="button" data-lb-set="p" data-lb-val="Acryl">Acryl</button>
-              <button class="btn" type="button" data-lb-set="p" data-lb-val="Custom">Custom</button>
+        <div class="step" data-cfg-steps hidden aria-label="Schritt 2 und 3">
+          <p class="steptitle">Schritt 2 – Variante</p>
+          <div class="fields">
+            <div>
+              <label for="cfgVariant">Variante (Auswahl)</label>
+              <select id="cfgVariant" data-cfg-variant aria-label="Variante auswählen">
+                <option value="">— auswählen —</option>
+              </select>
+            </div>
+            <div>
+              <label for="cfgVariantCustom">Variante (frei, optional)</label>
+              <input id="cfgVariantCustom" data-cfg-variant-custom type="text" placeholder="z. B. Hundemarke, Plakette, Schild..." autocomplete="off">
             </div>
           </div>
 
-          <div class="card">
-            <h3>Format</h3>
-            <div class="actions">
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="10x10">10×10</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="20x20">20×20</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="25x25">25×25</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="20 rund">20 rund</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="30 rund">30 rund</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="38x13">38×13</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="45x30">45×30</button>
-              <button class="btn" type="button" data-lb-set="f" data-lb-val="">egal</button>
+          <p class="steptitle" style="margin-top:14px;">Schritt 3 – Größe / Format</p>
+          <div class="fields">
+            <div>
+              <label for="cfgFormat">Format (Auswahl)</label>
+              <select id="cfgFormat" data-cfg-format aria-label="Format auswählen">
+                <option value="">— auswählen —</option>
+              </select>
+            </div>
+            <div>
+              <label for="cfgFormatCustom">Format (frei, optional)</label>
+              <input id="cfgFormatCustom" data-cfg-format-custom type="text" placeholder="z. B. 12mm rund, 30×20, nach Maß..." autocomplete="off">
+            </div>
+
+            <div class="full">
+              <label for="cfgNote">Notiz (optional)</label>
+              <textarea id="cfgNote" data-cfg-note placeholder="Was soll drauf? Text, Symbol, Stil, Einsatz (Outdoor?), Deadline …"></textarea>
             </div>
           </div>
 
-          <div class="card">
-            <h3>Notiz</h3>
-            <label class="small muted" for="lbNote">Kurz reinballern (z. B. Text, Motiv, Deadline):</label>
-            <textarea
-              id="lbNote"
-              rows="3"
-              style="margin-top:8px;width:100%;border-radius:14px;border:1px solid rgba(64,62,65,.65);background:rgba(42,45,51,.22);color:var(--text);padding:10px 12px;font:inherit;resize:vertical;"
-              placeholder="z.B. 'Hundemarke: Roxy, Tel hinten' oder 'Gedenktafel mit Foto + Name'…"
-            ></textarea>
+          <div class="summary" aria-live="polite">
+            <strong>Auswahl:</strong> <span data-cfg-summary>Bitte Material wählen.</span>
+          </div>
 
-            <div class="actions" style="margin-top:10px">
-              <button class="btn" type="button" data-lb-clear>Zurücksetzen</button>
-            </div>
+          <div class="cta">
+            <a class="btn primary" data-cfg-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
+            <a class="btn" data-cfg-mail data-disabled="1" href="#">E-Mail</a>
           </div>
         </div>
       </div>
@@ -134,16 +235,16 @@
 
       <div class="grid">
         <div class="card">
-          <h3>1 – Material</h3>
-          <p>Schiefer · Holz · Metall · Custom</p>
+          <h3>1 – Motiv</h3>
+          <p>Text, Symbol oder Foto. Bei Fotos: scharf, gut ausgeleuchtet, kein Screenshot.</p>
         </div>
         <div class="card">
           <h3>2 – Größe</h3>
           <p>z. B. 10×10 cm · 20 cm rund · oder „so groß wie …“</p>
         </div>
         <div class="card">
-          <h3>3 – Motiv</h3>
-          <p>Foto, Text oder Symbol – bei Fotos bitte scharf & gut ausgeleuchtet.</p>
+          <h3>3 – Deadline</h3>
+          <p>Wenn’s eilig ist: sagen. Dann sag ich dir ehrlich, ob’s passt.</p>
         </div>
       </div>
 
@@ -167,7 +268,7 @@
     <div class="wrap foot">
       <div class="small">© <span id="y"></span> Luderbein</div>
       <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> · 
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
         <a href="/rechtliches/datenschutz.html">Datenschutz</a>
       </div>
     </div>
