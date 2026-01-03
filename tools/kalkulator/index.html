@@ -194,7 +194,7 @@
         </div>
         <div>
           <label class="smalllab" for="qty">Stückzahl</label>
-          <input id="qty" type="number" min="1" max="999" value="1" />
+          <input id="qty" type="number" min="1" max="50" value="1" />
         </div>
       </div>
 
@@ -266,6 +266,7 @@
               <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
 
+            <!-- Split: Anfrage vs Auftrag -->
             <div class="ctaSplit" aria-label="Nächster Schritt">
               <div class="ctaCard">
                 <h4>Option A – Erstmal anfragen</h4>
@@ -283,7 +284,7 @@
                   Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.
                 </p>
                 <div class="cta">
-                  <a class="btn primary" id="waOrderLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
+                  <a class="btn primary" id="waLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
                   <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
                 </div>
               </div>
@@ -307,11 +308,13 @@
   </div>
 </footer>
 
+<script src="/assets/site.js?v=10"></script>
 <script src="/assets/nav-dropdown.js?v=1"></script>
 <script src="/assets/pricing.js?v=1.4.0"></script>
 
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
+  console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
 </script>
 
 <script>
@@ -336,7 +339,7 @@
         $total=document.getElementById('total'),
         $warn=document.getElementById('warn'),
         $oknote=document.getElementById('oknote'),
-        $wa=document.getElementById('waOrderLink'),
+        $wa=document.getElementById('waLink'),
         $mail=document.getElementById('mailLink'),
         $contact=document.getElementById('contactLink'),
         $note=document.getElementById('note'),
@@ -345,11 +348,18 @@
         $upgradesBox=document.getElementById('upgradesBox'),
         $fallbackNote=document.getElementById('fallbackNote');
 
+  // ✅ Härtefall-Fix: WhatsApp bekommt beim Klick IMMER die zuletzt berechnete URL
+  let lastWaUrl = "";
+
   function euro(n){
     return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';
   }
-  function getSchiefer(){ return P.products.schiefer; }
-  function isSchiefer(){ return ($cat.value === 'schiefer'); }
+  function getSchiefer(){
+    return P.products.schiefer;
+  }
+  function isSchiefer(){
+    return ($cat.value === 'schiefer');
+  }
 
   function buildContactUrlFromSelection(sel){
     try{
@@ -373,9 +383,12 @@
 
     const qs = new URLSearchParams();
     qs.set('p', pLabel);
+
     const url = '/kontakt/?' + qs.toString();
 
     if($contact) $contact.href = url;
+
+    // Bei nicht-aktiven Kategorien leiten wir bewusst auf Kontakt (kein WhatsApp-Auftrag)
     if($wa) $wa.href = url;
     if($mail) $mail.href = url;
 
@@ -467,10 +480,7 @@
     });
 
     $inclPill.textContent = S.includes || 'inkl. …';
-
-    const tag = (V.tag && String(V.tag).trim()) ? String(V.tag).trim() : "";
-    const hint = V.note || P.meta.note || "";
-    $notePill.textContent = (tag ? (tag + " • ") : "") + hint;
+    $notePill.textContent = V.note || P.meta.note || "";
   }
 
   function getSelected(){
@@ -525,7 +535,7 @@
 
     if(!sel || !sel.F){
       $total.textContent='Gesamt: —';
-      if($contact) $contact.href = '/kontakt/';
+      lastWaUrl = "";
       return;
     }
 
@@ -579,17 +589,21 @@
       `- Gesamt: ${euro(total)}`
     ];
 
-    if($note.value.trim()){
-      lines.push(`- Notiz: ${$note.value.trim()}`);
+    if(($note.value || '').trim()){
+      lines.push(`- Notiz: ${($note.value || '').trim()}`);
     }
+
     lines.push("Foto/Infos schicke ich gleich mit.");
+    const msg = lines.join('\n');
 
-    const msg=lines.join('\n');
+    lastWaUrl = 'https://wa.me/491725925858?text=' + encodeURIComponent(msg);
+    $wa.href = lastWaUrl;
 
-    if($wa) $wa.href='https://wa.me/491725925858?text='+encodeURIComponent(msg);
-
-    const subj=`Auftrag ${S.label} – ${V.label}`;
-    if($mail) $mail.href='mailto:luderbein_gravur@icloud.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg+'\n\nDanke!');
+    const subj = `Auftrag ${S.label} – ${V.label}`;
+    $mail.href = 'mailto:luderbein_gravur@icloud.com?subject='
+      + encodeURIComponent(subj)
+      + '&body='
+      + encodeURIComponent(msg + '\n\nDanke!');
   }
 
   function wire(){
@@ -623,8 +637,18 @@
     $shipSend.addEventListener('change', calc);
 
     $note.addEventListener('input', calc);
+
+    // ✅ WhatsApp beim Klick erzwingen (damit nix mehr “umleitet”)
+    if($wa){
+      $wa.addEventListener('click', (e)=>{
+        if(!lastWaUrl) return;
+        e.preventDefault();
+        window.location.href = lastWaUrl;
+      });
+    }
   }
 
+  // INIT
   fillVariant();
   fillFormat();
 
