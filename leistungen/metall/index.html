@@ -18,7 +18,7 @@
       padding: 8px 2px 18px;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      min-height: 260px; /* damit “nichts sichtbar” nicht passiert */
+      min-height: 260px; /* wichtig: Reel ist immer sichtbar */
       align-items: stretch;
     }
     .reel__item {
@@ -156,7 +156,7 @@
     const y = document.getElementById("y");
     if (y) y.textContent = new Date().getFullYear();
 
-    // Mini-Selbsttest: wenn nach 2s keine Items da sind, zeig Hinweis statt "leer"
+    // Wenn nach 2s keine Items da sind, bleibt "Reel lädt…" stehen (sichtbar statt "weg").
     setTimeout(() => {
       const reel = document.querySelector("[data-reel]");
       if (!reel) return;
@@ -165,7 +165,7 @@
       const loading = reel.querySelector("[data-reel-loading]");
 
       if (hasItems && loading) loading.remove();
-      if (!hasItems && loading) loading.textContent = "Reel konnte nicht geladen werden (JSON/Case prüfen).";
+      // Wenn keine Items: loading bleibt als Hinweis sichtbar.
     }, 2000);
   </script>
 </body>
