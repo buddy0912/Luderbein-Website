@@ -194,7 +194,7 @@
         </div>
         <div>
           <label class="smalllab" for="qty">Stückzahl</label>
-          <input id="qty" type="number" min="1" max="50" value="1" />
+          <input id="qty" type="number" min="1" max="999" value="1" />
         </div>
       </div>
 
@@ -266,7 +266,6 @@
               <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
 
-            <!-- Split: Anfrage vs Auftrag -->
             <div class="ctaSplit" aria-label="Nächster Schritt">
               <div class="ctaCard">
                 <h4>Option A – Erstmal anfragen</h4>
@@ -284,7 +283,6 @@
                   Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.
                 </p>
                 <div class="cta">
-                  <!-- WICHTIG: NICHT waLink heißen (Konflikt mit site.js Kontakt-Autofill) -->
                   <a class="btn primary" id="waOrderLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
                   <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
                 </div>
@@ -309,13 +307,11 @@
   </div>
 </footer>
 
-<script src="/assets/site.js?v=10"></script>
 <script src="/assets/nav-dropdown.js?v=1"></script>
 <script src="/assets/pricing.js?v=1.4.0"></script>
 
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
-  console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
 </script>
 
 <script>
@@ -352,12 +348,8 @@
   function euro(n){
     return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';
   }
-  function getSchiefer(){
-    return P.products.schiefer;
-  }
-  function isSchiefer(){
-    return ($cat.value === 'schiefer');
-  }
+  function getSchiefer(){ return P.products.schiefer; }
+  function isSchiefer(){ return ($cat.value === 'schiefer'); }
 
   function buildContactUrlFromSelection(sel){
     try{
@@ -384,8 +376,6 @@
     const url = '/kontakt/?' + qs.toString();
 
     if($contact) $contact.href = url;
-
-    // Bei nicht-aktiven Kategorien: Buttons auf Kontakt leiten (safe)
     if($wa) $wa.href = url;
     if($mail) $mail.href = url;
 
@@ -529,7 +519,6 @@
   function calc(){
     const sel=getSelected();
 
-    // Kontakt-Link immer aktuell halten (auch wenn was fehlt)
     if($contact){
       $contact.href = buildContactUrlFromSelection(sel);
     }
@@ -636,7 +625,6 @@
     $note.addEventListener('input', calc);
   }
 
-  // INIT
   fillVariant();
   fillFormat();
 
