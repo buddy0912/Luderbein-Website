@@ -4,14 +4,48 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Schiefer | Luderbein</title>
-  <meta name="description" content="Schiefergravur: Fotogravur sowie Text & Symbole. Beispiele ansehen, Preis kalkulieren oder direkt anfragen.">
+  <meta name="description" content="Schiefergravur: Fotogravur sowie Text & Symbole. Preis kalkulieren oder direkt anfragen.">
 
   <link rel="stylesheet" href="/assets/style.css">
   <link rel="stylesheet" href="/assets/nav-dropdown.css">
+
+  <!-- Nur für das Reel (additiv, keine globalen CSS-Änderungen) -->
+  <style>
+    .reel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 8px 2px 18px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .reel__item {
+      flex: 0 0 280px;
+      scroll-snap-align: start;
+      border-radius: 16px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+    }
+    .reel__img {
+      display: block;
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+    .reel__cap {
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.35;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- HEADER: exakt wie auf index.html, damit CSS/JS greifen -->
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -87,7 +121,7 @@
           <p class="kicker">Portraits, Haustiere, Erinnerungen – Schiefer zeigt, was das Foto taugt.</p>
 
           <div class="actions">
-            <a class="btn primary" href="#beispiele">Ansehen</a>
+            <a class="btn primary" href="#reel">Ansehen</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Fotogravur">Anfragen</a>
           </div>
@@ -97,9 +131,11 @@
         <article class="productcard">
           <div class="thumb">
             <!-- FIX: kein schiefer-text.jpg nötig -->
-            <img src="/assets/img/schiefer-foto-01.jpg"
-                 alt="Schiefer Text & Symbole Beispiel"
-                 style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+            <img
+              src="/assets/img/schiefer-foto-01.jpg"
+              alt="Schiefer Text & Symbole Beispiel"
+              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;"
+            >
           </div>
 
           <div class="meta">
@@ -110,58 +146,48 @@
           <p class="kicker">Schrift, Icons, kleine Motive – wir helfen bei Lesbarkeit &amp; Layout.</p>
 
           <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
+            <a class="btn primary" href="#reel">Reel</a>
             <a class="btn" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+            <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
           </div>
         </article>
       </div>
     </section>
 
-    <section id="beispiele" style="margin-top: 22px;">
-      <h2>Fotogravur Beispiele</h2>
-      <p class="muted">Hinweis: Qualität hängt stark vom Ausgangsfoto ab – wir helfen beim Optimieren.</p>
+    <!-- REEL / FEED (ersetzt die plumpen Fotogravur-Beispiele) -->
+    <section id="reel" style="margin-top: 22px;">
+      <h2>Schiefer Reel</h2>
+      <p class="muted">Swipe nach rechts für mehr Beispiele.</p>
 
-      <!-- WICHTIG: .thumb muss auf einem div sitzen (Block), nicht auf <a> -->
-      <div class="products">
-        <article class="productcard">
-          <a href="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" style="text-decoration:none; color:inherit;">
-            <div class="thumb">
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg"
-                   alt="Schiefer Beispiel 1"
-                   loading="lazy"
-                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
-            </div>
-            <div class="meta"><span>Beispiel 1</span></div>
-          </a>
-        </article>
+      <div class="reel" aria-label="Schiefer Beispiele Reel">
+        <a class="reel__item" href="/assets/img/schiefer-home.jpg">
+          <img class="reel__img" src="/assets/img/schiefer-home.jpg" alt="Schiefer Beispiel – Fotogravur" loading="lazy">
+          <div class="reel__cap">Fotogravur (Beispiel)</div>
+        </a>
 
-        <article class="productcard">
-          <a href="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" style="text-decoration:none; color:inherit;">
-            <div class="thumb">
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg"
-                   alt="Schiefer Beispiel 2"
-                   loading="lazy"
-                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
-            </div>
-            <div class="meta"><span>Beispiel 2</span></div>
-          </a>
-        </article>
+        <a class="reel__item" href="/assets/img/schiefer-foto-01.jpg">
+          <img class="reel__img" src="/assets/img/schiefer-foto-01.jpg" alt="Schiefer Beispiel – Fotogravur Detail" loading="lazy">
+          <div class="reel__cap">Fotogravur (Detail)</div>
+        </a>
 
-        <article class="productcard">
-          <a href="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" style="text-decoration:none; color:inherit;">
-            <div class="thumb">
-              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg"
-                   alt="Schiefer Beispiel 3"
-                   loading="lazy"
-                   style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
-            </div>
-            <div class="meta"><span>Beispiel 3</span></div>
-          </a>
-        </article>
+        <a class="reel__item" href="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg">
+          <img class="reel__img" src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Schiefer Gedenktafel Beispiel 1" loading="lazy">
+          <div class="reel__cap">Gedenktafel</div>
+        </a>
+
+        <a class="reel__item" href="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg">
+          <img class="reel__img" src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Schiefer Gedenktafel Beispiel 2" loading="lazy">
+          <div class="reel__cap">Gedenktafel</div>
+        </a>
+
+        <a class="reel__item" href="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg">
+          <img class="reel__img" src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Schiefer Gedenktafel Beispiel 3" loading="lazy">
+          <div class="reel__cap">Gedenktafel</div>
+        </a>
       </div>
 
       <div class="actions" style="margin-top: 14px;">
-        <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Fotogravur">Fotogravur anfragen</a>
+        <a class="btn primary" href="/kontakt/?p=Schiefer">Schiefer anfragen</a>
         <a class="btn" href="/tools/kalkulator/?t=schiefer">Preis kalkulieren</a>
       </div>
     </section>
