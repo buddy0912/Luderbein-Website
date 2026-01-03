@@ -1,11 +1,11 @@
-name: Link Check
+name: Link & Header Check
 
 on:
   push:
   pull_request:
 
 jobs:
-  check-links:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,3 +16,6 @@ jobs:
 
       - name: Check internal href/src targets
         run: node scripts/check-links.mjs
+
+      - name: Check header consistency
+        run: node scripts/check-headers.mjs
