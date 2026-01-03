@@ -11,7 +11,6 @@
 
   <!-- Werkstatt-Feed (additiv, nur Startseite) -->
   <style>
-    /* Wrapper für Fade-Ränder */
     .reelwrap {
       position: relative;
       margin-top: 10px;
@@ -36,7 +35,6 @@
       background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
     }
 
-    /* Reel Basis */
     .reel {
       display: flex;
       gap: 14px;
@@ -48,7 +46,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* Card (edler, responsive “Peek”) */
     .reel__item {
       flex: 0 0 clamp(260px, 72vw, 440px);
       scroll-snap-align: start;
@@ -64,7 +61,25 @@
       transform: translateZ(0);
     }
 
-    /* 16:9 Look */
+    /* Badge */
+    .reel__tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      user-select: none;
+    }
+
     .reel__img {
       display: block;
       width: 100%;
@@ -74,7 +89,6 @@
       filter: saturate(1.03) contrast(1.02);
     }
 
-    /* Caption als Overlay */
     .reel__cap {
       position: absolute;
       left: 0;
@@ -88,7 +102,6 @@
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
     }
 
-    /* Desktop Hover – nur kosmetisch */
     @media (hover:hover) and (pointer:fine) {
       .reel__item:hover {
         transform: translateY(-2px);
@@ -96,7 +109,6 @@
       }
     }
 
-    /* Kleine Überschrift-Zeile schöner */
     .sectionHead {
       display: flex;
       align-items: baseline;
@@ -160,7 +172,7 @@
       </div>
     </section>
 
-    <!-- WERKSTATT-FEED (nach oben gerückt) -->
+    <!-- WERKSTATT-FEED (oben) -->
     <section class="section" aria-label="Werkstatt-Feed">
       <div class="sectionHead">
         <h2>Werkstatt-Feed</h2>
