@@ -143,7 +143,7 @@
   <section class="section">
     <div class="section-head">
       <h2>Konfiguration</h2>
-      <p class="small muted">Fotogravur & Gedenktafel (JL7) – Preise Stand 01/2026.</p>
+      <p class="small muted">Schiefer – Preise Stand 01/2026.</p>
     </div>
 
     <div class="calcbox">
@@ -205,7 +205,7 @@
 
             <div class="checkrow">
               <input type="checkbox" id="wandhalter">
-              <div><div><strong>3D-Wandhalterung</strong> <span class="muted" id="p_wandhalter"></span></div></div>
+              <div><div><strong>Wandhalterung</strong> <span class="muted" id="p_wandhalter"></span></div></div>
             </div>
 
             <div style="height:10px"></div>
@@ -314,11 +314,9 @@
   }
 
   function setFallbackLinks(catKey){
-    // Für nicht-aktive Kategorien: direkt zum Anfrage-Builder
     const prod = P.products[catKey];
     const pLabel = prod?.label || catKey;
     const url = '/kontakt/?p=' + encodeURIComponent(pLabel);
-
     $wa.href = url;
     $mail.href = url;
 
@@ -354,7 +352,6 @@
       $variant.disabled=true;
       $format.disabled=true;
 
-      // Upgrades ausblenden, weil nicht kalkulierbar
       if($upgradesBox) $upgradesBox.style.opacity = ".55";
 
       setFallbackLinks(cat);
@@ -381,7 +378,6 @@
       $variant.appendChild(opt);
     });
 
-    // Default: erstes Element
     if(keys.length){
       $variant.value = keys[0];
     }
@@ -412,7 +408,10 @@
     });
 
     $inclPill.textContent = S.includes || 'inkl. …';
-    $notePill.textContent = V.note || P.meta.note;
+
+    const tag = (V.tag && String(V.tag).trim()) ? String(V.tag).trim() : "";
+    const hint = V.note || P.meta.note || "";
+    $notePill.textContent = (tag ? (tag + " • ") : "") + hint;
   }
 
   function getSelected(){
@@ -453,7 +452,6 @@
       set('p_ship', '('+euro(P.shipping.basePrice)+')');
     } else {
       set('p_ship', '(deaktiviert)');
-      // Versand-Option deaktivieren, falls Shipping aus
       $shipSend.disabled = true;
       $shipPickup.checked = true;
     }
@@ -530,7 +528,6 @@
   }
 
   function wire(){
-    // Change Events
     $cat.addEventListener('change', ()=>{
       fillVariant();
       fillFormat();
