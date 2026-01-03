@@ -1,0 +1,17 @@
+[
+  {
+    "src": "/assets/img/schiefer-home.jpg",
+    "alt": "Werkstatt – Schiefer Beispiel",
+    "cap": "Schiefer – Fotogravur (Beispiel)"
+  },
+  {
+    "src": "/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg",
+    "alt": "Werkstatt – Gedenktafel Beispiel",
+    "cap": "Schiefer – Gedenktafel"
+  },
+  {
+    "src": "/assets/img/schiefer-foto-01.jpg",
+    "alt": "Werkstatt – Fotogravur Detail",
+    "cap": "Fotogravur – Detail"
+  }
+]
