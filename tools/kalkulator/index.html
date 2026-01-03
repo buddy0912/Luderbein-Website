@@ -284,7 +284,8 @@
                   Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.
                 </p>
                 <div class="cta">
-                  <a class="btn primary" id="waLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
+                  <!-- WICHTIG: NICHT waLink heißen (Konflikt mit site.js Kontakt-Autofill) -->
+                  <a class="btn primary" id="waOrderLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
                   <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
                 </div>
               </div>
@@ -339,7 +340,7 @@
         $total=document.getElementById('total'),
         $warn=document.getElementById('warn'),
         $oknote=document.getElementById('oknote'),
-        $wa=document.getElementById('waLink'),
+        $wa=document.getElementById('waOrderLink'),
         $mail=document.getElementById('mailLink'),
         $contact=document.getElementById('contactLink'),
         $note=document.getElementById('note'),
@@ -359,8 +360,6 @@
   }
 
   function buildContactUrlFromSelection(sel){
-    // Kontakt-Konfigurator/Seite bekommt die Auswahl als Query-Params.
-    // Auch wenn Kontaktseite (noch) nicht alles nutzt: Link bleibt gültig & safe.
     try{
       const qs = new URLSearchParams();
       if(sel?.S?.label) qs.set('p', sel.S.label);
@@ -382,12 +381,13 @@
 
     const qs = new URLSearchParams();
     qs.set('p', pLabel);
-
     const url = '/kontakt/?' + qs.toString();
 
     if($contact) $contact.href = url;
-    $wa.href = url;
-    $mail.href = url;
+
+    // Bei nicht-aktiven Kategorien: Buttons auf Kontakt leiten (safe)
+    if($wa) $wa.href = url;
+    if($mail) $mail.href = url;
 
     if($fallbackNote){
       $fallbackNote.style.display = 'block';
@@ -536,7 +536,6 @@
 
     if(!sel || !sel.F){
       $total.textContent='Gesamt: —';
-      // Fallback: Kontakt ohne Details
       if($contact) $contact.href = '/kontakt/';
       return;
     }
@@ -588,7 +587,7 @@
       `- Stückzahl: ${qty}`,
       `- Upgrades: ${upgradesTxt}`,
       `- Versand: ${wantsShip?'ja':'nein'}`,
-      `- Gesamt (V0): ${euro(total)} (${P.meta.note})`
+      `- Gesamt: ${euro(total)}`
     ];
 
     if($note.value.trim()){
@@ -598,10 +597,10 @@
 
     const msg=lines.join('\n');
 
-    $wa.href='https://wa.me/491725925858?text='+encodeURIComponent(msg);
+    if($wa) $wa.href='https://wa.me/491725925858?text='+encodeURIComponent(msg);
 
     const subj=`Auftrag ${S.label} – ${V.label}`;
-    $mail.href='mailto:luderbein_gravur@icloud.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg+'\n\nDanke!');
+    if($mail) $mail.href='mailto:luderbein_gravur@icloud.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg+'\n\nDanke!');
   }
 
   function wire(){
