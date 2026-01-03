@@ -9,7 +9,7 @@ window.LUDERBEIN_PRICING = {
   meta: {
     version: "1.4",
     updated: "01/2026",
-    note: "Schieferpreise aktiv (Fotogravur JL7 + Gedenktafel). Weitere Materialien bitte anfragen."
+    note: "Schieferpreise aktiv (Fotogravur + Gedenktafel + Text/Symbol). Weitere Materialien bitte anfragen."
   },
 
   // === Versandregeln ===
@@ -32,7 +32,7 @@ window.LUDERBEIN_PRICING = {
 
       variants: {
         fotogravur: {
-          label: "Fotogravur (JL7)",
+          label: "Fotogravur",
           note: "inkl. Fotoaufbereitung, Gravur & Versiegelung.",
           formats: [
             { id: "jl7-10x10", label: "10 × 10 cm (eckig)", price: 14.95 },
@@ -51,6 +51,14 @@ window.LUDERBEIN_PRICING = {
           note: "Bild, Spruch, Name, Daten, optional Symbol oder Widmung.",
           formats: [
             { id: "ged-10x10", label: "10 × 10 cm (Quadratisch)", price: 19.95 }
+          ]
+        },
+
+        textsymbol: {
+          label: "Text / Symbol",
+          note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean, ohne Kitsch.",
+          formats: [
+            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 }
           ]
         }
       },
