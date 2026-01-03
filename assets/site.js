@@ -1,9 +1,5 @@
 // =========================================================
-// Luderbein Site Core v1.4
-// - Nav Toggle
-// - Active Nav Marker
-// - CTA Autofill (Kontakt): WhatsApp + Mail aus URL params
-// - Quick Buttons (Kontakt): setzt p/f/note in URL + aktualisiert CTAs
+// Luderbein Site Core v1.4.1
 // =========================================================
 (function () {
   "use strict";
@@ -41,173 +37,89 @@
     });
 
     // ----------------------------
-    // CTA AUTOFILL (Kontakt)
+    // KONTAKT: CTA Autofill (WhatsApp + Mail)
     // ----------------------------
-    initCtaAutofill();
+    initKontaktAutofill();
   });
 
-  function initCtaAutofill() {
-    const waLinks = Array.from(document.querySelectorAll('[data-lb-cta="whatsapp"]'));
-    const mailLinks = Array.from(document.querySelectorAll('[data-lb-cta="email"]'));
-    const summaryEl = document.getElementById("lbCtaPreview");
-    const noteEl = document.getElementById("lbNote");
+  function initKontaktAutofill() {
+    const pth = (window.location.pathname || "").toLowerCase();
+    if (!pth.startsWith("/kontakt")) return;
 
-    const hasCtas = waLinks.length || mailLinks.length;
-    const hasUi = !!(noteEl || document.querySelector("[data-lb-set]") || document.querySelector("[data-lb-clear]"));
-    if (!hasCtas && !hasUi) return; // Seite ohne Kontakt-CTA/UI: nichts machen
+    // Nur die Hero-CTA Buttons anfassen (nicht die Direktlinks weiter unten)
+    const heroCtas = document.querySelectorAll(".hero .cta a");
+    if (!heroCtas.length) return;
 
-    // Defaults (falls data-Attribute fehlen)
-    const DEFAULT_WA = "491725925858";
-    const DEFAULT_MAIL = "luderbein_gravur@icloud.com";
+    const sp = new URLSearchParams(window.location.search);
 
-    // --- Utils
-    const getParams = () => new URL(window.location.href).searchParams;
+    // Parameter: p = Produkt, v = Variante, f = Format (Fallback: size), note = freie Notiz
+    const p = (sp.get("p") || "").trim();
+    const v = (sp.get("v") || "").trim();
+    const f = (sp.get("f") || sp.get("size") || "").trim();
+    const note = (sp.get("note") || "").trim();
 
-    function getState() {
-      const sp = getParams();
-      const p = (sp.get("p") || "").trim();
-      const v = (sp.get("v") || "").trim();
-      const f = (sp.get("f") || sp.get("size") || "").trim(); // size als Fallback
-      const note = (sp.get("note") || "").trim();
-      return { p, v, f, note };
+    // Label für Kopfzeile
+    const labelParts = [p, v, f].filter(Boolean);
+    const label = labelParts.length ? labelParts.join(" • ") : "Allgemeine Anfrage";
+
+    // WhatsApp-Text: dein bestehender Stil, aber jetzt mit v/f sauber drin
+    const waLines = [];
+    waLines.push(`Hi Luderbein, ich möchte anfragen: ${label}`);
+    waLines.push("");
+    waLines.push("Kurzinfos:");
+    waLines.push(`- Motiv/Text: ${note ? note : ""}`);
+    waLines.push(`- Größe/Format: ${f ? f : ""}`);
+    waLines.push("- Deadline (optional): ");
+    waLines.push("");
+    waLines.push("Foto/Skizze schicke ich gleich mit.");
+
+    const waText = waLines.join("\n");
+
+    // Mail: Betreff + Body
+    const mailSubject = `Anfrage – ${label} – Luderbein`;
+
+    const mailLines = [];
+    mailLines.push("Hi Luderbein,");
+    mailLines.push("");
+    mailLines.push("ich möchte anfragen:");
+    if (p) mailLines.push(`- Produkt: ${p}`);
+    if (v) mailLines.push(`- Variante: ${v}`);
+    if (f) mailLines.push(`- Größe/Format: ${f}`);
+    mailLines.push(`- Motiv/Text: ${note ? note : ""}`);
+    mailLines.push("- Deadline (optional): ");
+    mailLines.push("");
+    mailLines.push("Foto/Skizze schicke ich gleich mit.");
+    mailLines.push("");
+    mailLines.push("Danke!");
+
+    const mailBody = mailLines.join("\n");
+
+    // Helper: WhatsApp Nummer aus vorhandener href ziehen (falls vorhanden)
+    function extractWaNumber(href) {
+      if (!href) return "491725925858";
+      const m = href.match(/wa\.me\/(\d+)/);
+      return m && m[1] ? m[1] : "491725925858";
     }
 
-    function buildLabel(st) {
-      const parts = [st.p, st.v, st.f].filter(Boolean);
-      return parts.length ? parts.join(" • ") : "Allgemeine Anfrage";
-    }
+    heroCtas.forEach((a) => {
+      const href = (a.getAttribute("href") || "").trim();
 
-    function buildMail(st) {
-      const label = buildLabel(st);
-      const subject = `Anfrage – ${label} – Luderbein`;
-
-      const lines = [];
-      lines.push("Hi Luderbein,");
-      lines.push("");
-      lines.push("ich möchte folgendes anfragen:");
-
-      if (st.p) lines.push(`- Produkt: ${st.p}`);
-      if (st.v) lines.push(`- Variante: ${st.v}`);
-      if (st.f) lines.push(`- Format: ${st.f}`);
-      if (st.note) lines.push(`- Notiz: ${st.note}`);
-
-      if (!st.p && !st.v && !st.f && !st.note) {
-        lines.push("- (kurz beschreiben, worum es geht)");
+      // WhatsApp CTA
+      if (href.includes("wa.me/")) {
+        const num = extractWaNumber(href);
+        a.setAttribute("href", `https://wa.me/${num}?text=${encodeURIComponent(waText)}`);
+        return;
       }
 
-      lines.push("");
-      lines.push("Anhang/Foto schicke ich mit.");
-      lines.push("");
-      lines.push("Danke!");
-
-      return { subject, body: lines.join("\n") };
-    }
-
-    function buildWhatsApp(st) {
-      const label = buildLabel(st);
-
-      const lines = [];
-      lines.push(`Hi Luderbein, ich möchte anfragen: ${label}`);
-      if (st.note) lines.push(`Notiz: ${st.note}`);
-      lines.push("");
-      lines.push("Ich schicke ggf. Foto/Skizze nach.");
-
-      return lines.join("\n");
-    }
-
-    function updateCtas() {
-      const st = getState();
-
-      // Preview
-      if (summaryEl) {
-        const label = buildLabel(st);
-        summaryEl.textContent = st.note ? `Wird gesendet: ${label} — Notiz: ${st.note}` : `Wird gesendet: ${label}`;
-      }
-
-      // WhatsApp
-      waLinks.forEach((a) => {
-        const wa = (a.getAttribute("data-lb-wa") || DEFAULT_WA).trim();
-        const text = buildWhatsApp(st);
-        a.setAttribute("href", `https://wa.me/${wa}?text=${encodeURIComponent(text)}`);
-      });
-
-      // Mail
-      mailLinks.forEach((a) => {
-        const mail = (a.getAttribute("data-lb-mail") || DEFAULT_MAIL).trim();
-        const m = buildMail(st);
+      // Mail CTA
+      if (href.startsWith("mailto:")) {
+        // vorhandene Mailadresse übernehmen
+        const mail = href.replace(/^mailto:/, "").split("?")[0].trim() || "luderbein_gravur@icloud.com";
         a.setAttribute(
           "href",
-          `mailto:${mail}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`
+          `mailto:${mail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`
         );
-      });
-
-      // Notizfeld initial füllen (nur wenn URL note hat und Feld leer ist)
-      if (noteEl) {
-        const current = (noteEl.value || "").trim();
-        if (!current && st.note) noteEl.value = st.note;
       }
-    }
-
-    function setParam(key, val) {
-      const url = new URL(window.location.href);
-      const sp = url.searchParams;
-
-      if (!val) {
-        sp.delete(key);
-      } else {
-        sp.set(key, val);
-      }
-
-      // Wenn f gesetzt wird: size-Fallback raus, damit nur 1 Wahrheit existiert
-      if (key === "f") sp.delete("size");
-
-      // URL ohne Reload aktualisieren
-      const next = url.pathname + (sp.toString() ? `?${sp.toString()}` : "");
-      window.history.replaceState({}, "", next);
-
-      updateCtas();
-    }
-
-    function clearParams() {
-      const url = new URL(window.location.href);
-      const sp = url.searchParams;
-
-      ["p", "v", "f", "size", "note"].forEach((k) => sp.delete(k));
-
-      const next = url.pathname;
-      window.history.replaceState({}, "", next);
-
-      if (noteEl) noteEl.value = "";
-      updateCtas();
-    }
-
-    // Quick Buttons: data-lb-set="p|v|f" data-lb-val="..."
-    document.querySelectorAll("[data-lb-set][data-lb-val]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = (btn.getAttribute("data-lb-set") || "").trim();
-        const val = (btn.getAttribute("data-lb-val") || "").trim();
-        if (!key) return;
-        setParam(key, val);
-      });
     });
-
-    // Clear Button
-    const clearBtn = document.querySelector("[data-lb-clear]");
-    if (clearBtn) clearBtn.addEventListener("click", clearParams);
-
-    // Notiz Input: schreibt nach note=...
-    if (noteEl) {
-      let t = null;
-      noteEl.addEventListener("input", () => {
-        if (t) clearTimeout(t);
-        t = setTimeout(() => {
-          const v = (noteEl.value || "").trim();
-          setParam("note", v);
-        }, 250);
-      });
-    }
-
-    // Initial
-    updateCtas();
   }
 })();
