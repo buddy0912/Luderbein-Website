@@ -163,6 +163,42 @@
       text-align: center;
       white-space: normal;
     }
+
+    /* ======================================
+       Mini-Reel inside cardthumb (Freie Idee)
+       ====================================== */
+    .cardthumb .minireel {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 10px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .cardthumb .minireel::-webkit-scrollbar { display: none; }
+
+    .cardthumb .minireel .reel__item {
+      flex: 0 0 86%;
+      scroll-snap-align: start;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      box-shadow: none;
+    }
+    .cardthumb .minireel .reel__tag { top: 10px; left: 10px; }
+    .cardthumb .minireel .reel__cap {
+      padding: 10px;
+      font-size: .9rem;
+    }
+    .cardthumb .minireel .reel__img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
   </style>
 </head>
 
@@ -319,12 +355,21 @@
           </div>
         </div>
 
-        <!-- Freie Idee (Feed “läuft mit”) -->
+        <!-- Freie Idee (Mini-Reel läuft wirklich durch) -->
         <div class="card">
-          <div class="cardthumb">
+          <div class="cardthumb" aria-label="Freie Idee – Beispiele">
             <span class="cardtag">Freie Idee</span>
-            <span class="cardsoon" aria-hidden="true">Beispiele oben im Feed</span>
+
+            <div
+              class="minireel"
+              aria-label="Freie Idee – Mini Reel"
+              data-reel
+              data-reel-src="/assets/reel-custom.json"
+              data-interval="0"
+              data-reel-default-tag="Custom"
+            ></div>
           </div>
+
           <h3>Freie Idee</h3>
           <p class="small muted">Du hast nur “so ungefähr” im Kopf? Schick’s. Ich mache daraus was Laserbares.</p>
           <div class="cta" style="margin-top:12px;">
