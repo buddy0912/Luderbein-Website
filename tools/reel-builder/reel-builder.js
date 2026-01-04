@@ -20,22 +20,17 @@
   const previewBox = $("previewBox");
   const previewImg = $("previewImg");
 
-  const elJsonIn = $("jsonIn");
+  // JSON tools
   const elJsonSrc = $("jsonSrc");
-
-  // Buttons (optional, existieren nach dem HTML-Patch)
-  const btnLoadFromSrc = $("btnLoadFromSrc");
-  const btnLoadWorking = $("btnLoadWorking");
-  const btnResetWorking = $("btnResetWorking");
+  const btnLoadJson = $("btnLoadJson");
+  const btnUseOutAsBase = $("btnUseOutAsBase");
+  const elJsonIn = $("jsonIn");
 
   // Persistenz (iPad-friendly)
-  const LS_KEY_TAG = "reelBuilder.lastTag";
+  const LS_KEY = "reelBuilder.lastTag";
   const LS_KEY_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
   const LS_KEY_LOCK = "reelBuilder.lockTag";     // "1" | "0"
-
-  // Arbeits-JSON Persistenz
-  const LS_WORK_JSON = "reelBuilder.workingJson";
-  const LS_JSON_SRC = "reelBuilder.jsonSrc";
+  const LS_KEY_JSONSRC = "reelBuilder.jsonSrc";  // last used json source
 
   function getSaved(key, fallback = "") {
     try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
@@ -68,13 +63,14 @@
   function saveLastTagFromUI() {
     const tag = currentTag();
     if (!tag) return;
+
     const mode = elTagCustomOn.checked ? "custom" : "preset";
-    setSaved(LS_KEY_TAG, tag);
+    setSaved(LS_KEY, tag);
     setSaved(LS_KEY_MODE, mode);
   }
 
   function applyLastTag() {
-    const last = safeTrim(getSaved(LS_KEY_TAG, ""));
+    const last = safeTrim(getSaved(LS_KEY, ""));
     if (!last) {
       status.innerHTML = `<span class="rb-bad">✖ Kein letztes Tag gespeichert.</span>`;
       return;
@@ -94,6 +90,7 @@
       if (opt) {
         elTagPreset.value = last;
       } else {
+        // Fallback: wenn Preset nicht existiert, nutze Custom
         elTagCustomOn.checked = true;
         syncTagUI();
         elTagCustom.value = last;
@@ -164,44 +161,33 @@
     return parsed;
   }
 
-  function setWorkingJson(arr, msgOk) {
-    const text = JSON.stringify(arr, null, 2);
-    outJson.textContent = text;
-    elJsonIn.value = text;                 // <- wichtig: Arbeitsfeld aktualisieren
-    setSaved(LS_WORK_JSON, text);          // <- wichtig: persistieren
-    if (msgOk) status.innerHTML = `<span class="rb-ok">✔ ${msgOk}</span>`;
+  function setBaseJson(arr, note = "") {
+    const formatted = JSON.stringify(arr, null, 2);
+    elJsonIn.value = formatted;
+    outJson.textContent = formatted;
+    status.innerHTML = `<span class="rb-ok">✔ Basis geladen${note ? " – " + note : ""} (Einträge: ${arr.length}).</span>`;
   }
 
-  function getWorkingJsonText() {
-    // Priorität: Arbeitsfeld → Output → localStorage → []
-    return safeTrim(elJsonIn.value)
-      || safeTrim(outJson.textContent)
-      || safeTrim(getSaved(LS_WORK_JSON, ""))
-      || "[]";
-  }
-
-  async function loadJsonFromSrc(src) {
-    const path = safeTrim(src);
-    if (!path) {
-      status.innerHTML = `<span class="rb-bad">✖ Bitte Quelle angeben, z. B. /assets/reel-custom.json</span>`;
+  async function loadJsonFromSource() {
+    const src = safeTrim(elJsonSrc.value);
+    if (!src) {
+      status.innerHTML = `<span class="rb-bad">✖ Bitte eine Quelle eintragen (z.B. /assets/reel-holz.json).</span>`;
       return;
     }
-    if (!path.startsWith("/assets/")) {
-      status.innerHTML = `<span class="rb-bad">✖ Quelle muss mit /assets/ beginnen.</span>`;
+    if (!src.startsWith("/")) {
+      status.innerHTML = `<span class="rb-bad">✖ Quelle muss mit / beginnen (z.B. /assets/reel-holz.json).</span>`;
       return;
     }
 
     try {
-      const res = await fetch(path, { cache: "no-store" });
+      const res = await fetch(src + (src.includes("?") ? "&" : "?") + "v=" + Date.now(), { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
-
-      const arr = parseJsonArray(text);
-      setWorkingJson(arr, `JSON geladen (${arr.length} Einträge): ${path}`);
-      setSaved(LS_JSON_SRC, path);
-      if (elJsonSrc) elJsonSrc.value = path;
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error("Quelle enthält kein JSON-Array.");
+      setSaved(LS_KEY_JSONSRC, src);
+      setBaseJson(data, `Quelle: ${src}`);
     } catch (e) {
-      status.innerHTML = `<span class="rb-bad">✖ Konnte JSON nicht laden: ${path} (${e.message})</span>`;
+      status.innerHTML = `<span class="rb-bad">✖ Konnte Quelle nicht laden: ${src} (${e.message})</span>`;
     }
   }
 
@@ -234,30 +220,54 @@
     syncTagUI();
 
     outEntry.textContent = "";
+    outJson.textContent = "";
+    elJsonIn.value = "";
     status.textContent = "";
     previewBox.style.display = "none";
     // Lock bleibt bewusst erhalten
   });
 
+  // JSON load helpers
+  if (btnLoadJson) btnLoadJson.addEventListener("click", () => loadJsonFromSource());
+
+  if (btnUseOutAsBase) btnUseOutAsBase.addEventListener("click", () => {
+    const t = safeTrim(outJson.textContent);
+    if (!t) {
+      status.innerHTML = `<span class="rb-bad">✖ Kein Output vorhanden, den man übernehmen kann.</span>`;
+      return;
+    }
+    try {
+      const arr = parseJsonArray(t);
+      setBaseJson(arr, "Output als Basis übernommen");
+    } catch (e) {
+      status.innerHTML = `<span class="rb-bad">✖ Output ist kein gültiges Array: ${e.message}</span>`;
+    }
+  });
+
   $("btnAddToJson").addEventListener("click", () => {
     const { obj } = buildEntry();
 
-    if (!safeTrim(obj.src)) {
-      status.innerHTML = `<span class="rb-bad">✖ Bitte zuerst einen gültigen Bildpfad eintragen.</span>`;
-      return;
-    }
+    // WICHTIG: Basis nehmen aus jsonIn; falls leer, fallback auf outJson
+    let baseText = safeTrim(elJsonIn.value);
+    if (!baseText) baseText = safeTrim(outJson.textContent);
 
     let arr;
     try {
-      arr = parseJsonArray(getWorkingJsonText());
+      arr = parseJsonArray(baseText);
     } catch (e) {
       outJson.textContent = "";
       status.innerHTML = `<span class="rb-bad">✖ ${e.message}</span>`;
       return;
     }
 
+    if (!safeTrim(obj.src)) {
+      status.innerHTML = `<span class="rb-bad">✖ Bitte zuerst einen gültigen Bildpfad eintragen.</span>`;
+      return;
+    }
+
+    const before = arr.length;
     arr.push(obj);
-    setWorkingJson(arr, `Zur Arbeits-JSON hinzugefügt (${arr.length} Einträge).`);
+    setBaseJson(arr, `hinzugefügt: +1 (vorher ${before}, jetzt ${arr.length})`);
 
     // Speed: Bildpfad leeren und Fokus setzen
     elSrc.value = "";
@@ -271,12 +281,11 @@
       syncTagUI();
     }
 
-    // Output/Preview neu rendern (zeigt jetzt src leer -> das ist ok)
     buildEntry();
   });
 
   $("btnCopyJson").addEventListener("click", async () => {
-    const text = safeTrim(outJson.textContent || "");
+    const text = outJson.textContent || "";
     if (!text) {
       status.innerHTML = `<span class="rb-bad">✖ Kein JSON Output vorhanden.</span>`;
       return;
@@ -289,8 +298,8 @@
 
   $("btnFormatJson").addEventListener("click", () => {
     try {
-      const arr = parseJsonArray(getWorkingJsonText());
-      setWorkingJson(arr, "JSON formatiert.");
+      const arr = parseJsonArray(elJsonIn.value);
+      setBaseJson(arr, "formatiert");
     } catch (e) {
       outJson.textContent = "";
       status.innerHTML = `<span class="rb-bad">✖ ${e.message}</span>`;
@@ -318,55 +327,13 @@
   elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry(); });
   elTagCustom.addEventListener("input", () => buildEntry());
 
-  // Loader UI (optional)
-  if (elJsonSrc) {
-    const savedSrc = getSaved(LS_JSON_SRC, "");
-    if (savedSrc && !elJsonSrc.value) elJsonSrc.value = savedSrc;
-  }
-
-  if (btnLoadFromSrc) {
-    btnLoadFromSrc.addEventListener("click", () => loadJsonFromSrc(elJsonSrc ? elJsonSrc.value : ""));
-  }
-
-  if (btnLoadWorking) {
-    btnLoadWorking.addEventListener("click", () => {
-      const t = getSaved(LS_WORK_JSON, "");
-      if (!safeTrim(t)) {
-        status.innerHTML = `<span class="rb-bad">✖ Keine Arbeits-JSON gespeichert.</span>`;
-        return;
-      }
-      try {
-        const arr = parseJsonArray(t);
-        setWorkingJson(arr, `Arbeits-JSON geladen (${arr.length} Einträge).`);
-      } catch (e) {
-        status.innerHTML = `<span class="rb-bad">✖ Arbeits-JSON ist kaputt: ${e.message}</span>`;
-      }
-    });
-  }
-
-  if (btnResetWorking) {
-    btnResetWorking.addEventListener("click", () => {
-      setWorkingJson([], "Arbeits-JSON zurückgesetzt ([])");
-    });
-  }
-
   // Init
   syncTagUI();
   outEntry.textContent = "";
   outJson.textContent = "";
 
-  // Auto-load: wenn Arbeits-JSON existiert -> rein
-  const savedWork = getSaved(LS_WORK_JSON, "");
-  if (safeTrim(savedWork)) {
-    try {
-      const arr = parseJsonArray(savedWork);
-      setWorkingJson(arr, `Arbeits-JSON geladen (${arr.length} Einträge).`);
-    } catch {
-      // ignore
-    }
-  } else {
-    // Startzustand
-    elJsonIn.value = "[]";
-    outJson.textContent = "[]";
+  // Default JSON source (last used) – damit du sofort loslegen kannst
+  if (elJsonSrc) {
+    elJsonSrc.value = getSaved(LS_KEY_JSONSRC, "/assets/reel-holz.json");
   }
 })();
