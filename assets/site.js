@@ -5,6 +5,7 @@
 // - Kontakt: Anfrage-Builder (CTA-Autofill + Click-Flow)
 // - PATCH: Prefill-Aliase (z.B. ?p=Acryl-Schilder -> Acryl)
 // - PATCH: NAV-SAFETY (Top-Navigation + Leistungen-Dropdown absichern)
+// - PATCH: NAV-SAFETY remove label-duplicates (z.B. alter "Acryl"-Link nach Separator)
 // =========================================================
 (function () {
   "use strict";
@@ -85,7 +86,6 @@
 
         return p + (u.search || "");
       } catch {
-        // Fallback: Original
         return h;
       }
     }
@@ -103,8 +103,15 @@
       return a;
     }
 
+    function normLabel(s) {
+      return (s || "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+    }
+
     function normalizeTopNav(nav) {
-      // vorhandene Knoten abgreifen
       const start = findLinkIn(nav, "/") || createLink("Start", "/");
 
       // Leistungen: bevorzugt Dropdown-Block, sonst Link /leistungen/
@@ -121,13 +128,11 @@
         findLinkIn(nav, "/rechtliches/impressum.html") ||
         createLink("Impressum", "/rechtliches/impressum.html");
 
-      // gewünschte Reihenfolge: Start, Leistungen, Über, Kontakt, Impressum
       const keep = new Set([start, leistungen, ueber, kontakt, impressum]);
 
-      // alles andere am Ende behalten (z.B. zusätzliche Links)
+      // alles andere am Ende behalten
       const extras = Array.from(nav.childNodes).filter((n) => !keep.has(n));
 
-      // Re-Order ohne Duplikate (falls z.B. Start mehrfach drin war)
       const frag = document.createDocumentFragment();
       frag.appendChild(start);
       frag.appendChild(leistungen);
@@ -142,7 +147,7 @@
 
     function normalizeLeistungenPanel(nav) {
       const drop = nav.querySelector(".navdrop");
-      if (!drop) return; // wenn kein Dropdown existiert, nix erzwingen
+      if (!drop) return;
 
       const panel = drop.querySelector(".navdrop__panel");
       if (!panel) return;
@@ -159,6 +164,20 @@
         { type: "a", href: "/service/", text: "Downloads" },
       ];
 
+      // Labels, die NICHT nochmal als "extra" auftauchen dürfen
+      const PROTECTED_LABELS = new Set(
+        [
+          "schiefer",
+          "metall",
+          "holz",
+          "acryl",
+          "custom",
+          "costum", // falls irgendwo falsch geschrieben
+          "kalkulator",
+          "downloads",
+        ].map(normLabel)
+      );
+
       // vorhandene Links einsammeln + Duplikate killen (nach canonical href)
       const existingAnchors = Array.from(panel.querySelectorAll('a[href]'));
       const firstByHref = new Map();
@@ -171,13 +190,11 @@
         else dupes.push(a);
       });
 
-      // Duplikate entfernen
       dupes.forEach((a) => a.remove());
 
       // Separator: wenn einer existiert, den ersten nehmen
       let existingSep = panel.querySelector(".navdrop__sep");
       if (existingSep) {
-        // falls mehrere: alle bis auf ersten löschen
         const seps = Array.from(panel.querySelectorAll(".navdrop__sep"));
         seps.slice(1).forEach((s) => s.remove());
         existingSep = seps[0];
@@ -205,7 +222,6 @@
           a = createLink(item.text, item.href);
           a.setAttribute("role", "menuitem");
         } else {
-          // role absichern (ohne Text umzuschreiben)
           if (!a.getAttribute("role")) a.setAttribute("role", "menuitem");
         }
 
@@ -213,8 +229,32 @@
         used.add(a);
       });
 
-      // extras (nicht in SPEC) hinten dran lassen
-      const extras = Array.from(panel.childNodes).filter((n) => !used.has(n));
+      // extras (nicht in SPEC) hinten dran lassen,
+      // ABER: keine Links, deren Label bereits zu den Kernpunkten gehört
+      const extras = Array.from(panel.childNodes).filter((n) => {
+        if (used.has(n)) return false;
+
+        // Textnodes nur behalten, wenn sie nicht nur whitespace sind
+        if (n.nodeType === Node.TEXT_NODE) {
+          return (n.textContent || "").trim().length > 0;
+        }
+
+        // Element nodes
+        if (n.nodeType === Node.ELEMENT_NODE) {
+          const el = /** @type {HTMLElement} */ (n);
+
+          // Separator doppelt? weg
+          if (el.classList && el.classList.contains("navdrop__sep")) return false;
+
+          // Wenn Link und Label ist "protected" -> weg (das war dein extra Acryl)
+          if (el.tagName === "A") {
+            const lbl = normLabel(el.textContent || "");
+            if (PROTECTED_LABELS.has(lbl)) return false;
+          }
+        }
+
+        return true;
+      });
 
       // panel rebuild
       const frag = document.createDocumentFragment();
@@ -224,7 +264,6 @@
       panel.innerHTML = "";
       panel.appendChild(frag);
 
-      // Panel-Rolle absichern
       if (!panel.getAttribute("role")) panel.setAttribute("role", "menu");
     }
   }
@@ -295,19 +334,14 @@
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
-
-      // ✅ Acryl (wie im HTML value="Acryl")
       Acryl: {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
-
-      // ✅ Alias bleibt drin (für interne Kompatibilität), wird aber über resolveMaterialName() sauber gemappt
       "Acryl-Schilder": {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
-
       Custom: {
         variants: [{ value: "Sonderwunsch", label: "Sonderwunsch" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
@@ -324,10 +358,8 @@
     const preFmt = safeText(params.get("f"));
     const preNote = safeText(params.get("note"));
 
-    // Note prefill
     if (els.note && preNote) els.note.value = preNote;
 
-    // Chip-Styles (ohne :has) – kompatibel
     function updateChipClasses() {
       els.mats.forEach((r) => {
         const lab = r.closest(".chip");
@@ -335,7 +367,6 @@
       });
     }
 
-    // Material preselect (wenn bekannt)
     if (preMat) {
       const hit = els.mats.find((i) => i.value === preMat);
       if (hit) {
@@ -347,7 +378,6 @@
       }
     }
 
-    // Listener
     els.mats.forEach((radio) => {
       radio.addEventListener("change", () => {
         if (!radio.checked) return;
@@ -382,13 +412,9 @@
 
     els.note?.addEventListener("input", updateLinks);
 
-    // Initial render
     updateChipClasses();
     updateLinks();
 
-    // ---------------------------------
-    // Helpers
-    // ---------------------------------
     function showSteps() {
       if (els.steps) els.steps.hidden = false;
     }
