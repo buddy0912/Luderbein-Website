@@ -1,19 +1,93 @@
 [
-  { "src": "/assets/reel/reel-01.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-02.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-03.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-04.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-05.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-06.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-07.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-08.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-09.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-10.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-11.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-12.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-13.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-14.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-15.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-16.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" },
-  { "src": "/assets/reel/reel-17.jpg", "alt": "Werkstatt – Einblick", "cap": "Werkstatt – Einblick" }
+  {
+    "src": "/assets/reel/reel-01.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-02.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-03.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-04.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-05.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-06.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-07.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-08.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-09.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-10.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-11.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-12.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-13.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-14.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-15.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-16.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-17.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick"
+  },
+  {
+    "src": "/assets/reel/reel-18.jpg",
+    "alt": "Schwibbogen ES - 400mm - beleuchtet - 3 Wände - Sockel - NFC",
+    "cap": "Schwibbogen Epidemic Scorn",
+    "tag": "Schwibbogen"
+  }
 ]
