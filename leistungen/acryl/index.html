@@ -92,6 +92,14 @@
       background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
     }
+
+    /* Thumb images in Varianten */
+    .thumbimg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
   </style>
 </head>
 
@@ -143,7 +151,7 @@
       <h1>Acryl</h1>
       <p class="lead">
         Clean, kontrastreich, modern. Ideal für Beschriftung, Labels und kleine Serien.
-        Kein Fake-Shop – du sagst Einsatz & Look, ich mach’s sauber.
+        Kein Fake-Shop – du sagst Einsatz &amp; Look, ich mach’s sauber.
       </p>
 
       <div class="cta">
@@ -185,7 +193,10 @@
 
       <div class="products">
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Schilder</span></div>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img class="thumbimg" src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
+            <span class="thumblabel">Schilder</span>
+          </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Beschriftung</span></div>
           <h3>Schilder</h3>
           <p class="kicker">Werkstatt, Tür, Hinweis, QR – sauber, gut lesbar, optisch „industrial“.</p>
@@ -195,7 +206,10 @@
         </article>
 
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Labels</span></div>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img class="thumbimg" src="/assets/reel/reel-11.jpg" alt="Acryl Label – Beispiel" loading="lazy">
+            <span class="thumblabel">Labels</span>
+          </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Klein &amp; clean</span></div>
           <h3>Labels / Tags</h3>
           <p class="kicker">Schubladen, Kisten, Regale, Maschine – einheitlich, klar, robust.</p>
@@ -205,7 +219,10 @@
         </article>
 
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Serie</span></div>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img class="thumbimg" src="/assets/reel/reel-11.jpg" alt="Acryl Serie – Beispiel" loading="lazy">
+            <span class="thumblabel">Serie</span>
+          </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>kleine Serien</span></div>
           <h3>Kleine Serien</h3>
           <p class="kicker">Wenn’s mehr als 1 ist: wir machen’s gleich sauber und konsistent.</p>
