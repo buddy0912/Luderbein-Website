@@ -1,281 +1,372 @@
-<!doctype html>
-<html lang="de">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Reel Builder | Luderbein</title>
-  <meta name="description" content="Interner Reel Builder: JSON-Einträge für Reels erstellen – ohne externen Embed." />
-  <meta name="robots" content="noindex, nofollow" />
+(function () {
+  function $(id) { return document.getElementById(id); }
+  function safeTrim(v) { return String(v || "").trim(); }
 
-  <link rel="stylesheet" href="/assets/style.css" />
-  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  const elSrc = $("src");
+  const elCap = $("cap");
+  const elAlt = $("alt");
 
-  <style>
-    .rb-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    .rb-card {
-      border-radius: 16px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(26,26,31,.72);
-      box-shadow: var(--shadow);
-      padding: 14px;
+  const elTagPreset = $("tagPreset");
+  const elTagCustomOn = $("tagCustomOn");
+  const elTagCustom = $("tagCustom");
+
+  const btnUseLastTag = $("btnUseLastTag");
+  const elLockTag = $("lockTag");
+
+  const outEntry = $("outEntry");
+  const outJson = $("outJson");
+  const status = $("status");
+
+  const previewBox = $("previewBox");
+  const previewImg = $("previewImg");
+
+  const elJsonIn = $("jsonIn");
+  const elJsonSrc = $("jsonSrc");
+
+  // Buttons (optional, existieren nach dem HTML-Patch)
+  const btnLoadFromSrc = $("btnLoadFromSrc");
+  const btnLoadWorking = $("btnLoadWorking");
+  const btnResetWorking = $("btnResetWorking");
+
+  // Persistenz (iPad-friendly)
+  const LS_KEY_TAG = "reelBuilder.lastTag";
+  const LS_KEY_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
+  const LS_KEY_LOCK = "reelBuilder.lockTag";     // "1" | "0"
+
+  // Arbeits-JSON Persistenz
+  const LS_WORK_JSON = "reelBuilder.workingJson";
+  const LS_JSON_SRC = "reelBuilder.jsonSrc";
+
+  function getSaved(key, fallback = "") {
+    try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
+  }
+  function setSaved(key, val) {
+    try { localStorage.setItem(key, String(val)); } catch {}
+  }
+
+  function validateSrc(src) {
+    if (!src) return { ok: false, msg: "Bitte Bildpfad eintragen." };
+    if (!src.startsWith("/assets/")) return { ok: false, msg: "Bildpfad muss mit /assets/ beginnen." };
+    const lower = src.toLowerCase();
+    const okExt = [".jpg", ".jpeg", ".png", ".webp", ".gif"].some((e) => lower.endsWith(e));
+    if (!okExt) return { ok: false, msg: "Tipp: Endung sollte .jpg/.png/.webp sein." };
+    return { ok: true, msg: "OK" };
+  }
+
+  function syncTagUI() {
+    const useCustom = !!elTagCustomOn.checked;
+    elTagCustom.disabled = !useCustom;
+    if (!useCustom) elTagCustom.value = "";
+  }
+
+  function currentTag() {
+    const useCustom = !!elTagCustomOn.checked;
+    if (useCustom) return safeTrim(elTagCustom.value);
+    return safeTrim(elTagPreset.value);
+  }
+
+  function saveLastTagFromUI() {
+    const tag = currentTag();
+    if (!tag) return;
+    const mode = elTagCustomOn.checked ? "custom" : "preset";
+    setSaved(LS_KEY_TAG, tag);
+    setSaved(LS_KEY_MODE, mode);
+  }
+
+  function applyLastTag() {
+    const last = safeTrim(getSaved(LS_KEY_TAG, ""));
+    if (!last) {
+      status.innerHTML = `<span class="rb-bad">✖ Kein letztes Tag gespeichert.</span>`;
+      return;
     }
-    .rb-row { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px; }
-    .rb-row label { font-size: .95rem; color: var(--muted); }
-    .rb-row input, .rb-row textarea, .rb-row select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(10,10,14,.55);
-      color: var(--text);
-      outline: none;
+
+    const mode = getSaved(LS_KEY_MODE, "preset");
+
+    if (mode === "custom") {
+      elTagCustomOn.checked = true;
+      syncTagUI();
+      elTagCustom.value = last;
+    } else {
+      elTagCustomOn.checked = false;
+      syncTagUI();
+
+      const opt = Array.from(elTagPreset.options).find(o => o.value === last);
+      if (opt) {
+        elTagPreset.value = last;
+      } else {
+        elTagCustomOn.checked = true;
+        syncTagUI();
+        elTagCustom.value = last;
+      }
     }
-    .rb-row textarea {
-      min-height: 140px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: .9rem;
-      line-height: 1.35;
+
+    status.innerHTML = `<span class="rb-ok">✔ Letztes Tag übernommen: ${last}</span>`;
+  }
+
+  function isLockTagOn() {
+    return getSaved(LS_KEY_LOCK, "0") === "1";
+  }
+
+  function buildEntry() {
+    const src = safeTrim(elSrc.value);
+    const cap = safeTrim(elCap.value);
+    const alt = safeTrim(elAlt.value);
+    const tag = currentTag();
+
+    const v = validateSrc(src);
+    status.innerHTML = v.ok
+      ? `<span class="rb-ok">✔ ${v.msg}</span>`
+      : `<span class="rb-bad">✖ ${v.msg}</span>`;
+
+    if (src) {
+      previewImg.src = src;
+      previewImg.alt = alt || "";
+      previewBox.style.display = "block";
+    } else {
+      previewBox.style.display = "none";
     }
-    .rb-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-    .rb-hint { color: var(--muted); font-size: .92rem; line-height: 1.35; margin-top: 8px; }
-    .rb-out {
-      white-space: pre-wrap;
-      word-break: break-word;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(10,10,14,.55);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: .9rem;
-      line-height: 1.35;
-      color: var(--text);
-      margin-top: 10px;
-      min-height: 58px;
+
+    const obj = { src, alt, cap };
+    if (tag) obj.tag = tag;
+
+    outEntry.textContent = JSON.stringify(obj, null, 2);
+    saveLastTagFromUI();
+
+    return { obj, snippet: JSON.stringify(obj), valid: v.ok };
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        return true;
+      } catch {
+        return false;
+      }
     }
-    .rb-bad { color: #ffb4b4; }
-    .rb-ok { color: #b6ffcb; }
-    .rb-preview {
-      margin-top: 12px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(10,10,14,.35);
+  }
+
+  function parseJsonArray(text) {
+    const t = safeTrim(text);
+    if (!t) return [];
+    const parsed = JSON.parse(t);
+    if (!Array.isArray(parsed)) throw new Error("JSON muss ein Array sein ( [ ... ] ).");
+    return parsed;
+  }
+
+  function setWorkingJson(arr, msgOk) {
+    const text = JSON.stringify(arr, null, 2);
+    outJson.textContent = text;
+    elJsonIn.value = text;                 // <- wichtig: Arbeitsfeld aktualisieren
+    setSaved(LS_WORK_JSON, text);          // <- wichtig: persistieren
+    if (msgOk) status.innerHTML = `<span class="rb-ok">✔ ${msgOk}</span>`;
+  }
+
+  function getWorkingJsonText() {
+    // Priorität: Arbeitsfeld → Output → localStorage → []
+    return safeTrim(elJsonIn.value)
+      || safeTrim(outJson.textContent)
+      || safeTrim(getSaved(LS_WORK_JSON, ""))
+      || "[]";
+  }
+
+  async function loadJsonFromSrc(src) {
+    const path = safeTrim(src);
+    if (!path) {
+      status.innerHTML = `<span class="rb-bad">✖ Bitte Quelle angeben, z. B. /assets/reel-custom.json</span>`;
+      return;
     }
-    .rb-preview img { width: 100%; height: 240px; object-fit: cover; display: block; }
-    .rb-small { font-size: .9rem; color: var(--muted); margin-top: 8px; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-
-    .rb-tagGrid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-    .rb-inline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .rb-check {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: .95rem;
-      user-select: none;
+    if (!path.startsWith("/assets/")) {
+      status.innerHTML = `<span class="rb-bad">✖ Quelle muss mit /assets/ beginnen.</span>`;
+      return;
     }
-    .rb-check input { width: auto; }
 
-    .rb-split { display:grid; grid-template-columns: 1fr; gap: 10px; }
-    @media (min-width: 900px) { .rb-split { grid-template-columns: 1.2fr .8fr; } }
-  </style>
-</head>
+    try {
+      const res = await fetch(path, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
 
-<body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>Luderbein</strong><br />
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
-        </div>
-      </a>
+      const arr = parseJsonArray(text);
+      setWorkingJson(arr, `JSON geladen (${arr.length} Einträge): ${path}`);
+      setSaved(LS_JSON_SRC, path);
+      if (elJsonSrc) elJsonSrc.value = path;
+    } catch (e) {
+      status.innerHTML = `<span class="rb-bad">✖ Konnte JSON nicht laden: ${path} (${e.message})</span>`;
+    }
+  }
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
+  // --- Buttons / Events ---
+  $("btnEntry").addEventListener("click", () => buildEntry());
 
-      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
-        <a href="/">Start</a>
+  $("btnCopyEntry").addEventListener("click", async () => {
+    const { snippet } = buildEntry();
+    const ok = await copyText(snippet);
+    status.innerHTML = ok
+      ? `<span class="rb-ok">✔ Eintrag kopiert.</span>`
+      : `<span class="rb-bad">✖ Konnte nicht kopieren (Clipboard blockiert).</span>`;
+  });
 
-        <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </button>
+  $("btnClearSrc").addEventListener("click", () => {
+    elSrc.value = "";
+    elSrc.focus();
+    buildEntry();
+    status.innerHTML = `<span class="rb-ok">✔ Bildpfad geleert.</span>`;
+  });
 
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-            <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
-            <a href="/leistungen/custom/" role="menuitem">Custom</a>
-            <div class="navdrop__sep" aria-hidden="true"></div>
-            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
-          </div>
-        </div>
+  $("btnClear").addEventListener("click", () => {
+    elSrc.value = "";
+    elCap.value = "";
+    elAlt.value = "";
 
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
-    </div>
-  </header>
+    elTagPreset.value = "";
+    elTagCustomOn.checked = false;
+    elTagCustom.value = "";
+    syncTagUI();
 
-  <main class="wrap">
-    <section class="hero">
-      <span class="badge"><i></i> Tool</span>
-      <h1>Reel Builder</h1>
-      <p class="lead">Einträge für <code>assets/reel-*.json</code> erstellen – inkl. optionalem <code>tag</code> (Badge).</p>
-      <div class="rb-hint">
-        Neu: Du kannst eine bestehende Reel-JSON direkt aus <code>/assets/...</code> laden.
-        Danach erweitert „Eintrag zur JSON hinzufügen“ immer die Arbeits-JSON (01–17 bleiben drin).
-      </div>
-    </section>
+    outEntry.textContent = "";
+    status.textContent = "";
+    previewBox.style.display = "none";
+    // Lock bleibt bewusst erhalten
+  });
 
-    <div class="rb-grid">
-      <section class="rb-card" aria-label="Neuen Reel-Eintrag erstellen">
-        <h2>Neuen Reel-Eintrag erstellen</h2>
+  $("btnAddToJson").addEventListener("click", () => {
+    const { obj } = buildEntry();
 
-        <div class="rb-row">
-          <label for="src">Bildpfad (muss mit <code>/assets/</code> beginnen)</label>
-          <input id="src" type="text" placeholder="/assets/werkstatt/01.jpg" autocomplete="off" />
-        </div>
+    if (!safeTrim(obj.src)) {
+      status.innerHTML = `<span class="rb-bad">✖ Bitte zuerst einen gültigen Bildpfad eintragen.</span>`;
+      return;
+    }
 
-        <div class="rb-row">
-          <label for="cap">Caption (kurzer Text)</label>
-          <input id="cap" type="text" placeholder="Einblick aus der Werkstatt" autocomplete="off" />
-        </div>
+    let arr;
+    try {
+      arr = parseJsonArray(getWorkingJsonText());
+    } catch (e) {
+      outJson.textContent = "";
+      status.innerHTML = `<span class="rb-bad">✖ ${e.message}</span>`;
+      return;
+    }
 
-        <div class="rb-row">
-          <label for="alt">Alt-Text (kurz beschreiben)</label>
-          <input id="alt" type="text" placeholder="Werkstatt Aufnahme" autocomplete="off" />
-        </div>
+    arr.push(obj);
+    setWorkingJson(arr, `Zur Arbeits-JSON hinzugefügt (${arr.length} Einträge).`);
 
-        <div class="rb-row">
-          <label>Tag/Badge (optional)</label>
+    // Speed: Bildpfad leeren und Fokus setzen
+    elSrc.value = "";
+    elSrc.focus();
 
-          <div class="rb-tagGrid">
-            <div class="rb-row" style="margin-top:0;">
-              <label for="tagPreset" class="rb-small">Vorgaben</label>
-              <select id="tagPreset">
-                <option value="">– kein Tag –</option>
-                <option value="Werkstatt">Werkstatt</option>
-                <option value="Laser">Laser</option>
-                <option value="Finish">Finish</option>
-                <option value="Material">Material</option>
-                <option value="Detail">Detail</option>
-                <option value="Verpackung">Verpackung</option>
-                <option value="Versand">Versand</option>
-                <option value="Montage">Montage</option>
-                <option value="Testdruck">Testdruck</option>
-              </select>
-            </div>
+    // Wenn Tag NICHT gesperrt: Tag zurücksetzen
+    if (!isLockTagOn()) {
+      elTagPreset.value = "";
+      elTagCustomOn.checked = false;
+      elTagCustom.value = "";
+      syncTagUI();
+    }
 
-            <div class="rb-inline">
-              <label class="rb-check" for="tagCustomOn">
-                <input id="tagCustomOn" type="checkbox" />
-                Eigenes Tag schreiben
-              </label>
-              <span class="rb-small">Wenn aktiv, überschreibt es die Vorgabe.</span>
-            </div>
+    // Output/Preview neu rendern (zeigt jetzt src leer -> das ist ok)
+    buildEntry();
+  });
 
-            <div class="rb-row" style="margin-top:0;">
-              <label for="tagCustom" class="rb-small">Eigenes Tag</label>
-              <input id="tagCustom" type="text" placeholder="z.B. Gravur / Schleifen / QA" autocomplete="off" disabled />
-            </div>
+  $("btnCopyJson").addEventListener("click", async () => {
+    const text = safeTrim(outJson.textContent || "");
+    if (!text) {
+      status.innerHTML = `<span class="rb-bad">✖ Kein JSON Output vorhanden.</span>`;
+      return;
+    }
+    const ok = await copyText(text);
+    status.innerHTML = ok
+      ? `<span class="rb-ok">✔ JSON kopiert.</span>`
+      : `<span class="rb-bad">✖ Konnte nicht kopieren (Clipboard blockiert).</span>`;
+  });
 
-            <div class="rb-inline" style="margin-top:6px;">
-              <button class="btn" type="button" id="btnUseLastTag">Letztes Tag übernehmen</button>
+  $("btnFormatJson").addEventListener("click", () => {
+    try {
+      const arr = parseJsonArray(getWorkingJsonText());
+      setWorkingJson(arr, "JSON formatiert.");
+    } catch (e) {
+      outJson.textContent = "";
+      status.innerHTML = `<span class="rb-bad">✖ ${e.message}</span>`;
+    }
+  });
 
-              <label class="rb-check" for="lockTag">
-                <input id="lockTag" type="checkbox" />
-                Tag sperren (bleibt beim Hinzufügen)
-              </label>
+  // Tag tools
+  btnUseLastTag.addEventListener("click", () => {
+    applyLastTag();
+    buildEntry();
+  });
 
-              <span class="rb-small">Ideal für Serien.</span>
-            </div>
-          </div>
-        </div>
+  // Lock persists
+  elLockTag.checked = getSaved(LS_KEY_LOCK, "0") === "1";
+  elLockTag.addEventListener("change", () => {
+    setSaved(LS_KEY_LOCK, elLockTag.checked ? "1" : "0");
+  });
 
-        <div class="rb-actions">
-          <button class="btn primary" type="button" id="btnEntry">Eintrag generieren</button>
-          <button class="btn" type="button" id="btnCopyEntry">Eintrag kopieren</button>
-          <button class="btn" type="button" id="btnClearSrc">Nur Bildpfad leeren</button>
-          <button class="btn" type="button" id="btnClear">Leeren</button>
-        </div>
+  // Live preview
+  elSrc.addEventListener("input", () => buildEntry());
+  elCap.addEventListener("input", () => buildEntry());
+  elAlt.addEventListener("input", () => buildEntry());
 
-        <div class="rb-small" id="status"></div>
+  elTagPreset.addEventListener("change", () => buildEntry());
+  elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry(); });
+  elTagCustom.addEventListener("input", () => buildEntry());
 
-        <div class="rb-preview" id="previewBox" style="display:none;">
-          <img id="previewImg" alt="" />
-        </div>
+  // Loader UI (optional)
+  if (elJsonSrc) {
+    const savedSrc = getSaved(LS_JSON_SRC, "");
+    if (savedSrc && !elJsonSrc.value) elJsonSrc.value = savedSrc;
+  }
 
-        <div class="rb-out" id="outEntry" aria-label="JSON Eintrag Output"></div>
-      </section>
+  if (btnLoadFromSrc) {
+    btnLoadFromSrc.addEventListener("click", () => loadJsonFromSrc(elJsonSrc ? elJsonSrc.value : ""));
+  }
 
-      <section class="rb-card" aria-label="JSON-Liste aktualisieren">
-        <h2>JSON-Liste aktualisieren</h2>
-        <p class="rb-hint">
-          Wichtig: „Eintrag zur JSON hinzufügen“ erweitert die <b>Arbeits-JSON</b>.
-          Lade sie einmal aus <code>/assets/reel-*.json</code> oder nutze <code>[]</code> für neu.
-        </p>
+  if (btnLoadWorking) {
+    btnLoadWorking.addEventListener("click", () => {
+      const t = getSaved(LS_WORK_JSON, "");
+      if (!safeTrim(t)) {
+        status.innerHTML = `<span class="rb-bad">✖ Keine Arbeits-JSON gespeichert.</span>`;
+        return;
+      }
+      try {
+        const arr = parseJsonArray(t);
+        setWorkingJson(arr, `Arbeits-JSON geladen (${arr.length} Einträge).`);
+      } catch (e) {
+        status.innerHTML = `<span class="rb-bad">✖ Arbeits-JSON ist kaputt: ${e.message}</span>`;
+      }
+    });
+  }
 
-        <div class="rb-split">
-          <div>
-            <div class="rb-row" style="margin-top:0;">
-              <label for="jsonSrc">Quelle laden (optional) – Pfad zur bestehenden Datei</label>
-              <input id="jsonSrc" type="text" placeholder="/assets/reel-custom.json" autocomplete="off" />
-            </div>
+  if (btnResetWorking) {
+    btnResetWorking.addEventListener("click", () => {
+      setWorkingJson([], "Arbeits-JSON zurückgesetzt ([])");
+    });
+  }
 
-            <div class="rb-actions" style="margin-top:10px;">
-              <button class="btn primary" type="button" id="btnLoadFromSrc">JSON aus Quelle laden</button>
-              <button class="btn" type="button" id="btnLoadWorking">Arbeits-JSON laden</button>
-              <button class="btn" type="button" id="btnResetWorking">Arbeits-JSON reset ([]) </button>
-            </div>
+  // Init
+  syncTagUI();
+  outEntry.textContent = "";
+  outJson.textContent = "";
 
-            <div class="rb-small">
-              Tipp: Nach dem Laden kannst du beliebig viele Einträge hinzufügen. 01–17 bleiben drin.
-            </div>
-          </div>
-
-          <div>
-            <div class="rb-row" style="margin-top:0;">
-              <label for="jsonIn">Arbeits-JSON (Array) – wird automatisch gepflegt</label>
-              <textarea id="jsonIn" placeholder='[]'></textarea>
-            </div>
-
-            <div class="rb-actions">
-              <button class="btn primary" type="button" id="btnAddToJson">Eintrag zur JSON hinzufügen</button>
-              <button class="btn" type="button" id="btnCopyJson">Komplette JSON kopieren</button>
-              <button class="btn" type="button" id="btnFormatJson">Nur formatieren</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="rb-out" id="outJson" aria-label="JSON Gesamt-Output"></div>
-      </section>
-    </div>
-  </main>
-
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-      </div>
-    </div>
-  </footer>
-
-  <script src="/assets/nav-dropdown.js"></script>
-  <script src="/assets/site.js"></script>
-  <script src="/tools/reel-builder/reel-builder.js"></script>
-  <script>
-    const y = document.getElementById("y");
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
+  // Auto-load: wenn Arbeits-JSON existiert -> rein
+  const savedWork = getSaved(LS_WORK_JSON, "");
+  if (safeTrim(savedWork)) {
+    try {
+      const arr = parseJsonArray(savedWork);
+      setWorkingJson(arr, `Arbeits-JSON geladen (${arr.length} Einträge).`);
+    } catch {
+      // ignore
+    }
+  } else {
+    // Startzustand
+    elJsonIn.value = "[]";
+    outJson.textContent = "[]";
+  }
+})();
