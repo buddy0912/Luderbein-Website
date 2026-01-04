@@ -68,6 +68,7 @@ function findCaseInsensitiveMatch(relPath) {
  * - strips query/hash
  * - decodes %20 etc
  * - normalizes leading slashes (///foo -> /foo)
+ * - normalizes “dash variants” (– — - − etc) into simple "-"
  */
 function normalizeInternalUrl(url) {
   let clean = String(url || "").trim();
@@ -80,8 +81,11 @@ function normalizeInternalUrl(url) {
     clean = decodeURIComponent(clean);
   } catch {}
 
-  // normalize slashes: "///assets/x" -> "/assets/x"
+  // normalize leading slashes: "///assets/x" -> "/assets/x"
   clean = clean.replace(/^\/+/, "/");
+
+  // ✅ normalize dash variants to "-"
+  clean = clean.replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-");
 
   return clean;
 }
