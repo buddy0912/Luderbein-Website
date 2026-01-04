@@ -104,6 +104,9 @@
       flex-wrap: wrap;
     }
 
+    /* ======================================
+       Custom-Kacheln: eigene Grid-Regeln (kleiner)
+       ====================================== */
     .customgrid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -117,6 +120,7 @@
       .customgrid { grid-template-columns: repeat(4, 1fr); }
     }
 
+    /* Thumb im Card-Top */
     .cardthumb {
       position: relative;
       border-radius: 14px;
@@ -174,6 +178,7 @@
       white-space: normal;
     }
 
+    /* Mini-Reel inside cardthumb (Freie Idee) */
     .cardthumb .minireel {
       position: absolute;
       inset: 0;
