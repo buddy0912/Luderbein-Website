@@ -157,7 +157,7 @@
 <main class="wrap">
   <section class="hero">
     <span class="badge"><i></i> Tool</span>
-    <h1>Kalkulator <small style="font-size:0.65em;opacity:0.7">(V1.4 – Schiefer)</small></h1>
+    <h1>Kalkulator <small style="font-size:0.65em;opacity:0.7">(V1.4 – Schiefer + Anfrage für Metall/Holz/Acryl)</small></h1>
     <p class="lead">
       Wähle Material + Variante + Format. Danach bekommst du eine fertige Nachricht,
       die du mir 1:1 per WhatsApp oder Mail schicken kannst.
@@ -171,7 +171,7 @@
   <section class="section">
     <div class="section-head">
       <h2>Konfiguration</h2>
-      <p class="small muted">Schiefer – Preise Stand 01/2026.</p>
+      <p class="small muted">Schiefer – Preise Stand 01/2026. Metall/Holz/Acryl: Anfrage-Flow.</p>
     </div>
 
     <div class="calcbox">
@@ -264,7 +264,7 @@
 
             <div class="section" style="margin-top:14px">
               <label class="smalllab" for="note">Notiz (optional)</label>
-              <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
+              <textarea id="note" placeholder="z. B. Maße, Text, Logo/QR, Materialwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
 
             <!-- Split: Anfrage vs Auftrag -->
@@ -280,13 +280,13 @@
               </div>
 
               <div class="ctaCard">
-                <h4>Option B – Preis fixieren & Auftrag starten</h4>
+                <h4>Option B – Nachricht raushauen</h4>
                 <p>
-                  Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.
+                  Für Schiefer: Preis fixieren. Für Metall/Holz/Acryl: Anfrage-Nachricht (ohne Preis).
                 </p>
                 <div class="cta">
-                  <a class="btn primary" id="waLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
-                  <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
+                  <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp</a>
+                  <a class="btn" id="mailLink" href="#">E-Mail</a>
                 </div>
               </div>
             </div>
@@ -349,7 +349,7 @@
         $upgradesBox=document.getElementById('upgradesBox'),
         $fallbackNote=document.getElementById('fallbackNote');
 
-  // ✅ Härtefall-Fix: WhatsApp bekommt beim Klick IMMER die zuletzt berechnete URL
+  // WhatsApp bekommt beim Klick IMMER die zuletzt gebaute URL
   let lastWaUrl = "";
 
   function euro(n){
@@ -378,24 +378,47 @@
     }
   }
 
-  function setFallbackLinks(catKey){
-    const prod = P.products[catKey];
+  function buildInquiryMessage(catKey){
+    const prod = P.products?.[catKey];
     const pLabel = prod?.label || catKey;
 
+    const qty = Math.max(1, parseInt($qty.value || '1', 10));
+    const n = ($note?.value || '').trim();
+
+    const lines = [
+      "Hi Luderbein, ich möchte anfragen:",
+      `- Kategorie: ${pLabel}`,
+      `- Stückzahl: ${qty}`
+    ];
+
+    if(n) lines.push(`- Notiz: ${n}`);
+    lines.push("Foto/Skizze/Maße schicke ich gleich mit.");
+
+    return { pLabel, msg: lines.join('\n') };
+  }
+
+  function setFallbackLinks(catKey){
+    const { pLabel, msg } = buildInquiryMessage(catKey);
+
+    // Kontakt-Link mit Parametern
     const qs = new URLSearchParams();
     qs.set('p', pLabel);
+    const contactUrl = '/kontakt/?' + qs.toString();
+    if($contact) $contact.href = contactUrl;
 
-    const url = '/kontakt/?' + qs.toString();
+    // WhatsApp + Mail (Anfrage, ohne Preis)
+    lastWaUrl = 'https://wa.me/491725925858?text=' + encodeURIComponent(msg);
+    if($wa) $wa.href = lastWaUrl;
 
-    if($contact) $contact.href = url;
-
-    // Bei nicht-aktiven Kategorien leiten wir bewusst auf Kontakt (kein WhatsApp-Auftrag)
-    if($wa) $wa.href = url;
-    if($mail) $mail.href = url;
+    const subj = `Anfrage ${pLabel}`;
+    if($mail) $mail.href = 'mailto:luderbein_gravur@icloud.com?subject='
+      + encodeURIComponent(subj)
+      + '&body='
+      + encodeURIComponent(msg + '\n\nDanke!');
 
     if($fallbackNote){
       $fallbackNote.style.display = 'block';
-      $fallbackNote.textContent = 'Für ' + pLabel + ' läuft aktuell alles über Anfrage (Kontakt).';
+      $fallbackNote.textContent = `Für ${pLabel} läuft aktuell alles über Anfrage (ohne Preis im Kalkulator).`;
     }
   }
 
@@ -411,10 +434,8 @@
     $variant.innerHTML='';
     $format.innerHTML='';
 
+    // Nur Schiefer ist aktiv kalkulierbar
     if(!P.products[cat] || cat !== 'schiefer'){
-      const prod = P.products[cat];
-      const note = prod?.note || 'Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
-
       const opt=document.createElement('option');
       opt.value="";
       opt.textContent="Nur auf Anfrage";
@@ -430,21 +451,21 @@
 
       if($upgradesBox) $upgradesBox.style.opacity = ".55";
 
+      // Anfrage-Links setzen
       setFallbackLinks(cat);
+
+      // UI-Hinweis
       $total.textContent='Gesamt: —';
       $warn.style.display='none';
-
       $oknote.style.display='block';
-      $oknote.textContent=note;
 
-      // Pills inaktiv setzen, damit nichts nach „Schiefer“ aussieht
-      if($inclPill) $inclPill.textContent = 'inkl. —';
-      if($notePill) $notePill.textContent = note;
+      const note = P.products?.[cat]?.note || 'Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
+      $oknote.textContent = note;
 
-      lastWaUrl = "";
       return;
     }
 
+    // Schiefer aktiv
     clearFallbackNote();
     if($upgradesBox) $upgradesBox.style.opacity = "1";
     $variant.disabled=false;
@@ -538,6 +559,16 @@
   }
 
   function calc(){
+    // ✅ Anfrage-Modus für Metall/Holz/Acryl (ohne Preise)
+    if(!isSchiefer()){
+      setFallbackLinks($cat.value);
+      $total.textContent='Gesamt: —';
+      $warn.style.display='none';
+      $oknote.style.display='block';
+      $oknote.textContent = P.products?.[$cat.value]?.note || 'Bitte anfragen.';
+      return;
+    }
+
     const sel=getSelected();
 
     if($contact){
@@ -649,7 +680,7 @@
 
     $note.addEventListener('input', calc);
 
-    // ✅ WhatsApp beim Klick erzwingen (damit nix mehr “umleitet”)
+    // WhatsApp beim Klick erzwingen
     if($wa){
       $wa.addEventListener('click', (e)=>{
         if(!lastWaUrl) return;
