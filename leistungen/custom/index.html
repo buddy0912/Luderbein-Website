@@ -105,8 +105,22 @@
     }
 
     /* ======================================
-       Custom – Kachel-Thumb (wie andere Seiten: grid + card)
+       Custom-Kacheln: eigene Grid-Regeln (kleiner)
        ====================================== */
+    .customgrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      align-items: start;
+    }
+    @media (min-width: 980px) {
+      .customgrid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (min-width: 1260px) {
+      .customgrid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* Thumb im Card-Top */
     .cardthumb {
       position: relative;
       border-radius: 14px;
@@ -164,9 +178,7 @@
       white-space: normal;
     }
 
-    /* ======================================
-       Mini-Reel inside cardthumb (Freie Idee)
-       ====================================== */
+    /* Mini-Reel inside cardthumb (Freie Idee) */
     .cardthumb .minireel {
       position: absolute;
       inset: 0;
@@ -181,7 +193,7 @@
     .cardthumb .minireel::-webkit-scrollbar { display: none; }
 
     .cardthumb .minireel .reel__item {
-      flex: 0 0 86%;
+      flex: 0 0 84%;
       scroll-snap-align: start;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,.10);
@@ -189,16 +201,8 @@
       box-shadow: none;
     }
     .cardthumb .minireel .reel__tag { top: 10px; left: 10px; }
-    .cardthumb .minireel .reel__cap {
-      padding: 10px;
-      font-size: .9rem;
-    }
-    .cardthumb .minireel .reel__img {
-      width: 100%;
-      height: 100%;
-      aspect-ratio: 16/9;
-      object-fit: cover;
-    }
+    .cardthumb .minireel .reel__cap { padding: 10px; font-size: .9rem; }
+    .cardthumb .minireel .reel__img { width: 100%; height: 100%; aspect-ratio: 16/9; object-fit: cover; }
   </style>
 </head>
 
@@ -213,14 +217,7 @@
         </div>
       </a>
 
-      <button
-        class="navbtn"
-        type="button"
-        data-nav-toggle
-        aria-expanded="false"
-        aria-controls="nav-main"
-        aria-label="Menü öffnen"
-      >
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
         <span class="navicon"><span></span></span>
       </button>
 
@@ -228,23 +225,11 @@
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button
-            class="navdrop__sum"
-            id="navdrop-leistungen-btn"
-            type="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="navdrop-leistungen-panel"
-          >
+          <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
 
-          <div
-            class="navdrop__panel"
-            id="navdrop-leistungen-panel"
-            role="menu"
-            aria-labelledby="navdrop-leistungen-btn"
-          >
+          <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
@@ -302,7 +287,7 @@
         <p class="small muted">Wähl grob die Richtung – dann klären wir Machbarkeit &amp; Design.</p>
       </div>
 
-      <div class="grid">
+      <div class="customgrid">
         <!-- Lampenbau -->
         <div class="card">
           <div class="cardthumb">
@@ -316,11 +301,11 @@
           </div>
         </div>
 
-        <!-- Schwibbögen (Bild kommt noch) -->
+        <!-- Schwibbögen Teaser (Bild kommt gleich) -->
         <div class="card">
           <div class="cardthumb">
             <span class="cardtag">Schwibbögen</span>
-            <span class="cardsoon" aria-hidden="true">Bild folgt – wird noch hochgeladen</span>
+            <img src="/assets/schwibbogen/schwibbogen-01.jpg" alt="Custom – Schwibbögen Teaser" loading="lazy">
           </div>
           <h3>Schwibbögen (Teaser)</h3>
           <p class="small muted">Schon jetzt möglich: Sonderwünsche, Namen, Motive, Anpassungen – bevor der große Bereich live ist.</p>
@@ -355,11 +340,10 @@
           </div>
         </div>
 
-        <!-- Freie Idee (Mini-Reel läuft wirklich durch) -->
+        <!-- Freie Idee (Mini-Reel läuft) -->
         <div class="card">
-          <div class="cardthumb" aria-label="Freie Idee – Beispiele">
+          <div class="cardthumb" aria-label="Freie Idee – Mini Reel">
             <span class="cardtag">Freie Idee</span>
-
             <div
               class="minireel"
               aria-label="Freie Idee – Mini Reel"
