@@ -2,9 +2,6 @@
   function $(id) { return document.getElementById(id); }
   function safeTrim(v) { return String(v || "").trim(); }
 
-  const elSrcFolder = $("srcFolder");
-  const elSrcFile = $("srcFile");
-
   const elSrc = $("src");
   const elCap = $("cap");
   const elAlt = $("alt");
@@ -16,10 +13,6 @@
   const btnUseLastTag = $("btnUseLastTag");
   const elLockTag = $("lockTag");
 
-  const elJsonTarget = $("jsonTarget");
-  const btnLoadJson = $("btnLoadJson");
-  const btnRememberJson = $("btnRememberJson");
-
   const outEntry = $("outEntry");
   const outJson = $("outJson");
   const status = $("status");
@@ -27,13 +20,12 @@
   const previewBox = $("previewBox");
   const previewImg = $("previewImg");
 
-  // Persistenz
-  const LS_KEY_TAG = "reelBuilder.lastTag";
-  const LS_KEY_TAG_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
-  const LS_KEY_LOCK = "reelBuilder.lockTag";         // "1" | "0"
-  const LS_KEY_JSON_PREFIX = "reelBuilder.jsonBuffer:"; // + jsonTarget
-  const LS_KEY_LAST_TARGET = "reelBuilder.lastJsonTarget";
-  const LS_KEY_LAST_FOLDER = "reelBuilder.lastSrcFolder";
+  const jsonIn = $("jsonIn");
+
+  // Persistenz (iPad-friendly)
+  const LS_KEY = "reelBuilder.lastTag";
+  const LS_KEY_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
+  const LS_KEY_LOCK = "reelBuilder.lockTag";     // "1" | "0"
 
   function getSaved(key, fallback = "") {
     try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
@@ -66,20 +58,19 @@
   function saveLastTagFromUI() {
     const tag = currentTag();
     if (!tag) return;
-
     const mode = elTagCustomOn.checked ? "custom" : "preset";
-    setSaved(LS_KEY_TAG, tag);
-    setSaved(LS_KEY_TAG_MODE, mode);
+    setSaved(LS_KEY, tag);
+    setSaved(LS_KEY_MODE, mode);
   }
 
   function applyLastTag() {
-    const last = safeTrim(getSaved(LS_KEY_TAG, ""));
+    const last = safeTrim(getSaved(LS_KEY, ""));
     if (!last) {
       status.innerHTML = `<span class="rb-bad">✖ Kein letztes Tag gespeichert.</span>`;
       return;
     }
 
-    const mode = getSaved(LS_KEY_TAG_MODE, "preset");
+    const mode = getSaved(LS_KEY_MODE, "preset");
 
     if (mode === "custom") {
       elTagCustomOn.checked = true;
@@ -93,6 +84,7 @@
       if (opt) {
         elTagPreset.value = last;
       } else {
+        // Fallback: wenn Preset nicht existiert, nutze Custom
         elTagCustomOn.checked = true;
         syncTagUI();
         elTagCustom.value = last;
@@ -106,32 +98,16 @@
     return getSaved(LS_KEY_LOCK, "0") === "1";
   }
 
-  function buildSrcFromDropdown() {
-    const folder = safeTrim(elSrcFolder.value);
-    const file = safeTrim(elSrcFile.value);
-    if (!folder || !file) return "";
-    // prevent double slashes
-    const f = folder.endsWith("/") ? folder : (folder + "/");
-    return f + file.replace(/^\/+/, "");
-  }
-
-  function keepDropdownInSyncWithSrc() {
-    // Wenn user manuell in "src" tippt, lassen wir Dropdown stehen.
-    // Aber wenn Dropdown/File geändert wird, überschreiben wir src.
-  }
-
-  function buildEntry({ quiet = false } = {}) {
+  function buildEntry() {
     const src = safeTrim(elSrc.value);
     const cap = safeTrim(elCap.value);
     const alt = safeTrim(elAlt.value);
     const tag = currentTag();
 
     const v = validateSrc(src);
-    if (!quiet) {
-      status.innerHTML = v.ok
-        ? `<span class="rb-ok">✔ ${v.msg}</span>`
-        : `<span class="rb-bad">✖ ${v.msg}</span>`;
-    }
+    status.innerHTML = v.ok
+      ? `<span class="rb-ok">✔ ${v.msg}</span>`
+      : `<span class="rb-bad">✖ ${v.msg}</span>`;
 
     if (src) {
       previewImg.src = src;
@@ -179,92 +155,7 @@
     return parsed;
   }
 
-  function jsonBufferKey() {
-    return LS_KEY_JSON_PREFIX + safeTrim(elJsonTarget.value || "");
-  }
-
-  function rememberJsonNow() {
-    const inBox = $("jsonIn");
-    const val = safeTrim(inBox.value);
-    if (!val) {
-      status.innerHTML = `<span class="rb-bad">✖ Nichts zu merken (JSON-Feld ist leer).</span>`;
-      return;
-    }
-    setSaved(jsonBufferKey(), val);
-    status.innerHTML = `<span class="rb-ok">✔ Zwischenstand gemerkt (für dieses Ziel-JSON).</span>`;
-  }
-
-  function restoreRememberedJson() {
-    const inBox = $("jsonIn");
-    const saved = safeTrim(getSaved(jsonBufferKey(), ""));
-    if (saved) {
-      inBox.value = saved;
-      try {
-        const arr = parseJsonArray(saved);
-        outJson.textContent = JSON.stringify(arr, null, 2);
-      } catch {
-        // ignore
-      }
-      status.innerHTML = `<span class="rb-ok">✔ Gemerkter Zwischenstand geladen.</span>`;
-    }
-  }
-
-  async function loadJsonFromSource() {
-    const target = safeTrim(elJsonTarget.value);
-    if (!target) {
-      status.innerHTML = `<span class="rb-bad">✖ Bitte Ziel-JSON wählen.</span>`;
-      return;
-    }
-
-    status.innerHTML = `<span class="rb-ok">… lade ${target}</span>`;
-
-    try {
-      // Cache-bust (Cloudflare/Browser)
-      const url = target + (target.includes("?") ? "&" : "?") + "v=" + Date.now();
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const text = await res.text();
-
-      const arr = parseJsonArray(text); // validiert Array
-      $("jsonIn").value = JSON.stringify(arr, null, 2);
-      outJson.textContent = JSON.stringify(arr, null, 2);
-
-      // merken
-      setSaved(jsonBufferKey(), JSON.stringify(arr, null, 2));
-
-      status.innerHTML = `<span class="rb-ok">✔ JSON geladen: ${arr.length} Einträge.</span>`;
-    } catch (e) {
-      status.innerHTML = `<span class="rb-bad">✖ Konnte Quelle nicht laden/parse'n: ${e.message}</span>`;
-    }
-  }
-
-  // --- Events ---
-
-  // Dropdown → src auto bauen
-  function syncSrcFromParts() {
-    const built = buildSrcFromDropdown();
-    if (built) {
-      elSrc.value = built;
-      buildEntry({ quiet: true });
-    }
-    setSaved(LS_KEY_LAST_FOLDER, elSrcFolder.value);
-  }
-
-  elSrcFolder.addEventListener("change", syncSrcFromParts);
-  elSrcFile.addEventListener("input", syncSrcFromParts);
-
-  // Wenn user manuell in src tippt: wir lassen ihn.
-  elSrc.addEventListener("input", () => buildEntry({ quiet: true }));
-
-  // Live preview
-  elCap.addEventListener("input", () => buildEntry({ quiet: true }));
-  elAlt.addEventListener("input", () => buildEntry({ quiet: true }));
-
-  elTagPreset.addEventListener("change", () => buildEntry({ quiet: true }));
-  elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry({ quiet: true }); });
-  elTagCustom.addEventListener("input", () => buildEntry({ quiet: true }));
-
-  // Buttons Entry
+  // --- Buttons / Events ---
   $("btnEntry").addEventListener("click", () => buildEntry());
 
   $("btnCopyEntry").addEventListener("click", async () => {
@@ -276,15 +167,13 @@
   });
 
   $("btnClearSrc").addEventListener("click", () => {
-    elSrcFile.value = "";
     elSrc.value = "";
-    elSrcFile.focus();
-    buildEntry({ quiet: true });
+    elSrc.focus();
+    buildEntry();
     status.innerHTML = `<span class="rb-ok">✔ Bildpfad geleert.</span>`;
   });
 
   $("btnClear").addEventListener("click", () => {
-    elSrcFile.value = "";
     elSrc.value = "";
     elCap.value = "";
     elAlt.value = "";
@@ -295,57 +184,49 @@
     syncTagUI();
 
     outEntry.textContent = "";
+    outJson.textContent = "";
+    jsonIn.value = "";
     status.textContent = "";
     previewBox.style.display = "none";
-    // JSON bleibt bewusst, damit du nix verlierst
+    // Lock bleibt bewusst erhalten
   });
 
-  // JSON target handling
-  elJsonTarget.addEventListener("change", () => {
-    setSaved(LS_KEY_LAST_TARGET, elJsonTarget.value);
-    // optional: remembered buffer laden
-    restoreRememberedJson();
-  });
-
-  btnLoadJson.addEventListener("click", () => loadJsonFromSource());
-  btnRememberJson.addEventListener("click", () => rememberJsonNow());
-
-  // Add to JSON
+  // ✅ FIX: erweitert nicht nur Output, sondern auch das Arbeitsfeld jsonIn
   $("btnAddToJson").addEventListener("click", () => {
-    const { obj } = buildEntry();
-    const inBox = $("jsonIn");
-
-    if (!safeTrim(obj.src)) {
-      status.innerHTML = `<span class="rb-bad">✖ Bitte zuerst einen gültigen Bildpfad eintragen.</span>`;
-      return;
-    }
+    const { obj, valid } = buildEntry();
 
     let arr;
     try {
-      arr = parseJsonArray(inBox.value);
+      arr = parseJsonArray(jsonIn.value);
     } catch (e) {
       outJson.textContent = "";
       status.innerHTML = `<span class="rb-bad">✖ ${e.message}</span>`;
       return;
     }
 
+    if (!safeTrim(obj.src)) {
+      status.innerHTML = `<span class="rb-bad">✖ Bitte zuerst einen gültigen Bildpfad eintragen.</span>`;
+      return;
+    }
+
+    if (!valid) {
+      status.innerHTML = `<span class="rb-bad">✖ Bildpfad ist nicht gültig. (Muss /assets/... + Endung)</span>`;
+      return;
+    }
+
     const before = arr.length;
     arr.push(obj);
-    const after = arr.length;
+    const next = JSON.stringify(arr, null, 2);
 
-    const pretty = JSON.stringify(arr, null, 2);
-    outJson.textContent = pretty;
-    inBox.value = pretty;
+    // wichtig: beides aktualisieren
+    jsonIn.value = next;
+    outJson.textContent = next;
 
-    // merken
-    setSaved(jsonBufferKey(), pretty);
+    status.innerHTML = `<span class="rb-ok">✔ Zur JSON hinzugefügt (vorher ${before}, jetzt ${before + 1}).</span>`;
 
-    status.innerHTML = `<span class="rb-ok">✔ Hinzugefügt: vorher ${before}, jetzt ${after}.</span>`;
-
-    // Speed: nur Bildpfad leeren
-    elSrcFile.value = "";
+    // Speed: Bildpfad leeren und Fokus setzen
     elSrc.value = "";
-    elSrcFile.focus();
+    elSrc.focus();
 
     // Wenn Tag NICHT gesperrt: Tag zurücksetzen
     if (!isLockTagOn()) {
@@ -355,12 +236,12 @@
       syncTagUI();
     }
 
-    buildEntry({ quiet: true });
+    buildEntry();
   });
 
   $("btnCopyJson").addEventListener("click", async () => {
-    const text = outJson.textContent || "";
-    if (!text) {
+    const text = outJson.textContent || jsonIn.value || "";
+    if (!safeTrim(text)) {
       status.innerHTML = `<span class="rb-bad">✖ Kein JSON Output vorhanden.</span>`;
       return;
     }
@@ -370,16 +251,13 @@
       : `<span class="rb-bad">✖ Konnte nicht kopieren (Clipboard blockiert).</span>`;
   });
 
+  // ✅ FIX: "Nur formatieren" kann optional auch das Arbeitsfeld sauber setzen
   $("btnFormatJson").addEventListener("click", () => {
-    const inBox = $("jsonIn");
     try {
-      const arr = parseJsonArray(inBox.value);
-      const pretty = JSON.stringify(arr, null, 2);
-      outJson.textContent = pretty;
-      inBox.value = pretty;
-
-      setSaved(jsonBufferKey(), pretty);
-
+      const arr = parseJsonArray(jsonIn.value);
+      const next = JSON.stringify(arr, null, 2);
+      jsonIn.value = next;
+      outJson.textContent = next;
       status.innerHTML = `<span class="rb-ok">✔ JSON formatiert.</span>`;
     } catch (e) {
       outJson.textContent = "";
@@ -390,7 +268,7 @@
   // Tag tools
   btnUseLastTag.addEventListener("click", () => {
     applyLastTag();
-    buildEntry({ quiet: true });
+    buildEntry();
   });
 
   // Lock persists
@@ -399,22 +277,17 @@
     setSaved(LS_KEY_LOCK, elLockTag.checked ? "1" : "0");
   });
 
+  // Live preview
+  elSrc.addEventListener("input", () => buildEntry());
+  elCap.addEventListener("input", () => buildEntry());
+  elAlt.addEventListener("input", () => buildEntry());
+
+  elTagPreset.addEventListener("change", () => buildEntry());
+  elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry(); });
+  elTagCustom.addEventListener("input", () => buildEntry());
+
   // Init
   syncTagUI();
   outEntry.textContent = "";
   outJson.textContent = "";
-
-  // Restore last folder/target
-  const lastFolder = getSaved(LS_KEY_LAST_FOLDER, "");
-  if (lastFolder && Array.from(elSrcFolder.options).some(o => o.value === lastFolder)) {
-    elSrcFolder.value = lastFolder;
-  }
-
-  const lastTarget = getSaved(LS_KEY_LAST_TARGET, "");
-  if (lastTarget && Array.from(elJsonTarget.options).some(o => o.value === lastTarget)) {
-    elJsonTarget.value = lastTarget;
-  }
-
-  // Restore remembered json buffer (if exists)
-  restoreRememberedJson();
 })();
