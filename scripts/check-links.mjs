@@ -1,200 +1,244 @@
 // scripts/check-links.mjs
-// Link & asset target checker for static HTML repos.
-// - Validates internal href/src/srcset + data-reel-src targets exist in repo.
-// - Correctly resolves web-absolute paths like "/assets/..." against repo root.
-// - Tolerates unicode dash variants (– — - etc.) by matching normalized filenames.
+// Link + Asset checker for static sites (GitHub Actions friendly)
+// - scans all *.html in repo
+// - checks internal href/src/srcset/data-reel-src targets exist
+// - detects unicode dashes (– — − etc.) vs normal hyphen (-)
 
 import fs from "node:fs";
+import fsp from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const repoRoot = process.cwd();
 
-// Prefer GITHUB_WORKSPACE; fallback: repo root assumed to be parent of /scripts
-const repoRoot = process.env.GITHUB_WORKSPACE
-  ? path.resolve(process.env.GITHUB_WORKSPACE)
-  : path.resolve(__dirname, "..");
-
-const IGNORED_DIRS = new Set([
+// folders to skip while walking
+const SKIP_DIRS = new Set([
   ".git",
   "node_modules",
-  ".github",
-  ".vscode",
-  ".idea",
+  ".next",
+  ".nuxt",
   "dist",
   "build",
-  "out",
-  ".next",
+  ".cache",
+  ".vercel",
+  ".idea",
+  ".vscode",
 ]);
 
-const isWindows = process.platform === "win32";
-const toPosix = (p) => p.split(path.sep).join("/");
+const DASH_CHARS = /[\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFE58\uFE63\uFF0D]/g;
 
-// Normalize for “same looking but different” characters (unicode dashes etc.)
-function normalizeName(s) {
-  return s
-    .normalize("NFKC")
-    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-");
+function normalizeDashes(s) {
+  return (s || "").normalize("NFC").replace(DASH_CHARS, "-");
 }
 
-// Return true if URL is external-ish and should be ignored.
-function isSkippableUrl(u) {
-  if (!u) return true;
-  const s = u.trim();
-  if (!s) return true;
-  if (s.startsWith("#")) return true;
-  if (s.startsWith("mailto:")) return true;
-  if (s.startsWith("tel:")) return true;
-  if (s.startsWith("javascript:")) return true;
-  if (s.startsWith("data:")) return true;
-  if (s.startsWith("http://") || s.startsWith("https://")) return true;
-  return false;
+function stripHashQuery(u) {
+  const i = u.search(/[?#]/);
+  return i === -1 ? u : u.slice(0, i);
 }
 
-// Strip query/hash and decode URI safely.
-function cleanUrl(u) {
-  let s = u.trim();
-  // drop surrounding spaces
-  // remove hash/query
-  s = s.split("#")[0].split("?")[0];
-  try {
-    s = decodeURI(s);
-  } catch {
-    // ignore decode errors, keep raw
+function isExternal(u) {
+  return (
+    /^https?:\/\//i.test(u) ||
+    /^mailto:/i.test(u) ||
+    /^tel:/i.test(u) ||
+    /^data:/i.test(u) ||
+    /^javascript:/i.test(u) ||
+    /^#/.test(u)
+  );
+}
+
+function looksLikeDirUrl(u) {
+  return u.endsWith("/");
+}
+
+function hasExtension(p) {
+  return path.posix.basename(p).includes(".");
+}
+
+function toPosix(p) {
+  return p.split(path.sep).join("/");
+}
+
+function safeRel(fromFile, targetUrl) {
+  // targetUrl is already stripped of hash/query
+  if (targetUrl.startsWith("/")) {
+    return targetUrl.slice(1); // repo-root relative
   }
-  return s;
+  // relative to html file
+  const baseDir = path.posix.dirname(toPosix(path.relative(repoRoot, fromFile)));
+  return path.posix.normalize(path.posix.join(baseDir === "." ? "" : baseDir, targetUrl));
 }
 
-function fileExists(p) {
-  try {
-    return fs.statSync(p).isFile();
-  } catch {
-    return false;
-  }
-}
-
-function dirExists(p) {
-  try {
-    return fs.statSync(p).isDirectory();
-  } catch {
-    return false;
-  }
-}
-
-// Try to find file by normalized basename inside its directory (unicode dash fix).
-function findByNormalizedBasename(expectedPath) {
-  const dir = path.dirname(expectedPath);
-  const base = path.basename(expectedPath);
-  if (!dirExists(dir)) return null;
-
-  const want = normalizeName(base);
-  let entries;
-  try {
-    entries = fs.readdirSync(dir);
-  } catch {
-    return null;
-  }
-
+async function walk(dir, out = []) {
+  const entries = await fsp.readdir(dir, { withFileTypes: true });
   for (const e of entries) {
-    if (normalizeName(e) === want) {
-      const candidate = path.join(dir, e);
-      if (fileExists(candidate)) return candidate;
+    const full = path.join(dir, e.name);
+    if (e.isDirectory()) {
+      if (SKIP_DIRS.has(e.name)) continue;
+      await walk(full, out);
+    } else {
+      out.push(full);
     }
   }
-  return null;
-}
-
-function resolveTarget(fromHtmlFile, url) {
-  // url is already cleaned (no query/hash)
-  // Absolute web path => resolve from repoRoot
-  if (url.startsWith("/")) {
-    const rel = url.replace(/^\/+/, ""); // remove all leading slashes
-    return path.join(repoRoot, rel);
-  }
-
-  // Relative path => resolve from html file directory
-  const fromDir = path.dirname(fromHtmlFile);
-  return path.resolve(fromDir, url);
-}
-
-function collectHtmlFiles(rootDir) {
-  const out = [];
-
-  function walk(dir) {
-    let entries;
-    try {
-      entries = fs.readdirSync(dir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-
-    for (const ent of entries) {
-      const full = path.join(dir, ent.name);
-      if (ent.isDirectory()) {
-        if (IGNORED_DIRS.has(ent.name)) continue;
-        walk(full);
-      } else if (ent.isFile() && ent.name.toLowerCase().endsWith(".html")) {
-        out.push(full);
-      }
-    }
-  }
-
-  walk(rootDir);
   return out;
 }
 
-// Extract urls from href/src/srcset + data-reel-src
-function extractUrlsFromHtml(content) {
-  const urls = [];
+async function fileExists(absPath) {
+  try {
+    await fsp.access(absPath, fs.constants.F_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-  // href/src
-  const attrRe = /\b(?:href|src)\s*=\s*["']([^"']+)["']/gi;
+async function listDir(absDir) {
+  try {
+    return await fsp.readdir(absDir);
+  } catch {
+    return null;
+  }
+}
+
+function parseSrcset(value) {
+  // "a.jpg 1x, b.jpg 2x" -> ["a.jpg","b.jpg"]
+  return value
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(part => part.split(/\s+/)[0])
+    .filter(Boolean);
+}
+
+function extractLinks(html) {
+  const links = [];
+
+  // href="..."
+  const hrefRe = /\bhref\s*=\s*(["'])(.*?)\1/gi;
+  // src="..."
+  const srcRe = /\bsrc\s*=\s*(["'])(.*?)\1/gi;
+  // data-reel-src="..."
+  const reelRe = /\bdata-reel-src\s*=\s*(["'])(.*?)\1/gi;
+  // srcset="..."
+  const srcsetRe = /\bsrcset\s*=\s*(["'])(.*?)\1/gi;
+
   let m;
-  while ((m = attrRe.exec(content)) !== null) {
-    urls.push(m[1]);
+
+  while ((m = hrefRe.exec(html)) !== null) links.push({ kind: "href", url: m[2] });
+  while ((m = srcRe.exec(html)) !== null) links.push({ kind: "src", url: m[2] });
+  while ((m = reelRe.exec(html)) !== null) links.push({ kind: "data-reel-src", url: m[2] });
+  while ((m = srcsetRe.exec(html)) !== null) {
+    for (const u of parseSrcset(m[2])) links.push({ kind: "srcset", url: u });
   }
 
-  // data-reel-src
-  const reelRe = /\bdata-reel-src\s*=\s*["']([^"']+)["']/gi;
-  while ((m = reelRe.exec(content)) !== null) {
-    urls.push(m[1]);
+  return links;
+}
+
+async function resolveTarget(htmlFile, rawUrl) {
+  const url0 = (rawUrl || "").trim();
+  if (!url0 || isExternal(url0)) return { skip: true };
+
+  const url = stripHashQuery(url0);
+
+  // normalize unicode dashes to compute "expected"
+  const normalizedUrl = normalizeDashes(url);
+
+  const rel = safeRel(htmlFile, normalizedUrl);
+  const abs = path.join(repoRoot, rel);
+
+  // 1) exact file exists
+  if (await fileExists(abs)) return { ok: true, rel, abs };
+
+  // 2) directory URL -> accept index.html
+  if (looksLikeDirUrl(normalizedUrl) || (!hasExtension(normalizedUrl) && !normalizedUrl.endsWith(".html"))) {
+    const idxRel = path.posix.join(rel, "index.html");
+    const idxAbs = path.join(repoRoot, idxRel);
+    if (await fileExists(idxAbs)) return { ok: true, rel: idxRel, abs: idxAbs, dirIndex: true };
   }
 
-  // srcset: "a.jpg 1x, b.jpg 2x"
-  const srcsetRe = /\bsrcset\s*=\s*["']([^"']+)["']/gi;
-  while ((m = srcsetRe.exec(content)) !== null) {
-    const parts = m[1].split(",");
-    for (const part of parts) {
-      const token = part.trim().split(/\s+/)[0];
-      if (token) urls.push(token);
+  // 3) try normalized-basename match inside same directory (unicode dash / similar)
+  const dirAbs = path.dirname(abs);
+  const dirList = await listDir(dirAbs);
+  if (dirList && dirList.length) {
+    const wantedBase = normalizeDashes(path.basename(abs));
+    const hit = dirList.find(name => normalizeDashes(name) === wantedBase);
+    if (hit) {
+      const hitAbs = path.join(dirAbs, hit);
+      const hitRel = toPosix(path.relative(repoRoot, hitAbs));
+      return { ok: true, rel: hitRel, abs: hitAbs, normalizedHit: true, actual: hitRel };
     }
   }
 
-  return urls;
+  return { ok: false, rel, abs, raw: url0, normalizedUrl };
 }
 
-function asIndexHtmlIfDirectory(targetPath) {
-  // If target points to a directory or ends with '/', accept directory/index.html
-  if (targetPath.endsWith(path.sep) || targetPath.endsWith("/")) {
-    return path.join(targetPath, "index.html");
+async function main() {
+  console.log(`check-links.mjs repoRoot = ${repoRoot}`);
+
+  const allFiles = await walk(repoRoot);
+  const htmlFiles = allFiles.filter(f => f.toLowerCase().endsWith(".html"));
+
+  const missing = [];
+  const trailingDirNoSlash = [];
+
+  for (const htmlFile of htmlFiles) {
+    const content = await fsp.readFile(htmlFile, "utf8");
+    const links = extractLinks(content);
+
+    for (const { kind, url } of links) {
+      if (!url) continue;
+      const trimmed = url.trim();
+
+      // warn: directory-like links without trailing slash (only for root-style nav paths)
+      if (
+        (kind === "href") &&
+        trimmed.startsWith("/") &&
+        !trimmed.includes(".") &&
+        !trimmed.endsWith("/") &&
+        !trimmed.includes("?") &&
+        !trimmed.includes("#")
+      ) {
+        trailingDirNoSlash.push({
+          kind,
+          from: toPosix(path.relative(repoRoot, htmlFile)),
+          url: trimmed,
+          suggestion: `${trimmed}/`,
+        });
+      }
+
+      const res = await resolveTarget(htmlFile, trimmed);
+      if (res.skip) continue;
+      if (res.ok) continue;
+
+      missing.push({
+        kind,
+        from: toPosix(path.relative(repoRoot, htmlFile)),
+        url: trimmed,
+        expected: toPosix(res.rel),
+      });
+    }
   }
 
-  if (dirExists(targetPath)) {
-    return path.join(targetPath, "index.html");
+  if (missing.length) {
+    console.error("❌ Missing internal targets:");
+    for (const x of missing) {
+      console.error(`- [${x.kind}] ${x.from} -> ${x.url} (expected: ${x.expected})`);
+    }
+    process.exit(1);
   }
 
-  // If no extension and not a file, also try index.html (for "/foo/" style links without trailing slash)
-  const base = path.basename(targetPath);
-  if (!base.includes(".") && !fileExists(targetPath)) {
-    const idx = path.join(targetPath, "index.html");
-    return idx;
+  if (trailingDirNoSlash.length) {
+    console.log("⚠️ Links to directories without trailing slash:");
+    for (const x of trailingDirNoSlash) {
+      console.log(`- [${x.kind}] ${x.from} -> ${x.url} (suggest: ${x.suggestion})`);
+    }
+    console.log("");
   }
 
-  return null;
+  console.log("✅ All internal targets exist (href/src + data-reel-src + srcset).");
 }
 
-function showPath(p) {
-  // make logs stable
-  const rel = path.relative(repoRoot, p);
-  const nice = rel && !rel
+main().catch((err) => {
+  console.error("❌ Fatal error in check-links.mjs");
+  console.error(err?.stack || err?.message || String(err));
+  process.exit(1);
+});
