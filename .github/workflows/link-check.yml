@@ -6,8 +6,8 @@ on:
 
 jobs:
   link_check:
-    name: Check internal href/src targets
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,5 +17,7 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Run link checker
+      # Wichtig: immer Repo-Root als Working Directory
+      - name: Check internal href/src targets
+        working-directory: ${{ github.workspace }}
         run: node scripts/check-links.mjs
