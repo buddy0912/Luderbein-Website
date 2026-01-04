@@ -8,7 +8,6 @@
   const elCap = $("cap");
   const elAlt = $("alt");
 
-  // ✅ NEU: cat dropdown
   const elCat = $("cat");
 
   const elTagPreset = $("tagPreset");
@@ -31,12 +30,11 @@
   const btnLoadJson = $("btnLoadJson");
   const btnRememberJson = $("btnRememberJson");
 
-  // Persistenz (iPad-friendly)
   const LS_KEY_LAST_TAG = "reelBuilder.lastTag";
-  const LS_KEY_LAST_TAG_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
-  const LS_KEY_LOCK_TAG = "reelBuilder.lockTag";          // "1" | "0"
-  const LS_KEY_LAST_CAT = "reelBuilder.lastCat";          // z.B. "holz"
-  const LS_KEY_JSON_PREFIX = "reelBuilder.jsonCache:";    // + target
+  const LS_KEY_LAST_TAG_MODE = "reelBuilder.lastTagMode";
+  const LS_KEY_LOCK_TAG = "reelBuilder.lockTag";
+  const LS_KEY_LAST_CAT = "reelBuilder.lastCat";
+  const LS_KEY_JSON_PREFIX = "reelBuilder.jsonCache:";
 
   function getSaved(key, fallback = "") {
     try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
@@ -106,7 +104,6 @@
       if (opt) {
         elTagPreset.value = last;
       } else {
-        // Fallback: wenn Preset nicht existiert, nutze Custom
         elTagCustomOn.checked = true;
         syncTagUI();
         elTagCustom.value = last;
@@ -131,7 +128,6 @@
 
   function syncSrc() {
     const built = buildSrcFromParts();
-    // Wir setzen src immer auf den gebauten Pfad (safer, weniger Tippfehler)
     if (elSrc) elSrc.value = built;
   }
 
@@ -165,7 +161,6 @@
   }
 
   function buildEntry() {
-    // src wird aus Folder+File gebaut
     syncSrc();
 
     const src = safeTrim(elSrc.value);
@@ -189,7 +184,7 @@
 
     const obj = { src, alt, cap };
     if (tag) obj.tag = tag;
-    if (cat) obj.cat = cat; // ✅ NEU
+    if (cat) obj.cat = cat;
 
     outEntry.textContent = JSON.stringify(obj, null, 2);
 
@@ -199,7 +194,6 @@
     return { obj, snippet: JSON.stringify(obj), valid: v.ok };
   }
 
-  // -------- JSON Load / Remember --------
   async function loadJsonFromTarget() {
     const target = safeTrim(elJsonTarget?.value || "");
     if (!target) {
@@ -218,12 +212,10 @@
       jsonIn.value = pretty;
       outJson.textContent = pretty;
 
-      // Cache im LS
       setSaved(LS_KEY_JSON_PREFIX + target, pretty);
 
       status.innerHTML = `<span class="rb-ok">✔ JSON geladen: ${target} (Einträge: ${arr.length})</span>`;
     } catch (e) {
-      // Fallback: LocalStorage Cache
       const cached = getSaved(LS_KEY_JSON_PREFIX + target, "");
       if (cached) {
         jsonIn.value = cached;
@@ -250,7 +242,6 @@
     status.innerHTML = `<span class="rb-ok">✔ Zwischenstand gemerkt für ${target}</span>`;
   }
 
-  // -------- Buttons / Events --------
   $("btnEntry")?.addEventListener("click", () => buildEntry());
 
   $("btnCopyEntry")?.addEventListener("click", async () => {
@@ -276,7 +267,8 @@
     elCap.value = "";
     elAlt.value = "";
 
-    if (elCat) elCat.value = ""; // ✅ reset cat
+    // ✅ Wunsch: beim "Leeren" cat resetten
+    if (elCat) elCat.value = "";
 
     elTagPreset.value = "";
     elTagCustomOn.checked = false;
@@ -288,10 +280,8 @@
     jsonIn.value = "";
     status.textContent = "";
     previewBox.style.display = "none";
-    // Lock bleibt bewusst erhalten
   });
 
-  // ✅ AddToJson: erweitert IMMER das Arbeitsfeld jsonIn + Output outJson
   $("btnAddToJson")?.addEventListener("click", () => {
     const { obj, valid } = buildEntry();
 
@@ -323,14 +313,12 @@
 
     status.innerHTML = `<span class="rb-ok">✔ Zur JSON hinzugefügt (vorher ${before}, jetzt ${before + 1}).</span>`;
 
-    // Speed: nur Dateiname leeren
     if (elSrcFile) {
       elSrcFile.value = "";
       elSrcFile.focus();
     }
     syncSrc();
 
-    // Wenn Tag NICHT gesperrt: Tag zurücksetzen
     if (!isLockTagOn()) {
       elTagPreset.value = "";
       elTagCustomOn.checked = false;
@@ -338,7 +326,7 @@
       syncTagUI();
     }
 
-    // Cat lassen wir bewusst stehen (Serienfreundlich)
+    // cat bleibt nach Add bewusst stehen (Serienfreundlich)
     buildEntry();
   });
 
@@ -367,13 +355,11 @@
     }
   });
 
-  // Tag tools
   btnUseLastTag?.addEventListener("click", () => {
     applyLastTag();
     buildEntry();
   });
 
-  // Lock persists
   if (elLockTag) {
     elLockTag.checked = getSaved(LS_KEY_LOCK_TAG, "0") === "1";
     elLockTag.addEventListener("change", () => {
@@ -381,15 +367,12 @@
     });
   }
 
-  // JSON Load/Remember
   btnLoadJson?.addEventListener("click", loadJsonFromTarget);
   btnRememberJson?.addEventListener("click", rememberJson);
 
-  // Live sync: Folder/File -> src
   elSrcFolder?.addEventListener("change", () => { syncSrc(); buildEntry(); });
   elSrcFile?.addEventListener("input", () => { syncSrc(); buildEntry(); });
 
-  // Live preview
   elCap?.addEventListener("input", () => buildEntry());
   elAlt?.addEventListener("input", () => buildEntry());
   elCat?.addEventListener("change", () => buildEntry());
@@ -398,11 +381,9 @@
   elTagCustomOn?.addEventListener("change", () => { syncTagUI(); buildEntry(); });
   elTagCustom?.addEventListener("input", () => buildEntry());
 
-  // Init
   syncTagUI();
   syncSrc();
 
-  // cat init: optional lastCat wiederherstellen
   const lastCat = safeTrim(getSaved(LS_KEY_LAST_CAT, ""));
   if (elCat && lastCat) {
     const opt = Array.from(elCat.options).find(o => o.value === lastCat);
