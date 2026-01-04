@@ -77,6 +77,18 @@
       .reelslide img { height: 240px; }
       .reelbtn { display: none; }
     }
+
+    /* =========================================================
+       KACHEL-ROTATOR – SMOOTH FADE
+       ========================================================= */
+    img.tile-rot {
+      opacity: 1;
+      transition: opacity 480ms ease;
+      will-change: opacity;
+    }
+    img.tile-rot.is-fading {
+      opacity: 0;
+    }
   </style>
 </head>
 
@@ -166,46 +178,46 @@
 
         <div class="reeltrack" id="metalTrack" aria-label="Metallgalerie">
           <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel 01" loading="lazy">
+            <img src="/assets/metall/metall-reel-01.jpg" alt="Metallgravur – Beispiel 01" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-02.jpg" alt="Metall Beispiel 02" loading="lazy">
+            <img src="/assets/metall/metall-reel-02.jpg" alt="Metallgravur – Beispiel 02" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-03.jpg" alt="Metall Beispiel 03" loading="lazy">
+            <img src="/assets/metall/metall-reel-03.jpg" alt="Metallgravur – Beispiel 03" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-04.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-04.jpg" alt="Metall Beispiel 04" loading="lazy">
+            <img src="/assets/metall/metall-reel-04.jpg" alt="Metallgravur – Beispiel 04" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-05.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-05.jpg" alt="Metall Beispiel 05" loading="lazy">
+            <img src="/assets/metall/metall-reel-05.jpg" alt="Metallgravur – Beispiel 05" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-06.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel 06" loading="lazy">
+            <img src="/assets/metall/metall-reel-06.jpg" alt="Metallgravur – Beispiel 06" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-07.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-07.jpg" alt="Metall Beispiel 07" loading="lazy">
+            <img src="/assets/metall/metall-reel-07.jpg" alt="Metallgravur – Beispiel 07" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-08.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-08.jpg" alt="Metall Beispiel 08" loading="lazy">
+            <img src="/assets/metall/metall-reel-08.jpg" alt="Metallgravur – Beispiel 08" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-09.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-09.jpg" alt="Metall Beispiel 09" loading="lazy">
+            <img src="/assets/metall/metall-reel-09.jpg" alt="Metallgravur – Beispiel 09" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-10.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-10.jpg" alt="Metall Beispiel 10" loading="lazy">
+            <img src="/assets/metall/metall-reel-10.jpg" alt="Metallgravur – Beispiel 10" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-11.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-11.jpg" alt="Metall Beispiel 11" loading="lazy">
+            <img src="/assets/metall/metall-reel-11.jpg" alt="Metallgravur – Beispiel 11" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-12.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-12.jpg" alt="Metall Beispiel 12" loading="lazy">
+            <img src="/assets/metall/metall-reel-12.jpg" alt="Metallgravur – Beispiel 12" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-13.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-13.jpg" alt="Metall Beispiel 13" loading="lazy">
+            <img src="/assets/metall/metall-reel-13.jpg" alt="Metallgravur – Beispiel 13" loading="lazy">
           </a>
           <a class="reelslide" href="/assets/metall/metall-reel-14.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-14.jpg" alt="Metall Beispiel 14" loading="lazy">
+            <img src="/assets/metall/metall-reel-14.jpg" alt="Metallgravur – Beispiel 14" loading="lazy">
           </a>
         </div>
       </div>
@@ -225,7 +237,7 @@
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/metall/metall-reel-04.jpg"
-              alt="Metall – Hundemarken / Tags Beispiel"
+              alt="Hundemarken und Tags aus Metall – graviert"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
             >
@@ -246,7 +258,7 @@
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/metall/metall-reel-12.jpg"
-              alt="Metall – Schilder / Plaketten Beispiel"
+              alt="Schilder und Plaketten aus Metall – graviert"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
             >
@@ -266,9 +278,10 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
+              class="tile-rot"
               src="/assets/metall/metall-reel-01.jpg"
               data-rot-srcs="/assets/metall/metall-reel-01.jpg|/assets/metall/metall-reel-06.jpg"
-              alt="Metall – Schlüsselanhänger Beispiel"
+              alt="Schlüsselanhänger aus Metall – graviert (verschiedene Beispiele)"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
             >
@@ -289,7 +302,7 @@
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/metall/metall-reel-09.jpg"
-              alt="Metall – Visitenkarten / Business Beispiel"
+              alt="Metall-Visitenkarten und Business-Plaketten – graviert"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
             >
@@ -309,9 +322,10 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
+              class="tile-rot"
               src="/assets/metall/metall-reel-08.jpg"
               data-rot-srcs="/assets/metall/metall-reel-08.jpg|/assets/metall/metall-reel-04.jpg|/assets/metall/metall-reel-05.jpg|/assets/metall/metall-reel-14.jpg|/assets/metall/metall-reel-13.jpg"
-              alt="Metall – Schmuck / Anhänger Beispiel"
+              alt="Schmuck und Anhänger aus Metall – graviert (verschiedene Beispiele)"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
             >
@@ -360,7 +374,7 @@
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
 
-    // Reel slider buttons + autoplay (bestehend)
+    // Reel slider buttons + autoplay
     (function(){
       const track = document.getElementById("metalTrack");
       if (!track) return;
@@ -385,7 +399,6 @@
 
       let paused = false;
       const AUTOPLAY_MS = 4600;
-
       const atEnd = () => (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
 
       function tick() {
@@ -409,13 +422,17 @@
       });
     })();
 
-    // Mini-rotator für Produkt-Kacheln (nur Metall-Seite)
+    // Mini-rotator für Produkt-Kacheln (fade + preload)
     (function(){
       const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
       if (reduceMotion) return;
 
       const imgs = Array.from(document.querySelectorAll('img[data-rot-srcs]'));
       if (!imgs.length) return;
+
+      const FADE_OUT_MS = 260;   // raus
+      const AFTER_SWAP_MS = 20;  // mini tick, damit transition sauber greift
+      const INTERVAL_MS = 3800;
 
       function parseList(v){
         return String(v || "")
@@ -424,26 +441,59 @@
           .filter(Boolean);
       }
 
+      function preload(src){
+        return new Promise((resolve) => {
+          const im = new Image();
+          im.onload = () => resolve(true);
+          im.onerror = () => resolve(false);
+          im.src = src;
+        });
+      }
+
       imgs.forEach(img => {
         const list = parseList(img.getAttribute("data-rot-srcs"));
         if (list.length < 2) return;
 
+        // sicherstellen, dass wir transition class haben
+        if (!img.classList.contains("tile-rot")) img.classList.add("tile-rot");
+
         let i = 0;
         let pausedUntil = 0;
+        let busy = false;
 
-        const step = () => {
-          if (Date.now() < pausedUntil) return;
-          i = (i + 1) % list.length;
-          img.src = list[i];
-        };
-
-        // Pause on hover / touch (damit nicht nervt)
         const pause = (ms) => pausedUntil = Date.now() + ms;
+
         img.addEventListener("mouseenter", () => pause(2500), { passive:true });
         img.addEventListener("touchstart", () => pause(2500), { passive:true });
 
-        // Alle ~3.8s wechseln
-        setInterval(step, 3800);
+        async function step(){
+          if (busy) return;
+          if (Date.now() < pausedUntil) return;
+          if (document.hidden) return;
+
+          busy = true;
+          const nextIndex = (i + 1) % list.length;
+          const nextSrc = list[nextIndex];
+
+          // Fade out
+          img.classList.add("is-fading");
+
+          // Preload während/kurz nach Fade-Out
+          await new Promise(r => setTimeout(r, FADE_OUT_MS));
+          await preload(nextSrc);
+
+          // Swap
+          img.src = nextSrc;
+          i = nextIndex;
+
+          // Fade in (next frame)
+          setTimeout(() => {
+            img.classList.remove("is-fading");
+            busy = false;
+          }, AFTER_SWAP_MS);
+        }
+
+        setInterval(step, INTERVAL_MS);
       });
     })();
   </script>
