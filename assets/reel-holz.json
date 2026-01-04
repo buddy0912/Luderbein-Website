@@ -18,5 +18,11 @@
     "src": "/assets/reel/reel-12.jpg",
     "alt": "Holz – Beispiel 12",
     "cap": "Holz – Beispiel"
+  },
+  {
+    "src": "/assets/schwibbogen/schwibbogen-01.jpg",
+    "alt": "Schwibbogen ES - 400mm - beleuchtet - 3 Wände - Sockel - NFC",
+    "cap": "Schwibbogen Epidemic Scorn",
+    "tag": "Schwibbogen"
   }
 ]
