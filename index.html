@@ -10,15 +10,113 @@
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
-    /* Start: klickbare Thumbs ohne Layout-Bruch */
+    /* =========================================================
+       START – FEED Reel (wie bei Schiefer/Acryl/Custom)
+       ========================================================= */
+    .reelwrap { position: relative; margin-top: 10px; }
+    .reelwrap::before, .reelwrap::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 34px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: .85;
+    }
+    .reelwrap::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reelwrap::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+
+    .reel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 10px 6px 18px;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 10px;
+      scroll-padding-right: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .reel__item {
+      flex: 0 0 clamp(260px, 72vw, 440px);
+      scroll-snap-align: start;
+      border-radius: 18px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      color: inherit;
+      margin: 0;
+      position: relative;
+      text-decoration: none;
+      transform: translateZ(0);
+    }
+
+    .reel__tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      user-select: none;
+    }
+
+    .reel__img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      height: auto;
+      object-fit: cover;
+      filter: saturate(1.03) contrast(1.02);
+    }
+
+    .reel__cap {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 12px 12px 12px;
+      color: rgba(255,255,255,.92);
+      font-size: .95rem;
+      line-height: 1.3;
+      background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+    }
+
+    @media (hover:hover) and (pointer:fine) {
+      .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
+    }
+
+    /* =========================================================
+       START – Preview-Kacheln: Bild klickbar + Smooth Fade
+       ========================================================= */
     .thumb a { display:block; width:100%; height:100%; color:inherit; text-decoration:none; }
     .thumb { position: relative; overflow: hidden; }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-
-    /* Optional: leichte Smoothness beim Image-Swap, falls du später rotierst */
-    .thumbslider { position: relative; display:block; width:100%; height:100%; }
-    .thumbslider img { position:absolute; inset:0; transition: opacity .55s ease; }
-    .thumbslider img:first-child { position:absolute; inset:0; }
+    .thumbslider { position: relative; width:100%; height:100%; display:block; }
+    .thumbslider img {
+      position: absolute;
+      inset: 0;
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      opacity: 0;
+      transition: opacity .65s ease;
+    }
+    .thumbslider img.is-on { opacity: 1; }
   </style>
 </head>
 
@@ -98,10 +196,11 @@
     </div>
   </section>
 
+  <!-- Werkstatt Feed -->
   <section class="section" aria-label="Werkstatt Feed">
     <div class="section-head">
       <h2>Werkstatt</h2>
-      <p class="small muted">Einblicke & Beispiele – wächst laufend.</p>
+      <p class="small muted">Einblicke &amp; Beispiele – wächst laufend.</p>
     </div>
 
     <div class="reelwrap">
@@ -114,10 +213,15 @@
         data-reel-default-tag="Werkstatt"
       ></div>
     </div>
+
+    <p class="small muted" style="margin-top:10px;">
+      Falls leer: JSON/Case prüfen (reel-werkstatt.json).
+    </p>
   </section>
 
   <div class="hr"></div>
 
+  <!-- Leistungen Preview -->
   <section class="section" aria-label="Leistungen Preview">
     <div class="section-head">
       <h2>Leistungen</h2>
@@ -129,9 +233,9 @@
       <article class="productcard">
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
-            <span class="thumbslider" style="display:block; width:100%; height:100%;">
-              <img src="/assets/reel/reel-02.jpg" alt="Schiefer Beispiel" loading="lazy" style="opacity:1;">
-              <img src="/assets/reel/reel-03.jpg" alt="Schiefer Beispiel" loading="lazy" style="opacity:0;">
+            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+              <img class="is-on" src="/assets/reel/reel-02.jpg" alt="Schiefer Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-03.jpg" alt="Schiefer Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Schiefer</span>
           </a>
@@ -149,9 +253,9 @@
       <article class="productcard">
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/metall/" aria-label="Metall ansehen">
-            <span class="thumbslider" style="display:block; width:100%; height:100%;">
-              <img src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel" loading="lazy" style="opacity:1;">
-              <img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel" loading="lazy" style="opacity:0;">
+            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+              <img class="is-on" src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel" loading="lazy">
+              <img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Metall</span>
           </a>
@@ -169,9 +273,9 @@
       <article class="productcard">
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/holz/" aria-label="Holz ansehen">
-            <span class="thumbslider" style="display:block; width:100%; height:100%;">
-              <img src="/assets/reel/reel-07.jpg" alt="Holz Beispiel" loading="lazy" style="opacity:1;">
-              <img src="/assets/reel/reel-12.jpg" alt="Holz Beispiel" loading="lazy" style="opacity:0;">
+            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+              <img class="is-on" src="/assets/reel/reel-07.jpg" alt="Holz Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-12.jpg" alt="Holz Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Holz</span>
           </a>
@@ -189,9 +293,8 @@
       <article class="productcard">
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/acryl/" aria-label="Acryl ansehen">
-            <span class="thumbslider" style="display:block; width:100%; height:100%;">
-              <img src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy" style="opacity:1;">
-              <img src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy" style="opacity:0;">
+            <span class="thumbslider" data-rotate="0" style="width:100%; height:100%;">
+              <img class="is-on" src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Acryl</span>
           </a>
@@ -224,6 +327,34 @@
 <script>
   const y = document.getElementById("y");
   if (y) y.textContent = new Date().getFullYear();
+
+  // Smooth Thumb-Fade (nur Preview-Kacheln)
+  (function () {
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    const sliders = Array.from(document.querySelectorAll(".thumbslider[data-rotate='1']"));
+    if (!sliders.length) return;
+
+    sliders.forEach((s, idx) => {
+      const imgs = Array.from(s.querySelectorAll("img"));
+      if (imgs.length < 2) return;
+
+      let i = 0;
+      imgs.forEach((img, k) => img.classList.toggle("is-on", k === 0));
+
+      const interval = 3200;
+      const startDelay = 400 + (idx * 180); // leicht versetzt, wirkt ruhiger
+
+      setTimeout(() => {
+        setInterval(() => {
+          imgs[i].classList.remove("is-on");
+          i = (i + 1) % imgs.length;
+          imgs[i].classList.add("is-on");
+        }, interval);
+      }, startDelay);
+    });
+  })();
 </script>
 </body>
 </html>
