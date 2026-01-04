@@ -224,7 +224,7 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
-              src="/assets/metall/metall-reel-03.jpg"
+              src="/assets/metall/metall-reel-04.jpg"
               alt="Metall – Hundemarken / Tags Beispiel"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
@@ -245,7 +245,7 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
-              src="/assets/metall/metall-reel-08.jpg"
+              src="/assets/metall/metall-reel-12.jpg"
               alt="Metall – Schilder / Plaketten Beispiel"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
@@ -262,11 +262,12 @@
           </div>
         </article>
 
-        <!-- SCHLÜSSELANHÄNGER -->
+        <!-- SCHLÜSSELANHÄNGER (2er Preview Switch) -->
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
-              src="/assets/metall/metall-reel-05.jpg"
+              src="/assets/metall/metall-reel-01.jpg"
+              data-rot-srcs="/assets/metall/metall-reel-01.jpg|/assets/metall/metall-reel-06.jpg"
               alt="Metall – Schlüsselanhänger Beispiel"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
@@ -287,7 +288,7 @@
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
-              src="/assets/metall/metall-reel-10.jpg"
+              src="/assets/metall/metall-reel-09.jpg"
               alt="Metall – Visitenkarten / Business Beispiel"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
@@ -304,11 +305,12 @@
           </div>
         </article>
 
-        <!-- SCHMUCK / ANHÄNGER -->
+        <!-- SCHMUCK / ANHÄNGER (5er Preview Switch) -->
         <article class="productcard">
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
-              src="/assets/metall/metall-reel-12.jpg"
+              src="/assets/metall/metall-reel-08.jpg"
+              data-rot-srcs="/assets/metall/metall-reel-08.jpg|/assets/metall/metall-reel-04.jpg|/assets/metall/metall-reel-05.jpg|/assets/metall/metall-reel-14.jpg|/assets/metall/metall-reel-13.jpg"
               alt="Metall – Schmuck / Anhänger Beispiel"
               loading="lazy"
               style="width:100%; height:100%; object-fit:cover; display:block;"
@@ -358,6 +360,7 @@
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
 
+    // Reel slider buttons + autoplay (bestehend)
     (function(){
       const track = document.getElementById("metalTrack");
       if (!track) return;
@@ -403,6 +406,44 @@
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) { clearInterval(timer); timer = null; }
         else if (!timer) timer = setInterval(tick, AUTOPLAY_MS);
+      });
+    })();
+
+    // Mini-rotator für Produkt-Kacheln (nur Metall-Seite)
+    (function(){
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
+      const imgs = Array.from(document.querySelectorAll('img[data-rot-srcs]'));
+      if (!imgs.length) return;
+
+      function parseList(v){
+        return String(v || "")
+          .split("|")
+          .map(s => s.trim())
+          .filter(Boolean);
+      }
+
+      imgs.forEach(img => {
+        const list = parseList(img.getAttribute("data-rot-srcs"));
+        if (list.length < 2) return;
+
+        let i = 0;
+        let pausedUntil = 0;
+
+        const step = () => {
+          if (Date.now() < pausedUntil) return;
+          i = (i + 1) % list.length;
+          img.src = list[i];
+        };
+
+        // Pause on hover / touch (damit nicht nervt)
+        const pause = (ms) => pausedUntil = Date.now() + ms;
+        img.addEventListener("mouseenter", () => pause(2500), { passive:true });
+        img.addEventListener("touchstart", () => pause(2500), { passive:true });
+
+        // Alle ~3.8s wechseln
+        setInterval(step, 3800);
       });
     })();
   </script>
