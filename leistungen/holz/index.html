@@ -28,7 +28,6 @@
       right: 0;
       background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
     }
-
     .reel {
       display: flex;
       gap: 14px;
@@ -39,7 +38,6 @@
       scroll-padding-right: 10px;
       -webkit-overflow-scrolling: touch;
     }
-
     .reel__item {
       flex: 0 0 clamp(260px, 72vw, 440px);
       scroll-snap-align: start;
@@ -54,7 +52,6 @@
       text-decoration: none;
       transform: translateZ(0);
     }
-
     .reel__tag {
       position: absolute;
       top: 12px;
@@ -72,7 +69,6 @@
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
       user-select: none;
     }
-
     .reel__img {
       display: block;
       width: 100%;
@@ -81,7 +77,6 @@
       object-fit: cover;
       filter: saturate(1.03) contrast(1.02);
     }
-
     .reel__cap {
       position: absolute;
       left: 0; right: 0; bottom: 0;
@@ -92,7 +87,6 @@
       background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
     }
-
     @media (hover:hover) and (pointer:fine) {
       .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
     }
@@ -181,12 +175,42 @@
 
     <div class="hr"></div>
 
-    <section class="section">
-      <h2>Was geht gut?</h2>
-      <div class="grid">
-        <div class="card"><h3>Schilder</h3><p>Werkstatt, Hausnummer, Hinweis, QR – sauber lesbar, cleanes Layout.</p></div>
-        <div class="card"><h3>Deko</h3><p>Personalisierte Stücke, Sprüche, kleine Serien – nicht von der Stange.</p></div>
-        <div class="card"><h3>Größe</h3><p>Von klein bis groß – sag Einsatz & Maße, dann sag ich dir, was sinnvoll ist.</p></div>
+    <section class="section" aria-label="Holz Varianten">
+      <div class="section-head">
+        <h2>Varianten</h2>
+        <p class="small muted">V1 – Beispiele wachsen mit der Zeit, Anfrage ist schon live.</p>
+      </div>
+
+      <div class="products">
+        <article class="productcard">
+          <div class="thumb"><span class="thumblabel">Schilder</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Werkstatt / Haus / QR</span></div>
+          <h3>Schilder</h3>
+          <p class="kicker">Sauber lesbar, gutes Layout, nicht „Baumarkt-Style“.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Holz&amp;v=Schilder">Anfragen</a>
+          </div>
+        </article>
+
+        <article class="productcard">
+          <div class="thumb"><span class="thumblabel">Deko</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Personalisierung</span></div>
+          <h3>Deko</h3>
+          <p class="kicker">Spruch, Motiv, Name – clean, frech, aber nicht billig.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Holz&amp;v=Deko">Anfragen</a>
+          </div>
+        </article>
+
+        <article class="productcard">
+          <div class="thumb"><span class="thumblabel">Serie</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>kleine Serien</span></div>
+          <h3>Kleine Serien</h3>
+          <p class="kicker">Wenn’s mehr als 1 ist: konsistent, sauber, gleichmäßig.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Holz&amp;v=Serie">Anfragen</a>
+          </div>
+        </article>
       </div>
 
       <div class="cta" style="margin-top:16px;">
