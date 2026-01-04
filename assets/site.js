@@ -4,8 +4,7 @@
 // - Active Menu Marker
 // - Kontakt: Anfrage-Builder (CTA-Autofill + Click-Flow)
 // - PATCH: Prefill-Aliase (z.B. ?p=Acryl-Schilder -> Acryl)
-// - PATCH: NAV-SAFETY (Top-Navigation + Leistungen-Dropdown absichern)
-// - PATCH: NAV-SAFETY remove label-duplicates (z.B. alter "Acryl"-Link nach Separator)
+// - PATCH: NAV-SAFETY (Dropdown-Links siteweit reparieren)
 // =========================================================
 (function () {
   "use strict";
@@ -30,10 +29,10 @@
     }
 
     // ---------------------------------
-    // NAV: Safety-Net (Links & Reihenfolge)
-    // -> verhindert "Acryl fehlt" usw.
+    // NAV-SAFETY: veraltete Dropdown-Links fixen
+    // (damit "Custom" nicht mehr nach /kontakt/ springt)
     // ---------------------------------
-    initNavSafety();
+    navSafetyFixLinks();
 
     // ---------------------------------
     // NAV: aktiven Menüpunkt markieren
@@ -53,219 +52,49 @@
   });
 
   // =========================================================
-  // NAV – Safety: Top-Links + Leistungen Dropdown absichern
+  // NAV-SAFETY – fix outdated hrefs sitewide
   // =========================================================
-  function initNavSafety() {
-    const navs = Array.from(document.querySelectorAll("nav.menu"));
-    if (!navs.length) return;
+  function navSafetyFixLinks() {
+    // Zielpfade (einheitlich)
+    const TARGET = {
+      custom: "/leistungen/custom/",
+      acryl: "/leistungen/acryl/",
+    };
 
-    navs.forEach((nav) => {
-      // 1) Top-Navigation absichern (Start, Leistungen, Über, Kontakt, Impressum)
-      normalizeTopNav(nav);
+    // Normalisiert nur leicht (wir vergleichen hauptsächlich "startsWith/contains")
+    function norm(h) {
+      return (h || "").toString().trim();
+    }
 
-      // 2) Leistungen Panel absichern (Schiefer/Metall/Holz/Acryl/Custom + Kalkulator/Downloads)
-      normalizeLeistungenPanel(nav);
+    const as = document.querySelectorAll("nav.menu a[href]");
+    as.forEach((a) => {
+      const raw = norm(a.getAttribute("href"));
+      if (!raw) return;
+
+      // 1) Custom: alte Links -> neue Seite
+      // - /kontakt/?p=Custom (alt)
+      // - /kontakt/?p=Costum (Vertipper)
+      // - /leistungen/costum/ (Vertipper)
+      if (raw.startsWith("/kontakt/") && raw.includes("p=Custom")) {
+        a.setAttribute("href", TARGET.custom);
+        return;
+      }
+      if (raw.startsWith("/kontakt/") && raw.includes("p=Costum")) {
+        a.setAttribute("href", TARGET.custom);
+        return;
+      }
+      if (raw.startsWith("/leistungen/") && raw.toLowerCase().includes("/costum")) {
+        a.setAttribute("href", TARGET.custom);
+        return;
+      }
+
+      // 2) Acryl: alte URL-Variante -> neue Seite
+      // - /leistungen/acryl-schilder/ (alt)
+      if (raw.startsWith("/leistungen/") && raw.toLowerCase().includes("/acryl-schilder")) {
+        a.setAttribute("href", TARGET.acryl);
+        return;
+      }
     });
-
-    // ----------------------------
-    // Helpers
-    // ----------------------------
-    function canonicalHref(raw) {
-      const h = (raw || "").toString().trim();
-      if (!h) return "";
-      if (h.startsWith("#")) return h;
-
-      try {
-        const u = new URL(h, window.location.origin);
-        let p = (u.pathname || "").replace(/index\.html$/, "");
-        const hasExt = /\.[a-z0-9]+$/i.test(p);
-
-        if (p === "") p = "/";
-        // trailing slash nur für "Ordnerpfade"
-        if (!hasExt && p !== "/" && !p.endsWith("/")) p += "/";
-
-        return p + (u.search || "");
-      } catch {
-        return h;
-      }
-    }
-
-    function findLinkIn(container, href) {
-      const target = canonicalHref(href);
-      const as = Array.from(container.querySelectorAll('a[href]'));
-      return as.find((a) => canonicalHref(a.getAttribute("href")) === target) || null;
-    }
-
-    function createLink(text, href) {
-      const a = document.createElement("a");
-      a.setAttribute("href", href);
-      a.textContent = text;
-      return a;
-    }
-
-    function normLabel(s) {
-      return (s || "")
-        .toString()
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, " ");
-    }
-
-    function normalizeTopNav(nav) {
-      const start = findLinkIn(nav, "/") || createLink("Start", "/");
-
-      // Leistungen: bevorzugt Dropdown-Block, sonst Link /leistungen/
-      const drop = nav.querySelector(".navdrop");
-      const leistungen =
-        drop ||
-        findLinkIn(nav, "/leistungen/") ||
-        createLink("Leistungen", "/leistungen/");
-
-      const ueber = findLinkIn(nav, "/ueber/") || createLink("Über", "/ueber/");
-      const kontakt =
-        findLinkIn(nav, "/kontakt/") || createLink("Kontakt", "/kontakt/");
-      const impressum =
-        findLinkIn(nav, "/rechtliches/impressum.html") ||
-        createLink("Impressum", "/rechtliches/impressum.html");
-
-      const keep = new Set([start, leistungen, ueber, kontakt, impressum]);
-
-      // alles andere am Ende behalten
-      const extras = Array.from(nav.childNodes).filter((n) => !keep.has(n));
-
-      const frag = document.createDocumentFragment();
-      frag.appendChild(start);
-      frag.appendChild(leistungen);
-      frag.appendChild(ueber);
-      frag.appendChild(kontakt);
-      frag.appendChild(impressum);
-
-      extras.forEach((n) => frag.appendChild(n));
-      nav.innerHTML = "";
-      nav.appendChild(frag);
-    }
-
-    function normalizeLeistungenPanel(nav) {
-      const drop = nav.querySelector(".navdrop");
-      if (!drop) return;
-
-      const panel = drop.querySelector(".navdrop__panel");
-      if (!panel) return;
-
-      // Soll-Struktur
-      const SPEC = [
-        { type: "a", href: "/leistungen/schiefer/", text: "Schiefer" },
-        { type: "a", href: "/leistungen/metall/", text: "Metall" },
-        { type: "a", href: "/leistungen/holz/", text: "Holz" },
-        { type: "a", href: "/leistungen/acryl/", text: "Acryl" },
-        { type: "a", href: "/kontakt/?p=Custom", text: "Custom" },
-        { type: "sep" },
-        { type: "a", href: "/tools/kalkulator/", text: "Kalkulator" },
-        { type: "a", href: "/service/", text: "Downloads" },
-      ];
-
-      // Labels, die NICHT nochmal als "extra" auftauchen dürfen
-      const PROTECTED_LABELS = new Set(
-        [
-          "schiefer",
-          "metall",
-          "holz",
-          "acryl",
-          "custom",
-          "costum", // falls irgendwo falsch geschrieben
-          "kalkulator",
-          "downloads",
-        ].map(normLabel)
-      );
-
-      // vorhandene Links einsammeln + Duplikate killen (nach canonical href)
-      const existingAnchors = Array.from(panel.querySelectorAll('a[href]'));
-      const firstByHref = new Map();
-      const dupes = [];
-
-      existingAnchors.forEach((a) => {
-        const key = canonicalHref(a.getAttribute("href"));
-        if (!key) return;
-        if (!firstByHref.has(key)) firstByHref.set(key, a);
-        else dupes.push(a);
-      });
-
-      dupes.forEach((a) => a.remove());
-
-      // Separator: wenn einer existiert, den ersten nehmen
-      let existingSep = panel.querySelector(".navdrop__sep");
-      if (existingSep) {
-        const seps = Array.from(panel.querySelectorAll(".navdrop__sep"));
-        seps.slice(1).forEach((s) => s.remove());
-        existingSep = seps[0];
-      }
-
-      // neue Reihenfolge bauen, vorhandene wiederverwenden
-      const used = new Set();
-      const ordered = [];
-
-      SPEC.forEach((item) => {
-        if (item.type === "sep") {
-          const sep = existingSep || document.createElement("div");
-          sep.className = "navdrop__sep";
-          sep.setAttribute("aria-hidden", "true");
-          ordered.push(sep);
-          used.add(sep);
-          existingSep = sep;
-          return;
-        }
-
-        const key = canonicalHref(item.href);
-        let a = firstByHref.get(key);
-
-        if (!a) {
-          a = createLink(item.text, item.href);
-          a.setAttribute("role", "menuitem");
-        } else {
-          if (!a.getAttribute("role")) a.setAttribute("role", "menuitem");
-        }
-
-        ordered.push(a);
-        used.add(a);
-      });
-
-      // extras (nicht in SPEC) hinten dran lassen,
-      // ABER: keine Links, deren Label bereits zu den Kernpunkten gehört
-      const extras = Array.from(panel.childNodes).filter((n) => {
-        if (used.has(n)) return false;
-
-        // Textnodes nur behalten, wenn sie nicht nur whitespace sind
-        if (n.nodeType === Node.TEXT_NODE) {
-          return (n.textContent || "").trim().length > 0;
-        }
-
-        // Element nodes
-        if (n.nodeType === Node.ELEMENT_NODE) {
-          const el = /** @type {HTMLElement} */ (n);
-
-          // Separator doppelt? weg
-          if (el.classList && el.classList.contains("navdrop__sep")) return false;
-
-          // Wenn Link und Label ist "protected" -> weg (das war dein extra Acryl)
-          if (el.tagName === "A") {
-            const lbl = normLabel(el.textContent || "");
-            if (PROTECTED_LABELS.has(lbl)) return false;
-          }
-        }
-
-        return true;
-      });
-
-      // panel rebuild
-      const frag = document.createDocumentFragment();
-      ordered.forEach((n) => frag.appendChild(n));
-      extras.forEach((n) => frag.appendChild(n));
-
-      panel.innerHTML = "";
-      panel.appendChild(frag);
-
-      if (!panel.getAttribute("role")) panel.setAttribute("role", "menu");
-    }
   }
 
   // =========================================================
@@ -334,14 +163,19 @@
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
+
+      // ✅ Acryl (wie im HTML value="Acryl")
       Acryl: {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
+
+      // ✅ Alias bleibt drin (für interne Kompatibilität), wird aber über resolveMaterialName() sauber gemappt
       "Acryl-Schilder": {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
+
       Custom: {
         variants: [{ value: "Sonderwunsch", label: "Sonderwunsch" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
@@ -358,8 +192,10 @@
     const preFmt = safeText(params.get("f"));
     const preNote = safeText(params.get("note"));
 
+    // Note prefill
     if (els.note && preNote) els.note.value = preNote;
 
+    // Chip-Styles (ohne :has) – kompatibel
     function updateChipClasses() {
       els.mats.forEach((r) => {
         const lab = r.closest(".chip");
@@ -367,6 +203,7 @@
       });
     }
 
+    // Material preselect (wenn bekannt)
     if (preMat) {
       const hit = els.mats.find((i) => i.value === preMat);
       if (hit) {
@@ -378,12 +215,14 @@
       }
     }
 
+    // Listener
     els.mats.forEach((radio) => {
       radio.addEventListener("change", () => {
         if (!radio.checked) return;
         showSteps();
         populateVariantAndFormat(radio.value);
         updateChipClasses();
+        // Wenn der User bewusst umstellt: Prefill löschen (sonst "Ghost")
         clearCustomFields();
         updateLinks();
       });
@@ -412,9 +251,13 @@
 
     els.note?.addEventListener("input", updateLinks);
 
+    // Initial render
     updateChipClasses();
     updateLinks();
 
+    // ---------------------------------
+    // Helpers
+    // ---------------------------------
     function showSteps() {
       if (els.steps) els.steps.hidden = false;
     }
