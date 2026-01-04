@@ -103,6 +103,106 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+
+    /* ======================================
+       Custom – Variant Cards (mit Preview-Bild)
+       ====================================== */
+    .variantGrid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .variantCard {
+      grid-column: span 12;
+      border-radius: 18px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.62);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    .variantThumb {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+    .variantThumb img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: saturate(1.02) contrast(1.02);
+    }
+    .variantTag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 2;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      user-select: none;
+      pointer-events: none;
+    }
+    .variantSoon {
+      position: absolute;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      z-index: 2;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: .82rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      user-select: none;
+      pointer-events: none;
+      max-width: calc(100% - 28px);
+      text-align: center;
+      white-space: normal;
+    }
+
+    .variantBody {
+      padding: 14px;
+    }
+    .variantBody h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+    }
+    .variantBody p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.45;
+    }
+    .variantActions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    @media (min-width: 760px) {
+      .variantCard { grid-column: span 6; }
+    }
+    @media (min-width: 980px) {
+      .variantCard { grid-column: span 4; }
+    }
   </style>
 </head>
 
@@ -153,7 +253,7 @@
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <a href="/leistungen/custom/" role="menuitem" aria-current="page">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
             <a href="/service/" role="menuitem">Downloads</a>
@@ -174,7 +274,7 @@
       <p class="lead">Sonderwunsch? Mischmaterial? “Gibt’s nicht” als Startpunkt? Passt. Ich sag dir schnell, ob’s machbar ist.</p>
 
       <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Custom">Anfragen</a>
+        <a class="btn primary" href="/kontakt/?p=Custom">Custom anfragen</a>
       </div>
 
       <p class="small muted" style="margin-top:.75rem;">
@@ -198,10 +298,109 @@
           data-reel-default-tag="Custom"
         ></div>
       </div>
+    </section>
 
-      <p class="small muted" style="margin-top:10px;">
-        Reel konnte nicht geladen werden (JSON/Case prüfen).
-      </p>
+    <section class="section" aria-label="Custom-Varianten">
+      <div class="sectionHead">
+        <h2>Wofür Custom?</h2>
+      </div>
+      <p class="muted">Wähl grob die Richtung. Den Rest ziehen wir schnell gerade.</p>
+
+      <div class="variantGrid">
+        <!-- Lampenbau -->
+        <article class="variantCard">
+          <div class="variantThumb">
+            <span class="variantTag">Lampenbau</span>
+            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
+          <div class="variantBody">
+            <h3>Lampenbau</h3>
+            <p>Individuelle Lampen / Teile / Gravur + Cut. Wenn’s leuchtet, darf’s auch Haltung haben.</p>
+            <div class="variantActions">
+              <a class="btn primary" href="/kontakt/?p=Custom&v=Lampenbau">Anfragen</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Schwibbögen (Teaser) -->
+        <article class="variantCard">
+          <div class="variantThumb">
+            <span class="variantTag">Schwibbögen</span>
+            <span class="variantSoon" aria-hidden="true">Kommt als großer Bereich</span>
+          </div>
+          <div class="variantBody">
+            <h3>Schwibbögen (Teaser)</h3>
+            <p>Schon jetzt möglich: Sonderwünsche, Namen, Motive, Anpassungen – bevor der große Reiter live ist.</p>
+            <div class="variantActions">
+              <a class="btn primary" href="/kontakt/?p=Custom&v=Schwibbogen">Anfragen</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sonderholzschnitt -->
+        <article class="variantCard">
+          <div class="variantThumb">
+            <span class="variantTag">Holz (dick)</span>
+            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
+          <div class="variantBody">
+            <h3>Sonderholzschnitt bis 35 mm</h3>
+            <p>Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile.</p>
+            <div class="variantActions">
+              <a class="btn primary" href="/kontakt/?p=Custom&v=Sonderholzschnitt%2035mm">Anfragen</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Schmuck -->
+        <article class="variantCard">
+          <div class="variantThumb">
+            <span class="variantTag">Schmuck</span>
+            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
+          <div class="variantBody">
+            <h3>Schmuck / Kleinzeug</h3>
+            <p>Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig.</p>
+            <div class="variantActions">
+              <a class="btn primary" href="/kontakt/?p=Custom&v=Schmuck">Anfragen</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Mischmaterial -->
+        <article class="variantCard">
+          <div class="variantThumb">
+            <span class="variantTag">Mischmaterial</span>
+            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
+          <div class="variantBody">
+            <h3>Mischmaterial / Sonderkombi</h3>
+            <p>Holz + Metall, Acryl + Gravur, Layer, Schraubkram – wenn’s ungewöhnlich wird, passt’s hier rein.</p>
+            <div class="variantActions">
+              <a class="btn primary" href="/kontakt/?p=Custom&v=Mischmaterial">Anfragen</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Freie Idee -->
+        <article class="variantCard">
+          <div class="variantThumb">
+            <span class="variantTag">Freie Idee</span>
+            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          </div>
+          <div class="variantBody">
+            <h3>Freie Idee</h3>
+            <p>Du hast nur “so ungefähr” im Kopf? Schick’s. Ich mache daraus was Druck-/Laserbares.</p>
+            <div class="variantActions">
+              <a class="btn primary" href="/kontakt/?p=Custom&v=Freie%20Idee">Anfragen</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="cta" style="margin-top:16px;">
+        <a class="btn primary" href="/kontakt/?p=Custom">Custom anfragen</a>
+      </div>
     </section>
 
     <section class="section" aria-label="Custom-Info">
