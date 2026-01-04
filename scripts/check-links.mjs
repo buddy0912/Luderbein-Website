@@ -2,15 +2,37 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-/**
- * ✅ Robust: repoRoot ist IMMER das Repo-Root – egal, aus welchem Working-Dir GitHub Actions startet.
- * Datei liegt in /scripts -> repoRoot = eine Ebene höher.
- */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..");
 
-// --- helpers ---
+// --- NORMALIZER (macht Link-Checks unkaputtbar bei Unicode-Strichen / Zero-Width-Müll) ---
+const DASH_RE = /[\u2010\u2011\u2012\u2013\u2014\u2212]/g; // ‐-‒–—−  -> -
+const ZW_RE = /[\u200B-\u200D\uFEFF]/g; // zero width chars
+
+function normStr(s) {
+  if (s == null) return "";
+  let out = String(s);
+  try {
+    out = out.normalize("NFC");
+  } catch {}
+  out = out.replace(ZW_RE, "");
+  out = out.replace(DASH_RE, "-");
+  return out;
+}
+
+function cleanUrl(u) {
+  let s = normStr((u || "").trim());
+  s = s.split("#")[0].split("?")[0];
+
+  try {
+    s = normStr(decodeURIComponent(s));
+  } catch {
+    // ignore
+  }
+  return s;
+}
+
 function walkFiles(dir) {
   const out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -30,29 +52,8 @@ function read(file) {
 }
 
 function existsRel(relPath) {
-  return fs.existsSync(path.join(repoRoot, relPath));
-}
-
-// Normalisierung nur fürs Parsen/Resolve (nicht fürs echte Dateisystem)
-function cleanUrl(u) {
-  let s = (u || "").trim();
-  s = s.split("#")[0].split("?")[0];
-
-  // decode (falls %20 etc.)
-  try {
-    s = decodeURIComponent(s);
-  } catch {
-    // ignore
-  }
-
-  // NFC normalize (Umlaute etc.)
-  try {
-    s = s.normalize("NFC");
-  } catch {
-    // ignore
-  }
-
-  return s;
+  const p = normStr(relPath);
+  return fs.existsSync(path.join(repoRoot, p));
 }
 
 /**
@@ -61,7 +62,7 @@ function cleanUrl(u) {
  * If matched, returns { actualRel, hasCaseMismatch }.
  */
 function findCaseInsensitiveMatch(relPath) {
-  const parts = relPath.split("/").filter(Boolean);
+  const parts = normStr(relPath).split("/").filter(Boolean);
   let curAbs = repoRoot;
   const actualParts = [];
   let hasCaseMismatch = false;
@@ -74,7 +75,8 @@ function findCaseInsensitiveMatch(relPath) {
       return null;
     }
 
-    const match = entries.find((e) => e.name.toLowerCase() === part.toLowerCase());
+    const partLower = part.toLowerCase();
+    const match = entries.find((e) => normStr(e.name).toLowerCase() === partLower);
     if (!match) return null;
 
     if (match.name !== part) hasCaseMismatch = true;
@@ -91,7 +93,6 @@ function findCaseInsensitiveMatch(relPath) {
 
 /**
  * Resolve an internal absolute URL ("/...") to a repo-relative target file path.
- * Also supports "directory without trailing slash" by checking .../index.html as fallback.
  */
 function resolveInternal(url) {
   const clean = cleanUrl(url);
@@ -110,13 +111,10 @@ function resolveInternal(url) {
   return { url: clean, target, fallbackTarget };
 }
 
-/**
- * Detect case-insensitive collisions in the repo (two paths differ only by case).
- */
 function detectCaseCollisions(allRelFiles) {
-  const map = new Map(); // lower -> [actual...]
+  const map = new Map();
   for (const p of allRelFiles) {
-    const k = p.toLowerCase();
+    const k = normStr(p).toLowerCase();
     if (!map.has(k)) map.set(k, []);
     map.get(k).push(p);
   }
@@ -128,22 +126,18 @@ function detectCaseCollisions(allRelFiles) {
   return collisions;
 }
 
-/**
- * Process a single internal URL and record missing/case-mismatch/warnings.
- */
 function checkOneTarget({ fromFile, url, kind }, state) {
   if (!url) return;
 
-  // Ignore protocol-relative or external
-  if (url.startsWith("//")) return;
-  if (!url.startsWith("/")) return;
+  const u = cleanUrl(url);
 
-  const { target, fallbackTarget } = resolveInternal(url);
+  if (u.startsWith("//")) return;
+  if (!u.startsWith("/")) return;
 
-  // 1) exact match exists
+  const { target, fallbackTarget } = resolveInternal(u);
+
   if (existsRel(target)) return;
 
-  // 2) case-insensitive match exists but case mismatch -> fail
   const ci = findCaseInsensitiveMatch(target);
   if (ci && ci.actualRel && ci.hasCaseMismatch) {
     state.caseMismatch.push({
@@ -156,7 +150,6 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     return;
   }
 
-  // 3) /dir (no slash) but /dir/index.html exists -> warning
   if (fallbackTarget && existsRel(fallbackTarget)) {
     state.trailingSlashWarnings.push({
       from: fromFile,
@@ -168,7 +161,6 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     return;
   }
 
-  // 4) case-insensitive match for fallback target
   if (fallbackTarget) {
     const ciFallback = findCaseInsensitiveMatch(fallbackTarget);
     if (ciFallback && ciFallback.actualRel && ciFallback.hasCaseMismatch) {
@@ -183,7 +175,6 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     }
   }
 
-  // 5) missing
   state.missing.push({
     from: fromFile,
     kind,
@@ -202,10 +193,7 @@ const allFilesRel = allFilesAbs.map((f) => path.relative(repoRoot, f).replaceAll
 const collisions = detectCaseCollisions(allFilesRel);
 const htmlFiles = allFilesAbs.filter((f) => f.endsWith(".html"));
 
-// Match internal absolute URLs: href="/..." or src="/..."
 const urlRegex = /\b(?:href|src)\s*=\s*["'](\/[^"']+)["']/gi;
-
-// Match internal reel JSON sources: data-reel-src="/assets/..."
 const dataReelSrcRegex = /\bdata-reel-src\s*=\s*["'](\/[^"']+)["']/gi;
 
 const state = {
@@ -218,7 +206,6 @@ for (const file of htmlFiles) {
   const relFile = path.relative(repoRoot, file).replaceAll("\\", "/");
   const content = read(file);
 
-  // href/src
   {
     let m;
     while ((m = urlRegex.exec(content)) !== null) {
@@ -226,7 +213,6 @@ for (const file of htmlFiles) {
     }
   }
 
-  // data-reel-src
   {
     let m;
     while ((m = dataReelSrcRegex.exec(content)) !== null) {
