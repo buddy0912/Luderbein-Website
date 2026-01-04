@@ -76,6 +76,13 @@
       user-select: none;
     }
     .rb-check input { width: auto; }
+
+    .rb-two { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 760px) {
+      .rb-two { grid-template-columns: 1fr 1fr; }
+    }
+
+    .rb-minihelp { font-size: .9rem; color: var(--muted); margin-top: 6px; }
   </style>
 </head>
 
@@ -125,27 +132,49 @@
     <section class="hero">
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
-      <p class="lead">Einträge für <code>assets/reel-*.json</code> erstellen – inkl. optionalem <code>tag</code> (Badge).</p>
-      <div class="rb-hint">Tag ist optional. Leer lassen = kein Badge (oder Default-Tag auf der Seite greift).</div>
+      <p class="lead">
+        Einträge für <code>/assets/reel-*.json</code> erstellen – sicherer Workflow mit Dropdowns (Ordner + Ziel-JSON).
+      </p>
+      <div class="rb-hint">
+        Wichtig: Der Button erweitert immer die JSON im Feld „Bestehende JSON“. Also: erst laden → dann hinzufügen → komplette JSON kopieren.
+      </div>
     </section>
 
     <div class="rb-grid">
       <section class="rb-card" aria-label="Neuen Reel-Eintrag erstellen">
         <h2>Neuen Reel-Eintrag erstellen</h2>
 
+        <div class="rb-two">
+          <div class="rb-row" style="margin-top:0;">
+            <label for="srcFolder">Bild-Ordner (Dropdown)</label>
+            <select id="srcFolder">
+              <option value="/assets/reel/">/assets/reel/</option>
+              <option value="/assets/schwibbogen/">/assets/schwibbogen/</option>
+              <option value="/assets/metall/">/assets/metall/</option>
+              <option value="/assets/schiefer/gedenktafeln/">/assets/schiefer/gedenktafeln/</option>
+            </select>
+            <div class="rb-minihelp">Du tippst nur noch den Dateinamen (z.B. <code>schwibbogen-01.jpg</code>).</div>
+          </div>
+
+          <div class="rb-row" style="margin-top:0;">
+            <label for="srcFile">Dateiname</label>
+            <input id="srcFile" type="text" placeholder="reel-18.jpg" autocomplete="off" />
+          </div>
+        </div>
+
         <div class="rb-row">
-          <label for="src">Bildpfad (muss mit <code>/assets/</code> beginnen)</label>
-          <input id="src" type="text" placeholder="/assets/werkstatt/01.jpg" autocomplete="off" />
+          <label for="src">Bildpfad (auto gebaut, kann man trotzdem manuell überschreiben)</label>
+          <input id="src" type="text" placeholder="/assets/reel/reel-18.jpg" autocomplete="off" />
         </div>
 
         <div class="rb-row">
           <label for="cap">Caption (kurzer Text)</label>
-          <input id="cap" type="text" placeholder="Einblick aus der Werkstatt" autocomplete="off" />
+          <input id="cap" type="text" placeholder="Schwibbogen – Epidemic Scorn" autocomplete="off" />
         </div>
 
         <div class="rb-row">
           <label for="alt">Alt-Text (kurz beschreiben)</label>
-          <input id="alt" type="text" placeholder="Werkstatt Aufnahme" autocomplete="off" />
+          <input id="alt" type="text" placeholder="Leuchtender Schwibbogen „Epidemic Scorn“ mit warmweißem Licht" autocomplete="off" />
         </div>
 
         <div class="rb-row">
@@ -165,6 +194,7 @@
                 <option value="Versand">Versand</option>
                 <option value="Montage">Montage</option>
                 <option value="Testdruck">Testdruck</option>
+                <option value="Schwibbogen">Schwibbogen</option>
               </select>
             </div>
 
@@ -212,21 +242,35 @@
 
       <section class="rb-card" aria-label="JSON-Liste aktualisieren">
         <h2>JSON-Liste aktualisieren</h2>
-        <p class="rb-hint">Quelle laden (empfohlen) → Eintrag hinzufügen → komplette JSON kopieren.</p>
+        <p class="rb-hint">
+          Workflow: Ziel wählen → <b>JSON aus Quelle laden</b> → Eintrag hinzufügen → komplette JSON kopieren → GitHub-Datei ersetzen.
+        </p>
 
-        <div class="rb-row">
-          <label for="jsonSrc">Quelle (JSON-Datei im Projekt)</label>
-          <input id="jsonSrc" type="text" placeholder="/assets/reel-holz.json" autocomplete="off" />
-          <div class="rb-small">Tipp: <code>/assets/reel-holz.json</code>, <code>/assets/reel-werkstatt.json</code>, <code>/assets/reel-custom.json</code> …</div>
+        <div class="rb-two">
+          <div class="rb-row" style="margin-top:0;">
+            <label for="jsonTarget">Ziel-JSON (Dropdown)</label>
+            <select id="jsonTarget">
+              <option value="/assets/reel-werkstatt.json">/assets/reel-werkstatt.json</option>
+              <option value="/assets/reel-schiefer.json">/assets/reel-schiefer.json</option>
+              <option value="/assets/reel-metall.json">/assets/reel-metall.json</option>
+              <option value="/assets/reel-holz.json" selected>/assets/reel-holz.json</option>
+              <option value="/assets/reel-custom.json">/assets/reel-custom.json</option>
+              <option value="/assets/reel-acryl.json">/assets/reel-acryl.json</option>
+            </select>
+            <div class="rb-minihelp">Genau so wie in deinem Screenshot: die Dateien liegen direkt in <code>/assets/</code>.</div>
+          </div>
+
+          <div class="rb-row" style="margin-top:0;">
+            <label>&nbsp;</label>
+            <div class="rb-actions" style="margin-top:0;">
+              <button class="btn primary" type="button" id="btnLoadJson">JSON aus Quelle laden</button>
+              <button class="btn" type="button" id="btnRememberJson">Zwischenstand merken</button>
+            </div>
+          </div>
         </div>
 
-        <div class="rb-actions">
-          <button class="btn" type="button" id="btnLoadJson">JSON aus Quelle laden</button>
-          <button class="btn" type="button" id="btnUseOutAsBase">Output als Basis übernehmen</button>
-        </div>
-
         <div class="rb-row">
-          <label for="jsonIn">Bestehende JSON (Array) – Basis</label>
+          <label for="jsonIn">Bestehende JSON (Array)</label>
           <textarea id="jsonIn" placeholder='[
   {"src":"/assets/...","alt":"...","cap":"...","tag":"..."}
 ]'></textarea>
@@ -239,6 +283,10 @@
         </div>
 
         <div class="rb-out" id="outJson" aria-label="JSON Gesamt-Output"></div>
+
+        <div class="rb-hint">
+          Wenn du aus Versehen ohne „Laden“ arbeitest: <b>nicht committen</b>. Erst Quelle laden → dann erweitern.
+        </div>
       </section>
     </div>
   </main>
