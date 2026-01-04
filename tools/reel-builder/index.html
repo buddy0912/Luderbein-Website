@@ -113,7 +113,7 @@
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
             <a href="/leistungen/custom/" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -133,10 +133,11 @@
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
       <p class="lead">
-        Einträge für <code>/assets/reel-*.json</code> erstellen – sicherer Workflow mit Dropdowns (Ordner + Ziel-JSON).
+        Einträge für <code>/assets/reel-*.json</code> erstellen – Dropdowns für Ordner + Ziel-JSON + Kategorie-Link (<code>cat</code>).
       </p>
       <div class="rb-hint">
-        Wichtig: Der Button erweitert immer die JSON im Feld „Bestehende JSON“. Also: erst laden → dann hinzufügen → komplette JSON kopieren.
+        <b>Wichtig:</b> Der Builder kann keine Repo-Dateien “direkt” ändern (Browser-Sandbox).
+        Er erzeugt dir die <b>komplette, aktualisierte JSON</b> zum Copy/Paste.
       </div>
     </section>
 
@@ -152,8 +153,11 @@
               <option value="/assets/schwibbogen/">/assets/schwibbogen/</option>
               <option value="/assets/metall/">/assets/metall/</option>
               <option value="/assets/schiefer/gedenktafeln/">/assets/schiefer/gedenktafeln/</option>
+              <option value="/assets/schiefer/">/assets/schiefer/</option>
+              <option value="/assets/holz/">/assets/holz/</option>
+              <option value="/assets/acryl/">/assets/acryl/</option>
             </select>
-            <div class="rb-minihelp">Du tippst nur noch den Dateinamen (z.B. <code>schwibbogen-01.jpg</code>).</div>
+            <div class="rb-minihelp">Du tippst nur noch den Dateinamen (z.B. <code>reel-18.jpg</code>).</div>
           </div>
 
           <div class="rb-row" style="margin-top:0;">
@@ -163,22 +167,39 @@
         </div>
 
         <div class="rb-row">
-          <label for="src">Bildpfad (auto gebaut, kann man trotzdem manuell überschreiben)</label>
+          <label for="src">Bildpfad (auto gebaut)</label>
           <input id="src" type="text" placeholder="/assets/reel/reel-18.jpg" autocomplete="off" />
         </div>
 
         <div class="rb-row">
           <label for="cap">Caption (kurzer Text)</label>
-          <input id="cap" type="text" placeholder="Schwibbogen – Epidemic Scorn" autocomplete="off" />
+          <input id="cap" type="text" placeholder="Epidemic Scorn – Schwibbogen" autocomplete="off" />
         </div>
 
         <div class="rb-row">
           <label for="alt">Alt-Text (kurz beschreiben)</label>
-          <input id="alt" type="text" placeholder="Leuchtender Schwibbogen „Epidemic Scorn“ mit warmweißem Licht" autocomplete="off" />
+          <input id="alt" type="text" placeholder="Leuchtender Schwibbogen mit warmweißem Licht" autocomplete="off" />
+        </div>
+
+        <!-- ✅ NEU: Kategorie-Link -->
+        <div class="rb-row">
+          <label for="cat">Kategorie-Link (optional) – schreibt <code>cat</code></label>
+          <select id="cat">
+            <option value="">– kein Kategorie-Link –</option>
+            <option value="schiefer">Schiefer</option>
+            <option value="metall">Metall</option>
+            <option value="holz">Holz</option>
+            <option value="acryl">Acryl</option>
+            <option value="custom">Custom</option>
+            <option value="schwibbogen">Schwibbögen (vorläufig)</option>
+          </select>
+          <div class="rb-minihelp">
+            Für Werkstattfeed: <code>tag</code> kann z.B. “Finish” sein – <code>cat</code> sorgt fürs Routing zur Leistung.
+          </div>
         </div>
 
         <div class="rb-row">
-          <label>Tag/Badge (optional)</label>
+          <label>Tag/Badge (optional) – schreibt <code>tag</code></label>
 
           <div class="rb-tagGrid">
             <div class="rb-row" style="margin-top:0;">
@@ -253,11 +274,11 @@
               <option value="/assets/reel-werkstatt.json">/assets/reel-werkstatt.json</option>
               <option value="/assets/reel-schiefer.json">/assets/reel-schiefer.json</option>
               <option value="/assets/reel-metall.json">/assets/reel-metall.json</option>
-              <option value="/assets/reel-holz.json" selected>/assets/reel-holz.json</option>
+              <option value="/assets/reel-holz.json">/assets/reel-holz.json</option>
               <option value="/assets/reel-custom.json">/assets/reel-custom.json</option>
               <option value="/assets/reel-acryl.json">/assets/reel-acryl.json</option>
             </select>
-            <div class="rb-minihelp">Genau so wie in deinem Screenshot: die Dateien liegen direkt in <code>/assets/</code>.</div>
+            <div class="rb-minihelp">Dateien liegen direkt in <code>/assets/</code>.</div>
           </div>
 
           <div class="rb-row" style="margin-top:0;">
@@ -272,7 +293,7 @@
         <div class="rb-row">
           <label for="jsonIn">Bestehende JSON (Array)</label>
           <textarea id="jsonIn" placeholder='[
-  {"src":"/assets/...","alt":"...","cap":"...","tag":"..."}
+  {"src":"/assets/...","alt":"...","cap":"...","tag":"...","cat":"..."}
 ]'></textarea>
         </div>
 
