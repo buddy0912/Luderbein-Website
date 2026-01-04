@@ -64,11 +64,34 @@ function findCaseInsensitiveMatch(relPath) {
 }
 
 /**
+ * Normalize an internal absolute URL string.
+ * - strips query/hash
+ * - decodes %20 etc
+ * - normalizes leading slashes (///foo -> /foo)
+ */
+function normalizeInternalUrl(url) {
+  let clean = String(url || "").trim();
+
+  // strip query/hash
+  clean = clean.split("#")[0].split("?")[0];
+
+  // decode %20 etc (safe)
+  try {
+    clean = decodeURIComponent(clean);
+  } catch {}
+
+  // normalize slashes: "///assets/x" -> "/assets/x"
+  clean = clean.replace(/^\/+/, "/");
+
+  return clean;
+}
+
+/**
  * Resolve an internal absolute URL ("/...") to a repo-relative target file path.
  * Also supports "directory without trailing slash" by checking .../index.html as fallback.
  */
 function resolveInternal(url) {
-  const clean = url.split("#")[0].split("?")[0];
+  const clean = normalizeInternalUrl(url);
 
   if (clean === "/") {
     return { url: clean, target: "index.html", fallbackTarget: null };
@@ -130,8 +153,7 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     return;
   }
 
-  // 3) /dir (no slash) but /dir/index.html exists -> warn only (for href/src mainly)
-  // For data-reel-src (JSON), this is harmless and unlikely, but keeping it consistent is OK.
+  // 3) /dir (no slash) but /dir/index.html exists -> warn only
   if (fallbackTarget && existsRel(fallbackTarget)) {
     state.trailingSlashWarnings.push({
       from: fromFile,
@@ -180,7 +202,7 @@ const htmlFiles = allFilesAbs.filter((f) => f.endsWith(".html"));
 // Match only absolute internal URLs: href="/..." or src="/..."
 const urlRegex = /\b(?:href|src)\s*=\s*["'](\/[^"']+)["']/gi;
 
-// NEW: match internal reel JSON sources: data-reel-src="/assets/..."
+// match internal reel JSON sources: data-reel-src="/assets/..."
 const dataReelSrcRegex = /\bdata-reel-src\s*=\s*["'](\/[^"']+)["']/gi;
 
 const state = {
