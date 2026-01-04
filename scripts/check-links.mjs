@@ -30,6 +30,56 @@ function existsRel(relPath) {
 }
 
 /**
+ * --- HARDENING: normalize "weird" dashes and URL encodings ---
+ * iOS / copy-paste can introduce Unicode dashes that LOOK like "-" but are not.
+ * We normalize them so the checker does NOT false-fail.
+ */
+
+// All common dash/minus variants we want to treat as a normal hyphen-minus "-"
+const DASH_REGEX =
+  /[\u2010\u2011\u2012\u2013\u2014\u2212\uFE58\uFE63\uFF0D]/g;
+
+function safeDecodeURIComponent(s) {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+}
+
+/**
+ * Normalize a repo-relative path string:
+ * - decode URL encoding
+ * - Unicode normalize (NFC)
+ * - convert dash variants to "-"
+ * - remove duplicate slashes
+ * - strip leading slash (repo-relative)
+ */
+function normalizeRelPath(p) {
+  if (!p) return p;
+
+  // 1) remove hash/query if accidentally passed
+  let x = String(p).split("#")[0].split("?")[0];
+
+  // 2) decode %xx
+  x = safeDecodeURIComponent(x);
+
+  // 3) unicode normalize
+  x = x.normalize("NFC");
+
+  // 4) normalize "dash" characters
+  x = x.replace(DASH_REGEX, "-");
+
+  // 5) collapse multiple slashes
+  x = x.replace(/\/{2,}/g, "/");
+
+  // 6) repo-relative: strip leading slash
+  x = x.replace(/^\//, "");
+
+  return x;
+}
+
+/**
  * Finds the actual on-disk path by matching each segment case-insensitively.
  * Returns null if no match exists.
  * If matched, returns { actualRel, hasCaseMismatch }.
@@ -64,58 +114,31 @@ function findCaseInsensitiveMatch(relPath) {
 }
 
 /**
- * Normalize an internal absolute URL string.
- * - strips query/hash
- * - decodes %20 etc
- * - normalizes leading slashes (///foo -> /foo)
- * - normalizes “dash variants” (– — - − etc) into simple "-"
- */
-function normalizeInternalUrl(url) {
-  let clean = String(url || "").trim();
-
-  // strip query/hash
-  clean = clean.split("#")[0].split("?")[0];
-
-  // decode %20 etc (safe)
-  try {
-    clean = decodeURIComponent(clean);
-  } catch {}
-
-  // normalize leading slashes: "///assets/x" -> "/assets/x"
-  clean = clean.replace(/^\/+/, "/");
-
-  // ✅ normalize dash variants to "-"
-  clean = clean.replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-");
-
-  return clean;
-}
-
-/**
  * Resolve an internal absolute URL ("/...") to a repo-relative target file path.
  * Also supports "directory without trailing slash" by checking .../index.html as fallback.
  */
 function resolveInternal(url) {
-  const clean = normalizeInternalUrl(url);
+  // Normalize early (decode + dash normalize etc.)
+  const cleanAbs = String(url).split("#")[0].split("?")[0];
 
-  if (clean === "/") {
-    return { url: clean, target: "index.html", fallbackTarget: null };
+  if (cleanAbs === "/") {
+    return { url: cleanAbs, target: "index.html", fallbackTarget: null };
   }
 
   // /foo/ -> foo/index.html
-  if (clean.endsWith("/")) {
-    const target = clean.replace(/^\//, "") + "index.html";
-    return { url: clean, target, fallbackTarget: null };
+  if (cleanAbs.endsWith("/")) {
+    const target = normalizeRelPath(cleanAbs) + "index.html";
+    return { url: cleanAbs, target, fallbackTarget: null };
   }
 
   // /foo -> foo (file) OR foo/index.html (dir fallback)
-  const target = clean.replace(/^\//, "");
+  const target = normalizeRelPath(cleanAbs);
   const fallbackTarget = target + "/index.html";
-  return { url: clean, target, fallbackTarget };
+  return { url: cleanAbs, target, fallbackTarget };
 }
 
 /**
  * Detect case-insensitive collisions in the repo (two paths differ only by case).
- * This is a real risk on macOS/Windows + generally a maintenance hazard.
  */
 function detectCaseCollisions(allRelFiles) {
   const map = new Map(); // lower -> [actual...]
@@ -144,6 +167,20 @@ function checkOneTarget({ fromFile, url, kind }, state) {
   // 1) exact match exists
   if (existsRel(target)) return;
 
+  // 1b) If not, try normalized version again (defensive, even after resolveInternal)
+  // (covers any future changes that bypass resolveInternal somehow)
+  const normTarget = normalizeRelPath(target);
+  if (normTarget !== target && existsRel(normTarget)) {
+    state.normalizedFixups.push({
+      from: fromFile,
+      kind,
+      url,
+      expected: target,
+      normalizedTo: normTarget,
+    });
+    return;
+  }
+
   // 2) case-insensitive match exists but case mismatch -> fail
   const ci = findCaseInsensitiveMatch(target);
   if (ci && ci.actualRel && ci.hasCaseMismatch) {
@@ -157,6 +194,21 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     return;
   }
 
+  // 2b) case-insensitive check for normalized target
+  if (normTarget && normTarget !== target) {
+    const ciNorm = findCaseInsensitiveMatch(normTarget);
+    if (ciNorm && ciNorm.actualRel && ciNorm.hasCaseMismatch) {
+      state.caseMismatch.push({
+        from: fromFile,
+        kind,
+        url,
+        expected: normTarget,
+        actual: ciNorm.actualRel,
+      });
+      return;
+    }
+  }
+
   // 3) /dir (no slash) but /dir/index.html exists -> warn only
   if (fallbackTarget && existsRel(fallbackTarget)) {
     state.trailingSlashWarnings.push({
@@ -167,6 +219,21 @@ function checkOneTarget({ fromFile, url, kind }, state) {
       resolvesTo: fallbackTarget,
     });
     return;
+  }
+
+  // 3b) normalized fallback
+  if (fallbackTarget) {
+    const normFallback = normalizeRelPath(fallbackTarget);
+    if (normFallback !== fallbackTarget && existsRel(normFallback)) {
+      state.trailingSlashWarnings.push({
+        from: fromFile,
+        kind,
+        url,
+        suggestion: "/" + normFallback.replace(/\/index\.html$/, "") + "/",
+        resolvesTo: normFallback,
+      });
+      return;
+    }
   }
 
   // 4) case-insensitive match for fallback target
@@ -206,13 +273,14 @@ const htmlFiles = allFilesAbs.filter((f) => f.endsWith(".html"));
 // Match only absolute internal URLs: href="/..." or src="/..."
 const urlRegex = /\b(?:href|src)\s*=\s*["'](\/[^"']+)["']/gi;
 
-// match internal reel JSON sources: data-reel-src="/assets/..."
+// Match internal reel JSON sources: data-reel-src="/assets/..."
 const dataReelSrcRegex = /\bdata-reel-src\s*=\s*["'](\/[^"']+)["']/gi;
 
 const state = {
   missing: [],
   caseMismatch: [],
   trailingSlashWarnings: [],
+  normalizedFixups: [], // NEW: paths that only worked after normalization
 };
 
 for (const file of htmlFiles) {
@@ -272,6 +340,17 @@ if (state.missing.length) {
     console.error(`- [${x.kind}] ${x.from} -> ${x.url} (expected: ${x.expected})${extra}`);
   }
   console.error("");
+}
+
+// This is not a failure – it’s an info so you see if normalization saved you.
+if (state.normalizedFixups.length) {
+  console.log("ℹ️ Normalization fixed some paths (Unicode dashes / URL-encoding):");
+  for (const x of state.normalizedFixups) {
+    console.log(`- [${x.kind}] ${x.from} -> ${x.url}`);
+    console.log(`  expected:     ${x.expected}`);
+    console.log(`  normalizedTo: ${x.normalizedTo}`);
+  }
+  console.log("");
 }
 
 if (state.trailingSlashWarnings.length) {
