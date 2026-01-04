@@ -76,9 +76,6 @@
       user-select: none;
     }
     .rb-check input { width: auto; }
-
-    .rb-split { display:grid; grid-template-columns: 1fr; gap: 10px; }
-    @media (min-width: 900px) { .rb-split { grid-template-columns: 1.2fr .8fr; } }
   </style>
 </head>
 
@@ -129,10 +126,7 @@
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
       <p class="lead">Einträge für <code>assets/reel-*.json</code> erstellen – inkl. optionalem <code>tag</code> (Badge).</p>
-      <div class="rb-hint">
-        Neu: Du kannst eine bestehende Reel-JSON direkt aus <code>/assets/...</code> laden.
-        Danach erweitert „Eintrag zur JSON hinzufügen“ immer die Arbeits-JSON (01–17 bleiben drin).
-      </div>
+      <div class="rb-hint">Tag ist optional. Leer lassen = kein Badge (oder Default-Tag auf der Seite greift).</div>
     </section>
 
     <div class="rb-grid">
@@ -218,41 +212,30 @@
 
       <section class="rb-card" aria-label="JSON-Liste aktualisieren">
         <h2>JSON-Liste aktualisieren</h2>
-        <p class="rb-hint">
-          Wichtig: „Eintrag zur JSON hinzufügen“ erweitert die <b>Arbeits-JSON</b>.
-          Lade sie einmal aus <code>/assets/reel-*.json</code> oder nutze <code>[]</code> für neu.
-        </p>
+        <p class="rb-hint">Quelle laden (empfohlen) → Eintrag hinzufügen → komplette JSON kopieren.</p>
 
-        <div class="rb-split">
-          <div>
-            <div class="rb-row" style="margin-top:0;">
-              <label for="jsonSrc">Quelle laden (optional) – Pfad zur bestehenden Datei</label>
-              <input id="jsonSrc" type="text" placeholder="/assets/reel-custom.json" autocomplete="off" />
-            </div>
+        <div class="rb-row">
+          <label for="jsonSrc">Quelle (JSON-Datei im Projekt)</label>
+          <input id="jsonSrc" type="text" placeholder="/assets/reel-holz.json" autocomplete="off" />
+          <div class="rb-small">Tipp: <code>/assets/reel-holz.json</code>, <code>/assets/reel-werkstatt.json</code>, <code>/assets/reel-custom.json</code> …</div>
+        </div>
 
-            <div class="rb-actions" style="margin-top:10px;">
-              <button class="btn primary" type="button" id="btnLoadFromSrc">JSON aus Quelle laden</button>
-              <button class="btn" type="button" id="btnLoadWorking">Arbeits-JSON laden</button>
-              <button class="btn" type="button" id="btnResetWorking">Arbeits-JSON reset ([]) </button>
-            </div>
+        <div class="rb-actions">
+          <button class="btn" type="button" id="btnLoadJson">JSON aus Quelle laden</button>
+          <button class="btn" type="button" id="btnUseOutAsBase">Output als Basis übernehmen</button>
+        </div>
 
-            <div class="rb-small">
-              Tipp: Nach dem Laden kannst du beliebig viele Einträge hinzufügen. 01–17 bleiben drin.
-            </div>
-          </div>
+        <div class="rb-row">
+          <label for="jsonIn">Bestehende JSON (Array) – Basis</label>
+          <textarea id="jsonIn" placeholder='[
+  {"src":"/assets/...","alt":"...","cap":"...","tag":"..."}
+]'></textarea>
+        </div>
 
-          <div>
-            <div class="rb-row" style="margin-top:0;">
-              <label for="jsonIn">Arbeits-JSON (Array) – wird automatisch gepflegt</label>
-              <textarea id="jsonIn" placeholder='[]'></textarea>
-            </div>
-
-            <div class="rb-actions">
-              <button class="btn primary" type="button" id="btnAddToJson">Eintrag zur JSON hinzufügen</button>
-              <button class="btn" type="button" id="btnCopyJson">Komplette JSON kopieren</button>
-              <button class="btn" type="button" id="btnFormatJson">Nur formatieren</button>
-            </div>
-          </div>
+        <div class="rb-actions">
+          <button class="btn primary" type="button" id="btnAddToJson">Eintrag zur JSON hinzufügen</button>
+          <button class="btn" type="button" id="btnCopyJson">Komplette JSON kopieren</button>
+          <button class="btn" type="button" id="btnFormatJson">Nur formatieren</button>
         </div>
 
         <div class="rb-out" id="outJson" aria-label="JSON Gesamt-Output"></div>
