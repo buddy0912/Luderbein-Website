@@ -30,20 +30,29 @@
   const btnRememberJson = $("btnRememberJson");
   const jsonIn = $("jsonIn");
 
-  // If some optional elements are missing, we still want core to run.
-  // (But in your current HTML they exist.)
-  const hasJsonTarget = !!elJsonTarget && !!btnLoadJson && !!jsonIn;
+  // Buttons
+  const btnEntry = $("btnEntry");
+  const btnCopyEntry = $("btnCopyEntry");
+  const btnClearSrc = $("btnClearSrc");
+  const btnClear = $("btnClear");
+  const btnAddToJson = $("btnAddToJson");
+  const btnCopyJson = $("btnCopyJson");
+  const btnFormatJson = $("btnFormatJson");
 
   // Persistenz (iPad-friendly)
   const LS_KEY_LASTTAG = "reelBuilder.lastTag";
   const LS_KEY_LASTTAG_MODE = "reelBuilder.lastTagMode"; // "preset" | "custom"
   const LS_KEY_LOCK = "reelBuilder.lockTag";             // "1" | "0"
-
-  const LS_KEY_LAST_TARGET = "reelBuilder.lastTarget";   // stores selected jsonTarget
+  const LS_KEY_LAST_TARGET = "reelBuilder.lastTarget";   // selected jsonTarget
   const LS_KEY_DRAFT_PREFIX = "reelBuilder.draft:";      // per target drafts
   const LS_KEY_SRC_MANUAL = "reelBuilder.srcManual";     // "1" | "0"
 
-  let didLoadFromSource = false; // guard: true only after successful load
+  // ✅ Single Source of Truth (nach Load)
+  const CURRENT = {
+    target: "",
+    arr: null,      // Array nach Load
+    loaded: false,  // true nur nach erfolgreichem Load
+  };
 
   function getSaved(key, fallback = "") {
     try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
@@ -61,6 +70,35 @@
     status.innerHTML = `<span class="rb-bad">✖ ${msg}</span>`;
   }
 
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  }
+
+  function parseJsonArray(text) {
+    const t = safeTrim(text);
+    if (!t) return [];
+    const parsed = JSON.parse(t);
+    if (!Array.isArray(parsed)) throw new Error("JSON muss ein Array sein ( [ ... ] ).");
+    return parsed;
+  }
+
   function validateSrc(src) {
     if (!src) return { ok: false, msg: "Bitte Bildpfad eintragen." };
     if (!src.startsWith("/assets/")) return { ok: false, msg: "Bildpfad muss mit /assets/ beginnen." };
@@ -71,13 +109,13 @@
   }
 
   function syncTagUI() {
-    const useCustom = !!elTagCustomOn && !!elTagCustomOn.checked;
+    const useCustom = !!elTagCustomOn && elTagCustomOn.checked;
     if (elTagCustom) elTagCustom.disabled = !useCustom;
     if (!useCustom && elTagCustom) elTagCustom.value = "";
   }
 
   function currentTag() {
-    const useCustom = !!elTagCustomOn && !!elTagCustomOn.checked;
+    const useCustom = !!elTagCustomOn && elTagCustomOn.checked;
     if (useCustom) return safeTrim(elTagCustom ? elTagCustom.value : "");
     return safeTrim(elTagPreset ? elTagPreset.value : "");
   }
@@ -123,38 +161,6 @@
     return getSaved(LS_KEY_LOCK, "0") === "1";
   }
 
-  // --- Clipboard
-  async function copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      try {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        ta.style.position = "fixed";
-        ta.style.left = "-9999px";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-        return true;
-      } catch {
-        return false;
-      }
-    }
-  }
-
-  // --- JSON parsing
-  function parseJsonArray(text) {
-    const t = safeTrim(text);
-    if (!t) return [];
-    const parsed = JSON.parse(t);
-    if (!Array.isArray(parsed)) throw new Error("JSON muss ein Array sein ( [ ... ] ).");
-    return parsed;
-  }
-
-  // --- src builder from dropdown + filename
   function normalizeJoin(folder, file) {
     const f = safeTrim(folder);
     const n = safeTrim(file);
@@ -173,13 +179,23 @@
 
   function updateSrcFromFolderFile() {
     if (!elSrcFolder || !elSrcFile || !elSrc) return;
-    if (isSrcManual()) return; // user typed src manually
+    if (isSrcManual()) return;
     const built = normalizeJoin(elSrcFolder.value, elSrcFile.value);
     if (built) elSrc.value = built;
   }
 
-  // --- Build entry
-  function buildEntry() {
+  function renderPreview(src, alt) {
+    if (!previewBox || !previewImg) return;
+    if (src) {
+      previewImg.src = src;
+      previewImg.alt = alt || "";
+      previewBox.style.display = "block";
+    } else {
+      previewBox.style.display = "none";
+    }
+  }
+
+  function buildEntry({ silentStatus = false } = {}) {
     if (!elSrc || !elCap || !elAlt) return { obj: {}, snippet: "{}", valid: false };
 
     const src = safeTrim(elSrc.value);
@@ -188,17 +204,9 @@
     const tag = currentTag();
 
     const v = validateSrc(src);
-    v.ok ? setStatusOk(v.msg) : setStatusBad(v.msg);
+    if (!silentStatus) v.ok ? setStatusOk(v.msg) : setStatusBad(v.msg);
 
-    if (previewBox && previewImg) {
-      if (src) {
-        previewImg.src = src;
-        previewImg.alt = alt || "";
-        previewBox.style.display = "block";
-      } else {
-        previewBox.style.display = "none";
-      }
-    }
+    renderPreview(src, alt);
 
     const obj = { src, alt, cap };
     if (tag) obj.tag = tag;
@@ -209,9 +217,15 @@
     return { obj, snippet: JSON.stringify(obj), valid: v.ok };
   }
 
-  // --- Load JSON from selected target
+  function renderJsonToUI(arr) {
+    const next = JSON.stringify(arr || [], null, 2);
+    if (jsonIn) jsonIn.value = next;
+    if (outJson) outJson.textContent = next;
+    return next;
+  }
+
   async function loadJsonFromSource() {
-    if (!hasJsonTarget) return;
+    if (!elJsonTarget || !jsonIn) return;
 
     const url = elJsonTarget.value;
     if (!url) return setStatusBad("Bitte Ziel-JSON wählen.");
@@ -223,24 +237,25 @@
       if (!res.ok) throw new Error(`HTTP ${res.status} – ${url}`);
 
       const text = await res.text();
-
-      // Validate JSON now (fail early)
       const arr = parseJsonArray(text);
-      const pretty = JSON.stringify(arr, null, 2);
 
-      jsonIn.value = pretty;
-      if (outJson) outJson.textContent = pretty;
+      // ✅ State setzen
+      CURRENT.target = url;
+      CURRENT.arr = arr;
+      CURRENT.loaded = true;
 
-      didLoadFromSource = true;
-      setStatusOk(`Quelle geladen: ${arr.length} Einträge.`);
+      renderJsonToUI(arr);
+      setStatusOk(`Quelle geladen: ${arr.length} Einträge (${url}).`);
     } catch (e) {
-      didLoadFromSource = false;
+      CURRENT.loaded = false;
+      CURRENT.arr = null;
+      CURRENT.target = "";
       setStatusBad(`Konnte Quelle nicht laden/lesen: ${e.message}`);
     }
   }
 
   function rememberDraft() {
-    if (!hasJsonTarget) return;
+    if (!elJsonTarget || !jsonIn) return;
     const url = elJsonTarget.value || "unknown";
     const key = LS_KEY_DRAFT_PREFIX + url;
     setSaved(key, jsonIn.value || "");
@@ -248,58 +263,108 @@
   }
 
   function restoreDraftIfAny() {
-    if (!hasJsonTarget) return;
+    if (!elJsonTarget || !jsonIn) return;
 
     const last = getSaved(LS_KEY_LAST_TARGET, "");
     if (last) {
-      // set dropdown to last target if exists
       const opt = Array.from(elJsonTarget.options || []).find(o => o.value === last);
       if (opt) elJsonTarget.value = last;
 
       const key = LS_KEY_DRAFT_PREFIX + last;
       const draft = getSaved(key, "");
-      if (safeTrim(draft)) {
-        // only restore if textarea empty (avoid overwriting)
-        if (!safeTrim(jsonIn.value)) {
-          jsonIn.value = draft;
-          if (outJson) outJson.textContent = draft;
-          // Note: draft restore does not count as "loaded from source"
-          didLoadFromSource = false;
-          setStatusOk("Zwischenstand wiederhergestellt (Draft). Tipp: trotzdem einmal 'Quelle laden' drücken.");
-        }
+      if (safeTrim(draft) && !safeTrim(jsonIn.value)) {
+        jsonIn.value = draft;
+        if (outJson) outJson.textContent = draft;
+
+        // Draft ist NICHT gleich Load
+        CURRENT.loaded = false;
+        CURRENT.arr = null;
+        CURRENT.target = elJsonTarget.value || "";
+        setStatusOk("Draft wiederhergestellt. Tipp: trotzdem einmal 'JSON aus Quelle laden' drücken.");
       }
     }
   }
 
-  // --- Events
-  const btnEntry = $("btnEntry");
-  const btnCopyEntry = $("btnCopyEntry");
-  const btnClearSrc = $("btnClearSrc");
-  const btnClear = $("btnClear");
-  const btnAddToJson = $("btnAddToJson");
-  const btnCopyJson = $("btnCopyJson");
-  const btnFormatJson = $("btnFormatJson");
+  async function addEntryToCurrentJson() {
+    if (!elJsonTarget || !jsonIn) return;
 
+    const { obj, valid } = buildEntry({ silentStatus: true });
+
+    if (!safeTrim(obj.src)) return setStatusBad("Bitte Bildpfad setzen.");
+    if (!valid) return setStatusBad("Bildpfad ungültig. Muss /assets/... + Endung.");
+
+    const targetNow = elJsonTarget.value;
+
+    // ✅ Wenn Ziel gewechselt wurde: zwingend neu laden
+    if (CURRENT.target && targetNow && CURRENT.target !== targetNow) {
+      CURRENT.loaded = false;
+      CURRENT.arr = null;
+      CURRENT.target = targetNow;
+      return setStatusBad("Ziel-JSON wurde geändert. Erst 'JSON aus Quelle laden' klicken.");
+    }
+
+    // ✅ Wenn noch nie geladen: versuche aus Textarea zu parsen – aber warne sichtbar
+    if (!CURRENT.loaded || !Array.isArray(CURRENT.arr)) {
+      try {
+        const parsed = parseJsonArray(jsonIn.value);
+        CURRENT.arr = parsed;
+        CURRENT.loaded = true;
+        CURRENT.target = targetNow;
+      } catch (e) {
+        return setStatusBad("Erst 'JSON aus Quelle laden' klicken (oder gültiges Array im Feld haben). " + e.message);
+      }
+    }
+
+    const before = CURRENT.arr.length;
+    CURRENT.arr.push(obj);
+
+    const next = renderJsonToUI(CURRENT.arr);
+
+    const okCopy = await copyText(next);
+    if (okCopy) {
+      setStatusOk(`Hinzugefügt (${targetNow}): vorher ${before}, jetzt ${before + 1}. ✅ JSON ist im Clipboard.`);
+    } else {
+      setStatusOk(`Hinzugefügt (${targetNow}): vorher ${before}, jetzt ${before + 1}. (Clipboard blockiert → 'Komplette JSON kopieren')`);
+    }
+
+    // Speed reset (ohne Status zu überschreiben!)
+    if (elSrcFile) elSrcFile.value = "";
+    if (elSrc) elSrc.value = "";
+    setSrcManual(false);
+    renderPreview("", "");
+
+    if (!isLockTagOn()) {
+      if (elTagPreset) elTagPreset.value = "";
+      if (elTagCustomOn) elTagCustomOn.checked = false;
+      if (elTagCustom) elTagCustom.value = "";
+      syncTagUI();
+    }
+
+    if (elSrcFile) elSrcFile.focus();
+    else if (elSrc) elSrc.focus();
+
+    // outEntry leeren ist optional – ich lasse es als “letzter Eintrag”
+  }
+
+  // --- Wire events
   if (btnEntry) btnEntry.addEventListener("click", () => buildEntry());
-
   if (btnCopyEntry) btnCopyEntry.addEventListener("click", async () => {
     const { snippet } = buildEntry();
     const ok = await copyText(snippet);
-    ok ? setStatusOk("Eintrag kopiert.") : setStatusBad("Konnte nicht kopieren (Clipboard blockiert).");
+    ok ? setStatusOk("Eintrag kopiert.") : setStatusBad("Clipboard blockiert.");
   });
 
   if (btnClearSrc) btnClearSrc.addEventListener("click", () => {
-    if (elSrc) elSrc.value = "";
     if (elSrcFile) elSrcFile.value = "";
+    if (elSrc) elSrc.value = "";
     setSrcManual(false);
-    if (elSrc) elSrc.focus();
-    buildEntry();
+    renderPreview("", "");
     setStatusOk("Bildpfad geleert.");
   });
 
   if (btnClear) btnClear.addEventListener("click", () => {
-    if (elSrc) elSrc.value = "";
     if (elSrcFile) elSrcFile.value = "";
+    if (elSrc) elSrc.value = "";
     setSrcManual(false);
 
     if (elCap) elCap.value = "";
@@ -314,76 +379,22 @@
     if (outJson) outJson.textContent = "";
     if (jsonIn) jsonIn.value = "";
 
-    if (previewBox) previewBox.style.display = "none";
-    didLoadFromSource = false;
+    renderPreview("", "");
+
+    CURRENT.loaded = false;
+    CURRENT.arr = null;
+    CURRENT.target = elJsonTarget ? (elJsonTarget.value || "") : "";
 
     if (status) status.textContent = "";
   });
 
-  // --- 핵: ADD + AUTO COPY FULL JSON
-  if (btnAddToJson) btnAddToJson.addEventListener("click", async () => {
-    const { obj, valid } = buildEntry();
-
-    if (!jsonIn) return setStatusBad("jsonIn nicht gefunden.");
-
-    // Guard: You WANT to never lose 01–17
-    if (!didLoadFromSource && !safeTrim(jsonIn.value)) {
-      return setStatusBad("Erst 'JSON aus Quelle laden' klicken (sonst fügst du in ein leeres Array ein).");
-    }
-
-    let arr;
-    try {
-      arr = parseJsonArray(jsonIn.value);
-    } catch (e) {
-      if (outJson) outJson.textContent = "";
-      return setStatusBad(e.message);
-    }
-
-    if (!safeTrim(obj.src)) return setStatusBad("Bitte zuerst einen gültigen Bildpfad eintragen.");
-    if (!valid) return setStatusBad("Bildpfad ist nicht gültig. (Muss /assets/... + Endung)");
-
-    const before = arr.length;
-    arr.push(obj);
-
-    const next = JSON.stringify(arr, null, 2);
-
-    // Single source of truth: textarea
-    jsonIn.value = next;
-    if (outJson) outJson.textContent = next;
-
-    // AUTO COPY full JSON (this is what you asked for)
-    const okCopy = await copyText(next);
-
-    if (okCopy) {
-      setStatusOk(`Hinzugefügt: vorher ${before}, jetzt ${before + 1}. ✅ Komplette JSON ist im Clipboard.`);
-    } else {
-      setStatusOk(`Hinzugefügt: vorher ${before}, jetzt ${before + 1}. (Clipboard blockiert – nutze 'Komplette JSON kopieren')`);
-    }
-
-    // Speed: clear only src filename, keep cap/alt if you want quick series
-    if (elSrcFile) elSrcFile.value = "";
-    if (elSrc) elSrc.value = "";
-    setSrcManual(false);
-
-    if (elSrcFile) elSrcFile.focus();
-    else if (elSrc) elSrc.focus();
-
-    // If tag not locked, reset tag UI
-    if (!isLockTagOn()) {
-      if (elTagPreset) elTagPreset.value = "";
-      if (elTagCustomOn) elTagCustomOn.checked = false;
-      if (elTagCustom) elTagCustom.value = "";
-      syncTagUI();
-    }
-
-    buildEntry();
-  });
+  if (btnAddToJson) btnAddToJson.addEventListener("click", () => addEntryToCurrentJson());
 
   if (btnCopyJson) btnCopyJson.addEventListener("click", async () => {
-    const text = (jsonIn && jsonIn.value) || (outJson && outJson.textContent) || "";
+    const text = (jsonIn && jsonIn.value) || "";
     if (!safeTrim(text)) return setStatusBad("Kein JSON vorhanden.");
     const ok = await copyText(text);
-    ok ? setStatusOk("Komplette JSON kopiert.") : setStatusBad("Konnte nicht kopieren (Clipboard blockiert).");
+    ok ? setStatusOk("Komplette JSON kopiert.") : setStatusBad("Clipboard blockiert.");
   });
 
   if (btnFormatJson) btnFormatJson.addEventListener("click", () => {
@@ -399,57 +410,51 @@
     }
   });
 
-  // --- Dropdowns wiring
-  if (elSrcFolder) elSrcFolder.addEventListener("change", () => { updateSrcFromFolderFile(); buildEntry(); });
-  if (elSrcFile) elSrcFile.addEventListener("input", () => { updateSrcFromFolderFile(); buildEntry(); });
-
-  if (elSrc) {
-    // If user types directly into src, mark manual = true
-    elSrc.addEventListener("input", () => {
-      // If src equals built value, keep auto mode; else manual
-      const built = (elSrcFolder && elSrcFile) ? normalizeJoin(elSrcFolder.value, elSrcFile.value) : "";
-      const cur = safeTrim(elSrc.value);
-      setSrcManual(!!cur && built && cur !== built);
-      buildEntry();
-    });
-  }
-
-  // --- Load/Remember handlers
   if (btnLoadJson) btnLoadJson.addEventListener("click", () => loadJsonFromSource());
   if (btnRememberJson) btnRememberJson.addEventListener("click", () => rememberDraft());
+
   if (elJsonTarget) elJsonTarget.addEventListener("change", () => {
-    didLoadFromSource = false; // switching target requires load again
-    setSaved(LS_KEY_LAST_TARGET, elJsonTarget.value || "");
+    // Ziel geändert -> State invalid
+    CURRENT.loaded = false;
+    CURRENT.arr = null;
+    CURRENT.target = elJsonTarget.value || "";
+    setSaved(LS_KEY_LAST_TARGET, CURRENT.target);
     setStatusOk("Ziel geändert. Jetzt 'JSON aus Quelle laden' klicken.");
   });
 
-  // --- Tag tools
-  if (btnUseLastTag) btnUseLastTag.addEventListener("click", () => {
-    applyLastTag();
-    buildEntry();
-  });
+  // Folder/file -> src auto build
+  if (elSrcFolder) elSrcFolder.addEventListener("change", () => { updateSrcFromFolderFile(); buildEntry({ silentStatus: true }); });
+  if (elSrcFile) elSrcFile.addEventListener("input", () => { updateSrcFromFolderFile(); buildEntry({ silentStatus: true }); });
+
+  if (elSrc) {
+    elSrc.addEventListener("input", () => {
+      const built = (elSrcFolder && elSrcFile) ? normalizeJoin(elSrcFolder.value, elSrcFile.value) : "";
+      const cur = safeTrim(elSrc.value);
+      setSrcManual(!!cur && !!built && cur !== built);
+      buildEntry({ silentStatus: true });
+    });
+  }
+
+  // Tags
+  if (btnUseLastTag) btnUseLastTag.addEventListener("click", () => { applyLastTag(); buildEntry({ silentStatus: true }); });
 
   if (elLockTag) {
     elLockTag.checked = getSaved(LS_KEY_LOCK, "0") === "1";
     elLockTag.addEventListener("change", () => setSaved(LS_KEY_LOCK, elLockTag.checked ? "1" : "0"));
   }
 
-  if (elTagPreset) elTagPreset.addEventListener("change", () => buildEntry());
-  if (elTagCustomOn) elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry(); });
-  if (elTagCustom) elTagCustom.addEventListener("input", () => buildEntry());
+  if (elTagPreset) elTagPreset.addEventListener("change", () => buildEntry({ silentStatus: true }));
+  if (elTagCustomOn) elTagCustomOn.addEventListener("change", () => { syncTagUI(); buildEntry({ silentStatus: true }); });
+  if (elTagCustom) elTagCustom.addEventListener("input", () => buildEntry({ silentStatus: true }));
 
-  if (elCap) elCap.addEventListener("input", () => buildEntry());
-  if (elAlt) elAlt.addEventListener("input", () => buildEntry());
+  if (elCap) elCap.addEventListener("input", () => buildEntry({ silentStatus: true }));
+  if (elAlt) elAlt.addEventListener("input", () => buildEntry({ silentStatus: true }));
 
   // Init
   syncTagUI();
   if (outEntry) outEntry.textContent = "";
   if (outJson) outJson.textContent = "";
-
-  // Restore last target + any draft
-  if (hasJsonTarget) restoreDraftIfAny();
-
-  // Build initial src if possible
+  restoreDraftIfAny();
   updateSrcFromFolderFile();
-  buildEntry();
+  buildEntry({ silentStatus: true });
 })();
