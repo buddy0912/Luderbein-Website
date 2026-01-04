@@ -103,6 +103,13 @@
       gap: 12px;
       flex-wrap: wrap;
     }
+
+    /* Kacheln: wir nutzen dein bestehendes .grid/.card aus style.css */
+    .cards {
+      margin-top: 14px;
+    }
+    .cards .card h3 { margin-top: 0; }
+    .cards .card .small { margin: 10px 0 0; }
   </style>
 </head>
 
@@ -171,7 +178,10 @@
     <section class="hero">
       <span class="badge"><i></i> Leistung – Custom</span>
       <h1>Custom</h1>
-      <p class="lead">Sonderwunsch? Mischmaterial? “Gibt’s nicht” als Startpunkt? Passt. Ich sag dir schnell, ob’s machbar ist.</p>
+      <p class="lead">
+        Sonderwunsch? Mischmaterial? „Gibt’s nicht“ als Startpunkt? Passt.
+        Ich sag dir schnell, ob’s machbar ist – oder wie’s besser wird.
+      </p>
 
       <div class="cta">
         <a class="btn primary" href="/kontakt/?p=Custom">Anfragen</a>
@@ -198,22 +208,62 @@
           data-reel-default-tag="Custom"
         ></div>
       </div>
-
-      <p class="small muted" style="margin-top:10px;">
-        Reel konnte nicht geladen werden (JSON/Case prüfen).
-      </p>
     </section>
 
-    <section class="section" aria-label="Custom-Info">
-      <h2>So läuft’s</h2>
-      <div class="grid">
-        <div class="card"><h3>1 – Idee</h3><p>Foto, Skizze, Text – egal. Hauptsache ich sehe, worum’s geht.</p></div>
-        <div class="card"><h3>2 – Machbarkeit</h3><p>Ich sage dir schnell: ja / nein / ja, aber anders.</p></div>
-        <div class="card"><h3>3 – Entwurf</h3><p>Sauberer Entwurf + Freigabe. Dann erst geht’s an die Maschine.</p></div>
+    <section class="section cards" aria-label="Custom Varianten">
+      <div class="sectionHead">
+        <h2>Varianten</h2>
       </div>
+      <p class="small muted">Wähl eine Richtung – den Rest klären wir direkt (ohne Shop-Quatsch).</p>
 
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Custom">Anfragen</a>
+      <div class="grid">
+        <div class="card">
+          <h3>Lampenbau</h3>
+          <p>Funktion + Look. Gravur, Details, Halter, Plaketten – je nach Aufbau.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Lampenbau">Anfragen</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Schwibbogen (Preview)</h3>
+          <p>Kleiner Vorgeschmack auf den großen Reiter: Motive, Layer, Sonderwünsche.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Schwibbogen%20Preview">Anfragen</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Sonder-Holzschnitt (bis 35 mm)</h3>
+          <p>Dicke Bretter. Sauberer Schnitt, Gravur, Teststücke nach Bedarf.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Sonder-Holzschnitt%20bis%2035mm">Anfragen</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Schmuck & Kleinteile</h3>
+          <p>Plaketten, Anhänger, Mini-Serien – präzise, robust, sauber.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Schmuck%20%26%20Kleinteile">Anfragen</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Werkstatt-Labels & Sonderteile</h3>
+          <p>Wenn’s irgendwie beschriftet, markiert oder „anders“ werden soll.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Werkstatt-Labels%20%26%20Sonderteile">Anfragen</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Freestyle</h3>
+          <p>Du hast nur eine Idee? Reicht. Foto/Skizze schicken – ich mache den Rest.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Freestyle">Anfragen</a>
+          </div>
+        </div>
       </div>
     </section>
   </main>
