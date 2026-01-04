@@ -3,10 +3,9 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ✅ Repo-Root zuverlässig bestimmen (egal von wo das Script gestartet wird)
+// ✅ Repo-Root immer zuverlässig: "…/<repo>/scripts/check-links.mjs" -> repoRoot="…/<repo>"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// scripts/ liegt 1 Ebene unter Repo-Root
 const repoRoot = path.resolve(__dirname, "..");
 
 /**
@@ -32,25 +31,7 @@ function read(file) {
 }
 
 function existsRel(relPath) {
-  const clean = relPath.replace(/^\//, "");
-  return fs.existsSync(path.join(repoRoot, clean));
-}
-
-/**
- * Normalize internal URL strings so the checker doesn't fail because of:
- * - line breaks / whitespace inside attributes
- * - unicode dashes (– — − etc.) instead of "-"
- */
-function normalizeInternalUrl(url) {
-  if (!url) return url;
-
-  // remove all whitespace (incl newlines) inside URL values
-  let u = url.replace(/\s+/g, "");
-
-  // normalize unicode dashes to ASCII hyphen-minus
-  u = u.replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-");
-
-  return u;
+  return fs.existsSync(path.join(repoRoot, relPath));
 }
 
 /**
@@ -59,8 +40,7 @@ function normalizeInternalUrl(url) {
  * If matched, returns { actualRel, hasCaseMismatch }.
  */
 function findCaseInsensitiveMatch(relPath) {
-  const clean = relPath.replace(/^\//, "");
-  const parts = clean.split("/").filter(Boolean);
+  const parts = relPath.split("/").filter(Boolean);
   let curAbs = repoRoot;
   let actualParts = [];
   let hasCaseMismatch = false;
@@ -93,9 +73,7 @@ function findCaseInsensitiveMatch(relPath) {
  * Also supports "directory without trailing slash" by checking .../index.html as fallback.
  */
 function resolveInternal(url) {
-  const u = normalizeInternalUrl(url);
-
-  const clean = u.split("#")[0].split("?")[0];
+  const clean = url.split("#")[0].split("?")[0];
 
   if (clean === "/") {
     return { url: clean, target: "index.html", fallbackTarget: null };
@@ -135,8 +113,6 @@ function detectCaseCollisions(allRelFiles) {
  * Process a single internal URL and record missing/case-mismatch/warnings.
  */
 function checkOneTarget({ fromFile, url, kind }, state) {
-  if (!url) return;
-
   // Ignore protocol-relative
   if (url.startsWith("//")) return;
 
@@ -151,7 +127,7 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     state.caseMismatch.push({
       from: fromFile,
       kind,
-      url: normalizeInternalUrl(url),
+      url,
       expected: target,
       actual: ci.actualRel,
     });
@@ -163,7 +139,7 @@ function checkOneTarget({ fromFile, url, kind }, state) {
     state.trailingSlashWarnings.push({
       from: fromFile,
       kind,
-      url: normalizeInternalUrl(url),
+      url,
       suggestion: "/" + target + "/",
       resolvesTo: fallbackTarget,
     });
@@ -177,7 +153,7 @@ function checkOneTarget({ fromFile, url, kind }, state) {
       state.caseMismatch.push({
         from: fromFile,
         kind,
-        url: normalizeInternalUrl(url),
+        url,
         expected: fallbackTarget,
         actual: ciFallback.actualRel,
       });
@@ -189,7 +165,7 @@ function checkOneTarget({ fromFile, url, kind }, state) {
   state.missing.push({
     from: fromFile,
     kind,
-    url: normalizeInternalUrl(url),
+    url,
     expected: target,
     alsoTried: fallbackTarget,
   });
@@ -282,4 +258,5 @@ if (state.trailingSlashWarnings.length) {
 }
 
 if (failed) process.exit(1);
+
 console.log("✅ All internal targets exist (href/src + data-reel-src) and no case issues found.");
