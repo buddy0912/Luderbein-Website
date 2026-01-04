@@ -140,7 +140,8 @@
           <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
           <a href="/leistungen/metall/" role="menuitem">Metall</a>
           <a href="/leistungen/holz/" role="menuitem">Holz</a>
-          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+          <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+          <a href="/leistungen/custom/" role="menuitem">Custom</a>
           <div class="navdrop__sep" aria-hidden="true"></div>
           <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
           <a href="/service/" role="menuitem">Downloads</a>
@@ -411,6 +412,9 @@
     $format.innerHTML='';
 
     if(!P.products[cat] || cat !== 'schiefer'){
+      const prod = P.products[cat];
+      const note = prod?.note || 'Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
+
       const opt=document.createElement('option');
       opt.value="";
       opt.textContent="Nur auf Anfrage";
@@ -429,8 +433,15 @@
       setFallbackLinks(cat);
       $total.textContent='Gesamt: —';
       $warn.style.display='none';
+
       $oknote.style.display='block';
-      $oknote.textContent='Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
+      $oknote.textContent=note;
+
+      // Pills inaktiv setzen, damit nichts nach „Schiefer“ aussieht
+      if($inclPill) $inclPill.textContent = 'inkl. —';
+      if($notePill) $notePill.textContent = note;
+
+      lastWaUrl = "";
       return;
     }
 
