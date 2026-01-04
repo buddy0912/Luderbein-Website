@@ -1,35 +1,30 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 /**
- * Robust repo root detection:
- * In GitHub Actions kann process.cwd() z.B. .../repo/scripts sein.
- * Wir laufen nach oben, bis wir einen Ordner finden, der nach Repo-Root aussieht.
+ * ✅ Robust repo root detection (works no matter where Actions runs from)
+ * scripts/check-links.mjs  -> repo root is one level up from /scripts
  */
-function findRepoRoot(startDir) {
-  let cur = startDir;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, "..");
 
-  // max. 12 Ebenen hoch (reicht locker)
-  for (let i = 0; i < 12; i++) {
-    const hasAssets = fs.existsSync(path.join(cur, "assets"));
-    const hasGithub = fs.existsSync(path.join(cur, ".github"));
-    const hasIndex = fs.existsSync(path.join(cur, "index.html"));
-    const hasPkg = fs.existsSync(path.join(cur, "package.json"));
-
-    // Heuristik: assets + (.github oder index.html oder package.json) => Repo root
-    if (hasAssets && (hasGithub || hasIndex || hasPkg)) return cur;
-
-    const parent = path.dirname(cur);
-    if (parent === cur) break;
-    cur = parent;
-  }
-
-  // fallback
-  return startDir;
+function toPosix(p) {
+  return p.replaceAll("\\", "/");
 }
 
-const repoRoot = findRepoRoot(process.cwd());
-console.log("check-links.mjs repoRoot =", repoRoot);
+/**
+ * Normalize weird dash/minus characters in URLs/paths to plain "-"
+ * This prevents false "missing" due to Unicode dashes that look identical.
+ */
+function normalizeDashes(s) {
+  if (!s) return s;
+  return s.replace(
+    /[\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFE63\uFF0D]/g,
+    "-"
+  );
+}
 
 /**
  * Walk repo and return absolute paths for all files.
@@ -38,17 +33,9 @@ function walkFiles(dir) {
   const out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-
     if (entry.isDirectory()) {
       // skip common noise
-      if (
-        entry.name === ".git" ||
-        entry.name === "node_modules" ||
-        entry.name === ".next" ||
-        entry.name === "dist" ||
-        entry.name === ".wrangler"
-      ) continue;
-
+      if (entry.name === ".git" || entry.name === "node_modules") continue;
       out.push(...walkFiles(full));
     } else {
       out.push(full);
@@ -66,29 +53,18 @@ function existsRel(relPath) {
 }
 
 /**
- * Normalize weird dash chars to ASCII '-' (sicherheitsnetz).
- * Wir ändern damit NICHTS an deinen Dateien – nur die Prüfung wird robuster.
- */
-function normalizePathLike(s) {
-  return (s || "")
-    .normalize("NFC")
-    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-");
-}
-
-/**
  * Finds the actual on-disk path by matching each segment case-insensitively.
  * Returns null if no match exists.
  * If matched, returns { actualRel, hasCaseMismatch }.
  */
 function findCaseInsensitiveMatch(relPath) {
-  const safe = normalizePathLike(relPath);
-  const parts = safe.split("/").filter(Boolean);
-
+  const parts = toPosix(relPath).split("/").filter(Boolean);
   let curAbs = repoRoot;
-  let actualParts = [];
+  const actualParts = [];
   let hasCaseMismatch = false;
 
-  for (const part of parts) {
+  for (const partRaw of parts) {
+    const part = partRaw;
     let entries;
     try {
       entries = fs.readdirSync(curAbs, { withFileTypes: true });
@@ -105,7 +81,7 @@ function findCaseInsensitiveMatch(relPath) {
     curAbs = path.join(curAbs, match.name);
   }
 
-  const actualRel = actualParts.join("/");
+  const actualRel = toPosix(actualParts.join("/"));
   if (!fs.existsSync(path.join(repoRoot, actualRel))) return null;
 
   return { actualRel, hasCaseMismatch };
@@ -116,8 +92,7 @@ function findCaseInsensitiveMatch(relPath) {
  * Also supports "directory without trailing slash" by checking .../index.html as fallback.
  */
 function resolveInternal(url) {
-  const cleanRaw = (url || "").split("#")[0].split("?")[0];
-  const clean = normalizePathLike(cleanRaw);
+  const clean = url.split("#")[0].split("?")[0];
 
   if (clean === "/") {
     return { url: clean, target: "index.html", fallbackTarget: null };
@@ -162,7 +137,10 @@ function checkOneTarget({ fromFile, url, kind }, state) {
   // Ignore protocol-relative
   if (url.startsWith("//")) return;
 
-  const { target, fallbackTarget } = resolveInternal(url);
+  // Normalize unicode dashes
+  const normalizedUrl = normalizeDashes(url);
+
+  const { target, fallbackTarget } = resolveInternal(normalizedUrl);
 
   // 1) exact match exists
   if (existsRel(target)) return;
@@ -219,8 +197,10 @@ function checkOneTarget({ fromFile, url, kind }, state) {
 
 // --- Main scan ---
 
+console.log("check-links.mjs repoRoot =", repoRoot);
+
 const allFilesAbs = walkFiles(repoRoot);
-const allFilesRel = allFilesAbs.map((f) => path.relative(repoRoot, f).replaceAll("\\", "/"));
+const allFilesRel = allFilesAbs.map((f) => toPosix(path.relative(repoRoot, f)));
 
 const collisions = detectCaseCollisions(allFilesRel);
 
@@ -239,7 +219,7 @@ const state = {
 };
 
 for (const file of htmlFiles) {
-  const relFile = path.relative(repoRoot, file).replaceAll("\\", "/");
+  const relFile = toPosix(path.relative(repoRoot, file));
   const content = read(file);
 
   // href/src
@@ -270,7 +250,9 @@ let failed = false;
 if (collisions.length) {
   failed = true;
   console.error("❌ Case-insensitive path collisions found:");
-  for (const c of collisions) console.error(`- ${c.paths.join("  |  ")}`);
+  for (const c of collisions) {
+    console.error(`- ${c.paths.join("  |  ")}`);
+  }
   console.error("");
 }
 
@@ -303,5 +285,8 @@ if (state.trailingSlashWarnings.length) {
   console.log("");
 }
 
-if (failed) process.exit(1);
-console.log("✅ All internal targets exist (href/src + data-reel-src) and no case issues found.");
+if (failed) {
+  process.exit(1);
+} else {
+  console.log("✅ All internal targets exist (href/src + data-reel-src) and no case issues found.");
+}
