@@ -22,6 +22,46 @@
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
 
+  // --- Tag → Zielseite (Fallback-Link, wenn JSON kein href hat) ---
+  function normalizeTagKey(tag) {
+    return String(tag || "")
+      .trim()
+      .toLowerCase()
+      // Umlaute/ß robust
+      .replace(/ä/g, "ae")
+      .replace(/ö/g, "oe")
+      .replace(/ü/g, "ue")
+      .replace(/ß/g, "ss")
+      // alles außer a-z0-9 entfernen
+      .replace(/[^a-z0-9]/g, "");
+  }
+
+  function tagToHref(tag) {
+    const k = normalizeTagKey(tag);
+    if (!k) return null;
+
+    // Du kannst hier jederzeit neue Tags ergänzen
+    const map = {
+      // Leistungen
+      schiefer: "/leistungen/schiefer/",
+      metall: "/leistungen/metall/",
+      holz: "/leistungen/holz/",
+      acryl: "/leistungen/acryl-schilder/",
+      acrylschilder: "/leistungen/acryl-schilder/",
+      custom: "/leistungen/custom/",
+
+      // Spezialfälle / Synonyme
+      schwibbogen: "/leistungen/holz/?p=Schwibbogen",
+      schwibboegen: "/leistungen/holz/?p=Schwibbogen",
+      schwibbogenbau: "/leistungen/holz/?p=Schwibbogen",
+      lampenbau: "/leistungen/custom/?p=Lampenbau",
+      lampe: "/leistungen/custom/?p=Lampenbau",
+      lampen: "/leistungen/custom/?p=Lampenbau"
+    };
+
+    return map[k] || null;
+  }
+
   function normalizeItem(it, defaultTag) {
     if (!it || typeof it !== "object") return null;
 
@@ -40,11 +80,19 @@
         ? String(ownTag ?? "").trim() // kann bewusst "" sein => kein Badge
         : String(defaultTag ?? "").trim();
 
+    // href-Regel:
+    // 1) JSON: href/link
+    // 2) fallback: aus Tag ableiten
+    const explicitHref = it.href || it.link || null;
+    const autoHref = explicitHref ? null : tagToHref(finalTag);
+
+    const href = explicitHref || autoHref || null;
+
     return {
       src,
       alt: it.alt || it.title || "Beispiel",
       cap: it.cap || it.caption || it.text || "",
-      href: it.href || it.link || null,
+      href,
       tag: finalTag
     };
   }
@@ -55,12 +103,18 @@
   }
 
   function buildCard(item) {
-    const cardTag = item.href ? "a" : "div";
+    const isLink = !!item.href;
+    const cardTag = isLink ? "a" : "div";
 
     const card = el(cardTag, {
       class: "reel__item",
-      href: item.href || null
+      href: isLink ? item.href : null
     });
+
+    if (isLink) {
+      // Tastatur/UX nice: Link soll wie Link wirken, ohne extra CSS-Zwang
+      card.setAttribute("aria-label", item.cap ? item.cap : item.alt);
+    }
 
     if (item.tag) {
       card.appendChild(el("span", { class: "reel__tag", text: item.tag }));
