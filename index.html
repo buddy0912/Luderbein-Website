@@ -8,130 +8,6 @@
 
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
-
-  <style>
-    .reelwrap { position: relative; margin-top: 10px; }
-    .reelwrap::before, .reelwrap::after {
-      content: "";
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 34px;
-      pointer-events: none;
-      z-index: 2;
-      opacity: .85;
-    }
-    .reelwrap::before {
-      left: 0;
-      background: linear-gradient(to right, rgba(11,11,14,1), rgba(11,11,14,0));
-    }
-    .reelwrap::after {
-      right: 0;
-      background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
-    }
-
-    .reel {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding: 10px 6px 18px;
-      scroll-snap-type: x mandatory;
-      scroll-padding-left: 10px;
-      scroll-padding-right: 10px;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .reel__item {
-      flex: 0 0 clamp(260px, 72vw, 440px);
-      scroll-snap-align: start;
-      border-radius: 18px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(26,26,31,.72);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      color: inherit;
-      margin: 0;
-      position: relative;
-      text-decoration: none;
-      transform: translateZ(0);
-    }
-
-    .reel__tag {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      z-index: 3;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: .78rem;
-      letter-spacing: .02em;
-      color: rgba(255,255,255,.92);
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.16);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      text-shadow: 0 1px 10px rgba(0,0,0,.45);
-      user-select: none;
-    }
-
-    .reel__img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 16/9;
-      height: auto;
-      object-fit: cover;
-      filter: saturate(1.03) contrast(1.02);
-    }
-
-    .reel__cap {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      padding: 12px 12px 12px;
-      color: rgba(255,255,255,.92);
-      font-size: .95rem;
-      line-height: 1.3;
-      background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
-      text-shadow: 0 1px 10px rgba(0,0,0,.45);
-    }
-
-    @media (hover:hover) and (pointer:fine) {
-      .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
-    }
-
-    .sectionHead {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    /* ======================================
-       Preview-Thumb Placeholder (ohne Overlap)
-       ====================================== */
-    .thumb { position: relative; }
-    .thumb .thumbsoon {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: .85rem;
-      letter-spacing: .02em;
-      color: rgba(255,255,255,.92);
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.16);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      text-shadow: 0 1px 10px rgba(0,0,0,.45);
-      pointer-events: none;
-      user-select: none;
-      max-width: calc(100% - 28px);
-      text-align: center;
-      white-space: normal;
-    }
-  </style>
 </head>
 
 <body>
@@ -145,19 +21,38 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
 
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
@@ -180,34 +75,13 @@
     <section class="hero">
       <span class="badge"><i></i> Live – V1.5 (Website im Aufbau)</span>
       <h1>Gravur, die nicht nach „Standard-Katalog“ schreit.</h1>
-      <p class="lead">Sauber gefertigt, gut personalisiert – und ohne Shop-Schnickschnack.
-        Erst ansehen, dann kalkulieren oder anfragen.</p>
+      <p class="lead">
+        Sauber gefertigt, gut personalisiert – und ohne Shop-Schnickschnack.
+        Erst ansehen, dann kalkulieren oder anfragen.
+      </p>
       <div class="cta">
         <a class="btn primary" href="/leistungen/">Leistungen ansehen</a>
         <a class="btn" href="/kontakt/">Wunschmotiv anfragen</a>
-      </div>
-    </section>
-
-    <section class="section" aria-label="Werkstatt-Feed">
-      <div class="sectionHead">
-        <h2>Werkstatt-Feed</h2>
-      </div>
-      <p class="muted">Einblicke in die Werkstatt und den Alltag.</p>
-
-      <div class="reelwrap">
-        <div
-          class="reel"
-          aria-label="Werkstatt-Feed Reel"
-          data-reel
-          data-reel-src="/assets/reel-werkstatt.json"
-          data-interval="4500"
-          data-reel-default-tag="Werkstatt"
-        ></div>
-      </div>
-
-      <div class="actions" style="margin-top: 14px;">
-        <a class="btn primary" href="/leistungen/">Mehr Beispiele</a>
-        <a class="btn" href="/kontakt/">Anfrage senden</a>
       </div>
     </section>
 
@@ -237,13 +111,15 @@
 
         <!-- HOLZ -->
         <article class="productcard">
-          <div class="thumb">
-            <span class="thumblabel">Holz</span>
-            <span class="thumbsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <span class="thumbslider" data-thumb-rotator style="display:block; width:100%; height:100%;">
+              <img src="/assets/schwibbogen/schwibbogen-01.jpg" alt="Holz Beispiel 1 – Schwibbogen" loading="lazy" style="opacity:1;">
+              <img src="/assets/reel/reel-18.jpg" alt="Holz Beispiel 2 – Werkstatt / Holz" loading="lazy" style="opacity:0;">
+            </span>
           </div>
-          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur • Deko</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Deko • Serie • Gravur</span></div>
           <h3>Holz</h3>
-          <p class="kicker">Schilder, Deko, Gravur – kommt als Nächstes sauber rein.</p>
+          <p class="kicker">Schwibbögen, Deko, Gravur, Serien – sauber gebaut statt „irgendwie gebastelt“.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/holz/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
@@ -252,13 +128,15 @@
 
         <!-- METALL -->
         <article class="productcard">
-          <div class="thumb">
-            <span class="thumblabel">Metall</span>
-            <span class="thumbsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <span class="thumbslider" data-thumb-rotator style="display:block; width:100%; height:100%;">
+              <img src="/assets/metall/metall-reel-04.jpg" alt="Metall Beispiel 1 – Tags / Marken" loading="lazy" style="opacity:1;">
+              <img src="/assets/metall/metall-reel-12.jpg" alt="Metall Beispiel 2 – Schilder / Plaketten" loading="lazy" style="opacity:0;">
+            </span>
           </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Edelstahl / Alu</span></div>
           <h3>Metall</h3>
-          <p class="kicker">Tags, Plaketten, Gravur – robust, kantig, präzise.</p>
+          <p class="kicker">Tags, Plaketten, Anhänger – robust, kantig, präzise.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
@@ -267,13 +145,20 @@
 
         <!-- ACRYL -->
         <article class="productcard">
-          <div class="thumb">
-            <span class="thumblabel">Acryl</span>
-            <span class="thumbsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <span class="thumbslider" style="display:block; width:100%; height:100%; position:relative;">
+              <img
+                src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%230b0b0e'/><stop offset='1' stop-color='%231a1a1f'/></linearGradient></defs><rect width='800' height='800' fill='url(%23g)'/><circle cx='560' cy='240' r='180' fill='rgba(255,255,255,0.06)'/><circle cx='300' cy='520' r='220' fill='rgba(255,255,255,0.04)'/><text x='56' y='700' font-family='Arial, Helvetica, sans-serif' font-size='86' font-weight='700' fill='rgba(255,255,255,0.88)'>ACRYL</text><text x='60' y='748' font-family='Arial, Helvetica, sans-serif' font-size='32' fill='rgba(255,255,255,0.55)'>Schilder · Labels · Serie</text></svg>"
+                alt="Acryl Preview"
+                loading="lazy"
+                style="width:100%; height:100%; object-fit:cover; display:block;"
+              >
+              <span class="thumblabel">Acryl</span>
+            </span>
           </div>
-          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Schilder • Labels</span></div>
+          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Schilder / Labels</span></div>
           <h3>Acryl</h3>
-          <p class="kicker">Clean, kontrastreich, modern – Beschriftung, Labels, kleine Serien.</p>
+          <p class="kicker">Clean, kontrastreich, modern – Beschriftung, Labels und kleine Serien.</p>
           <div class="actions">
             <a class="btn primary" href="/leistungen/acryl/">Ansehen</a>
             <a class="btn" href="/kontakt/?p=Acryl">Anfragen</a>
@@ -303,7 +188,6 @@
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/thumb-rotator.js"></script>
   <script src="/assets/site.js"></script>
-  <script src="/assets/reel-internal.js"></script>
   <script>
     document.getElementById("y").textContent = new Date().getFullYear();
   </script>
