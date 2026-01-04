@@ -1,8 +1,9 @@
 // =========================================================
-// Luderbein Site Core v1.4
+// Luderbein Site Core v1.4 (patched)
 // - Navigation Toggle (Mobile)
 // - Active Menu Marker
 // - Kontakt: Anfrage-Builder (CTA-Autofill + Click-Flow)
+// - PATCH: Prefill-Aliase (z.B. ?p=Acryl-Schilder -> Acryl)
 // =========================================================
 (function () {
   "use strict";
@@ -65,6 +66,22 @@
 
     if (!els.mats.length || !els.wa || !els.mail) return;
 
+    // ---------------------------------
+    // Prefill-Aliase (nur fürs URL-Handling)
+    // ---------------------------------
+    const MAT_ALIAS = {
+      "Acryl-Schilder": "Acryl",
+      "Acrylschilder": "Acryl",
+      "Acryl_Schilder": "Acryl",
+      "Acryl Schilder": "Acryl",
+    };
+
+    function resolveMaterialName(m) {
+      const t = safeText(m);
+      if (!t) return "";
+      return MAT_ALIAS[t] || t;
+    }
+
     // --- Daten: nur das, was wir sicher wissen ---
     const DATA = {
       Schiefer: {
@@ -94,13 +111,13 @@
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
 
-      // ✅ Fix: Acryl heißt jetzt "Acryl" (wie in deinem HTML value="Acryl")
+      // ✅ Acryl (wie im HTML value="Acryl")
       Acryl: {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
 
-      // ✅ Alias für alte Links/Alt-HTML (falls irgendwo noch "Acryl-Schilder" rumliegt)
+      // ✅ Alias bleibt drin (für interne Kompatibilität), wird aber über resolveMaterialName() sauber gemappt
       "Acryl-Schilder": {
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
@@ -116,7 +133,8 @@
     // URL Prefill (?p=...&v=...&f=...&note=...)
     // ---------------------------------
     const params = new URLSearchParams(window.location.search);
-    const preMat = safeText(params.get("p"));
+    const preMatRaw = safeText(params.get("p"));
+    const preMat = resolveMaterialName(preMatRaw);
     const preVar = safeText(params.get("v"));
     const preFmt = safeText(params.get("f"));
     const preNote = safeText(params.get("note"));
@@ -158,33 +176,29 @@
     });
 
     els.variantSelect?.addEventListener("change", () => {
-      // Wenn eine bekannte Variante gewählt wird: Custom leeren
       if (els.variantCustom) els.variantCustom.value = "";
       updateLinks();
     });
     els.variantCustom?.addEventListener("input", () => {
-      // Wenn Custom gefüllt: Select auf leer stellen (wenn möglich)
       if (els.variantSelect && els.variantCustom.value.trim()) els.variantSelect.value = "";
       updateLinks();
     });
 
     els.formatSelect?.addEventListener("change", () => {
       if (els.formatCustom) {
-        // Nur löschen, wenn nicht "custom"
         if (els.formatSelect.value !== "custom") els.formatCustom.value = "";
       }
       updateLinks();
     });
     els.formatCustom?.addEventListener("input", () => {
       if (!els.formatSelect) return;
-      // Wenn Custom gefüllt und nicht explizit ein Preset gewählt: select auf "custom"
       if (els.formatCustom.value.trim()) els.formatSelect.value = "custom";
       updateLinks();
     });
 
     els.note?.addEventListener("input", updateLinks);
 
-    // Initial render, falls noch nichts gesetzt wurde
+    // Initial render
     updateChipClasses();
     updateLinks();
 
@@ -206,7 +220,6 @@
 
       if (els.variantSelect) {
         els.variantSelect.innerHTML = "";
-        // Leere Option -> erlaubt Custom Text ohne "Allgemein" zu erzwingen
         els.variantSelect.appendChild(new Option("— auswählen —", ""));
         cfg.variants.forEach((v) => els.variantSelect.appendChild(new Option(v.label, v.value)));
       }
@@ -222,7 +235,6 @@
       const cfg = DATA[material];
       if (!cfg) return;
 
-      // Variante: match exact label/value, sonst Custom
       if (v) {
         const variantHit = cfg.variants.find((x) => normalizeText(x.value) === normalizeText(v));
         if (variantHit && els.variantSelect) {
@@ -234,17 +246,14 @@
         }
       }
 
-      // Format: match bekannte values, oder normalize "10x10" etc.
       if (f) {
         const fmtNorm = normalizeFormat(f);
         const fmtHit = cfg.formats.find((x) => normalizeFormat(x.value) === fmtNorm);
         if (fmtHit && els.formatSelect) {
           els.formatSelect.value = fmtHit.value;
           if (els.formatCustom) els.formatCustom.value = "";
-          // Falls custom gewählt: Customfeld befüllen (damit man sieht, was passiert)
           if (fmtHit.value === "custom" && els.formatCustom) els.formatCustom.value = f;
         } else {
-          // Unbekannt -> custom
           if (els.formatSelect) els.formatSelect.value = "custom";
           if (els.formatCustom) els.formatCustom.value = f;
         }
@@ -265,7 +274,6 @@
       const sel = els.variantSelect ? els.variantSelect.value : "";
       if (!sel) return "";
 
-      // "Allgemein" nicht zwingend im Titel anzeigen (wirkt wie Füllwort)
       if (material !== "Schiefer" && sel === "Allgemein") return "";
       return sel;
     }
@@ -276,13 +284,11 @@
 
       if (!sel && !custom) return "";
 
-      // Wenn preset gewählt und nicht "custom": nimm label vom Option-Text
       if (els.formatSelect && sel && sel !== "custom") {
         const opt = els.formatSelect.selectedOptions && els.formatSelect.selectedOptions[0];
         return opt ? opt.textContent.trim() : sel;
       }
 
-      // custom: wenn User Text eingegeben hat, nimm den – sonst nimm das "custom" Label
       if (custom) return custom;
       if (els.formatSelect) {
         const opt = els.formatSelect.selectedOptions && els.formatSelect.selectedOptions[0];
@@ -307,12 +313,10 @@
 
       const title = material ? buildTitle(material, variant, format) : "";
 
-      // Summary im UI
       if (els.summary) {
         els.summary.textContent = title ? title : "Bitte Material wählen.";
       }
 
-      // Buttons deaktivieren, solange kein Material gesetzt ist
       setCtaEnabled(!!material);
 
       if (!material) {
