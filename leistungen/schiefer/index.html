@@ -4,12 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Schiefer – Luderbein</title>
-  <meta name="description" content="Schiefer von Luderbein: Fotogravur, Text & Symbole, Gedenktafeln – sauber aufbereitet, präzise graviert, versiegelt." />
+  <meta name="description" content="Schiefergravur von Luderbein: Fotogravur, Text & Symbole, Gedenktafeln – sauber aufbereitet, präzise graviert, versiegelt." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
-    /* ===== Reel (wie Startseite) ===== */
+    /* =========================================================
+       FEED – Reel (wie bei Holz / Start)
+       ========================================================= */
     .reelwrap { position: relative; margin-top: 10px; }
     .reelwrap::before, .reelwrap::after {
       content: "";
@@ -87,9 +89,6 @@
       background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
     }
-    @media (hover:hover) and (pointer:fine) {
-      .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
-    }
   </style>
 </head>
 
@@ -104,7 +103,14 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
@@ -112,10 +118,23 @@
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
-          <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
             <a href="/leistungen/schiefer/" role="menuitem" aria-current="page">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
@@ -139,27 +158,25 @@
       <span class="badge"><i></i> Leistung – Schiefer</span>
       <h1>Schiefer</h1>
       <p class="lead">
-        Fotogravur, Text & Symbole, Gedenktafeln – sauber aufbereitet, präzise graviert, versiegelt.
+        Fotogravur, Text &amp; Symbole, Gedenktafeln – sauber aufbereitet und versiegelt.
+        Du sagst Einsatz &amp; Look, ich sag dir, was sinnvoll ist.
       </p>
 
       <div class="cta">
-        <a class="btn primary" href="/tools/kalkulator/?t=schiefer">Kalkulator öffnen</a>
+        <a class="btn primary" href="/tools/kalkulator/">Direkt kalkulieren</a>
         <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
       </div>
 
       <p class="small muted" style="margin-top:.75rem;">
         <a href="/leistungen/">← Zurück zu allen Leistungen</a>
       </p>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Tipp:</strong> Bei Fotos: lieber 1 gutes Originalbild als 5 Screenshots.
-      </div>
     </section>
 
-    <section class="section" aria-label="Schiefer-Feed">
+    <!-- FEED (ist bei dir „eigentlich da“ – hier exakt 1x sauber drin) -->
+    <section class="section" aria-label="Schiefer Feed">
       <div class="section-head">
-        <h2>Schiefer-Feed</h2>
-        <p class="small muted">Beispiele – Fotogravur, Text, Gedenktafeln.</p>
+        <h2>Feed</h2>
+        <p class="small muted">Einblicke &amp; Beispiele rund um Schiefer.</p>
       </div>
 
       <div class="reelwrap">
@@ -172,6 +189,10 @@
           data-reel-default-tag="Schiefer"
         ></div>
       </div>
+
+      <div class="actions" style="margin-top: 14px;">
+        <a class="btn" href="/kontakt/?p=Schiefer">Schiefer anfragen</a>
+      </div>
     </section>
 
     <div class="hr"></div>
@@ -179,41 +200,79 @@
     <section class="section" aria-label="Schiefer Varianten">
       <div class="section-head">
         <h2>Varianten</h2>
-        <p class="small muted">Direkt wählen – anfragen oder kalkulieren.</p>
+        <p class="small muted">Tippen oder klicken – Beispiele und Serien werden fortlaufend ergänzt.</p>
       </div>
 
       <div class="products">
+        <!-- FOTOGRAVUR -->
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Foto</span></div>
-          <div class="meta"><span class="price">ab 9,95 €</span><span>•</span><span>Fotogravur</span></div>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/img/schiefer-foto-01.jpg"
+              alt="Schiefer – Fotogravur Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Fotogravur</span>
+          </div>
+          <div class="meta">
+            <span class="price">ab 9,95 €</span><span>•</span><span>Fotoaufbereitung + Gravur</span>
+          </div>
           <h3>Fotogravur</h3>
-          <p class="kicker">Fotoaufbereitung + Gravur + Versiegelung. Clean, kontrastreich, haltbar.</p>
+          <p class="kicker">Portraits, Tiere, Erinnerungen – sauber vorbereitet, kontraststark, versiegelt.</p>
           <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+            <a class="btn primary" href="/tools/kalkulator/">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Fotogravur">Anfragen</a>
           </div>
         </article>
 
+        <!-- TEXT & SYMBOLE -->
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Text</span></div>
-          <div class="meta"><span class="price">ab 9,95 €</span><span>•</span><span>Text &amp; Symbol</span></div>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/img/schiefer-home.jpg"
+              alt="Schiefer – Text & Symbole Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Text &amp; Symbole</span>
+          </div>
+          <div class="meta">
+            <span class="price">ab 9,95 €</span><span>•</span><span>clean &amp; gut lesbar</span>
+          </div>
           <h3>Text &amp; Symbole</h3>
-          <p class="kicker">Spruch, Koordinaten, Icon, Logo – sauber gesetzt, gut lesbar.</p>
+          <p class="kicker">Widmung, Koordinaten, Icons, QR – minimalistisch oder frech. Hauptsache sauber.</p>
           <div class="actions">
-            <a class="btn primary" href="/tools/kalkulator/?t=schiefer">Kalkulieren</a>
+            <a class="btn primary" href="/tools/kalkulator/">Kalkulieren</a>
             <a class="btn" href="/kontakt/?p=Schiefer&amp;v=Text%20%26%20Symbole">Anfragen</a>
           </div>
         </article>
 
+        <!-- GEDENKTAFEL -->
         <article class="productcard">
-          <div class="thumb"><span class="thumblabel">Gedenk</span></div>
-          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gedenktafel</span></div>
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg"
+              alt="Schiefer – Gedenktafel Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Gedenktafel</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>respektvoll &amp; klar</span>
+          </div>
           <h3>Gedenktafel</h3>
-          <p class="kicker">Würdevoll, klar, ohne Kitsch. Layout sauber abgestimmt.</p>
+          <p class="kicker">Erinnerungsstücke mit Haltung – Layout sauber, Ton respektvoll, Umsetzung stabil.</p>
           <div class="actions">
             <a class="btn primary" href="/kontakt/?p=Schiefer&amp;v=Gedenktafel">Anfragen</a>
           </div>
         </article>
+      </div>
+
+      <div class="notice" style="margin-top:16px">
+        <strong style="color:var(--text)">Hinweis:</strong><br>
+        Schiefer ist Naturmaterial – Oberfläche &amp; Struktur variieren. Genau das macht’s hübsch.
       </div>
     </section>
   </main>
@@ -231,6 +290,8 @@
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
   <script src="/assets/reel-internal.js"></script>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
