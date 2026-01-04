@@ -30,6 +30,15 @@
       color: var(--text);
       outline: none;
     }
+
+    /* ✅ Placeholder deutlich dezenter (damit du echte Eingaben sofort erkennst) */
+    .rb-row input::placeholder,
+    .rb-row textarea::placeholder {
+      color: rgba(255,255,255,.38);
+      opacity: 1;
+      font-style: italic;
+    }
+
     .rb-row textarea {
       min-height: 140px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -181,7 +190,6 @@
           <input id="alt" type="text" placeholder="Leuchtender Schwibbogen mit warmweißem Licht" autocomplete="off" />
         </div>
 
-        <!-- ✅ NEU: Kategorie-Link -->
         <div class="rb-row">
           <label for="cat">Kategorie-Link (optional) – schreibt <code>cat</code></label>
           <select id="cat">
