@@ -76,6 +76,9 @@
       user-select: none;
     }
     .rb-check input { width: auto; }
+
+    .rb-split { display:grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 900px) { .rb-split { grid-template-columns: 1.2fr .8fr; } }
   </style>
 </head>
 
@@ -107,7 +110,7 @@
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
-            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
             <a href="/service/" role="menuitem">Downloads</a>
@@ -126,7 +129,10 @@
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Builder</h1>
       <p class="lead">Einträge für <code>assets/reel-*.json</code> erstellen – inkl. optionalem <code>tag</code> (Badge).</p>
-      <div class="rb-hint">Tag ist optional. Leer lassen = kein Badge (oder Default-Tag auf der Seite greift).</div>
+      <div class="rb-hint">
+        Neu: Du kannst eine bestehende Reel-JSON direkt aus <code>/assets/...</code> laden.
+        Danach erweitert „Eintrag zur JSON hinzufügen“ immer die Arbeits-JSON (01–17 bleiben drin).
+      </div>
     </section>
 
     <div class="rb-grid">
@@ -181,7 +187,6 @@
               <input id="tagCustom" type="text" placeholder="z.B. Gravur / Schleifen / QA" autocomplete="off" disabled />
             </div>
 
-            <!-- Sichtbar: Letztes Tag + Lock -->
             <div class="rb-inline" style="margin-top:6px;">
               <button class="btn" type="button" id="btnUseLastTag">Letztes Tag übernehmen</button>
 
@@ -213,19 +218,41 @@
 
       <section class="rb-card" aria-label="JSON-Liste aktualisieren">
         <h2>JSON-Liste aktualisieren</h2>
-        <p class="rb-hint">Bestehende JSON reinpaste-n → Eintrag hinzufügen → komplette JSON kopieren.</p>
+        <p class="rb-hint">
+          Wichtig: „Eintrag zur JSON hinzufügen“ erweitert die <b>Arbeits-JSON</b>.
+          Lade sie einmal aus <code>/assets/reel-*.json</code> oder nutze <code>[]</code> für neu.
+        </p>
 
-        <div class="rb-row">
-          <label for="jsonIn">Bestehende JSON (Array) – optional</label>
-          <textarea id="jsonIn" placeholder='[
-  {"src":"/assets/...","alt":"...","cap":"...","tag":"..."}
-]'></textarea>
-        </div>
+        <div class="rb-split">
+          <div>
+            <div class="rb-row" style="margin-top:0;">
+              <label for="jsonSrc">Quelle laden (optional) – Pfad zur bestehenden Datei</label>
+              <input id="jsonSrc" type="text" placeholder="/assets/reel-custom.json" autocomplete="off" />
+            </div>
 
-        <div class="rb-actions">
-          <button class="btn primary" type="button" id="btnAddToJson">Eintrag zur JSON hinzufügen</button>
-          <button class="btn" type="button" id="btnCopyJson">Komplette JSON kopieren</button>
-          <button class="btn" type="button" id="btnFormatJson">Nur formatieren</button>
+            <div class="rb-actions" style="margin-top:10px;">
+              <button class="btn primary" type="button" id="btnLoadFromSrc">JSON aus Quelle laden</button>
+              <button class="btn" type="button" id="btnLoadWorking">Arbeits-JSON laden</button>
+              <button class="btn" type="button" id="btnResetWorking">Arbeits-JSON reset ([]) </button>
+            </div>
+
+            <div class="rb-small">
+              Tipp: Nach dem Laden kannst du beliebig viele Einträge hinzufügen. 01–17 bleiben drin.
+            </div>
+          </div>
+
+          <div>
+            <div class="rb-row" style="margin-top:0;">
+              <label for="jsonIn">Arbeits-JSON (Array) – wird automatisch gepflegt</label>
+              <textarea id="jsonIn" placeholder='[]'></textarea>
+            </div>
+
+            <div class="rb-actions">
+              <button class="btn primary" type="button" id="btnAddToJson">Eintrag zur JSON hinzufügen</button>
+              <button class="btn" type="button" id="btnCopyJson">Komplette JSON kopieren</button>
+              <button class="btn" type="button" id="btnFormatJson">Nur formatieren</button>
+            </div>
+          </div>
         </div>
 
         <div class="rb-out" id="outJson" aria-label="JSON Gesamt-Output"></div>
