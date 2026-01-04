@@ -4,6 +4,7 @@
 // - Active Menu Marker
 // - Kontakt: Anfrage-Builder (CTA-Autofill + Click-Flow)
 // - PATCH: Prefill-Aliase (z.B. ?p=Acryl-Schilder -> Acryl)
+// - PATCH: NAV-SAFETY (Top-Navigation + Leistungen-Dropdown absichern)
 // =========================================================
 (function () {
   "use strict";
@@ -28,6 +29,12 @@
     }
 
     // ---------------------------------
+    // NAV: Safety-Net (Links & Reihenfolge)
+    // -> verhindert "Acryl fehlt" usw.
+    // ---------------------------------
+    initNavSafety();
+
+    // ---------------------------------
     // NAV: aktiven Menüpunkt markieren
     // ---------------------------------
     const links = document.querySelectorAll("nav.menu a[href]");
@@ -43,6 +50,184 @@
     // ---------------------------------
     initContactRequestBuilder();
   });
+
+  // =========================================================
+  // NAV – Safety: Top-Links + Leistungen Dropdown absichern
+  // =========================================================
+  function initNavSafety() {
+    const navs = Array.from(document.querySelectorAll("nav.menu"));
+    if (!navs.length) return;
+
+    navs.forEach((nav) => {
+      // 1) Top-Navigation absichern (Start, Leistungen, Über, Kontakt, Impressum)
+      normalizeTopNav(nav);
+
+      // 2) Leistungen Panel absichern (Schiefer/Metall/Holz/Acryl/Custom + Kalkulator/Downloads)
+      normalizeLeistungenPanel(nav);
+    });
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+    function canonicalHref(raw) {
+      const h = (raw || "").toString().trim();
+      if (!h) return "";
+      if (h.startsWith("#")) return h;
+
+      try {
+        const u = new URL(h, window.location.origin);
+        let p = (u.pathname || "").replace(/index\.html$/, "");
+        const hasExt = /\.[a-z0-9]+$/i.test(p);
+
+        if (p === "") p = "/";
+        // trailing slash nur für "Ordnerpfade"
+        if (!hasExt && p !== "/" && !p.endsWith("/")) p += "/";
+
+        return p + (u.search || "");
+      } catch {
+        // Fallback: Original
+        return h;
+      }
+    }
+
+    function findLinkIn(container, href) {
+      const target = canonicalHref(href);
+      const as = Array.from(container.querySelectorAll('a[href]'));
+      return as.find((a) => canonicalHref(a.getAttribute("href")) === target) || null;
+    }
+
+    function createLink(text, href) {
+      const a = document.createElement("a");
+      a.setAttribute("href", href);
+      a.textContent = text;
+      return a;
+    }
+
+    function normalizeTopNav(nav) {
+      // vorhandene Knoten abgreifen
+      const start = findLinkIn(nav, "/") || createLink("Start", "/");
+
+      // Leistungen: bevorzugt Dropdown-Block, sonst Link /leistungen/
+      const drop = nav.querySelector(".navdrop");
+      const leistungen =
+        drop ||
+        findLinkIn(nav, "/leistungen/") ||
+        createLink("Leistungen", "/leistungen/");
+
+      const ueber = findLinkIn(nav, "/ueber/") || createLink("Über", "/ueber/");
+      const kontakt =
+        findLinkIn(nav, "/kontakt/") || createLink("Kontakt", "/kontakt/");
+      const impressum =
+        findLinkIn(nav, "/rechtliches/impressum.html") ||
+        createLink("Impressum", "/rechtliches/impressum.html");
+
+      // gewünschte Reihenfolge: Start, Leistungen, Über, Kontakt, Impressum
+      const keep = new Set([start, leistungen, ueber, kontakt, impressum]);
+
+      // alles andere am Ende behalten (z.B. zusätzliche Links)
+      const extras = Array.from(nav.childNodes).filter((n) => !keep.has(n));
+
+      // Re-Order ohne Duplikate (falls z.B. Start mehrfach drin war)
+      const frag = document.createDocumentFragment();
+      frag.appendChild(start);
+      frag.appendChild(leistungen);
+      frag.appendChild(ueber);
+      frag.appendChild(kontakt);
+      frag.appendChild(impressum);
+
+      extras.forEach((n) => frag.appendChild(n));
+      nav.innerHTML = "";
+      nav.appendChild(frag);
+    }
+
+    function normalizeLeistungenPanel(nav) {
+      const drop = nav.querySelector(".navdrop");
+      if (!drop) return; // wenn kein Dropdown existiert, nix erzwingen
+
+      const panel = drop.querySelector(".navdrop__panel");
+      if (!panel) return;
+
+      // Soll-Struktur
+      const SPEC = [
+        { type: "a", href: "/leistungen/schiefer/", text: "Schiefer" },
+        { type: "a", href: "/leistungen/metall/", text: "Metall" },
+        { type: "a", href: "/leistungen/holz/", text: "Holz" },
+        { type: "a", href: "/leistungen/acryl/", text: "Acryl" },
+        { type: "a", href: "/kontakt/?p=Custom", text: "Custom" },
+        { type: "sep" },
+        { type: "a", href: "/tools/kalkulator/", text: "Kalkulator" },
+        { type: "a", href: "/service/", text: "Downloads" },
+      ];
+
+      // vorhandene Links einsammeln + Duplikate killen (nach canonical href)
+      const existingAnchors = Array.from(panel.querySelectorAll('a[href]'));
+      const firstByHref = new Map();
+      const dupes = [];
+
+      existingAnchors.forEach((a) => {
+        const key = canonicalHref(a.getAttribute("href"));
+        if (!key) return;
+        if (!firstByHref.has(key)) firstByHref.set(key, a);
+        else dupes.push(a);
+      });
+
+      // Duplikate entfernen
+      dupes.forEach((a) => a.remove());
+
+      // Separator: wenn einer existiert, den ersten nehmen
+      let existingSep = panel.querySelector(".navdrop__sep");
+      if (existingSep) {
+        // falls mehrere: alle bis auf ersten löschen
+        const seps = Array.from(panel.querySelectorAll(".navdrop__sep"));
+        seps.slice(1).forEach((s) => s.remove());
+        existingSep = seps[0];
+      }
+
+      // neue Reihenfolge bauen, vorhandene wiederverwenden
+      const used = new Set();
+      const ordered = [];
+
+      SPEC.forEach((item) => {
+        if (item.type === "sep") {
+          const sep = existingSep || document.createElement("div");
+          sep.className = "navdrop__sep";
+          sep.setAttribute("aria-hidden", "true");
+          ordered.push(sep);
+          used.add(sep);
+          existingSep = sep;
+          return;
+        }
+
+        const key = canonicalHref(item.href);
+        let a = firstByHref.get(key);
+
+        if (!a) {
+          a = createLink(item.text, item.href);
+          a.setAttribute("role", "menuitem");
+        } else {
+          // role absichern (ohne Text umzuschreiben)
+          if (!a.getAttribute("role")) a.setAttribute("role", "menuitem");
+        }
+
+        ordered.push(a);
+        used.add(a);
+      });
+
+      // extras (nicht in SPEC) hinten dran lassen
+      const extras = Array.from(panel.childNodes).filter((n) => !used.has(n));
+
+      // panel rebuild
+      const frag = document.createDocumentFragment();
+      ordered.forEach((n) => frag.appendChild(n));
+      extras.forEach((n) => frag.appendChild(n));
+
+      panel.innerHTML = "";
+      panel.appendChild(frag);
+
+      // Panel-Rolle absichern
+      if (!panel.getAttribute("role")) panel.setAttribute("role", "menu");
+    }
+  }
 
   // =========================================================
   // Kontakt – Anfrage-Builder
@@ -169,7 +354,6 @@
         showSteps();
         populateVariantAndFormat(radio.value);
         updateChipClasses();
-        // Wenn der User bewusst umstellt: Prefill löschen (sonst "Ghost")
         clearCustomFields();
         updateLinks();
       });
