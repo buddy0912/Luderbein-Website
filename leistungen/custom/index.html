@@ -105,41 +105,28 @@
     }
 
     /* ======================================
-       Custom – Variant Cards (mit Preview-Bild)
+       Custom – Kachel-Thumb (wie andere Seiten: grid + card)
        ====================================== */
-    .variantGrid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
-      margin-top: 12px;
-    }
-    .variantCard {
-      grid-column: span 12;
-      border-radius: 18px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(26,26,31,.62);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      display: grid;
-      grid-template-columns: 1fr;
-    }
-    .variantThumb {
+    .cardthumb {
       position: relative;
-      aspect-ratio: 16/9;
-      background: rgba(0,0,0,.18);
+      border-radius: 14px;
       overflow: hidden;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      aspect-ratio: 16/9;
+      margin-bottom: 10px;
     }
-    .variantThumb img {
+    .cardthumb img {
       width: 100%;
       height: 100%;
       display: block;
       object-fit: cover;
       filter: saturate(1.02) contrast(1.02);
     }
-    .variantTag {
+    .cardtag {
       position: absolute;
-      top: 12px;
-      left: 12px;
+      top: 10px;
+      left: 10px;
       z-index: 2;
       padding: 6px 10px;
       border-radius: 999px;
@@ -154,10 +141,10 @@
       user-select: none;
       pointer-events: none;
     }
-    .variantSoon {
+    .cardsoon {
       position: absolute;
       left: 50%;
-      bottom: 12px;
+      bottom: 10px;
       transform: translateX(-50%);
       z-index: 2;
       padding: 7px 10px;
@@ -172,36 +159,9 @@
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
       user-select: none;
       pointer-events: none;
-      max-width: calc(100% - 28px);
+      max-width: calc(100% - 24px);
       text-align: center;
       white-space: normal;
-    }
-
-    .variantBody {
-      padding: 14px;
-    }
-    .variantBody h3 {
-      margin: 0 0 6px;
-      font-size: 1.05rem;
-    }
-    .variantBody p {
-      margin: 0;
-      color: var(--muted);
-      font-size: .95rem;
-      line-height: 1.45;
-    }
-    .variantActions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
-    @media (min-width: 760px) {
-      .variantCard { grid-column: span 6; }
-    }
-    @media (min-width: 980px) {
-      .variantCard { grid-column: span 4; }
     }
   </style>
 </head>
@@ -300,102 +260,77 @@
       </div>
     </section>
 
-    <section class="section" aria-label="Custom-Varianten">
-      <div class="sectionHead">
-        <h2>Wofür Custom?</h2>
+    <section class="section" aria-label="Custom-Kacheln">
+      <div class="section-head">
+        <h2>Bereiche</h2>
+        <p class="small muted">Wähl grob die Richtung – dann klären wir Machbarkeit &amp; Design.</p>
       </div>
-      <p class="muted">Wähl grob die Richtung. Den Rest ziehen wir schnell gerade.</p>
 
-      <div class="variantGrid">
+      <div class="grid">
         <!-- Lampenbau -->
-        <article class="variantCard">
-          <div class="variantThumb">
-            <span class="variantTag">Lampenbau</span>
-            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+        <div class="card">
+          <div class="cardthumb">
+            <span class="cardtag">Lampenbau</span>
+            <img src="/assets/reel/reel-09.jpg" alt="Custom – Lampenbau Beispiel" loading="lazy">
           </div>
-          <div class="variantBody">
-            <h3>Lampenbau</h3>
-            <p>Individuelle Lampen / Teile / Gravur + Cut. Wenn’s leuchtet, darf’s auch Haltung haben.</p>
-            <div class="variantActions">
-              <a class="btn primary" href="/kontakt/?p=Custom&v=Lampenbau">Anfragen</a>
-            </div>
+          <h3>Lampenbau</h3>
+          <p class="small muted">Individuelle Lampen / Teile / Gravur + Cut. Wenn’s leuchtet, darf’s auch Haltung haben.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Lampenbau">Anfragen</a>
           </div>
-        </article>
+        </div>
 
-        <!-- Schwibbögen (Teaser) -->
-        <article class="variantCard">
-          <div class="variantThumb">
-            <span class="variantTag">Schwibbögen</span>
-            <span class="variantSoon" aria-hidden="true">Kommt als großer Bereich</span>
+        <!-- Schwibbögen (Bild kommt noch) -->
+        <div class="card">
+          <div class="cardthumb">
+            <span class="cardtag">Schwibbögen</span>
+            <span class="cardsoon" aria-hidden="true">Bild folgt – wird noch hochgeladen</span>
           </div>
-          <div class="variantBody">
-            <h3>Schwibbögen (Teaser)</h3>
-            <p>Schon jetzt möglich: Sonderwünsche, Namen, Motive, Anpassungen – bevor der große Reiter live ist.</p>
-            <div class="variantActions">
-              <a class="btn primary" href="/kontakt/?p=Custom&v=Schwibbogen">Anfragen</a>
-            </div>
+          <h3>Schwibbögen (Teaser)</h3>
+          <p class="small muted">Schon jetzt möglich: Sonderwünsche, Namen, Motive, Anpassungen – bevor der große Bereich live ist.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Schwibbogen">Anfragen</a>
           </div>
-        </article>
+        </div>
 
-        <!-- Sonderholzschnitt -->
-        <article class="variantCard">
-          <div class="variantThumb">
-            <span class="variantTag">Holz (dick)</span>
-            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+        <!-- Holz dick (noch kein Bild) -->
+        <div class="card">
+          <div class="cardthumb">
+            <span class="cardtag">Holz (dick)</span>
+            <span class="cardsoon" aria-hidden="true">Bilder folgen in Kürze</span>
           </div>
-          <div class="variantBody">
-            <h3>Sonderholzschnitt bis 35 mm</h3>
-            <p>Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile.</p>
-            <div class="variantActions">
-              <a class="btn primary" href="/kontakt/?p=Custom&v=Sonderholzschnitt%2035mm">Anfragen</a>
-            </div>
+          <h3>Sonderholzschnitt bis 35 mm</h3>
+          <p class="small muted">Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Sonderholzschnitt%2035mm">Anfragen</a>
           </div>
-        </article>
+        </div>
 
-        <!-- Schmuck -->
-        <article class="variantCard">
-          <div class="variantThumb">
-            <span class="variantTag">Schmuck</span>
-            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+        <!-- Schmuck (später) -->
+        <div class="card">
+          <div class="cardthumb">
+            <span class="cardtag">Schmuck</span>
+            <span class="cardsoon" aria-hidden="true">Bilder folgen später</span>
           </div>
-          <div class="variantBody">
-            <h3>Schmuck / Kleinzeug</h3>
-            <p>Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig.</p>
-            <div class="variantActions">
-              <a class="btn primary" href="/kontakt/?p=Custom&v=Schmuck">Anfragen</a>
-            </div>
+          <h3>Schmuck / Kleinzeug</h3>
+          <p class="small muted">Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Schmuck">Anfragen</a>
           </div>
-        </article>
+        </div>
 
-        <!-- Mischmaterial -->
-        <article class="variantCard">
-          <div class="variantThumb">
-            <span class="variantTag">Mischmaterial</span>
-            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
+        <!-- Freie Idee (Feed “läuft mit”) -->
+        <div class="card">
+          <div class="cardthumb">
+            <span class="cardtag">Freie Idee</span>
+            <span class="cardsoon" aria-hidden="true">Beispiele oben im Feed</span>
           </div>
-          <div class="variantBody">
-            <h3>Mischmaterial / Sonderkombi</h3>
-            <p>Holz + Metall, Acryl + Gravur, Layer, Schraubkram – wenn’s ungewöhnlich wird, passt’s hier rein.</p>
-            <div class="variantActions">
-              <a class="btn primary" href="/kontakt/?p=Custom&v=Mischmaterial">Anfragen</a>
-            </div>
+          <h3>Freie Idee</h3>
+          <p class="small muted">Du hast nur “so ungefähr” im Kopf? Schick’s. Ich mache daraus was Laserbares.</p>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Custom&v=Freie%20Idee">Anfragen</a>
           </div>
-        </article>
-
-        <!-- Freie Idee -->
-        <article class="variantCard">
-          <div class="variantThumb">
-            <span class="variantTag">Freie Idee</span>
-            <span class="variantSoon" aria-hidden="true">Bilder folgen in Kürze</span>
-          </div>
-          <div class="variantBody">
-            <h3>Freie Idee</h3>
-            <p>Du hast nur “so ungefähr” im Kopf? Schick’s. Ich mache daraus was Druck-/Laserbares.</p>
-            <div class="variantActions">
-              <a class="btn primary" href="/kontakt/?p=Custom&v=Freie%20Idee">Anfragen</a>
-            </div>
-          </div>
-        </article>
+        </div>
       </div>
 
       <div class="cta" style="margin-top:16px;">
