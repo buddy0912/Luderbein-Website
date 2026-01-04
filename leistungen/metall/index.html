@@ -82,64 +82,64 @@
 
 <body>
   <header>
-  <div class="wrap nav">
-    <a class="brand" href="/">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <strong>Luderbein</strong><br>
-        <span>Schwibbögen • Gravur • Sonderwünsche</span>
-      </div>
-    </a>
-
-    <button
-      class="navbtn"
-      type="button"
-      data-nav-toggle
-      aria-expanded="false"
-      aria-controls="nav-main"
-      aria-label="Menü öffnen"
-    >
-      <span class="navicon"><span></span></span>
-    </button>
-
-    <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-      <a href="/">Start</a>
-
-      <div class="navdrop" data-navdrop>
-        <button
-          class="navdrop__sum"
-          id="navdrop-leistungen-btn"
-          type="button"
-          aria-haspopup="true"
-          aria-expanded="false"
-          aria-controls="navdrop-leistungen-panel"
-        >
-          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-        </button>
-
-        <div
-          class="navdrop__panel"
-          id="navdrop-leistungen-panel"
-          role="menu"
-          aria-labelledby="navdrop-leistungen-btn"
-        >
-          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-          <a href="/leistungen/metall/" role="menuitem">Metall</a>
-          <a href="/leistungen/holz/" role="menuitem">Holz</a>
-          <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-          <a href="/leistungen/custom/" role="menuitem">Custom</a>
-          <div class="navdrop__sep" aria-hidden="true"></div>
-          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-          <a href="/service/" role="menuitem">Downloads</a>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
         </div>
-      </div>
+      </a>
 
-      <a href="/ueber/">Über</a>
-      <a href="/kontakt/">Kontakt</a>
-      <a href="/rechtliches/impressum.html">Impressum</a>
-    </nav>
-  </div>
-</header>
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem" aria-current="page">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
 
   <main class="wrap" id="content">
     <section class="hero">
@@ -210,6 +210,124 @@
         </div>
       </div>
     </section>
+
+    <div class="hr"></div>
+
+    <section class="section" aria-label="Metall Varianten">
+      <div class="section-head">
+        <h2>Varianten</h2>
+        <p class="small muted">Klicken → Anfrage starten. Varianten werden fortlaufend ergänzt.</p>
+      </div>
+
+      <div class="products">
+        <!-- HUNDEMARKEN / TAGS -->
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/metall/metall-reel-03.jpg"
+              alt="Metall – Hundemarken / Tags Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Hundemarken &amp; Tags</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>robust &amp; alltagstauglich</span>
+          </div>
+          <h3>Hundemarken &amp; Tags</h3>
+          <p class="kicker">Name, Nummer, QR – sauber lesbar, langlebig, ohne Klimbim. Genau dein Style.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Hundemarken%20%26%20Tags">Anfragen</a>
+          </div>
+        </article>
+
+        <!-- SCHILDER / PLAKETTEN -->
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/metall/metall-reel-08.jpg"
+              alt="Metall – Schilder / Plaketten Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Schilder &amp; Plaketten</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>Werkstatt, Maschine, Outdoor</span>
+          </div>
+          <h3>Schilder &amp; Plaketten</h3>
+          <p class="kicker">Typenschilder, Werkstatt-Labels, Warnhinweise – stabil, klar, dauerhaft.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Schilder%20%26%20Plaketten">Anfragen</a>
+          </div>
+        </article>
+
+        <!-- SCHLÜSSELANHÄNGER -->
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/metall/metall-reel-05.jpg"
+              alt="Metall – Schlüsselanhänger Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Schlüsselanhänger</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>clean, frech, personalisiert</span>
+          </div>
+          <h3>Schlüsselanhänger</h3>
+          <p class="kicker">Text, Icon, Koordinaten – minimal oder provokant. Aber sauber.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Schl%C3%BCsselanh%C3%A4nger">Anfragen</a>
+          </div>
+        </article>
+
+        <!-- VISITENKARTEN / BUSINESS -->
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/metall/metall-reel-10.jpg"
+              alt="Metall – Visitenkarten / Business Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Business</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>edel, auffällig, langlebig</span>
+          </div>
+          <h3>Visitenkarten &amp; Business</h3>
+          <p class="kicker">Metall-Visitenkarten, Branding-Plaketten, QR – wenn du ernst machst, mach’s richtig.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Business">Anfragen</a>
+          </div>
+        </article>
+
+        <!-- SCHMUCK / ANHÄNGER -->
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/metall/metall-reel-12.jpg"
+              alt="Metall – Schmuck / Anhänger Beispiel"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Schmuck</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>klein, fein, präzise</span>
+          </div>
+          <h3>Schmuck &amp; Anhänger</h3>
+          <p class="kicker">Initialen, Symbole, kleine Serien – sauber graviert, ohne dass es nach „Bastel“ aussieht.</p>
+          <div class="actions">
+            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Schmuck">Anfragen</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="hr"></div>
 
     <section class="section" style="margin-top:30px;">
       <h2>Anwendung &amp; Hinweise</h2>
