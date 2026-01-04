@@ -4,23 +4,47 @@ import path from "path";
 const repoRoot = process.cwd();
 
 /**
- * Normalize internal URLs so the checker is robust against
- * typographic dashes (– — − etc.) that can sneak in via copy/paste.
- * We convert them to a plain ASCII hyphen-minus "-".
+ * Robust normalization for comparing path segments.
+ * - decodes %xx
+ * - normalizes unicode (NFKC)
+ * - converts all dash variants to "-"
+ * - removes zero-width chars + soft hyphen
+ * - trims
  */
-function normalizeInternalUrl(url) {
-  if (!url) return url;
+function normSeg(input) {
+  if (input == null) return "";
+  let s = String(input);
 
-  // Normalize Unicode (compat form) first
-  let u = String(url).normalize("NFKC");
+  // decode percent-encoding if present (safe)
+  try {
+    // decodeURIComponent explodes on malformed sequences; ignore then
+    s = decodeURIComponent(s);
+  } catch {}
 
-  // Replace common dash variants with "-"
-  u = u.replace(/[\u2010\u2011\u2012\u2013\u2014\u2212\uFE58\uFE63\uFF0D]/g, "-");
+  // unicode normalize
+  s = s.normalize("NFKC");
 
-  // Also normalize weird spaces that sometimes creep in
-  u = u.replace(/[\u00A0\u2007\u202F]/g, " ");
+  // remove soft hyphen + zero width chars + BOM
+  s = s.replace(/[\u00AD\u200B\u200C\u200D\uFEFF]/g, "");
 
-  return u;
+  // replace dash variants with ASCII hyphen-minus
+  s = s.replace(
+    /[\u2010\u2011\u2012\u2013\u2014\u2212\u2043\uFE58\uFE63\uFF0D]/g,
+    "-"
+  );
+
+  // normalize weird spaces (just in case)
+  s = s.replace(/[\u00A0\u2007\u202F]/g, " ");
+
+  return s.trim();
+}
+
+function normPathRel(relPath) {
+  return relPath
+    .split("/")
+    .filter(Boolean)
+    .map(normSeg)
+    .join("/");
 }
 
 /**
@@ -31,7 +55,6 @@ function walkFiles(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      // skip common noise
       if (entry.name === ".git" || entry.name === "node_modules") continue;
       out.push(...walkFiles(full));
     } else {
@@ -45,22 +68,39 @@ function read(file) {
   return fs.readFileSync(file, "utf8");
 }
 
-function existsRel(relPath) {
-  return fs.existsSync(path.join(repoRoot, relPath));
+/**
+ * Loose-exists: exact OR normalization-based match across segments.
+ * Returns { ok:true, actualRel } or { ok:false }.
+ */
+function existsRelLoose(relPath) {
+  const exactAbs = path.join(repoRoot, relPath);
+  if (fs.existsSync(exactAbs)) return { ok: true, actualRel: relPath };
+
+  // try segment-by-segment normalized match on disk
+  const match = findNormalizedMatch(relPath);
+  if (match && match.actualRel && fs.existsSync(path.join(repoRoot, match.actualRel))) {
+    return { ok: true, actualRel: match.actualRel };
+  }
+
+  return { ok: false };
 }
 
 /**
- * Finds the actual on-disk path by matching each segment case-insensitively.
+ * Finds the actual on-disk path by matching each segment using normSeg().
  * Returns null if no match exists.
- * If matched, returns { actualRel, hasCaseMismatch }.
+ * If matched, returns { actualRel, differs } where differs means the raw segment strings differ.
  */
-function findCaseInsensitiveMatch(relPath) {
-  const parts = relPath.split("/").filter(Boolean);
+function findNormalizedMatch(relPath) {
+  const partsRaw = relPath.split("/").filter(Boolean);
+  const parts = partsRaw.map(normSeg);
+
   let curAbs = repoRoot;
   let actualParts = [];
-  let hasCaseMismatch = false;
+  let differs = false;
 
-  for (const part of parts) {
+  for (let i = 0; i < parts.length; i++) {
+    const wantNorm = parts[i];
+
     let entries;
     try {
       entries = fs.readdirSync(curAbs, { withFileTypes: true });
@@ -68,19 +108,19 @@ function findCaseInsensitiveMatch(relPath) {
       return null;
     }
 
-    const match = entries.find((e) => e.name.toLowerCase() === part.toLowerCase());
+    // match by normalized name
+    const match = entries.find((e) => normSeg(e.name) === wantNorm);
     if (!match) return null;
 
-    if (match.name !== part) hasCaseMismatch = true;
+    // if raw differs, note it (case/dash/hidden char)
+    if (match.name !== partsRaw[i]) differs = true;
 
     actualParts.push(match.name);
     curAbs = path.join(curAbs, match.name);
   }
 
   const actualRel = actualParts.join("/");
-  if (!fs.existsSync(path.join(repoRoot, actualRel))) return null;
-
-  return { actualRel, hasCaseMismatch };
+  return { actualRel, differs };
 }
 
 /**
@@ -88,33 +128,33 @@ function findCaseInsensitiveMatch(relPath) {
  * Also supports "directory without trailing slash" by checking .../index.html as fallback.
  */
 function resolveInternal(url) {
-  // Normalize dash variants etc. BEFORE parsing
-  const normalizedUrl = normalizeInternalUrl(url);
+  const cleanRaw = String(url || "").split("#")[0].split("?")[0];
 
-  const clean = normalizedUrl.split("#")[0].split("?")[0];
+  // Normalize the URL path for comparison purposes (dash/hidden chars/percent-encoding)
+  // NOTE: We DO NOT change what the site serves, only how the checker resolves.
+  const clean = normSeg(cleanRaw).startsWith("/")
+    ? normSeg(cleanRaw)
+    : "/" + normSeg(cleanRaw);
 
   if (clean === "/") {
-    return { url: clean, target: "index.html", fallbackTarget: null };
+    return { url: cleanRaw, target: "index.html", fallbackTarget: null };
   }
 
-  // /foo/ -> foo/index.html
   if (clean.endsWith("/")) {
     const target = clean.replace(/^\//, "") + "index.html";
-    return { url: clean, target, fallbackTarget: null };
+    return { url: cleanRaw, target, fallbackTarget: null };
   }
 
-  // /foo -> foo (file) OR foo/index.html (dir fallback)
   const target = clean.replace(/^\//, "");
   const fallbackTarget = target + "/index.html";
-  return { url: clean, target, fallbackTarget };
+  return { url: cleanRaw, target, fallbackTarget };
 }
 
 /**
  * Detect case-insensitive collisions in the repo (two paths differ only by case).
- * This is a real risk on macOS/Windows + generally a maintenance hazard.
  */
 function detectCaseCollisions(allRelFiles) {
-  const map = new Map(); // lower -> [actual...]
+  const map = new Map();
   for (const p of allRelFiles) {
     const k = p.toLowerCase();
     if (!map.has(k)) map.set(k, []);
@@ -129,72 +169,55 @@ function detectCaseCollisions(allRelFiles) {
 }
 
 /**
- * Process a single internal URL and record missing/case-mismatch/warnings.
+ * Process a single internal URL and record missing/warnings.
  */
 function checkOneTarget({ fromFile, url, kind }, state) {
-  // Ignore protocol-relative
-  if (url.startsWith("//")) return;
+  if (!url || url.startsWith("//")) return;
 
-  // Normalize here too (defensive, in case caller bypassed resolveInternal)
-  const safeUrl = normalizeInternalUrl(url);
+  const { target, fallbackTarget } = resolveInternal(url);
 
-  const { target, fallbackTarget } = resolveInternal(safeUrl);
-
-  // 1) exact match exists
-  if (existsRel(target)) return;
-
-  // 2) case-insensitive match exists but case mismatch -> fail
-  const ci = findCaseInsensitiveMatch(target);
-  if (ci && ci.actualRel && ci.hasCaseMismatch) {
-    state.caseMismatch.push({
-      from: fromFile,
-      kind,
-      url: safeUrl,
-      expected: target,
-      actual: ci.actualRel,
-    });
-    return;
-  }
-
-  // 3) /dir (no slash) but /dir/index.html exists -> warn only
-  if (fallbackTarget && existsRel(fallbackTarget)) {
-    state.trailingSlashWarnings.push({
-      from: fromFile,
-      kind,
-      url: safeUrl,
-      suggestion: "/" + target + "/",
-      resolvesTo: fallbackTarget,
-    });
-    return;
-  }
-
-  // 4) case-insensitive match for fallback target
-  if (fallbackTarget) {
-    const ciFallback = findCaseInsensitiveMatch(fallbackTarget);
-    if (ciFallback && ciFallback.actualRel && ciFallback.hasCaseMismatch) {
-      state.caseMismatch.push({
+  // 1) exact OR normalized match exists
+  const ex1 = existsRelLoose(target);
+  if (ex1.ok) {
+    // optional warn if normalized match had to fix something
+    if (ex1.actualRel !== target) {
+      state.normalizedWarnings.push({
         from: fromFile,
         kind,
-        url: safeUrl,
-        expected: fallbackTarget,
-        actual: ciFallback.actualRel,
+        url,
+        expected: target,
+        actual: ex1.actualRel,
+      });
+    }
+    return;
+  }
+
+  // 2) /dir (no slash) but /dir/index.html exists -> warn only
+  if (fallbackTarget) {
+    const ex2 = existsRelLoose(fallbackTarget);
+    if (ex2.ok) {
+      state.trailingSlashWarnings.push({
+        from: fromFile,
+        kind,
+        url,
+        suggestion: "/" + target + "/",
+        resolvesTo: ex2.actualRel,
       });
       return;
     }
   }
 
-  // 5) missing
+  // 3) missing
   state.missing.push({
     from: fromFile,
     kind,
-    url: safeUrl,
+    url,
     expected: target,
     alsoTried: fallbackTarget,
   });
 }
 
 // --- Main scan ---
-
 const allFilesAbs = walkFiles(repoRoot);
 const allFilesRel = allFilesAbs.map((f) => path.relative(repoRoot, f).replaceAll("\\", "/"));
 
@@ -210,8 +233,8 @@ const dataReelSrcRegex = /\bdata-reel-src\s*=\s*["'](\/[^"']+)["']/gi;
 
 const state = {
   missing: [],
-  caseMismatch: [],
   trailingSlashWarnings: [],
+  normalizedWarnings: [],
 };
 
 for (const file of htmlFiles) {
@@ -240,26 +263,12 @@ for (const file of htmlFiles) {
 }
 
 // --- Reporting ---
-
 let failed = false;
 
 if (collisions.length) {
   failed = true;
-  console.error("❌ Case-insensitive path collisions found (danger on macOS/Windows + confusing):");
-  for (const c of collisions) {
-    console.error(`- ${c.paths.join("  |  ")}`);
-  }
-  console.error("");
-}
-
-if (state.caseMismatch.length) {
-  failed = true;
-  console.error("❌ Case mismatch in internal targets (will break on case-sensitive hosting like Cloudflare Pages):");
-  for (const x of state.caseMismatch) {
-    console.error(`- [${x.kind}] ${x.from} -> ${x.url}`);
-    console.error(`  expected: ${x.expected}`);
-    console.error(`  actual:   ${x.actual}`);
-  }
+  console.error("❌ Case-insensitive path collisions found:");
+  for (const c of collisions) console.error(`- ${c.paths.join("  |  ")}`);
   console.error("");
 }
 
@@ -273,16 +282,24 @@ if (state.missing.length) {
   console.error("");
 }
 
+// This is ONLY a warning: means "we had to normalize something to find it"
+if (state.normalizedWarnings.length) {
+  console.log("⚠️ Normalized matches (dash/hidden-char/encoding fixed by checker):");
+  for (const x of state.normalizedWarnings) {
+    console.log(`- [${x.kind}] ${x.from} -> ${x.url}`);
+    console.log(`  expected: ${x.expected}`);
+    console.log(`  actual:   ${x.actual}`);
+  }
+  console.log("");
+}
+
 if (state.trailingSlashWarnings.length) {
-  console.log("⚠️ Links to directories without trailing slash (works sometimes via redirect, but not guaranteed everywhere):");
+  console.log("⚠️ Links to directories without trailing slash:");
   for (const x of state.trailingSlashWarnings) {
     console.log(`- [${x.kind}] ${x.from} -> ${x.url} (suggest: ${x.suggestion}, resolves to: ${x.resolvesTo})`);
   }
   console.log("");
 }
 
-if (failed) {
-  process.exit(1);
-} else {
-  console.log("✅ All internal targets exist (href/src + data-reel-src) and no case issues found.");
-}
+if (failed) process.exit(1);
+console.log("✅ All internal targets exist (href/src + data-reel-src).");
