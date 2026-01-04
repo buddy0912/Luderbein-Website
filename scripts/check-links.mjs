@@ -1,12 +1,36 @@
-// scripts/check-links.mjs
+// /scripts/check-links.mjs
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// ✅ Repo-Root immer zuverlässig: "…/<repo>/scripts/check-links.mjs" -> repoRoot="…/<repo>"
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const repoRoot = path.resolve(__dirname, "..");
+
+/**
+ * Robust repo root detection:
+ * Works even if the GitHub Action runs with working-directory = scripts/
+ */
+function findRepoRoot(startDir) {
+  let dir = startDir;
+  for (let i = 0; i < 20; i++) {
+    // strong markers
+    if (
+      fs.existsSync(path.join(dir, ".git")) ||
+      fs.existsSync(path.join(dir, "index.html")) ||
+      fs.existsSync(path.join(dir, "package.json")) ||
+      fs.existsSync(path.join(dir, "assets"))
+    ) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  // fallback: scripts/.. (expected layout)
+  return path.resolve(startDir, "..");
+}
+
+const repoRoot = findRepoRoot(__dirname);
 
 /**
  * Walk repo and return absolute paths for all files.
@@ -16,7 +40,6 @@ function walkFiles(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      // skip common noise
       if (entry.name === ".git" || entry.name === "node_modules") continue;
       out.push(...walkFiles(full));
     } else {
@@ -113,8 +136,7 @@ function detectCaseCollisions(allRelFiles) {
  * Process a single internal URL and record missing/case-mismatch/warnings.
  */
 function checkOneTarget({ fromFile, url, kind }, state) {
-  // Ignore protocol-relative
-  if (url.startsWith("//")) return;
+  if (url.startsWith("//")) return; // protocol-relative
 
   const { target, fallbackTarget } = resolveInternal(url);
 
@@ -192,6 +214,7 @@ const state = {
   trailingSlashWarnings: [],
 };
 
+// scan
 for (const file of htmlFiles) {
   const relFile = path.relative(repoRoot, file).replaceAll("\\", "/");
   const content = read(file);
@@ -258,5 +281,4 @@ if (state.trailingSlashWarnings.length) {
 }
 
 if (failed) process.exit(1);
-
 console.log("✅ All internal targets exist (href/src + data-reel-src) and no case issues found.");
