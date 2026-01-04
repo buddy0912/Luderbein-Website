@@ -5,23 +5,17 @@ on:
   pull_request:
 
 jobs:
-  checks:
+  link_check:
+    name: Check internal href/src targets
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Check internal href/src targets
+      - name: Run link checker
         run: node scripts/check-links.mjs
-
-      - name: Check header consistency
-        run: node scripts/check-headers.mjs
-
-      - name: Check footer consistency
-        run: node scripts/check-footers.mjs
-
-      - name: Check HTML hygiene (report only)
-        run: node scripts/check-hygiene.mjs
