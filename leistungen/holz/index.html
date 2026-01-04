@@ -11,66 +11,46 @@
 
 <body>
   <header>
-  <div class="wrap nav">
-    <a class="brand" href="/">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <strong>Luderbein</strong><br>
-        <span>Schwibbögen • Gravur • Sonderwünsche</span>
-      </div>
-    </a>
-
-    <button
-      class="navbtn"
-      type="button"
-      data-nav-toggle
-      aria-expanded="false"
-      aria-controls="nav-main"
-      aria-label="Menü öffnen"
-    >
-      <span class="navicon"><span></span></span>
-    </button>
-
-    <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-      <a href="/">Start</a>
-
-      <div class="navdrop" data-navdrop>
-        <button
-          class="navdrop__sum"
-          id="navdrop-leistungen-btn"
-          type="button"
-          aria-haspopup="true"
-          aria-expanded="false"
-          aria-controls="navdrop-leistungen-panel"
-        >
-          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-        </button>
-
-        <div
-          class="navdrop__panel"
-          id="navdrop-leistungen-panel"
-          role="menu"
-          aria-labelledby="navdrop-leistungen-btn"
-        >
-          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-          <a href="/leistungen/metall/" role="menuitem">Metall</a>
-          <a href="/leistungen/holz/" role="menuitem">Holz</a>
-          <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
-          <div class="navdrop__sep" aria-hidden="true"></div>
-          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-          <a href="/service/" role="menuitem">Downloads</a>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
         </div>
-      </div>
+      </a>
 
-      <a href="/ueber/">Über</a>
-      <a href="/kontakt/">Kontakt</a>
-      <a href="/rechtliches/impressum.html">Impressum</a>
-    </nav>
-  </div>
-</header>
-  
-  <main class="wrap" id="content">
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem" aria-current="page">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
     <section class="hero">
       <span class="badge"><i></i> Leistung – Holz</span>
       <h1>Holzgravur</h1>
@@ -79,24 +59,47 @@
         Gravur, Fräsung oder Laser-Schnitt: du sagst, was das Holz werden soll.
       </p>
 
-      <!-- Clean: 1 CTA -->
       <div class="cta">
         <a class="btn primary" href="/kontakt/?p=Holz">Anfragen</a>
+        <a class="btn" href="/leistungen/">Zurück</a>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Holz Beispiele">
+      <div class="section-head">
+        <h2>Beispiele</h2>
+        <p class="small muted">Kurzer Eindruck – mehr kommt nach und nach rein.</p>
       </div>
 
-      <p class="small muted" style="margin-top:.75rem;">
-        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
-      </p>
+      <div class="grid">
+        <div class="card" style="overflow:hidden;">
+          <img src="/assets/reel/reel-03.jpg" alt="Holz – Beispiel" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;">
+          <p class="small muted" style="margin-top:.65rem;">Werkstatt – Holz (Beispiel)</p>
+        </div>
+        <div class="card" style="overflow:hidden;">
+          <img src="/assets/reel/reel-07.jpg" alt="Holz – Beispiel" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;">
+          <p class="small muted" style="margin-top:.65rem;">Holz – Schilder/Gravur</p>
+        </div>
+        <div class="card" style="overflow:hidden;">
+          <img src="/assets/reel/reel-08.jpg" alt="Holz – Beispiel" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;">
+          <p class="small muted" style="margin-top:.65rem;">Holz – Deko/Details</p>
+        </div>
+        <div class="card" style="overflow:hidden;">
+          <img src="/assets/reel/reel-12.jpg" alt="Holz – Beispiel" loading="lazy" style="width:100%;height:auto;display:block;border-radius:12px;">
+          <p class="small muted" style="margin-top:.65rem;">Holz – Sonderteile</p>
+        </div>
+      </div>
     </section>
 
     <section class="section" aria-label="Holz Varianten">
-      <h2>Kategorien (in Vorbereitung)</h2>
+      <h2>Kategorien</h2>
       <p class="small muted">Diese Bereiche werden nach und nach ausgebaut – Anfragen gehen aber jetzt schon.</p>
 
       <div class="products">
         <!-- HOLZSCHILDER -->
         <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1;">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img src="/assets/reel/reel-07.jpg" alt="Holzschilder – Beispiel" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
             <span class="thumblabel">Holzschilder</span>
           </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur / Fräsung</span></div>
@@ -111,7 +114,8 @@
 
         <!-- DEKO -->
         <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1;">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img src="/assets/reel/reel-08.jpg" alt="Holz Deko – Beispiel" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
             <span class="thumblabel">Deko</span>
           </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Design &amp; Deko</span></div>
@@ -126,7 +130,8 @@
 
         <!-- SONDERTEILE -->
         <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1;">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img src="/assets/reel/reel-12.jpg" alt="Holz Sonderteile – Beispiel" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;">
             <span class="thumblabel">Sonderteile</span>
           </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Laser bis 850×800 mm</span></div>
@@ -165,8 +170,6 @@
 
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
 </body>
 </html>
