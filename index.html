@@ -11,7 +11,7 @@
 
   <style>
     /* =========================================================
-       START – FEED Reel (wie bei Schiefer/Acryl/Custom)
+       START – FEED Reel (Werkstatt)
        ========================================================= */
     .reelwrap { position: relative; margin-top: 10px; }
     .reelwrap::before, .reelwrap::after {
@@ -76,7 +76,7 @@
       user-select: none;
     }
 
-    /* Werkstatt: 4:3 + contain => nix wird abgeschnitten */
+    /* Werkstatt: 4:3 + contain => nichts wird abgeschnitten */
     .reel__img {
       display: block;
       width: 100%;
@@ -103,7 +103,7 @@
     }
 
     /* =========================================================
-       FIX: Brand-Farbe oben links (Luderbein) – passend zu dir
+       Brand-Farbe oben links (Luderbein) – klares Rot, edel
        ========================================================= */
     .brand strong{
       color: rgba(255, 48, 48, .92);
@@ -113,7 +113,7 @@
     .brand span { color: rgba(255,255,255,.72); }
 
     /* =========================================================
-       START – Preview-Kacheln: Bild klickbar + Smooth Fade
+       Preview-Kacheln: Bild klickbar + Smooth Fade
        ========================================================= */
     .thumb a { display:block; width:100%; height:100%; color:inherit; text-decoration:none; }
     .thumb { position: relative; overflow: hidden; }
@@ -129,6 +129,18 @@
       transition: opacity .65s ease;
     }
     .thumbslider img.is-on { opacity: 1; }
+
+    /* =========================================================
+       FIX: Kachel-Aufbau strikt konsistent (Meta/Titel/Text/Buttons)
+       -> sorgt dafür, dass Acryl NICHT anders “formatiert” wirkt.
+       ========================================================= */
+    .productcard .meta { min-height: 1.2em; }
+    .productcard h3 { margin-top: 10px; }
+    .productcard .kicker {
+      min-height: 3.9em; /* ~3 Zeilen bei line-height ~1.3 */
+      display: block;
+    }
+    .productcard .actions { margin-top: 14px; }
   </style>
 </head>
 
@@ -242,9 +254,10 @@
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
             <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
-              <!-- Schiefer: hier bewusst NICHT reel-02/03 (waren bei dir falsch) -->
-              <img class="is-on" src="/assets/reel/reel-04.jpg" alt="Schiefer Beispiel" loading="lazy">
-              <img src="/assets/reel/reel-05.jpg" alt="Schiefer Beispiel" loading="lazy">
+              <img class="is-on" src="/assets/reel/reel-01.jpg" alt="Schiefer – Beispiel" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Schiefer</span>
           </a>
@@ -302,10 +315,9 @@
       <article class="productcard">
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/acryl/" aria-label="Acryl ansehen">
-            <!-- FIX: Acryl exakt wie die anderen (rotate=1 + 2 Bilder) -->
             <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
-              <img class="is-on" src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
-              <img src="/assets/reel/reel-10.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
+              <img class="is-on" src="/assets/reel/reel-11.jpg" alt="Acryl – Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-10.jpg" alt="Acryl – Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Acryl</span>
           </a>
