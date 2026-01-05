@@ -1,14 +1,14 @@
 /*
  * Luderbein Preisliste / Kalkulator
- * V1.4 – Stand Januar 2026
+ * V1.5 – Stand Januar 2026
  * Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen
  */
 
 window.LUDERBEIN_PRICING = {
   meta: {
-    version: "1.4",
+    version: "1.5",
     updated: "01/2026",
-    note: "Schieferpreise aktiv (Fotogravur + Gedenktafel + Text/Symbol). Weitere Materialien bitte anfragen."
+    note: "Schiefer aktiv. Metall wird schrittweise ergänzt."
   },
 
   // === Versandregeln ===
@@ -25,6 +25,7 @@ window.LUDERBEIN_PRICING = {
     // 🔹 SCHIEFER (aktiv)
     // ===============================
     schiefer: {
+      active: true,
       label: "Schiefer",
       includes: "Fotoaufbereitung, Gravur, Klarlack-Versiegelung",
 
@@ -70,13 +71,26 @@ window.LUDERBEIN_PRICING = {
     },
 
     // ===============================
-    // ⚫ METALL (noch deaktiviert)
+    // ⚫ METALL (aktiv, Start-Setup)
     // ===============================
     metall: {
+      active: true,
       label: "Metall",
-      note: "In Vorbereitung – bitte aktuell per WhatsApp oder Mail anfragen.",
-      active: false,
-      variants: {},
+      includes: "Layout-Check, Gravur, Kantencheck (je nach Produkt)",
+
+      // ✅ Start: 1 Variante + 1 Format (damit der Kalkulator Metall “kann”)
+      // Später einfach neue Varianten/Formate ergänzen.
+      variants: {
+        gravur: {
+          label: "Gravur (Start)",
+          note: "Metallpreise werden gerade aufgebaut – wenn du unsicher bist: Anfrage schicken.",
+          formats: [
+            { id: "m-start", label: "Start-Format (Platzhalter)", price: 0.00 }
+          ]
+        }
+      },
+
+      // vorerst leer (oder später eigene Metall-Upgrades)
       upgrades: {}
     },
 
@@ -84,9 +98,9 @@ window.LUDERBEIN_PRICING = {
     // 🪵 HOLZ (noch deaktiviert)
     // ===============================
     holz: {
+      active: false,
       label: "Holz",
       note: "Kommt als Nächstes. Laserbearbeitung bis 850 × 800 mm möglich.",
-      active: false,
       variants: {},
       upgrades: {}
     },
@@ -95,9 +109,9 @@ window.LUDERBEIN_PRICING = {
     // 🔷 ACRYL (noch deaktiviert)
     // ===============================
     acryl: {
+      active: false,
       label: "Acryl",
       note: "Noch in Vorbereitung – individuelle Anfragen bitte per Mail.",
-      active: false,
       variants: {},
       upgrades: {}
     }
