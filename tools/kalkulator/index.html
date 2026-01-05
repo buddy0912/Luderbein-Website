@@ -4,115 +4,33 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="V1.4 – Schiefer-Kalkulator: auswählen, kalkulieren, dann per WhatsApp oder E-Mail anfragen." />
+  <meta name="description" content="V1.5 – Kalkulator: auswählen, kalkulieren, dann per WhatsApp oder E-Mail anfragen." />
   <link rel="stylesheet" href="/assets/style.css?v=10" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css?v=1" />
 
   <style>
-    .calcbox{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      border-radius:18px;
-      padding:16px;
-    }
-    .calcgrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-      margin-top:14px;
-    }
+    .calcbox{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);border-radius:18px;padding:16px;}
+    .calcgrid{display:grid;grid-template-columns: 1fr 1fr;gap:14px;margin-top:14px;}
     @media (max-width:760px){.calcgrid{grid-template-columns:1fr}}
-    label.smalllab{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      margin:0 0 6px 2px;
-    }
-    select,input[type="number"],textarea{
-      width:100%;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);
-      color:var(--text);
-      outline:none;
-    }
+    label.smalllab{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px;}
+    select,input[type="number"],textarea{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:var(--text);outline:none;}
     textarea{min-height:120px;resize:vertical}
-    .checkrow{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.02);
-    }
+    .checkrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);}
     .checkrow input{margin-top:3px}
     .checkrow .muted{font-size:12px;color:var(--muted);margin-top:2px}
-    .subcard{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.02);
-      border-radius:16px;
-      padding:14px;
-      margin-top:14px;
-    }
+    .subcard{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);border-radius:16px;padding:14px;margin-top:14px;}
     .total{font-size:18px;font-weight:800;letter-spacing:.2px}
-    .warn{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,80,80,.25);
-      background:rgba(255,80,80,.08);
-      color:rgba(255,220,220,.95);
-      font-size:13px;
-      display:none;
-    }
-    .oknote{
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.02);
-      color:rgba(255,255,255,.85);
-      font-size:13px;
-      display:none;
-    }
+    .warn{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,80,80,.25);background:rgba(255,80,80,.08);color:rgba(255,220,220,.95);font-size:13px;display:none;}
+    .oknote{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);color:rgba(255,255,255,.85);font-size:13px;display:none;}
     .inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .inline .pill{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.22);
-      color:rgba(255,255,255,.86);
-    }
+    .inline .pill{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);color:rgba(255,255,255,.86);}
     .radioStack{display:grid;gap:10px}
 
-    /* CTA Split am Ende */
-    .ctaSplit{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-      margin-top:12px;
-    }
+    .ctaSplit{display:grid;grid-template-columns: 1fr 1fr;gap:12px;margin-top:12px;}
     @media (max-width:760px){.ctaSplit{grid-template-columns:1fr}}
-    .ctaCard{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
-      border-radius:16px;
-      padding:12px;
-    }
-    .ctaCard h4{
-      margin:0 0 6px 0;
-      font-size:14px;
-      letter-spacing:.2px;
-    }
-    .ctaCard p{
-      margin:0 0 10px 0;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.45;
-    }
+    .ctaCard{border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);border-radius:16px;padding:12px;}
+    .ctaCard h4{margin:0 0 6px 0;font-size:14px;letter-spacing:.2px;}
+    .ctaCard p{margin:0 0 10px 0;color:var(--muted);font-size:13px;line-height:1.45;}
     .ctaCard .cta{margin-top:8px}
   </style>
 </head>
@@ -141,7 +59,7 @@
           <a href="/leistungen/metall/" role="menuitem">Metall</a>
           <a href="/leistungen/holz/" role="menuitem">Holz</a>
           <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-          <a href="/leistungen/custom/" role="menuitem">Custom</a>
+          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
           <div class="navdrop__sep" aria-hidden="true"></div>
           <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
           <a href="/service/" role="menuitem">Downloads</a>
@@ -157,7 +75,7 @@
 <main class="wrap">
   <section class="hero">
     <span class="badge"><i></i> Tool</span>
-    <h1>Kalkulator <small style="font-size:0.65em;opacity:0.7">(V1.4 – Schiefer + Anfrage für Metall/Holz/Acryl)</small></h1>
+    <h1>Kalkulator <small style="font-size:0.65em;opacity:0.7">(V1.5)</small></h1>
     <p class="lead">
       Wähle Material + Variante + Format. Danach bekommst du eine fertige Nachricht,
       die du mir 1:1 per WhatsApp oder Mail schicken kannst.
@@ -171,7 +89,7 @@
   <section class="section">
     <div class="section-head">
       <h2>Konfiguration</h2>
-      <p class="small muted">Schiefer – Preise Stand 01/2026. Metall/Holz/Acryl: Anfrage-Flow.</p>
+      <p class="small muted">Preise Stand 01/2026.</p>
     </div>
 
     <div class="calcbox">
@@ -180,9 +98,9 @@
           <label class="smalllab" for="cat">Oberkategorie</label>
           <select id="cat">
             <option value="schiefer">Schiefer</option>
-            <option value="metall">Metall (auf Anfrage)</option>
-            <option value="holz">Holz (auf Anfrage)</option>
-            <option value="acryl">Acryl (auf Anfrage)</option>
+            <option value="metall">Metall</option>
+            <option value="holz">Holz</option>
+            <option value="acryl">Acryl</option>
           </select>
         </div>
         <div>
@@ -195,7 +113,7 @@
         </div>
         <div>
           <label class="smalllab" for="qty">Stückzahl</label>
-          <input id="qty" type="number" min="1" max="50" value="1" />
+          <input id="qty" type="number" min="1" max="200" value="1" />
         </div>
       </div>
 
@@ -206,8 +124,9 @@
         </div>
 
         <div class="grid">
-          <div class="card" style="margin:0">
-            <h3 style="margin-top:0">Upgrades</h3>
+          <!-- Upgrades (Schiefer) -->
+          <div class="card" id="upgradesCard" style="margin:0">
+            <h3 style="margin-top:0">Upgrades (Schiefer)</h3>
 
             <div class="checkrow">
               <input type="checkbox" id="widmung">
@@ -242,7 +161,8 @@
             </div>
           </div>
 
-          <div class="card" style="margin:0">
+          <!-- Versand / Total / CTA -->
+          <div class="card" id="shipCard" style="margin:0">
             <h3 style="margin-top:0">Versand / Abholung</h3>
 
             <div class="radioStack">
@@ -264,29 +184,24 @@
 
             <div class="section" style="margin-top:14px">
               <label class="smalllab" for="note">Notiz (optional)</label>
-              <textarea id="note" placeholder="z. B. Maße, Text, Logo/QR, Materialwunsch, Deadline, besonderer Wunsch…"></textarea>
+              <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
 
-            <!-- Split: Anfrage vs Auftrag -->
             <div class="ctaSplit" aria-label="Nächster Schritt">
               <div class="ctaCard">
                 <h4>Option A – Erstmal anfragen</h4>
-                <p>
-                  Du bist noch unsicher? Schick mir kurz die Daten – ich sag dir, was sinnvoll ist (und ob’s machbar ist).
-                </p>
+                <p>Du bist noch unsicher? Schick mir kurz die Daten – ich sag dir, was sinnvoll ist (und ob’s machbar ist).</p>
                 <div class="cta">
                   <a class="btn" id="contactLink" href="/kontakt/">Zur Anfrage (Kontakt)</a>
                 </div>
               </div>
 
               <div class="ctaCard">
-                <h4>Option B – Nachricht raushauen</h4>
-                <p>
-                  Für Schiefer: Preis fixieren. Für Metall/Holz/Acryl: Anfrage-Nachricht (ohne Preis).
-                </p>
+                <h4>Option B – Preis fixieren & Auftrag starten</h4>
+                <p>Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.</p>
                 <div class="cta">
-                  <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp</a>
-                  <a class="btn" id="mailLink" href="#">E-Mail</a>
+                  <a class="btn primary" id="waLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
+                  <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
                 </div>
               </div>
             </div>
@@ -311,7 +226,7 @@
 
 <script src="/assets/site.js?v=10"></script>
 <script src="/assets/nav-dropdown.js?v=1"></script>
-<script src="/assets/pricing.js?v=1.4.0"></script>
+<script src="/assets/pricing.js?v=1.5.0"></script>
 
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
@@ -347,18 +262,23 @@
         $inclPill=document.getElementById('inclPill'),
         $notePill=document.getElementById('notePill'),
         $upgradesBox=document.getElementById('upgradesBox'),
-        $fallbackNote=document.getElementById('fallbackNote');
+        $fallbackNote=document.getElementById('fallbackNote'),
+        $upgradesCard=document.getElementById('upgradesCard');
 
-  // WhatsApp bekommt beim Klick IMMER die zuletzt gebaute URL
   let lastWaUrl = "";
 
   function euro(n){
     return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';
   }
-  function getSchiefer(){
-    return P.products.schiefer;
+
+  function getProd(key){
+    return P.products[key];
   }
-  function isSchiefer(){
+  function isActiveProd(key){
+    const prod=getProd(key);
+    return !!(prod && prod.active && prod.variants && Object.keys(prod.variants).length);
+  }
+  function hasSchieferUpgrades(){
     return ($cat.value === 'schiefer');
   }
 
@@ -378,47 +298,21 @@
     }
   }
 
-  function buildInquiryMessage(catKey){
-    const prod = P.products?.[catKey];
+  function setFallbackLinks(catKey){
+    const prod = getProd(catKey);
     const pLabel = prod?.label || catKey;
 
-    const qty = Math.max(1, parseInt($qty.value || '1', 10));
-    const n = ($note?.value || '').trim();
-
-    const lines = [
-      "Hi Luderbein, ich möchte anfragen:",
-      `- Kategorie: ${pLabel}`,
-      `- Stückzahl: ${qty}`
-    ];
-
-    if(n) lines.push(`- Notiz: ${n}`);
-    lines.push("Foto/Skizze/Maße schicke ich gleich mit.");
-
-    return { pLabel, msg: lines.join('\n') };
-  }
-
-  function setFallbackLinks(catKey){
-    const { pLabel, msg } = buildInquiryMessage(catKey);
-
-    // Kontakt-Link mit Parametern
     const qs = new URLSearchParams();
     qs.set('p', pLabel);
-    const contactUrl = '/kontakt/?' + qs.toString();
-    if($contact) $contact.href = contactUrl;
+    const url = '/kontakt/?' + qs.toString();
 
-    // WhatsApp + Mail (Anfrage, ohne Preis)
-    lastWaUrl = 'https://wa.me/491725925858?text=' + encodeURIComponent(msg);
-    if($wa) $wa.href = lastWaUrl;
-
-    const subj = `Anfrage ${pLabel}`;
-    if($mail) $mail.href = 'mailto:luderbein_gravur@icloud.com?subject='
-      + encodeURIComponent(subj)
-      + '&body='
-      + encodeURIComponent(msg + '\n\nDanke!');
+    if($contact) $contact.href = url;
+    if($wa) $wa.href = url;
+    if($mail) $mail.href = url;
 
     if($fallbackNote){
       $fallbackNote.style.display = 'block';
-      $fallbackNote.textContent = `Für ${pLabel} läuft aktuell alles über Anfrage (ohne Preis im Kalkulator).`;
+      $fallbackNote.textContent = 'Für ' + pLabel + ' läuft aktuell alles über Anfrage (Kontakt).';
     }
   }
 
@@ -434,8 +328,10 @@
     $variant.innerHTML='';
     $format.innerHTML='';
 
-    // Nur Schiefer ist aktiv kalkulierbar
-    if(!P.products[cat] || cat !== 'schiefer'){
+    const prod=getProd(cat);
+    const active = isActiveProd(cat);
+
+    if(!prod || !active){
       const opt=document.createElement('option');
       opt.value="";
       opt.textContent="Nur auf Anfrage";
@@ -450,32 +346,28 @@
       $format.disabled=true;
 
       if($upgradesBox) $upgradesBox.style.opacity = ".55";
+      if($upgradesCard) $upgradesCard.style.display = "none";
 
-      // Anfrage-Links setzen
       setFallbackLinks(cat);
-
-      // UI-Hinweis
       $total.textContent='Gesamt: —';
       $warn.style.display='none';
       $oknote.style.display='block';
-
-      const note = P.products?.[cat]?.note || 'Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
-      $oknote.textContent = note;
-
+      $oknote.textContent='Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
       return;
     }
 
-    // Schiefer aktiv
     clearFallbackNote();
     if($upgradesBox) $upgradesBox.style.opacity = "1";
     $variant.disabled=false;
     $format.disabled=false;
 
-    const S=getSchiefer();
-    const keys = Object.keys(S.variants);
+    // Upgrades nur bei Schiefer anzeigen
+    if($upgradesCard) $upgradesCard.style.display = (hasSchieferUpgrades() ? "" : "none");
+
+    const keys = Object.keys(prod.variants);
 
     keys.forEach((k)=>{
-      const v=S.variants[k];
+      const v=prod.variants[k];
       const opt=document.createElement('option');
       opt.value=k;
       opt.textContent=v.label;
@@ -488,11 +380,12 @@
   }
 
   function fillFormat(){
-    if(!isSchiefer()) return;
+    const cat=$cat.value;
+    const prod=getProd(cat);
+    if(!prod || !isActiveProd(cat)) return;
 
-    const S=getSchiefer();
     const vKey=$variant.value;
-    const V=S.variants[vKey];
+    const V=prod.variants[vKey];
 
     $format.innerHTML='';
 
@@ -511,32 +404,13 @@
       $format.appendChild(opt);
     });
 
-    $inclPill.textContent = S.includes || 'inkl. …';
-    $notePill.textContent = V.note || P.meta.note || "";
+    $inclPill.textContent = prod.includes || 'inkl. …';
+    $notePill.textContent = V.note || prod.note || P.meta.note || "";
   }
 
-  function getSelected(){
-    if(!isSchiefer()) return null;
-
-    const S=getSchiefer();
-    const V=S.variants[$variant.value];
-    const F=V?.formats?.find(x=>x.id===$format.value);
-    const qty=Math.max(1,parseInt($qty.value||'1',10));
-
-    const U=S.upgrades;
-    const ups=[];
-    if($widmung.checked) ups.push(U.widmung);
-    if($sfStd.checked) ups.push(U.standfuss_std);
-    if($wandhalter.checked) ups.push(U.wandhalter);
-    if($express.checked) ups.push(U.express);
-
-    const wantsShip=$shipSend.checked;
-
-    return {S,V,F,qty,ups,wantsShip};
-  }
-
-  function bindPrices(){
-    const S=getSchiefer();
+  function bindPricesSchiefer(){
+    if(!hasSchieferUpgrades()) return;
+    const S=getProd('schiefer');
     const U=S.upgrades;
 
     const set = (id, txt) => {
@@ -548,27 +422,45 @@
     set('p_sf_std', '('+euro(U.standfuss_std.price)+')');
     set('p_wandhalter', '('+euro(U.wandhalter.price)+')');
     set('p_express', '('+euro(U.express.price)+')');
+  }
 
+  function bindShipping(){
     if(P.shipping?.enabled){
-      set('p_ship', '('+euro(P.shipping.basePrice)+')');
+      const el = document.getElementById('p_ship');
+      if(el) el.textContent = '('+euro(P.shipping.basePrice)+')';
+      $shipSend.disabled = false;
     } else {
-      set('p_ship', '(deaktiviert)');
+      const el = document.getElementById('p_ship');
+      if(el) el.textContent = '(deaktiviert)';
       $shipSend.disabled = true;
       $shipPickup.checked = true;
     }
   }
 
-  function calc(){
-    // ✅ Anfrage-Modus für Metall/Holz/Acryl (ohne Preise)
-    if(!isSchiefer()){
-      setFallbackLinks($cat.value);
-      $total.textContent='Gesamt: —';
-      $warn.style.display='none';
-      $oknote.style.display='block';
-      $oknote.textContent = P.products?.[$cat.value]?.note || 'Bitte anfragen.';
-      return;
+  function getSelected(){
+    const cat=$cat.value;
+    const prod=getProd(cat);
+    if(!prod || !isActiveProd(cat)) return null;
+
+    const V=prod.variants[$variant.value];
+    const F=V?.formats?.find(x=>x.id===$format.value);
+    const qty=Math.max(1,parseInt($qty.value||'1',10));
+
+    // Upgrades nur für Schiefer
+    let ups=[];
+    if(cat==='schiefer'){
+      const U=prod.upgrades;
+      if($widmung.checked) ups.push(U.widmung);
+      if($sfStd.checked) ups.push(U.standfuss_std);
+      if($wandhalter.checked) ups.push(U.wandhalter);
+      if($express.checked) ups.push(U.express);
     }
 
+    const wantsShip=$shipSend.checked;
+    return {S:prod,V,F,qty,ups,wantsShip,cat};
+  }
+
+  function calc(){
     const sel=getSelected();
 
     if($contact){
@@ -584,7 +476,7 @@
     const {S,V,F,qty,ups,wantsShip}=sel;
 
     const base=F.price*qty;
-    const up=(ups.reduce((a,u)=>a+(u.price||0),0))*qty;
+    const up=(ups.reduce((a,u)=>a+(u?.price||0),0))*qty;
 
     let subtotal=base+up;
     let ship=0;
@@ -652,11 +544,14 @@
     $cat.addEventListener('change', ()=>{
       fillVariant();
       fillFormat();
-      if(isSchiefer()){
-        bindPrices();
-        $oknote.style.display='none';
-        $warn.style.display='none';
+
+      bindShipping();
+      if(hasSchieferUpgrades()){
+        bindPricesSchiefer();
       }
+
+      $oknote.style.display='none';
+      $warn.style.display='none';
       calc();
     });
 
@@ -680,7 +575,6 @@
 
     $note.addEventListener('input', calc);
 
-    // WhatsApp beim Klick erzwingen
     if($wa){
       $wa.addEventListener('click', (e)=>{
         if(!lastWaUrl) return;
@@ -693,13 +587,8 @@
   // INIT
   fillVariant();
   fillFormat();
-
-  if(isSchiefer()){
-    bindPrices();
-    $oknote.style.display='none';
-    $warn.style.display='none';
-  }
-
+  bindShipping();
+  if(hasSchieferUpgrades()) bindPricesSchiefer();
   wire();
   calc();
 })();
