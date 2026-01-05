@@ -4,34 +4,187 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kalkulator – Luderbein</title>
-  <meta name="description" content="V1.5 – Kalkulator: auswählen, kalkulieren, dann per WhatsApp oder E-Mail anfragen." />
-  <link rel="stylesheet" href="/assets/style.css?v=10" />
-  <link rel="stylesheet" href="/assets/nav-dropdown.css?v=1" />
+  <meta name="description" content="Kalkulator von Luderbein: Schiefer & Metall kalkulieren, Staffelpreise, Upgrades, Versand, Anfrage per WhatsApp oder E-Mail." />
+
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
-    .calcbox{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);border-radius:18px;padding:16px;}
-    .calcgrid{display:grid;grid-template-columns: 1fr 1fr;gap:14px;margin-top:14px;}
-    @media (max-width:760px){.calcgrid{grid-template-columns:1fr}}
-    label.smalllab{display:block;font-size:12px;color:var(--muted);margin:0 0 6px 2px;}
-    select,input[type="number"],textarea{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);color:var(--text);outline:none;}
-    textarea{min-height:120px;resize:vertical}
-    .checkrow{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);}
-    .checkrow input{margin-top:3px}
-    .checkrow .muted{font-size:12px;color:var(--muted);margin-top:2px}
-    .subcard{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);border-radius:16px;padding:14px;margin-top:14px;}
-    .total{font-size:18px;font-weight:800;letter-spacing:.2px}
-    .warn{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,80,80,.25);background:rgba(255,80,80,.08);color:rgba(255,220,220,.95);font-size:13px;display:none;}
-    .oknote{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02);color:rgba(255,255,255,.85);font-size:13px;display:none;}
-    .inline{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .inline .pill{font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);color:rgba(255,255,255,.86);}
-    .radioStack{display:grid;gap:10px}
+    /* =========================================================
+       KALKULATOR – UI (isoliert)
+       ========================================================= */
+    .cfg {
+      margin-top: 14px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.62);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .cfg h2 { margin: 0 0 6px; font-size: 1.05rem; }
+    .cfg .hint { color: var(--muted); font-size: .92rem; margin: 0 0 12px; }
 
-    .ctaSplit{display:grid;grid-template-columns: 1fr 1fr;gap:12px;margin-top:12px;}
-    @media (max-width:760px){.ctaSplit{grid-template-columns:1fr}}
-    .ctaCard{border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);border-radius:16px;padding:12px;}
-    .ctaCard h4{margin:0 0 6px 0;font-size:14px;letter-spacing:.2px;}
-    .ctaCard p{margin:0 0 10px 0;color:var(--muted);font-size:13px;line-height:1.45;}
-    .ctaCard .cta{margin-top:8px}
+    .cfg .step { margin-top: 12px; }
+    .cfg .steptitle {
+      font-weight: 800;
+      letter-spacing: .02em;
+      margin: 0 0 8px;
+    }
+
+    .cfg .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .cfg .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(42,45,51,.22);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cfg .chip input { display: none; }
+    .cfg .chip b { font-weight: 800; }
+    .cfg .chip.is-on {
+      border-color: rgba(219,16,33,.62);
+      background: linear-gradient(180deg, rgba(219,16,33,.18), rgba(70,18,22,.14));
+      box-shadow: 0 14px 34px rgba(219,16,33,.10);
+    }
+
+    .cfg .fields {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .cfg label {
+      display: block;
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .cfg select,
+    .cfg input[type="text"],
+    .cfg input[type="number"],
+    .cfg textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(14,6,11,.35);
+      color: var(--text);
+      padding: 12px 12px;
+      outline: none;
+    }
+    .cfg textarea { min-height: 84px; resize: vertical; }
+
+    /* Placeholder dezenter (damit Demo-Text nicht wie echter Text wirkt) */
+    .cfg input::placeholder,
+    .cfg textarea::placeholder {
+      color: rgba(154,146,142,.70);
+      opacity: 1;
+    }
+
+    .cfg .inline {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .cfg .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(42,45,51,.18);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cfg .toggle input { display: none; }
+    .cfg .toggle.is-on {
+      border-color: rgba(219,16,33,.55);
+      background: rgba(219,16,33,.12);
+    }
+
+    .cfg .upgrades {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .cfg .up {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.16);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .cfg .up .left {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      min-width: 0;
+    }
+    .cfg .up input { margin-top: 3px; }
+    .cfg .up b { font-weight: 800; display:block; }
+    .cfg .up .desc { color: var(--muted); font-size: .92rem; margin-top: 2px; }
+    .cfg .up .price { white-space: nowrap; color: var(--text); font-weight: 800; }
+    .cfg .up.is-locked {
+      opacity: .85;
+    }
+    .cfg .up.is-locked input {
+      pointer-events: none;
+    }
+
+    .cfg .summary {
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.20);
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.45;
+    }
+    .cfg .summary strong { color: var(--text); }
+
+    .cfg .cta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .cfg .cta .btn { flex: 1 1 180px; }
+
+    .cfg a[data-disabled="1"] {
+      opacity: .55;
+      pointer-events: none;
+      filter: grayscale(.4);
+    }
+
+    .cfg .warn {
+      margin-top: 10px;
+      border: 1px solid rgba(219,16,33,.35);
+      background: rgba(219,16,33,.10);
+      border-radius: 14px;
+      padding: 10px 12px;
+      color: rgba(210,207,206,.92);
+    }
+
+    @media (min-width: 760px) {
+      .cfg .fields { grid-template-columns: 1fr 1fr; }
+      .cfg .fields .full { grid-column: 1 / -1; }
+    }
   </style>
 </head>
 
@@ -41,30 +194,54 @@
     <a class="brand" href="/">
       <div class="logo" aria-hidden="true"></div>
       <div>
-        <strong>Luderbein</strong><br>
+        <strong>Luderbein</strong><br />
         <span>Schwibbögen • Gravur • Sonderwünsche</span>
       </div>
     </a>
-    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+
+    <button
+      class="navbtn"
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="nav-main"
+      aria-label="Menü öffnen"
+    >
       <span class="navicon"><span></span></span>
     </button>
-    <nav class="menu" data-nav data-open="0" aria-label="Hauptmenü">
+
+    <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
       <a href="/">Start</a>
-      <details class="navdrop" data-navdrop>
-        <summary class="navdrop__sum" aria-label="Leistungen öffnen">
+
+      <div class="navdrop" data-navdrop>
+        <button
+          class="navdrop__sum"
+          id="navdrop-leistungen-btn"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="navdrop-leistungen-panel"
+        >
           Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-        </summary>
-        <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+        </button>
+
+        <div
+          class="navdrop__panel"
+          id="navdrop-leistungen-panel"
+          role="menu"
+          aria-labelledby="navdrop-leistungen-btn"
+        >
           <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
           <a href="/leistungen/metall/" role="menuitem">Metall</a>
           <a href="/leistungen/holz/" role="menuitem">Holz</a>
           <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-          <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+          <a href="/leistungen/custom/" role="menuitem">Custom</a>
           <div class="navdrop__sep" aria-hidden="true"></div>
-          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+          <a href="/tools/kalkulator/" role="menuitem" aria-current="page">Kalkulator</a>
           <a href="/service/" role="menuitem">Downloads</a>
         </div>
-      </details>
+      </div>
+
       <a href="/ueber/">Über</a>
       <a href="/kontakt/">Kontakt</a>
       <a href="/rechtliches/impressum.html">Impressum</a>
@@ -72,143 +249,141 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="content">
   <section class="hero">
-    <span class="badge"><i></i> Tool</span>
-    <h1>Kalkulator <small style="font-size:0.65em;opacity:0.7">(V1.5)</small></h1>
+    <span class="badge"><i></i> Kalkulator</span>
+    <h1>Preis grob kalkulieren. Dann sauber anfragen.</h1>
     <p class="lead">
-      Wähle Material + Variante + Format. Danach bekommst du eine fertige Nachricht,
-      die du mir 1:1 per WhatsApp oder Mail schicken kannst.
+      Schiefer &amp; Metall: Auswahl bauen → Preis/Staffel sehen → per WhatsApp oder E-Mail abschicken.
+      <span class="small muted">Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen.</span>
     </p>
-    <div class="notice">
-      <strong style="color:var(--text)">Hinweis:</strong><br>
-      Kein Shop: Du schickst mir die fertige Nachricht – ich bestätige kurz Preis & Machbarkeit, dann geht’s los.
+
+    <div class="cfg" data-kalk>
+      <h2>Konfigurator</h2>
+      <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → abschicken.</p>
+
+      <div class="step" aria-label="Schritt 1 – Material">
+        <p class="steptitle">Schritt 1 – Material</p>
+        <div class="chips" role="radiogroup" aria-label="Material auswählen" data-k-mat></div>
+      </div>
+
+      <div class="step" data-k-steps hidden aria-label="Schritt 2 bis 5">
+        <p class="steptitle">Schritt 2 – Ausführung</p>
+        <div class="fields">
+          <div>
+            <label for="kVariant">Ausführung</label>
+            <select id="kVariant" data-k-variant>
+              <option value="">— auswählen —</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="kFormat">Format</label>
+            <select id="kFormat" data-k-format>
+              <option value="">— auswählen —</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Metall-spezifisch -->
+        <div class="step" data-k-metall-block hidden aria-label="Metall-Optionen">
+          <p class="steptitle">Metall – Optionen</p>
+          <div class="fields">
+            <div>
+              <label for="kColor">Farbe</label>
+              <select id="kColor" data-k-color>
+                <option value="">— auswählen —</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="kEngraving">Gravur</label>
+              <select id="kEngraving" data-k-engraving>
+                <option value="">— auswählen —</option>
+              </select>
+            </div>
+
+            <div class="full">
+              <label for="kMotif">Motiv</label>
+              <select id="kMotif" data-k-motif>
+                <option value="">— auswählen —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="warn" data-k-metall-rules>
+            <strong>Regeln:</strong><br>
+            Mindestmenge 10 · 1 Motiv pro Auftrag (alle Teile gleich) · Basis 1-seitig (Außen ODER Innen) ·
+            fertiges Logo: SVG/PDF/AI oder PNG/JPG (1-farbig) · Ausschuss ~5% eingepreist.
+          </div>
+        </div>
+
+        <p class="steptitle" style="margin-top:14px;">Schritt 3 – Stückzahl &amp; Versand</p>
+        <div class="fields">
+          <div>
+            <label for="kQty">Stückzahl</label>
+            <input id="kQty" data-k-qty type="number" min="1" step="1" placeholder="z. B. 25" inputmode="numeric" />
+          </div>
+
+          <div>
+            <label>Versand</label>
+            <div class="inline">
+              <label class="toggle is-on" data-k-ship-toggle>
+                <input type="checkbox" checked data-k-ship />
+                <span><b>Versand</b> (DHL)</span>
+              </label>
+              <span class="small muted" data-k-ship-hint></span>
+            </div>
+          </div>
+
+          <div class="full">
+            <label for="kNote">Notizen (optional)</label>
+            <textarea id="kNote" data-k-note placeholder="Motiv/Deadline/Wunschstil/Verwendung (Outdoor?) …"></textarea>
+          </div>
+        </div>
+
+        <div class="step" aria-label="Schritt 4 – Upgrades">
+          <p class="steptitle">Schritt 4 – Upgrades</p>
+          <div class="upgrades" data-k-upgrades></div>
+        </div>
+
+        <div class="summary" aria-live="polite">
+          <strong>Zusammenfassung:</strong><br>
+          <span data-k-summary>Bitte Material &amp; Ausführung wählen.</span>
+        </div>
+
+        <div class="cta">
+          <a class="btn primary" data-k-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
+          <a class="btn" data-k-mail data-disabled="1" href="#">E-Mail</a>
+        </div>
+
+        <p class="small muted" style="margin-top:10px;">
+          Wenn „Auf Anfrage“ erscheint: Menge/Deadline/Motiv kurz dazuschreiben – ich antworte schnell.
+        </p>
+      </div>
     </div>
   </section>
 
-  <section class="section">
+  <div class="hr"></div>
+
+  <section class="section" aria-label="Hinweise">
     <div class="section-head">
-      <h2>Konfiguration</h2>
-      <p class="small muted">Preise Stand 01/2026.</p>
+      <h2>Hinweise</h2>
+      <p class="small muted">Kalkulator = Richtwert + saubere Anfrage. Final klären wir Motiv/Dateien/Deadline.</p>
     </div>
 
-    <div class="calcbox">
-      <div class="calcgrid">
-        <div>
-          <label class="smalllab" for="cat">Oberkategorie</label>
-          <select id="cat">
-            <option value="schiefer">Schiefer</option>
-            <option value="metall">Metall</option>
-            <option value="holz">Holz</option>
-            <option value="acryl">Acryl</option>
-          </select>
-        </div>
-        <div>
-          <label class="smalllab" for="variant">Ausführung</label>
-          <select id="variant"></select>
-        </div>
-        <div>
-          <label class="smalllab" for="format">Format</label>
-          <select id="format"></select>
-        </div>
-        <div>
-          <label class="smalllab" for="qty">Stückzahl</label>
-          <input id="qty" type="number" min="1" max="200" value="1" />
-        </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Dateien</h3>
+        <p>Logos ideal als SVG/PDF/AI. Raster (PNG/JPG) nur 1-farbig &amp; sauber.</p>
       </div>
-
-      <div class="subcard" id="upgradesBox">
-        <div class="inline" style="margin-bottom:10px">
-          <div class="pill" id="inclPill">inkl. …</div>
-          <div class="pill" id="notePill">Hinweis …</div>
-        </div>
-
-        <div class="grid">
-          <!-- Upgrades (Schiefer) -->
-          <div class="card" id="upgradesCard" style="margin:0">
-            <h3 style="margin-top:0">Upgrades (Schiefer)</h3>
-
-            <div class="checkrow">
-              <input type="checkbox" id="widmung">
-              <div><div><strong>Signatur / Widmung</strong> <span class="muted" id="p_widmung"></span></div></div>
-            </div>
-
-            <div style="height:10px"></div>
-
-            <div class="radioStack" aria-label="Standfuß Auswahl">
-              <div class="checkrow">
-                <input type="radio" name="standfuss" id="sf_none" value="none" checked>
-                <div><div><strong>Kein Standfuß</strong></div></div>
-              </div>
-              <div class="checkrow">
-                <input type="radio" name="standfuss" id="sf_std" value="std">
-                <div><div><strong>3D-Standfuß (schwarz)</strong> <span class="muted" id="p_sf_std"></span></div></div>
-              </div>
-            </div>
-
-            <div style="height:10px"></div>
-
-            <div class="checkrow">
-              <input type="checkbox" id="wandhalter">
-              <div><div><strong>Wandhalterung</strong> <span class="muted" id="p_wandhalter"></span></div></div>
-            </div>
-
-            <div style="height:10px"></div>
-
-            <div class="checkrow">
-              <input type="checkbox" id="express">
-              <div><div><strong>Express (3 Werktage)</strong> <span class="muted" id="p_express"></span></div></div>
-            </div>
-          </div>
-
-          <!-- Versand / Total / CTA -->
-          <div class="card" id="shipCard" style="margin:0">
-            <h3 style="margin-top:0">Versand / Abholung</h3>
-
-            <div class="radioStack">
-              <div class="checkrow">
-                <input type="radio" name="ship" id="ship_pickup" value="pickup" checked>
-                <div><div><strong>Abholung / Übergabe</strong></div></div>
-              </div>
-              <div class="checkrow">
-                <input type="radio" name="ship" id="ship_send" value="send">
-                <div><div><strong>Versand</strong> <span class="muted" id="p_ship"></span></div></div>
-              </div>
-            </div>
-
-            <div class="hr" style="margin:14px 0"></div>
-
-            <div class="total" id="total">Gesamt: —</div>
-            <div class="warn" id="warn"></div>
-            <div class="oknote" id="oknote"></div>
-
-            <div class="section" style="margin-top:14px">
-              <label class="smalllab" for="note">Notiz (optional)</label>
-              <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
-            </div>
-
-            <div class="ctaSplit" aria-label="Nächster Schritt">
-              <div class="ctaCard">
-                <h4>Option A – Erstmal anfragen</h4>
-                <p>Du bist noch unsicher? Schick mir kurz die Daten – ich sag dir, was sinnvoll ist (und ob’s machbar ist).</p>
-                <div class="cta">
-                  <a class="btn" id="contactLink" href="/kontakt/">Zur Anfrage (Kontakt)</a>
-                </div>
-              </div>
-
-              <div class="ctaCard">
-                <h4>Option B – Preis fixieren & Auftrag starten</h4>
-                <p>Du weißt, was du willst. Du schickst die fertige Nachricht – ich bestätige kurz Machbarkeit & los geht’s.</p>
-                <div class="cta">
-                  <a class="btn primary" id="waLink" href="#" rel="noopener">Auftrag starten (WhatsApp)</a>
-                  <a class="btn" id="mailLink" href="#">Auftrag starten (E-Mail)</a>
-                </div>
-              </div>
-            </div>
-
-            <div class="oknote" id="fallbackNote"></div>
-          </div>
-        </div>
+      <div class="card">
+        <h3>Serien</h3>
+        <p>Staffelpreise greifen automatisch. Variable Datenliste ist extra (Setup + Stück).</p>
+      </div>
+      <div class="card">
+        <h3>Versand</h3>
+        <p>Versand-Regeln hängen an Mindestwert &amp; Freigrenze – siehst du direkt in der Zusammenfassung.</p>
       </div>
     </div>
   </section>
@@ -224,375 +399,665 @@
   </div>
 </footer>
 
-<script src="/assets/site.js?v=10"></script>
-<script src="/assets/nav-dropdown.js?v=1"></script>
-<script src="/assets/pricing.js?v=1.5.0"></script>
+<script src="/assets/nav-dropdown.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/assets/pricing.js"></script>
 
 <script>
-  document.getElementById('y').textContent = new Date().getFullYear();
-  console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
-</script>
+  (function () {
+    const y = document.getElementById("y");
+    if (y) y.textContent = new Date().getFullYear();
 
-<script>
-(function(){
-  const P = window.LUDERBEIN_PRICING;
-  if(!P || !P.products){
-    console.warn("Pricing data missing");
-    return;
-  }
+    const PR = window.LUDERBEIN_PRICING;
+    const el = (sel, root=document) => root.querySelector(sel);
+    const els = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 
-  const $cat=document.getElementById('cat'),
-        $variant=document.getElementById('variant'),
-        $format=document.getElementById('format'),
-        $qty=document.getElementById('qty'),
-        $widmung=document.getElementById('widmung'),
-        $wandhalter=document.getElementById('wandhalter'),
-        $express=document.getElementById('express'),
-        $sfNone=document.getElementById('sf_none'),
-        $sfStd=document.getElementById('sf_std'),
-        $shipPickup=document.getElementById('ship_pickup'),
-        $shipSend=document.getElementById('ship_send'),
-        $total=document.getElementById('total'),
-        $warn=document.getElementById('warn'),
-        $oknote=document.getElementById('oknote'),
-        $wa=document.getElementById('waLink'),
-        $mail=document.getElementById('mailLink'),
-        $contact=document.getElementById('contactLink'),
-        $note=document.getElementById('note'),
-        $inclPill=document.getElementById('inclPill'),
-        $notePill=document.getElementById('notePill'),
-        $upgradesBox=document.getElementById('upgradesBox'),
-        $fallbackNote=document.getElementById('fallbackNote'),
-        $upgradesCard=document.getElementById('upgradesCard');
+    const $root = el("[data-kalk]");
+    if (!$root || !PR || !PR.products) return;
 
-  let lastWaUrl = "";
+    const $matWrap = el("[data-k-mat]", $root);
+    const $steps = el("[data-k-steps]", $root);
 
-  function euro(n){
-    return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';
-  }
+    const $variant = el("[data-k-variant]", $root);
+    const $format  = el("[data-k-format]", $root);
 
-  function getProd(key){
-    return P.products[key];
-  }
-  function isActiveProd(key){
-    const prod=getProd(key);
-    return !!(prod && prod.active && prod.variants && Object.keys(prod.variants).length);
-  }
-  function hasSchieferUpgrades(){
-    return ($cat.value === 'schiefer');
-  }
+    const $metallBlock = el("[data-k-metall-block]", $root);
+    const $color   = el("[data-k-color]", $root);
+    const $engr    = el("[data-k-engraving]", $root);
+    const $motif   = el("[data-k-motif]", $root);
 
-  function buildContactUrlFromSelection(sel){
-    try{
-      const qs = new URLSearchParams();
-      if(sel?.S?.label) qs.set('p', sel.S.label);
-      if(sel?.V?.label) qs.set('v', sel.V.label);
-      if(sel?.F?.label) qs.set('f', sel.F.label);
-      if(sel?.qty) qs.set('qty', String(sel.qty));
-      const n = ($note?.value || '').trim();
-      if(n) qs.set('note', n);
-      const q = qs.toString();
-      return '/kontakt/' + (q ? ('?' + q) : '');
-    }catch(e){
-      return '/kontakt/';
-    }
-  }
+    const $qty     = el("[data-k-qty]", $root);
+    const $ship    = el("[data-k-ship]", $root);
+    const $shipToggle = el("[data-k-ship-toggle]", $root);
+    const $shipHint = el("[data-k-ship-hint]", $root);
 
-  function setFallbackLinks(catKey){
-    const prod = getProd(catKey);
-    const pLabel = prod?.label || catKey;
+    const $note    = el("[data-k-note]", $root);
+    const $upWrap  = el("[data-k-upgrades]", $root);
+    const $sum     = el("[data-k-summary]", $root);
 
-    const qs = new URLSearchParams();
-    qs.set('p', pLabel);
-    const url = '/kontakt/?' + qs.toString();
+    const $wa      = el("[data-k-wa]", $root);
+    const $mail    = el("[data-k-mail]", $root);
 
-    if($contact) $contact.href = url;
-    if($wa) $wa.href = url;
-    if($mail) $mail.href = url;
+    const phoneWA = "491725925858";
+    const mailTo  = "luderbein_gravur@icloud.com";
 
-    if($fallbackNote){
-      $fallbackNote.style.display = 'block';
-      $fallbackNote.textContent = 'Für ' + pLabel + ' läuft aktuell alles über Anfrage (Kontakt).';
-    }
-  }
+    const eur = (n) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(n);
+    const clean = (s) => (s || "").toString().trim();
 
-  function clearFallbackNote(){
-    if($fallbackNote){
-      $fallbackNote.style.display = 'none';
-      $fallbackNote.textContent = '';
-    }
-  }
-
-  function fillVariant(){
-    const cat=$cat.value;
-    $variant.innerHTML='';
-    $format.innerHTML='';
-
-    const prod=getProd(cat);
-    const active = isActiveProd(cat);
-
-    if(!prod || !active){
-      const opt=document.createElement('option');
-      opt.value="";
-      opt.textContent="Nur auf Anfrage";
-      $variant.appendChild(opt);
-
-      const opt2=document.createElement('option');
-      opt2.value="";
-      opt2.textContent="—";
-      $format.appendChild(opt2);
-
-      $variant.disabled=true;
-      $format.disabled=true;
-
-      if($upgradesBox) $upgradesBox.style.opacity = ".55";
-      if($upgradesCard) $upgradesCard.style.display = "none";
-
-      setFallbackLinks(cat);
-      $total.textContent='Gesamt: —';
-      $warn.style.display='none';
-      $oknote.style.display='block';
-      $oknote.textContent='Diese Kategorie ist noch nicht im Kalkulator aktiv. Bitte anfragen.';
-      return;
+    function setDisabled(a, on) {
+      a.dataset.disabled = on ? "1" : "0";
+      if (on) a.setAttribute("aria-disabled", "true");
+      else a.removeAttribute("aria-disabled");
     }
 
-    clearFallbackNote();
-    if($upgradesBox) $upgradesBox.style.opacity = "1";
-    $variant.disabled=false;
-    $format.disabled=false;
-
-    // Upgrades nur bei Schiefer anzeigen
-    if($upgradesCard) $upgradesCard.style.display = (hasSchieferUpgrades() ? "" : "none");
-
-    const keys = Object.keys(prod.variants);
-
-    keys.forEach((k)=>{
-      const v=prod.variants[k];
-      const opt=document.createElement('option');
-      opt.value=k;
-      opt.textContent=v.label;
-      $variant.appendChild(opt);
-    });
-
-    if(keys.length){
-      $variant.value = keys[0];
-    }
-  }
-
-  function fillFormat(){
-    const cat=$cat.value;
-    const prod=getProd(cat);
-    if(!prod || !isActiveProd(cat)) return;
-
-    const vKey=$variant.value;
-    const V=prod.variants[vKey];
-
-    $format.innerHTML='';
-
-    if(!V || !Array.isArray(V.formats) || !V.formats.length){
-      const opt=document.createElement('option');
-      opt.value="";
-      opt.textContent="—";
-      $format.appendChild(opt);
-      return;
+    function tierUnit(tiers, qty) {
+      if (!Array.isArray(tiers)) return { unit: null, note: "Auf Anfrage" };
+      for (const t of tiers) {
+        const minOk = qty >= (t.min ?? 0);
+        const maxOk = (t.max == null) ? true : qty <= t.max;
+        if (minOk && maxOk) return { unit: (t.unit ?? t.price ?? null), note: t.note || "" };
+      }
+      return { unit: null, note: "Auf Anfrage" };
     }
 
-    V.formats.forEach((f)=>{
-      const opt=document.createElement('option');
-      opt.value=f.id;
-      opt.textContent=f.label+' – '+euro(f.price);
-      $format.appendChild(opt);
-    });
+    function shippingFor(subtotal, shipOn) {
+      const S = PR.shipping || { enabled:false };
+      if (!S.enabled || !shipOn) return { ok:true, price:0, note:"Abholung/Übergabe" };
 
-    $inclPill.textContent = prod.includes || 'inkl. …';
-    $notePill.textContent = V.note || prod.note || P.meta.note || "";
-  }
+      if (subtotal >= (S.freeShippingFrom ?? Infinity)) {
+        return { ok:true, price:0, note:`Versand frei ab ${eur(S.freeShippingFrom)}` };
+      }
 
-  function bindPricesSchiefer(){
-    if(!hasSchieferUpgrades()) return;
-    const S=getProd('schiefer');
-    const U=S.upgrades;
+      if (subtotal < (S.minOrderForShipping ?? 0)) {
+        return { ok:false, price:null, note:`Versand erst ab ${eur(S.minOrderForShipping)} (sonst bitte anfragen)` };
+      }
 
-    const set = (id, txt) => {
-      const el = document.getElementById(id);
-      if(el) el.textContent = txt;
+      return { ok:true, price:(S.basePrice ?? 0), note:`Versand ${eur(S.basePrice ?? 0)}` };
+    }
+
+    function resetSelect($s, placeholder="— auswählen —") {
+      $s.innerHTML = "";
+      const o = document.createElement("option");
+      o.value = "";
+      o.textContent = placeholder;
+      $s.appendChild(o);
+    }
+
+    function buildMaterialChips() {
+      $matWrap.innerHTML = "";
+      const activeKeys = Object.keys(PR.products).filter((k) => PR.products[k] && PR.products[k].active);
+
+      activeKeys.forEach((key) => {
+        const prod = PR.products[key];
+
+        const lab = document.createElement("label");
+        lab.className = "chip";
+        lab.innerHTML = `<input type="radio" name="k-mat" value="${key}"><span><b>${prod.label || key}</b></span>`;
+        $matWrap.appendChild(lab);
+
+        lab.addEventListener("click", () => {
+          els(".chip", $matWrap).forEach((x) => x.classList.remove("is-on"));
+          lab.classList.add("is-on");
+          lab.querySelector("input").checked = true;
+
+          onMaterial(key);
+        });
+      });
+
+      if (!activeKeys.length) {
+        $matWrap.innerHTML = `<div class="small muted">Keine aktiven Materialien in pricing.js.</div>`;
+      }
+    }
+
+    let state = {
+      matKey: "",
+      variantKey: "",
+      formatId: "",
+      qty: 0,
+      ship: true,
+
+      // metall extras
+      color: "",
+      engraving: "",
+      motif: "",
+
+      // upgrades selected
+      upgrades: new Set()
     };
 
-    set('p_widmung', '('+euro(U.widmung.price)+')');
-    set('p_sf_std', '('+euro(U.standfuss_std.price)+')');
-    set('p_wandhalter', '('+euro(U.wandhalter.price)+')');
-    set('p_express', '('+euro(U.express.price)+')');
-  }
+    function onMaterial(matKey) {
+      state.matKey = matKey;
+      state.variantKey = "";
+      state.formatId = "";
+      state.upgrades = new Set();
 
-  function bindShipping(){
-    if(P.shipping?.enabled){
-      const el = document.getElementById('p_ship');
-      if(el) el.textContent = '('+euro(P.shipping.basePrice)+')';
-      $shipSend.disabled = false;
-    } else {
-      const el = document.getElementById('p_ship');
-      if(el) el.textContent = '(deaktiviert)';
-      $shipSend.disabled = true;
-      $shipPickup.checked = true;
-    }
-  }
+      // reset selects
+      resetSelect($variant);
+      resetSelect($format);
 
-  function getSelected(){
-    const cat=$cat.value;
-    const prod=getProd(cat);
-    if(!prod || !isActiveProd(cat)) return null;
+      // metall extras reset
+      $metallBlock.hidden = true;
+      resetSelect($color);
+      resetSelect($engr);
+      resetSelect($motif);
 
-    const V=prod.variants[$variant.value];
-    const F=V?.formats?.find(x=>x.id===$format.value);
-    const qty=Math.max(1,parseInt($qty.value||'1',10));
-
-    // Upgrades nur für Schiefer
-    let ups=[];
-    if(cat==='schiefer'){
-      const U=prod.upgrades;
-      if($widmung.checked) ups.push(U.widmung);
-      if($sfStd.checked) ups.push(U.standfuss_std);
-      if($wandhalter.checked) ups.push(U.wandhalter);
-      if($express.checked) ups.push(U.express);
-    }
-
-    const wantsShip=$shipSend.checked;
-    return {S:prod,V,F,qty,ups,wantsShip,cat};
-  }
-
-  function calc(){
-    const sel=getSelected();
-
-    if($contact){
-      $contact.href = buildContactUrlFromSelection(sel);
-    }
-
-    if(!sel || !sel.F){
-      $total.textContent='Gesamt: —';
-      lastWaUrl = "";
-      return;
-    }
-
-    const {S,V,F,qty,ups,wantsShip}=sel;
-
-    const base=F.price*qty;
-    const up=(ups.reduce((a,u)=>a+(u?.price||0),0))*qty;
-
-    let subtotal=base+up;
-    let ship=0;
-    let warn='';
-    let ok='';
-
-    if(wantsShip && P.shipping?.enabled){
-      const min=P.shipping.minOrderForShipping;
-      const free=P.shipping.freeShippingFrom;
-
-      if(subtotal>=free){
-        ok=`Versandkostenfrei ab ${euro(free)} erreicht.`;
+      // qty default
+      const prod = PR.products[matKey];
+      if (prod && matKey === "metall") {
+        $qty.value = 10;
       } else {
-        ship=P.shipping.basePrice;
-        ok=`Versand: ${euro(ship)}`;
+        if (!$qty.value) $qty.value = 1;
       }
 
-      if(subtotal<min){
-        warn=`Mindestbestellwert für Versand: ${euro(min)}.`;
-      }
-    }
+      // show steps
+      $steps.hidden = false;
 
-    const total=subtotal+ship;
-
-    $total.textContent='Gesamt: '+euro(total);
-    $warn.style.display=warn?'block':'none';
-    $warn.textContent=warn;
-
-    $oknote.style.display=ok?'block':'none';
-    $oknote.textContent=ok;
-
-    const upgradesTxt = ups.length
-      ? ups.map(u=>`${u.label} (${euro(u.price)})`).join(', ')
-      : 'keine';
-
-    const lines=[
-      "Hi Luderbein, ich möchte Preis fixieren & den Auftrag starten:",
-      `- Material: ${S.label}`,
-      `- Ausführung: ${V.label}`,
-      `- Format: ${F.label}`,
-      `- Stückzahl: ${qty}`,
-      `- Upgrades: ${upgradesTxt}`,
-      `- Versand: ${wantsShip?'ja':'nein'}`,
-      `- Gesamt: ${euro(total)}`
-    ];
-
-    if(($note.value || '').trim()){
-      lines.push(`- Notiz: ${($note.value || '').trim()}`);
-    }
-
-    lines.push("Foto/Infos schicke ich gleich mit.");
-    const msg = lines.join('\n');
-
-    lastWaUrl = 'https://wa.me/491725925858?text=' + encodeURIComponent(msg);
-    $wa.href = lastWaUrl;
-
-    const subj = `Auftrag ${S.label} – ${V.label}`;
-    $mail.href = 'mailto:luderbein_gravur@icloud.com?subject='
-      + encodeURIComponent(subj)
-      + '&body='
-      + encodeURIComponent(msg + '\n\nDanke!');
-  }
-
-  function wire(){
-    $cat.addEventListener('change', ()=>{
-      fillVariant();
-      fillFormat();
-
-      bindShipping();
-      if(hasSchieferUpgrades()){
-        bindPricesSchiefer();
-      }
-
-      $oknote.style.display='none';
-      $warn.style.display='none';
-      calc();
-    });
-
-    $variant.addEventListener('change', ()=>{
-      fillFormat();
-      calc();
-    });
-
-    $format.addEventListener('change', calc);
-    $qty.addEventListener('input', calc);
-
-    $widmung.addEventListener('change', calc);
-    $wandhalter.addEventListener('change', calc);
-    $express.addEventListener('change', calc);
-
-    $sfNone.addEventListener('change', calc);
-    $sfStd.addEventListener('change', calc);
-
-    $shipPickup.addEventListener('change', calc);
-    $shipSend.addEventListener('change', calc);
-
-    $note.addEventListener('input', calc);
-
-    if($wa){
-      $wa.addEventListener('click', (e)=>{
-        if(!lastWaUrl) return;
-        e.preventDefault();
-        window.location.href = lastWaUrl;
+      // fill variants
+      const variants = (prod && prod.variants) ? prod.variants : {};
+      Object.keys(variants).forEach((vKey) => {
+        const v = variants[vKey];
+        const opt = document.createElement("option");
+        opt.value = vKey;
+        opt.textContent = v.label || v.title || vKey;
+        $variant.appendChild(opt);
       });
+
+      renderUpgrades();
+      recalc();
     }
-  }
 
-  // INIT
-  fillVariant();
-  fillFormat();
-  bindShipping();
-  if(hasSchieferUpgrades()) bindPricesSchiefer();
-  wire();
-  calc();
-})();
+    function onVariant() {
+      state.variantKey = $variant.value || "";
+      state.formatId = "";
+      state.upgrades = new Set();
+
+      resetSelect($format);
+
+      const prod = PR.products[state.matKey];
+      const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
+
+      // formats
+      if (v && Array.isArray(v.formats)) {
+        v.formats.forEach((f) => {
+          const opt = document.createElement("option");
+          opt.value = f.id;
+          opt.textContent = f.label || f.id;
+          $format.appendChild(opt);
+        });
+      }
+
+      // metall-only block for flaschenoeffner
+      const isMetallBottle = (state.matKey === "metall" && state.variantKey === "flaschenoeffner");
+
+      if (isMetallBottle && v && v.options) {
+        $metallBlock.hidden = false;
+
+        // colors
+        resetSelect($color);
+        (v.options.colors || []).forEach((c) => {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.label;
+          $color.appendChild(opt);
+        });
+
+        // engraving main select (1-seitig / beidseitig)
+        resetSelect($engr);
+        (v.options.engraving || []).forEach((e) => {
+          const opt = document.createElement("option");
+          opt.value = e.id;
+          opt.textContent = e.label;
+          $engr.appendChild(opt);
+        });
+
+        // motif select
+        resetSelect($motif);
+        (v.options.motif || []).forEach((m) => {
+          const opt = document.createElement("option");
+          opt.value = m.id;
+          opt.textContent = m.label;
+          $motif.appendChild(opt);
+        });
+
+        // qty min
+        if (v.minQty && Number($qty.value || 0) < v.minQty) $qty.value = v.minQty;
+
+      } else {
+        $metallBlock.hidden = true;
+      }
+
+      renderUpgrades();
+      recalc();
+    }
+
+    function onFormat() {
+      state.formatId = $format.value || "";
+      recalc();
+    }
+
+    function renderUpgrades() {
+      $upWrap.innerHTML = "";
+
+      const prod = PR.products[state.matKey];
+      const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
+
+      // Schiefer: upgrades as object
+      if (state.matKey === "schiefer" && prod && prod.upgrades) {
+        Object.keys(prod.upgrades).forEach((uKey) => {
+          const u = prod.upgrades[uKey];
+          const row = document.createElement("label");
+          row.className = "up";
+          row.innerHTML = `
+            <div class="left">
+              <input type="checkbox" data-up="${uKey}">
+              <div>
+                <b>${u.label}</b>
+              </div>
+            </div>
+            <div class="price">${eur(u.price)}</div>
+          `;
+          $upWrap.appendChild(row);
+
+          row.querySelector("input").addEventListener("change", (e) => {
+            if (e.target.checked) state.upgrades.add(uKey);
+            else state.upgrades.delete(uKey);
+            recalc();
+          });
+        });
+        return;
+      }
+
+      // Metall Flaschenöffner: upgrades are variant.upgrades object
+      if (state.matKey === "metall" && v && v.upgrades) {
+        const ups = v.upgrades;
+
+        // Render all upgrades incl. "beidseitig" (locked via engraving select)
+        const order = [
+          "engrave_inside_and_outside",
+          "variable_data_list",
+          "clear_coat",
+          "logo_rework",
+          "display_stand_3d_printed"
+        ].filter((k) => ups[k]);
+
+        order.forEach((uKey) => {
+          const u = ups[uKey];
+
+          const row = document.createElement("label");
+          row.className = "up";
+          row.dataset.upRow = uKey;
+
+          const priceText = (u.type === "per_unit") ? `${eur(u.unit)} / Stk` :
+            (u.type === "one_time") ? `${eur(u.once)} einmalig` :
+            (u.type === "per_unit_tiered") ? `Staffel / Stk` :
+            (u.type === "setup_plus_per_unit_tiered") ? `${eur(u.setupFee || 0)} Setup + Staffel / Stk` :
+            `—`;
+
+          row.innerHTML = `
+            <div class="left">
+              <input type="checkbox" data-up="${uKey}">
+              <div>
+                <b>${u.label}</b>
+                <div class="desc">${u.description || ""}</div>
+              </div>
+            </div>
+            <div class="price">${priceText}</div>
+          `;
+          $upWrap.appendChild(row);
+
+          const input = row.querySelector("input");
+          input.addEventListener("change", (e) => {
+            // locked upgrade handled in recalc() (engraving select)
+            if (e.target.checked) state.upgrades.add(uKey);
+            else state.upgrades.delete(uKey);
+            recalc();
+          });
+        });
+        return;
+      }
+
+      $upWrap.innerHTML = `<div class="small muted">Keine Upgrades für diese Auswahl.</div>`;
+    }
+
+    function lockBeidseitigUpgrade(shouldLockOn) {
+      const row = el(`[data-up-row="engrave_inside_and_outside"]`, $upWrap);
+      if (!row) return;
+      const cb = el(`input[data-up="engrave_inside_and_outside"]`, row);
+      if (!cb) return;
+
+      if (shouldLockOn) {
+        cb.checked = true;
+        state.upgrades.add("engrave_inside_and_outside");
+        row.classList.add("is-locked");
+        cb.disabled = true;
+      } else {
+        row.classList.remove("is-locked");
+        cb.disabled = false;
+        // nicht automatisch abwählen – nur wenn User es wirklich nicht will:
+        // hier aber: 1-seitig => Upgrade muss weg, sonst Preis falsch
+        cb.checked = false;
+        state.upgrades.delete("engrave_inside_and_outside");
+      }
+    }
+
+    function recalc() {
+      state.variantKey = $variant.value || "";
+      state.formatId = $format.value || "";
+      state.qty = Number($qty.value || 0);
+      state.ship = !!$ship.checked;
+
+      // metall extras
+      state.color = $color ? ($color.value || "") : "";
+      state.engraving = $engr ? ($engr.value || "") : "";
+      state.motif = $motif ? ($motif.value || "") : "";
+
+      // toggle UI
+      if ($shipToggle) $shipToggle.classList.toggle("is-on", state.ship);
+
+      // basic validity
+      const prod = PR.products[state.matKey];
+      const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
+
+      // lock beidseitig via main select (wenn beidseitig gewählt)
+      const isMetallBottle = (state.matKey === "metall" && state.variantKey === "flaschenoeffner");
+      if (isMetallBottle) {
+        const beid = (state.engraving === "beidseitig");
+        lockBeidseitigUpgrade(beid);
+      }
+
+      // summary building
+      let ok = true;
+      let onRequest = false;
+      let reasons = [];
+
+      if (!state.matKey) { ok = false; reasons.push("Material fehlt."); }
+      if (!state.variantKey) { ok = false; reasons.push("Ausführung fehlt."); }
+      if (!state.formatId) { ok = false; reasons.push("Format fehlt."); }
+
+      if (!state.qty || state.qty < 1) { ok = false; reasons.push("Stückzahl fehlt."); }
+
+      // qty min checks
+      if (v && v.minQty && state.qty < v.minQty) {
+        ok = false;
+        reasons.push(`Mindestmenge: ${v.minQty} Stück.`);
+      }
+
+      // metall required selects
+      if (isMetallBottle) {
+        if (!state.color) { ok = false; reasons.push("Farbe fehlt."); }
+        if (!state.engraving) { ok = false; reasons.push("Gravur fehlt."); }
+        if (!state.motif) { ok = false; reasons.push("Motiv fehlt."); }
+      }
+
+      // price calc
+      let baseUnit = 0;
+      let baseLine = 0;
+      let baseNote = "";
+
+      // base prices
+      if (ok && v) {
+        if (state.matKey === "schiefer") {
+          const fmt = (v.formats || []).find((f) => f.id === state.formatId);
+          if (!fmt) { ok = false; reasons.push("Format ungültig."); }
+          else {
+            baseUnit = Number(fmt.price || 0);
+            baseLine = baseUnit; // per piece? schiefer is per item (no qty tiers). handle qty multiplier below.
+            baseNote = (v.note || "");
+          }
+        }
+
+        if (state.matKey === "metall" && v && Array.isArray(v.tiers)) {
+          const t = tierUnit(v.tiers, state.qty);
+          if (t.unit == null) {
+            onRequest = true;
+            baseNote = t.note || "Auf Anfrage";
+          } else {
+            baseUnit = Number(t.unit);
+            baseNote = t.note || "";
+          }
+        }
+      }
+
+      let subtotal = 0;
+      let upgradeOnce = 0;
+      let upgradeUnit = 0;
+      let upgradePerUnitLines = [];
+      let upgradeOnceLines = [];
+
+      if (ok && !onRequest) {
+        // base subtotal
+        if (state.matKey === "schiefer") {
+          subtotal += (baseUnit * state.qty);
+        } else if (state.matKey === "metall") {
+          subtotal += (baseUnit * state.qty);
+        }
+
+        // upgrades
+        if (state.matKey === "schiefer" && prod && prod.upgrades) {
+          for (const uKey of state.upgrades) {
+            const u = prod.upgrades[uKey];
+            if (!u) continue;
+            // schiefer upgrades are one-time per order? Historically they are per order, except standfuss/wandhalter might be per item.
+            // Your old behavior typically treated upgrades as per order add-ons. We'll keep it per order to stay safe.
+            // If you want per Stück later, we can add a flag.
+            upgradeOnce += Number(u.price || 0);
+            upgradeOnceLines.push(`${u.label}: ${eur(Number(u.price || 0))}`);
+          }
+        }
+
+        if (state.matKey === "metall" && v && v.upgrades) {
+          const ups = v.upgrades;
+
+          for (const uKey of state.upgrades) {
+            const u = ups[uKey];
+            if (!u) continue;
+
+            if (u.type === "per_unit") {
+              const uUnit = Number(u.unit || 0);
+              upgradeUnit += uUnit;
+              upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
+            }
+
+            if (u.type === "one_time") {
+              const once = Number(u.once || 0);
+              upgradeOnce += once;
+              upgradeOnceLines.push(`${u.label}: ${eur(once)} einmalig`);
+            }
+
+            if (u.type === "per_unit_tiered") {
+              const t = tierUnit(u.tiers, state.qty);
+              if (t.unit == null) {
+                onRequest = true;
+              } else {
+                const uUnit = Number(t.unit);
+                upgradeUnit += uUnit;
+                upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
+              }
+            }
+
+            if (u.type === "setup_plus_per_unit_tiered") {
+              const setup = Number(u.setupFee || 0);
+              upgradeOnce += setup;
+              upgradeOnceLines.push(`${u.label}: ${eur(setup)} Setup`);
+
+              const t = tierUnit(u.tiers, state.qty);
+              if (t.unit == null) {
+                onRequest = true;
+              } else {
+                const uUnit = Number(t.unit);
+                upgradeUnit += uUnit;
+                upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
+              }
+            }
+          }
+
+          // apply per-unit upgrades to subtotal
+          if (!onRequest) {
+            subtotal += (upgradeUnit * state.qty);
+          }
+        }
+
+        // add once upgrades
+        subtotal += upgradeOnce;
+      }
+
+      // shipping
+      const shipRes = shippingFor(subtotal, state.ship);
+      if (!shipRes.ok) {
+        onRequest = true;
+      }
+
+      const total = (!onRequest) ? (subtotal + (shipRes.price || 0)) : null;
+
+      // hint text for shipping
+      if ($shipHint) {
+        if (!state.ship) $shipHint.textContent = "Abholung/Übergabe";
+        else if (shipRes.ok) $shipHint.textContent = shipRes.note || "";
+        else $shipHint.textContent = shipRes.note || "Versand auf Anfrage";
+      }
+
+      // message
+      const matLabel = prod ? (prod.label || state.matKey) : state.matKey;
+      const varLabel = v ? (v.label || v.title || state.variantKey) : state.variantKey;
+      const fmtLabel = (() => {
+        if (!v) return "";
+        const f = (v.formats || []).find((x) => x.id === state.formatId);
+        return f ? (f.label || f.id) : state.formatId;
+      })();
+
+      const upgradesList = [];
+      if (state.matKey === "schiefer" && prod && prod.upgrades) {
+        state.upgrades.forEach((k) => {
+          const u = prod.upgrades[k];
+          if (u) upgradesList.push(u.label);
+        });
+      }
+      if (state.matKey === "metall" && v && v.upgrades) {
+        state.upgrades.forEach((k) => {
+          const u = v.upgrades[k];
+          if (u) upgradesList.push(u.label);
+        });
+      }
+
+      const shipText = state.ship ? "ja" : "nein";
+      const noteText = clean($note.value);
+
+      let summaryLines = [];
+      if (!state.matKey) summaryLines.push("Bitte Material wählen.");
+      else {
+        summaryLines.push(`Material: <strong>${matLabel}</strong>`);
+        if (state.variantKey) summaryLines.push(`Ausführung: <strong>${varLabel}</strong>`);
+        if (state.formatId) summaryLines.push(`Format: <strong>${fmtLabel}</strong>`);
+        if (isMetallBottle) {
+          summaryLines.push(`Farbe: <strong>${state.color || "—"}</strong>`);
+          summaryLines.push(`Gravur: <strong>${state.engraving || "—"}</strong>`);
+          summaryLines.push(`Motiv: <strong>${state.motif || "—"}</strong>`);
+        }
+        if (state.qty) summaryLines.push(`Stückzahl: <strong>${state.qty}</strong>`);
+
+        if (upgradesList.length) summaryLines.push(`Upgrades: <strong>${upgradesList.join(", ")}</strong>`);
+        else summaryLines.push(`Upgrades: <strong>keine</strong>`);
+
+        summaryLines.push(`Versand: <strong>${shipText}</strong>`);
+
+        if (onRequest) {
+          summaryLines.push(`<br><strong>Preis: Auf Anfrage</strong>`);
+          if (v && v.note) summaryLines.push(`<span class="small muted">${v.note}</span>`);
+          if (shipRes && shipRes.note) summaryLines.push(`<span class="small muted">${shipRes.note}</span>`);
+        } else if (ok) {
+          // breakdown
+          if (state.matKey === "metall") {
+            summaryLines.push(`<br>Basis: <strong>${eur(baseUnit)} / Stk</strong>`);
+            if (upgradePerUnitLines.length) summaryLines.push(`Upgrades (pro Stück): <span class="small muted">${upgradePerUnitLines.join(" · ")}</span>`);
+            if (upgradeOnceLines.length) summaryLines.push(`Upgrades (einmalig): <span class="small muted">${upgradeOnceLines.join(" · ")}</span>`);
+          }
+          if (state.matKey === "schiefer") {
+            summaryLines.push(`<br>Basis: <strong>${eur(baseUnit)} / Stk</strong>`);
+            if (upgradeOnceLines.length) summaryLines.push(`Upgrades: <span class="small muted">${upgradeOnceLines.join(" · ")}</span>`);
+          }
+
+          summaryLines.push(`Zwischensumme: <strong>${eur(subtotal)}</strong>`);
+          summaryLines.push(`Versand: <strong>${shipRes.price === 0 ? "0,00 €" : eur(shipRes.price || 0)}</strong>`);
+          summaryLines.push(`Gesamt: <strong>${eur(total)}</strong>`);
+        }
+
+        if (!ok && reasons.length) {
+          summaryLines.push(`<br><strong>Fehlt:</strong> ${reasons.join(" ")}`);
+        }
+      }
+
+      $sum.innerHTML = summaryLines.join("<br>");
+
+      // build WA / mail links
+      const canSend = ok && !onRequest;
+
+      const msgLines = [
+        "Hi Luderbein, ich möchte anfragen:",
+        "",
+        `- Material: ${matLabel}`,
+        `- Ausführung: ${varLabel}`,
+        `- Format: ${fmtLabel}`,
+      ];
+
+      if (isMetallBottle) {
+        msgLines.push(`- Farbe: ${state.color || ""}`);
+        msgLines.push(`- Gravur: ${state.engraving || ""}`);
+        msgLines.push(`- Motiv: ${state.motif || ""}`);
+      }
+
+      msgLines.push(`- Stückzahl: ${state.qty || ""}`);
+      msgLines.push(`- Versand: ${shipText}`);
+
+      if (upgradesList.length) msgLines.push(`- Upgrades: ${upgradesList.join(", ")}`);
+      else msgLines.push(`- Upgrades: keine`);
+
+      if (!onRequest && ok) {
+        msgLines.push(`- Zwischensumme: ${eur(subtotal)}`);
+        msgLines.push(`- Versand: ${shipRes.price === 0 ? "0,00 €" : eur(shipRes.price || 0)}`);
+        msgLines.push(`- Gesamt: ${eur(total)}`);
+      } else {
+        msgLines.push("- Preis: Auf Anfrage");
+      }
+
+      if (noteText) {
+        msgLines.push(`- Notiz: ${noteText}`);
+      }
+
+      const msg = msgLines.join("\n");
+      const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
+
+      const subject = `Anfrage – ${matLabel} – ${varLabel}`;
+      const mailBody = msg.replace(/\n/g, "%0D%0A");
+      const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${mailBody}`;
+
+      $wa.href = waUrl;
+      $mail.href = mailUrl;
+
+      setDisabled($wa, !canSend);
+      setDisabled($mail, !canSend);
+    }
+
+    // events
+    $variant.addEventListener("change", onVariant);
+    $format.addEventListener("change", onFormat);
+
+    $qty.addEventListener("input", recalc);
+    $ship.addEventListener("change", () => {
+      $shipToggle.classList.toggle("is-on", $ship.checked);
+      recalc();
+    });
+
+    if ($color) $color.addEventListener("change", recalc);
+    if ($engr)  $engr.addEventListener("change", recalc);
+    if ($motif) $motif.addEventListener("change", recalc);
+
+    // init
+    buildMaterialChips();
+
+    // fallback: preselect first active material if present
+    const firstChip = el(".chip", $matWrap);
+    if (firstChip) firstChip.click();
+  })();
 </script>
-
 </body>
 </html>
