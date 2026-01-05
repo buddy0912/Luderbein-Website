@@ -1,0 +1,18 @@
+<div class="wrap foot">
+  <div class="footcol">
+    <div class="small">© <span data-year></span> Luderbein</div>
+    <div class="small">
+      <a href="/rechtliches/impressum.html">Impressum</a> ·
+      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+    </div>
+  </div>
+
+  <div class="footcol">
+    <div class="small foothead">Kontakt</div>
+    <div class="small footlinks">
+      <a href="mailto:DEINE_EMAIL@HIER.DE">E-Mail: DEINE_EMAIL@HIER.DE</a><br />
+      <a href="https://wa.me/DEINE_NUMMER" rel="noopener">WhatsApp: +49 DEINE_NUMMER</a><br />
+      <a href="https://instagram.com/Luderbein_Gravur" rel="noopener">@Luderbein_Gravur</a>
+    </div>
+  </div>
+</div>
