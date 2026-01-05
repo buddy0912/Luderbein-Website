@@ -95,24 +95,6 @@
       flex-wrap: wrap;
       align-items: center;
     }
-    .cfg .toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid rgba(64,62,65,.65);
-      background: rgba(42,45,51,.18);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 10px 12px;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .cfg .toggle input { display: none; }
-    .cfg .toggle.is-on {
-      border-color: rgba(219,16,33,.55);
-      background: rgba(219,16,33,.12);
-    }
 
     .cfg .upgrades {
       display: grid;
@@ -139,12 +121,8 @@
     .cfg .up b { font-weight: 800; display:block; }
     .cfg .up .desc { color: var(--muted); font-size: .92rem; margin-top: 2px; }
     .cfg .up .price { white-space: nowrap; color: var(--text); font-weight: 800; }
-    .cfg .up.is-locked {
-      opacity: .85;
-    }
-    .cfg .up.is-locked input {
-      pointer-events: none;
-    }
+    .cfg .up.is-locked { opacity: .85; }
+    .cfg .up.is-locked input { pointer-events: none; }
 
     .cfg .summary {
       margin-top: 12px;
@@ -392,8 +370,68 @@
   </section>
 </main>
 
-<footer id="site-footer"></footer>
-<script src="/assets/footer.js"></script>
+<footer>
+  <div class="wrap foot">
+    <div class="small">© <span id="y"></span> Luderbein</div>
+
+    <div class="small">
+      <div style="margin-bottom:8px;">Kontakt</div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <a class="btn primary" href="https://wa.me/491725925858" rel="noopener">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3C7.03 3 3 6.7 3 11.25c0 2.15.9 4.1 2.39 5.57L4 21l4.46-1.3c1.08.36 2.27.55 3.54.55 4.97 0 9-3.7 9-8.25S16.97 3 12 3Z"
+                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M8.3 11.4h.01M12 11.4h.01M15.7 11.4h.01"
+                stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+          WhatsApp
+        </a>
+
+        <a class="btn" href="mailto:luderbein_gravur@icloud.com">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.5 7.5h15v9h-15v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M5.2 8.2 12 13.2l6.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          E-Mail
+        </a>
+
+        <a class="btn" href="https://instagram.com/Luderbein_Gravur" rel="me noopener">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 4.5h8A3.5 3.5 0 0 1 19.5 8v8A3.5 3.5 0 0 1 16 19.5H8A3.5 3.5 0 0 1 4.5 16V8A3.5 3.5 0 0 1 8 4.5Z"
+                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M12 10a2.75 2.75 0 1 0 0 5.5A2.75 2.75 0 0 0 12 10Z"
+                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M16.6 7.6h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Instagram
+        </a>
+
+        <a class="btn" href="/kontakt/">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 10.8v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 8.2h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Kontaktseite
+        </a>
+      </div>
+    </div>
+
+    <div class="small">
+      <a href="/rechtliches/impressum.html">Impressum</a> ·
+      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+    </div>
+  </div>
+</footer>
 
 <script src="/assets/nav-dropdown.js"></script>
 <script src="/assets/site.js"></script>
@@ -424,7 +462,7 @@
 
     const $qty     = el("[data-k-qty]", $root);
 
-    // Versand (neu): 2 Buttons (Abholung / DHL)
+    // Versand (2 Buttons)
     const $shipWrap = el("[data-k-shipmode]", $root);
     const $shipHint = el("[data-k-ship-hint]", $root);
 
@@ -475,10 +513,13 @@
 
     function shippingFor(subtotal, shipMode) {
       const S = PR.shipping || { enabled:false };
+
+      // Abholung immer ok
       if (!S.enabled || shipMode !== "dhl") {
         return { ok:true, price:0, note:"Abholung/Übergabe" };
       }
 
+      // DHL: Regeln
       if (subtotal >= (S.freeShippingFrom ?? Infinity)) {
         return { ok:true, price:0, note:`Versand frei ab ${eur(S.freeShippingFrom)}` };
       }
@@ -529,8 +570,6 @@
       variantKey: "",
       formatId: "",
       qty: 0,
-
-      // Versand (neu): pickup | dhl
       shipMode: "dhl",
 
       // metall extras
@@ -538,7 +577,6 @@
       engraving: "",
       motif: "",
 
-      // upgrades selected
       upgrades: new Set()
     };
 
@@ -548,28 +586,20 @@
       state.formatId = "";
       state.upgrades = new Set();
 
-      // reset selects
       resetSelect($variant);
       resetSelect($format);
 
-      // metall extras reset
       $metallBlock.hidden = true;
       resetSelect($color);
       resetSelect($engr);
       resetSelect($motif);
 
-      // qty default
       const prod = PR.products[matKey];
-      if (prod && matKey === "metall") {
-        $qty.value = 10;
-      } else {
-        if (!$qty.value) $qty.value = 1;
-      }
+      if (prod && matKey === "metall") $qty.value = 10;
+      else if (!$qty.value) $qty.value = 1;
 
-      // show steps
       $steps.hidden = false;
 
-      // fill variants
       const variants = (prod && prod.variants) ? prod.variants : {};
       Object.keys(variants).forEach((vKey) => {
         const v = variants[vKey];
@@ -593,7 +623,6 @@
       const prod = PR.products[state.matKey];
       const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
 
-      // formats
       if (v && Array.isArray(v.formats)) {
         v.formats.forEach((f) => {
           const opt = document.createElement("option");
@@ -603,13 +632,11 @@
         });
       }
 
-      // metall-only block for flaschenoeffner
       const isMetallBottle = (state.matKey === "metall" && state.variantKey === "flaschenoeffner");
 
       if (isMetallBottle && v && v.options) {
         $metallBlock.hidden = false;
 
-        // colors
         resetSelect($color);
         (v.options.colors || []).forEach((c) => {
           const opt = document.createElement("option");
@@ -618,7 +645,6 @@
           $color.appendChild(opt);
         });
 
-        // engraving main select (1-seitig / beidseitig)
         resetSelect($engr);
         (v.options.engraving || []).forEach((e) => {
           const opt = document.createElement("option");
@@ -627,7 +653,6 @@
           $engr.appendChild(opt);
         });
 
-        // motif select
         resetSelect($motif);
         (v.options.motif || []).forEach((m) => {
           const opt = document.createElement("option");
@@ -636,9 +661,7 @@
           $motif.appendChild(opt);
         });
 
-        // qty min
         if (v.minQty && Number($qty.value || 0) < v.minQty) $qty.value = v.minQty;
-
       } else {
         $metallBlock.hidden = true;
       }
@@ -658,7 +681,6 @@
       const prod = PR.products[state.matKey];
       const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
 
-      // Schiefer: upgrades as object
       if (state.matKey === "schiefer" && prod && prod.upgrades) {
         Object.keys(prod.upgrades).forEach((uKey) => {
           const u = prod.upgrades[uKey];
@@ -667,9 +689,7 @@
           row.innerHTML = `
             <div class="left">
               <input type="checkbox" data-up="${uKey}">
-              <div>
-                <b>${u.label}</b>
-              </div>
+              <div><b>${u.label}</b></div>
             </div>
             <div class="price">${eur(u.price)}</div>
           `;
@@ -684,11 +704,8 @@
         return;
       }
 
-      // Metall Flaschenöffner: upgrades are variant.upgrades object
       if (state.matKey === "metall" && v && v.upgrades) {
         const ups = v.upgrades;
-
-        // Render all upgrades incl. "beidseitig" (locked via engraving select)
         const order = [
           "engrave_inside_and_outside",
           "variable_data_list",
@@ -704,7 +721,8 @@
           row.className = "up";
           row.dataset.upRow = uKey;
 
-          const priceText = (u.type === "per_unit") ? `${eur(u.unit)} / Stk` :
+          const priceText =
+            (u.type === "per_unit") ? `${eur(u.unit)} / Stk` :
             (u.type === "one_time") ? `${eur(u.once)} einmalig` :
             (u.type === "per_unit_tiered") ? `Staffel / Stk` :
             (u.type === "setup_plus_per_unit_tiered") ? `${eur(u.setupFee || 0)} Setup + Staffel / Stk` :
@@ -724,7 +742,6 @@
 
           const input = row.querySelector("input");
           input.addEventListener("change", (e) => {
-            // locked upgrade handled in recalc() (engraving select)
             if (e.target.checked) state.upgrades.add(uKey);
             else state.upgrades.delete(uKey);
             recalc();
@@ -750,7 +767,6 @@
       } else {
         row.classList.remove("is-locked");
         cb.disabled = false;
-        // 1-seitig => Upgrade muss weg, sonst Preis falsch
         cb.checked = false;
         state.upgrades.delete("engrave_inside_and_outside");
       }
@@ -761,26 +777,21 @@
       state.formatId = $format.value || "";
       state.qty = Number($qty.value || 0);
 
-      // Versand (neu)
       state.shipMode = getShipMode();
 
-      // metall extras
       state.color = $color ? ($color.value || "") : "";
       state.engraving = $engr ? ($engr.value || "") : "";
       state.motif = $motif ? ($motif.value || "") : "";
 
-      // basic validity
       const prod = PR.products[state.matKey];
       const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
 
-      // lock beidseitig via main select (wenn beidseitig gewählt)
       const isMetallBottle = (state.matKey === "metall" && state.variantKey === "flaschenoeffner");
       if (isMetallBottle) {
         const beid = (state.engraving === "beidseitig");
         lockBeidseitigUpgrade(beid);
       }
 
-      // summary building
       let ok = true;
       let onRequest = false;
       let reasons = [];
@@ -788,46 +799,32 @@
       if (!state.matKey) { ok = false; reasons.push("Material fehlt."); }
       if (!state.variantKey) { ok = false; reasons.push("Ausführung fehlt."); }
       if (!state.formatId) { ok = false; reasons.push("Format fehlt."); }
-
       if (!state.qty || state.qty < 1) { ok = false; reasons.push("Stückzahl fehlt."); }
 
-      // qty min checks
       if (v && v.minQty && state.qty < v.minQty) {
         ok = false;
         reasons.push(`Mindestmenge: ${v.minQty} Stück.`);
       }
 
-      // metall required selects
       if (isMetallBottle) {
         if (!state.color) { ok = false; reasons.push("Farbe fehlt."); }
         if (!state.engraving) { ok = false; reasons.push("Gravur fehlt."); }
         if (!state.motif) { ok = false; reasons.push("Motiv fehlt."); }
       }
 
-      // price calc
       let baseUnit = 0;
-      let baseNote = "";
 
-      // base prices
       if (ok && v) {
         if (state.matKey === "schiefer") {
           const fmt = (v.formats || []).find((f) => f.id === state.formatId);
           if (!fmt) { ok = false; reasons.push("Format ungültig."); }
-          else {
-            baseUnit = Number(fmt.price || 0);
-            baseNote = (v.note || "");
-          }
+          else baseUnit = Number(fmt.price || 0);
         }
 
-        if (state.matKey === "metall" && v && Array.isArray(v.tiers)) {
+        if (state.matKey === "metall" && Array.isArray(v.tiers)) {
           const t = tierUnit(v.tiers, state.qty);
-          if (t.unit == null) {
-            onRequest = true;
-            baseNote = t.note || "Auf Anfrage";
-          } else {
-            baseUnit = Number(t.unit);
-            baseNote = t.note || "";
-          }
+          if (t.unit == null) onRequest = true;
+          else baseUnit = Number(t.unit);
         }
       }
 
@@ -838,15 +835,12 @@
       let upgradeOnceLines = [];
 
       if (ok && !onRequest) {
-        // base subtotal
         subtotal += (baseUnit * state.qty);
 
-        // upgrades
         if (state.matKey === "schiefer" && prod && prod.upgrades) {
           for (const uKey of state.upgrades) {
             const u = prod.upgrades[uKey];
             if (!u) continue;
-            // safe default: per order
             upgradeOnce += Number(u.price || 0);
             upgradeOnceLines.push(`${u.label}: ${eur(Number(u.price || 0))}`);
           }
@@ -873,9 +867,8 @@
 
             if (u.type === "per_unit_tiered") {
               const t = tierUnit(u.tiers, state.qty);
-              if (t.unit == null) {
-                onRequest = true;
-              } else {
+              if (t.unit == null) onRequest = true;
+              else {
                 const uUnit = Number(t.unit);
                 upgradeUnit += uUnit;
                 upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
@@ -888,9 +881,8 @@
               upgradeOnceLines.push(`${u.label}: ${eur(setup)} Setup`);
 
               const t = tierUnit(u.tiers, state.qty);
-              if (t.unit == null) {
-                onRequest = true;
-              } else {
+              if (t.unit == null) onRequest = true;
+              else {
                 const uUnit = Number(t.unit);
                 upgradeUnit += uUnit;
                 upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
@@ -898,30 +890,19 @@
             }
           }
 
-          // apply per-unit upgrades to subtotal
-          if (!onRequest) {
-            subtotal += (upgradeUnit * state.qty);
-          }
+          if (!onRequest) subtotal += (upgradeUnit * state.qty);
         }
 
-        // add once upgrades
         subtotal += upgradeOnce;
       }
 
-      // shipping
       const shipRes = shippingFor(subtotal, state.shipMode);
-      if (!shipRes.ok) {
-        onRequest = true;
-      }
+      if (!shipRes.ok) onRequest = true;
 
       const total = (!onRequest) ? (subtotal + (shipRes.price || 0)) : null;
 
-      // hint text for shipping
-      if ($shipHint) {
-        $shipHint.textContent = shipRes.note || "";
-      }
+      if ($shipHint) $shipHint.textContent = shipRes.note || "";
 
-      // message labels
       const matLabel = prod ? (prod.label || state.matKey) : state.matKey;
       const varLabel = v ? (v.label || v.title || state.variantKey) : state.variantKey;
       const fmtLabel = (() => {
@@ -953,11 +934,13 @@
         summaryLines.push(`Material: <strong>${matLabel}</strong>`);
         if (state.variantKey) summaryLines.push(`Ausführung: <strong>${varLabel}</strong>`);
         if (state.formatId) summaryLines.push(`Format: <strong>${fmtLabel}</strong>`);
+
         if (isMetallBottle) {
           summaryLines.push(`Farbe: <strong>${state.color || "—"}</strong>`);
           summaryLines.push(`Gravur: <strong>${state.engraving || "—"}</strong>`);
           summaryLines.push(`Motiv: <strong>${state.motif || "—"}</strong>`);
         }
+
         if (state.qty) summaryLines.push(`Stückzahl: <strong>${state.qty}</strong>`);
 
         if (upgradesList.length) summaryLines.push(`Upgrades: <strong>${upgradesList.join(", ")}</strong>`);
@@ -967,10 +950,8 @@
 
         if (onRequest) {
           summaryLines.push(`<br><strong>Preis: Auf Anfrage</strong>`);
-          if (v && v.note) summaryLines.push(`<span class="small muted">${v.note}</span>`);
           if (shipRes && shipRes.note) summaryLines.push(`<span class="small muted">${shipRes.note}</span>`);
         } else if (ok) {
-          // breakdown
           if (state.matKey === "metall") {
             summaryLines.push(`<br>Basis: <strong>${eur(baseUnit)} / Stk</strong>`);
             if (upgradePerUnitLines.length) summaryLines.push(`Upgrades (pro Stück): <span class="small muted">${upgradePerUnitLines.join(" · ")}</span>`);
@@ -993,7 +974,6 @@
 
       $sum.innerHTML = summaryLines.join("<br>");
 
-      // build WA / mail links
       const canSend = ok && !onRequest;
 
       const msgLines = [
@@ -1001,7 +981,7 @@
         "",
         `- Material: ${matLabel}`,
         `- Ausführung: ${varLabel}`,
-        `- Format: ${fmtLabel}`,
+        `- Format: ${fmtLabel}`
       ];
 
       if (isMetallBottle) {
@@ -1024,19 +1004,14 @@
         msgLines.push("- Preis: Auf Anfrage");
       }
 
-      if (noteText) {
-        msgLines.push(`- Notiz: ${noteText}`);
-      }
+      if (noteText) msgLines.push(`- Notiz: ${noteText}`);
 
       const msg = msgLines.join("\n");
-      const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
+      $wa.href = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
 
       const subject = `Anfrage – ${matLabel} – ${varLabel}`;
       const mailBody = msg.replace(/\n/g, "%0D%0A");
-      const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${mailBody}`;
-
-      $wa.href = waUrl;
-      $mail.href = mailUrl;
+      $mail.href = `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${mailBody}`;
 
       setDisabled($wa, !canSend);
       setDisabled($mail, !canSend);
@@ -1045,14 +1020,12 @@
     // events
     $variant.addEventListener("change", onVariant);
     $format.addEventListener("change", onFormat);
-
     $qty.addEventListener("input", recalc);
 
     if ($color) $color.addEventListener("change", recalc);
     if ($engr)  $engr.addEventListener("change", recalc);
     if ($motif) $motif.addEventListener("change", recalc);
 
-    // Versand-Chips events
     if ($shipWrap) {
       const shipChips = els("[data-k-ship-chip]", $shipWrap);
       shipChips.forEach((lab) => {
@@ -1068,11 +1041,11 @@
     // init
     buildMaterialChips();
 
-    // fallback: preselect first active material if present
     const firstChip = el(".chip", $matWrap);
     if (firstChip) firstChip.click();
 
-    // initial ship UI hint
+    // ensure shipping UI state
+    setShipModeUI(getShipMode());
     recalc();
   })();
 </script>
