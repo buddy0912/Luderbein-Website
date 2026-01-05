@@ -76,10 +76,7 @@
       user-select: none;
     }
 
-    /* FIX: Werkstatt-Bilder nicht mehr abschneiden
-       - statt 16:9 → 4:3
-       - statt cover → contain (kein Cut mehr)
-    */
+    /* Werkstatt: 4:3 + contain => nix wird abgeschnitten */
     .reel__img {
       display: block;
       width: 100%;
@@ -106,9 +103,13 @@
     }
 
     /* =========================================================
-       FIX: Brand-Farbe oben links (Luderbein) – clean/edel
+       FIX: Brand-Farbe oben links (Luderbein) – passend zu dir
        ========================================================= */
-    .brand strong { color: rgba(255,255,255,.95); }
+    .brand strong{
+      color: rgba(255, 48, 48, .92);
+      text-shadow: 0 1px 18px rgba(255,48,48,.18), 0 1px 12px rgba(0,0,0,.55);
+      letter-spacing: .01em;
+    }
     .brand span { color: rgba(255,255,255,.72); }
 
     /* =========================================================
@@ -224,10 +225,6 @@
         data-reel-default-tag="Werkstatt"
       ></div>
     </div>
-
-    <p class="small muted" style="margin-top:10px;">
-      Falls leer: JSON/Case prüfen (reel-werkstatt.json).
-    </p>
   </section>
 
   <div class="hr"></div>
@@ -245,8 +242,9 @@
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
             <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
-              <img class="is-on" src="/assets/reel/reel-02.jpg" alt="Schiefer Beispiel" loading="lazy">
-              <img src="/assets/reel/reel-03.jpg" alt="Schiefer Beispiel" loading="lazy">
+              <!-- Schiefer: hier bewusst NICHT reel-02/03 (waren bei dir falsch) -->
+              <img class="is-on" src="/assets/reel/reel-04.jpg" alt="Schiefer Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-05.jpg" alt="Schiefer Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Schiefer</span>
           </a>
@@ -304,8 +302,10 @@
       <article class="productcard">
         <div class="thumb" style="aspect-ratio:1/1; position:relative;">
           <a href="/leistungen/acryl/" aria-label="Acryl ansehen">
-            <span class="thumbslider" data-rotate="0" style="width:100%; height:100%;">
+            <!-- FIX: Acryl exakt wie die anderen (rotate=1 + 2 Bilder) -->
+            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
               <img class="is-on" src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-10.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Acryl</span>
           </a>
@@ -355,7 +355,7 @@
       imgs.forEach((img, k) => img.classList.toggle("is-on", k === 0));
 
       const interval = 3200;
-      const startDelay = 400 + (idx * 180); // leicht versetzt, wirkt ruhiger
+      const startDelay = 400 + (idx * 180);
 
       setTimeout(() => {
         setInterval(() => {
