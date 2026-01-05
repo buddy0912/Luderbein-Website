@@ -69,7 +69,26 @@ header {
   background: linear-gradient(135deg, var(--accent), rgba(255,8,13,.55));
   box-shadow: 0 14px 34px rgba(219,16,33,.22);
 }
-.brand strong { letter-spacing: .3px; }
+
+/* Brand: clean + roter Punkt davor (wie früher, nur sauberer) */
+.brand strong {
+  letter-spacing: .3px;
+  color: var(--text);
+  position: relative;
+  padding-left: 14px;
+}
+.brand strong::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(219,16,33,.14);
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .brand span {
   color: var(--muted);
   font-size: .92rem;
@@ -171,6 +190,8 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   grid-template-columns: repeat(12, 1fr);
   gap: 14px;
 }
+
+/* WICHTIG: Card als Flex-Column -> alles wirkt identisch, Buttons kleben unten */
 .productcard {
   grid-column: span 4;
   border-radius: var(--radius);
@@ -178,11 +199,16 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   background: rgba(26,26,31,.72);
   box-shadow: var(--shadow);
   padding: 16px;
+
+  display: flex;
+  flex-direction: column;
 }
+
 .productcard:hover {
   border-color: rgba(219,16,33,.45);
   box-shadow: 0 18px 52px rgba(219,16,33,.07), var(--shadow);
 }
+
 .thumb {
   height: auto;
   aspect-ratio: 1/1;
@@ -193,6 +219,9 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   position: relative;
   overflow: hidden;
 }
+
+.thumb a { display: block; width: 100%; height: 100%; color: inherit; text-decoration: none; }
+
 .thumblabel {
   font-size: .78rem;
   letter-spacing: .16em;
@@ -206,21 +235,36 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   bottom: 10px;
   right: 10px;
 }
+
+/* Meta: jetzt exakt “Preis-Zeile” + “Typ-Zeile” (überall gleich) */
 .productcard .meta {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   color: var(--muted);
   font-size: .95rem;
-  margin-bottom: 8px;
 }
+.productcard .meta--price {
+  margin-bottom: 2px;
+}
+.productcard .meta--type {
+  margin-bottom: 10px;
+}
+
 .price { color: var(--text); font-weight: 700; }
-.kicker { color: var(--muted); margin-top: 8px; }
+
+/* Titel/3-Zeiler: gleiche Abstände + gleiche Höhe -> wirkt “geordnet” */
+.productcard h3 { margin: 8px 0 0; }
+.kicker {
+  color: var(--muted);
+  margin: 8px 0 0;
+  min-height: 3.9em; /* ~3 Zeilen */
+}
+
+/* Actions immer unten */
 .actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: auto; /* <- fix: drückt Buttons nach unten */
+  padding-top: 12px;
 }
 .actions .btn {
   flex: 1 1 auto;
@@ -257,6 +301,7 @@ footer {
 }
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--text); }
+
 .foot {
   display: flex;
   align-items: flex-start;
@@ -264,6 +309,14 @@ footer a:hover { color: var(--text); }
   gap: 14px;
   flex-wrap: wrap;
 }
+.footcol { min-width: 240px; }
+.foothead {
+  color: rgba(210,207,206,.86);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.footlinks a { display: inline-block; padding: 2px 0; }
+
 .small { font-size: .92rem; }
 
 /* ================================
