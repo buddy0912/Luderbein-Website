@@ -4,297 +4,313 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kontakt – Luderbein</title>
-  <meta name="description" content="Kontakt zu Luderbein: Anfrage-Builder für WhatsApp oder E-Mail. Direkt, ehrlich, unkompliziert – so geht Gravur mit Haltung." />
+  <meta name="description" content="Kontakt zu Luderbein – schneller Draht per WhatsApp, E-Mail oder Instagram. Für Anfragen: Material, Größe, Motiv, Deadline." />
+
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
-    /* =========================================================
-       KONTAKT – ANFRAGE-BUILDER (isoliert, safe)
-       ========================================================= */
-    .cfg {
-      margin-top: 14px;
+    /* Kontakt-Seite – kleine Ergänzungen, ohne style.css anzufassen */
+
+    /* Links im Content: nicht blau, sondern Luderbein-Rot */
+    main a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    main a:hover {
+      color: var(--accentHot);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .hr {
+      height: 1px;
+      background: rgba(64,62,65,.45);
+      margin: 18px 0;
+      border: 0;
+    }
+
+    .section {
+      margin-top: 18px;
+    }
+
+    .section-head {
+      margin-bottom: 10px;
+    }
+    .section-head h2 {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+      line-height: 1.2;
+    }
+
+    .muted { color: var(--muted); }
+    .small { font-size: .92rem; }
+
+    .card {
       border: 1px solid rgba(64,62,65,.55);
-      background: rgba(26,26,31,.62);
-      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(26,26,31,.80), rgba(26,26,31,.62));
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+    .grid .col6 { grid-column: span 6; }
+    .grid .col12 { grid-column: span 12; }
+
+    .info {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      border-radius: 16px;
       padding: 14px;
     }
-    .cfg h2 { margin: 0 0 6px; font-size: 1.05rem; }
-    .cfg .hint { color: var(--muted); font-size: .92rem; margin: 0 0 12px; }
-
-    .cfg .step { margin-top: 12px; }
-    .cfg .steptitle {
-      font-weight: 700;
-      letter-spacing: .02em;
-      margin: 0 0 8px;
+    .info h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      letter-spacing: .2px;
     }
+    .info p { margin: 0; color: var(--muted); }
 
-    .cfg .chips {
+    .btnrow {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
+      flex-wrap: wrap;
       align-items: center;
+      margin-top: 12px;
     }
-    .cfg .chip {
+
+    .pill {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      border: 1px solid rgba(64,62,65,.65);
-      background: rgba(42,45,51,.22);
-      color: var(--text);
+      gap: 8px;
+      padding: 8px 10px;
       border-radius: 999px;
-      padding: 10px 12px;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .cfg .chip input { display: none; }
-    .cfg .chip b { font-weight: 700; }
-    .cfg .chip.is-on {
-      border-color: rgba(219,16,33,.62);
-      background: linear-gradient(180deg, rgba(219,16,33,.18), rgba(70,18,22,.14));
-      box-shadow: 0 14px 34px rgba(219,16,33,.10);
-    }
-
-    .cfg .fields {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .cfg label {
-      display: block;
-      font-size: .9rem;
+      border: 1px solid rgba(64,62,65,.70);
+      background: rgba(42,45,51,.28);
       color: var(--muted);
-      margin-bottom: 6px;
+      font-size: .92rem;
     }
-    .cfg select,
-    .cfg input[type="text"],
-    .cfg textarea {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(64,62,65,.65);
-      background: rgba(14,6,11,.35);
-      color: var(--text);
-      padding: 12px 12px;
-      outline: none;
-    }
-    .cfg textarea { min-height: 84px; resize: vertical; }
+    .pill strong { color: var(--text); font-weight: 700; }
 
-    .cfg .summary {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(42,45,51,.20);
-      color: var(--muted);
-      font-size: .95rem;
-    }
-    .cfg .summary strong { color: var(--text); }
-
-    .cfg .cta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-    .cfg .cta .btn { flex: 1 1 160px; }
-
-    /* Visuell disabled (ohne JS-Abhängigkeit) */
-    .cfg a[data-disabled="1"] {
-      opacity: .55;
-      pointer-events: none;
-      filter: grayscale(.4);
-    }
-
-    @media (min-width: 760px) {
-      .cfg .fields { grid-template-columns: 1fr 1fr; }
-      .cfg .fields .full { grid-column: 1 / -1; }
+    /* Mobile */
+    @media (max-width: 720px) {
+      .grid .col6 { grid-column: span 12; }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <strong>Luderbein</strong><br />
+        <span>Schwibbögen • Gravur • Sonderwünsche</span>
+      </div>
+    </a>
+
+    <button
+      class="navbtn"
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="nav-main"
+      aria-label="Menü öffnen"
+    >
+      <span class="navicon"><span></span></span>
+    </button>
+
+    <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+      <a href="/">Start</a>
+
+      <div class="navdrop" data-navdrop>
+        <button
+          class="navdrop__sum"
+          id="navdrop-leistungen-btn"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="navdrop-leistungen-panel"
+        >
+          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+        </button>
+
+        <div
+          class="navdrop__panel"
+          id="navdrop-leistungen-panel"
+          role="menu"
+          aria-labelledby="navdrop-leistungen-btn"
+        >
+          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+          <a href="/leistungen/metall/" role="menuitem">Metall</a>
+          <a href="/leistungen/holz/" role="menuitem">Holz</a>
+          <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+          <a href="/leistungen/custom/" role="menuitem">Custom</a>
+          <div class="navdrop__sep" aria-hidden="true"></div>
+          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+          <a href="/service/" role="menuitem">Downloads</a>
         </div>
+      </div>
+
+      <a href="/ueber/">Über</a>
+      <a href="/kontakt/" aria-current="page">Kontakt</a>
+      <a href="/rechtliches/impressum.html">Impressum</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="content">
+  <!-- 1) Kurzer Draht -->
+  <section class="hero">
+    <span class="badge"><i></i> Kontakt</span>
+    <h1>Kurzer Draht.</h1>
+    <p class="lead">
+      Du willst schnell starten? Perfekt. Schreib mir kurz – ich sag dir direkt, was sinnvoll ist, was es kostet und wie schnell’s geht.
+    </p>
+
+    <div class="btnrow">
+      <a class="btn primary" href="https://wa.me/491725925858" rel="noopener">
+        <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+          <!-- chat bubble -->
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3C7.03 3 3 6.7 3 11.25c0 2.15.9 4.1 2.39 5.57L4 21l4.46-1.3c1.08.36 2.27.55 3.54.55 4.97 0 9-3.7 9-8.25S16.97 3 12 3Z"
+              stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M8.3 11.4h.01M12 11.4h.01M15.7 11.4h.01"
+              stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        WhatsApp
       </a>
 
-      <button
-        class="navbtn"
-        type="button"
-        data-nav-toggle
-        aria-expanded="false"
-        aria-controls="nav-main"
-        aria-label="Menü öffnen"
-      >
-        <span class="navicon"><span></span></span>
-      </button>
+      <a class="btn" href="mailto:luderbein_gravur@icloud.com">
+        <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+          <!-- envelope -->
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.5 7.5h15v9h-15v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M5.2 8.2 12 13.2l6.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        E-Mail
+      </a>
 
-      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-        <a href="/">Start</a>
-
-        <div class="navdrop" data-navdrop>
-          <button
-            class="navdrop__sum"
-            id="navdrop-leistungen-btn"
-            type="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="navdrop-leistungen-panel"
-          >
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </button>
-
-          <div
-            class="navdrop__panel"
-            id="navdrop-leistungen-panel"
-            role="menu"
-            aria-labelledby="navdrop-leistungen-btn"
-          >
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-            <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-            <a href="/leistungen/custom/" role="menuitem">Custom</a>
-            <div class="navdrop__sep" aria-hidden="true"></div>
-            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
-          </div>
-        </div>
-
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/" aria-current="page">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
+      <a class="btn" href="https://instagram.com/Luderbein_Gravur" rel="me noopener">
+        <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+          <!-- camera -->
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 4.5h8A3.5 3.5 0 0 1 19.5 8v8A3.5 3.5 0 0 1 16 19.5H8A3.5 3.5 0 0 1 4.5 16V8A3.5 3.5 0 0 1 8 4.5Z"
+              stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M12 10a2.75 2.75 0 1 0 0 5.5A2.75 2.75 0 0 0 12 10Z"
+              stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M16.6 7.6h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </span>
+        Instagram
+      </a>
     </div>
-  </header>
-
-  <main class="wrap" id="content">
-    <section class="hero">
-      <span class="badge"><i></i> Kontakt</span>
-      <h1>Kurzer Draht.</h1>
-      <p class="lead">
-        Kein Shop-Klickirrsinn. Du stellst dir deine Anfrage zusammen → WhatsApp oder Mail → fertig.
-        Idee, Skizze oder Foto dazu? Perfekt. Ich sag dir schnell, ob’s taugt und was sinnvoll ist.
-      </p>
-
-      <div class="cfg" data-contact-config>
-        <h2>Anfrage-Builder</h2>
-        <p class="hint">1) Material wählen → 2) Variante/Format → 3) abschicken. (Format wird erst nach Material sichtbar.)</p>
-
-        <div class="step" aria-label="Schritt 1 – Material">
-          <p class="steptitle">Schritt 1 – Material</p>
-          <div class="chips" role="radiogroup" aria-label="Material auswählen">
-            <label class="chip"><input type="radio" name="cfg-mat" value="Schiefer"><span><b>Schiefer</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Metall"><span><b>Metall</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Holz"><span><b>Holz</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Acryl"><span><b>Acryl</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Custom"><span><b>Custom</b></span></label>
-          </div>
-        </div>
-
-        <div class="step" data-cfg-steps hidden aria-label="Schritt 2 und 3">
-          <p class="steptitle">Schritt 2 – Variante</p>
-          <div class="fields">
-            <div>
-              <label for="cfgVariant">Variante (Auswahl)</label>
-              <select id="cfgVariant" data-cfg-variant aria-label="Variante auswählen">
-                <option value="">— auswählen —</option>
-              </select>
-            </div>
-            <div>
-              <label for="cfgVariantCustom">Variante (frei, optional)</label>
-              <input id="cfgVariantCustom" data-cfg-variant-custom type="text" placeholder="z. B. Hundemarke, Plakette, Schild..." autocomplete="off">
-            </div>
-          </div>
-
-          <p class="steptitle" style="margin-top:14px;">Schritt 3 – Größe / Format</p>
-          <div class="fields">
-            <div>
-              <label for="cfgFormat">Format (Auswahl)</label>
-              <select id="cfgFormat" data-cfg-format aria-label="Format auswählen">
-                <option value="">— auswählen —</option>
-              </select>
-            </div>
-            <div>
-              <label for="cfgFormatCustom">Format (frei, optional)</label>
-              <input id="cfgFormatCustom" data-cfg-format-custom type="text" placeholder="z. B. 12mm rund, 30×20, nach Maß..." autocomplete="off">
-            </div>
-
-            <div class="full">
-              <label for="cfgNote">Notiz (optional)</label>
-              <textarea id="cfgNote" data-cfg-note placeholder="Was soll drauf? Text, Symbol, Stil, Einsatz (Outdoor?), Deadline …"></textarea>
-            </div>
-          </div>
-
-          <div class="summary" aria-live="polite">
-            <strong>Auswahl:</strong> <span data-cfg-summary>Bitte Material wählen.</span>
-          </div>
-
-          <div class="cta">
-            <a class="btn primary" data-cfg-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
-            <a class="btn" data-cfg-mail data-disabled="1" href="#">E-Mail</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>Damit’s schnell geht</h2>
-        <p class="small muted">Drei Infos reichen meistens.</p>
-      </div>
-
-      <div class="grid">
-        <div class="card">
-          <h3>1 – Motiv</h3>
-          <p>Text, Symbol oder Foto. Bei Fotos: scharf, gut ausgeleuchtet, kein Screenshot.</p>
-        </div>
-        <div class="card">
-          <h3>2 – Größe</h3>
-          <p>z. B. 10×10 cm · 20 cm rund · oder „so groß wie …“</p>
-        </div>
-        <div class="card">
-          <h3>3 – Deadline</h3>
-          <p>Wenn’s eilig ist: sagen. Dann sag ich dir ehrlich, ob’s passt.</p>
-        </div>
-      </div>
-
-      <div class="notice" style="margin-top:16px">
-        <strong style="color:var(--text)">Tipp:</strong><br>
-        Kein Screenshot-vom-Screenshot. Lieber 1 gutes Originalbild als 5 matschige Kopien.
-      </div>
-    </section>
 
     <div class="hr"></div>
 
-    <section class="section">
-      <h2>Direktlinks</h2>
-      <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
-      <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 5925858</a></p>
-      <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
-    </section>
-  </main>
+    <div class="pill">
+      <span class="muted">Telefon:</span>
+      <strong>+49 172 592 5858</strong>
+      <span class="muted">·</span>
+      <a href="tel:+491725925858" class="muted" style="text-decoration:none;">anrufen</a>
+    </div>
+  </section>
 
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+  <!-- 2) Damit’s schnell geht -->
+  <section class="section" aria-label="Damit’s schnell geht">
+    <div class="section-head">
+      <h2>Damit’s schnell geht</h2>
+      <p class="small muted">
+        Schick mir kurz diese Infos – dann kann ich dir direkt ein sauberes „Ja / Preis / Zeitpunkt“ geben.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="info col6">
+        <h3>1) Material</h3>
+        <p>Schiefer, Metall, Holz oder Acryl. (Wenn du unsicher bist: Foto reicht – ich sag dir, was passt.)</p>
+      </div>
+
+      <div class="info col6">
+        <h3>2) Größe</h3>
+        <p>Maße oder Wunschformat (z.B. 10×10, 20×20, rund/ eckig). Je genauer, desto schneller.</p>
+      </div>
+
+      <div class="info col6">
+        <h3>3) Motiv</h3>
+        <p>Foto / Text / Symbol / QR / Kombi. Wenn Text: bitte direkt copy&paste, nicht als Bild.</p>
+      </div>
+
+      <div class="info col6">
+        <h3>4) Deadline</h3>
+        <p>Bis wann muss es fertig sein? (Wenn’s knapp ist: sag’s direkt – ich bin lieber ehrlich als „vielleicht“.)</p>
+      </div>
+
+      <div class="info col12">
+        <h3>Tipp (Qualität)</h3>
+        <p>
+          Kein Screenshot-vom-Screenshot. Lieber 1 gutes Originalbild als 5 matschige Kopien.
+          Klar: manchmal klappt’s trotzdem – aber das Ergebnis kann nie besser als die Vorlage sein.
+        </p>
       </div>
     </div>
-  </footer>
+  </section>
 
-  <script src="/assets/nav-dropdown.js"></script>
-  <script src="/assets/site.js"></script>
-  <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
-  </script>
+  <div class="hr"></div>
+
+  <!-- 3) Direktlinks -->
+  <section class="section" aria-label="Direktlinks">
+    <div class="section-head">
+      <h2>Direktlinks</h2>
+      <p class="small muted">Falls du direkt klicken willst (ohne suchen).</p>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div class="col6">
+          <div class="small muted" style="margin-bottom:6px;">Kontakt</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <a href="https://wa.me/491725925858" rel="noopener">WhatsApp Chat starten</a>
+            <a href="mailto:luderbein_gravur@icloud.com">E-Mail schreiben</a>
+            <a href="https://instagram.com/Luderbein_Gravur" rel="me noopener">Instagram: @Luderbein_Gravur</a>
+          </div>
+        </div>
+
+        <div class="col6">
+          <div class="small muted" style="margin-bottom:6px;">Schnell rein</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <a href="/tools/kalkulator/">Kalkulator öffnen</a>
+            <a href="/leistungen/">Leistungen Übersicht</a>
+            <a href="/leistungen/schiefer/">Leistungen: Schiefer</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="small">© <span id="y"></span> Luderbein</div>
+    <div class="small">
+      <a href="/rechtliches/impressum.html">Impressum</a> ·
+      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/nav-dropdown.js"></script>
+<script src="/assets/site.js"></script>
+<script>
+  const y = document.getElementById("y");
+  if (y) y.textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
