@@ -313,8 +313,7 @@
 
           <div class="warn" data-k-metall-rules>
             <strong>Regeln:</strong><br>
-            Mindestmenge 10 · 1 Motiv pro Auftrag (alle Teile gleich) · Basis 1-seitig (Außen ODER Innen) ·
-            fertiges Logo: SVG/PDF/AI oder PNG/JPG (1-farbig) · Ausschuss ~5% eingepreist.
+            Mindestmenge 10 · 1 Motiv pro Auftrag · fertiges Logo (SVG/PDF/PNG/JPG) 1-farbig
           </div>
         </div>
 
@@ -327,13 +326,17 @@
 
           <div>
             <label>Versand</label>
-            <div class="inline">
-              <label class="toggle is-on" data-k-ship-toggle>
-                <input type="checkbox" checked data-k-ship />
+            <div class="chips" role="radiogroup" aria-label="Versand auswählen" data-k-shipmode>
+              <label class="chip" data-k-ship-chip>
+                <input type="radio" name="k-shipmode" value="pickup">
+                <span><b>Abholung</b></span>
+              </label>
+              <label class="chip is-on" data-k-ship-chip>
+                <input type="radio" name="k-shipmode" value="dhl" checked>
                 <span><b>Versand</b> (DHL)</span>
               </label>
-              <span class="small muted" data-k-ship-hint></span>
             </div>
+            <span class="small muted" data-k-ship-hint></span>
           </div>
 
           <div class="full">
@@ -383,7 +386,7 @@
       </div>
       <div class="card">
         <h3>Versand</h3>
-        <p>Versand-Regeln hängen an Mindestwert &amp; Freigrenze – siehst du direkt in der Zusammenfassung.</p>
+        <p>DHL ab 6,95 € · versandkostenfrei ab 80 € (Mindestwert siehst du in der Zusammenfassung).</p>
       </div>
     </div>
   </section>
@@ -427,8 +430,9 @@
     const $motif   = el("[data-k-motif]", $root);
 
     const $qty     = el("[data-k-qty]", $root);
-    const $ship    = el("[data-k-ship]", $root);
-    const $shipToggle = el("[data-k-ship-toggle]", $root);
+
+    // Versand (neu): 2 Buttons (Abholung / DHL)
+    const $shipWrap = el("[data-k-shipmode]", $root);
     const $shipHint = el("[data-k-ship-hint]", $root);
 
     const $note    = el("[data-k-note]", $root);
@@ -460,9 +464,27 @@
       return { unit: null, note: "Auf Anfrage" };
     }
 
-    function shippingFor(subtotal, shipOn) {
+    function getShipMode() {
+      const r = el('input[name="k-shipmode"]:checked', $root);
+      return r ? r.value : "dhl";
+    }
+
+    function setShipModeUI(mode) {
+      if (!$shipWrap) return;
+      const chips = els("[data-k-ship-chip]", $shipWrap);
+      chips.forEach((lab) => {
+        const inp = el("input", lab);
+        const isOn = inp && inp.value === mode;
+        lab.classList.toggle("is-on", !!isOn);
+        if (isOn && inp) inp.checked = true;
+      });
+    }
+
+    function shippingFor(subtotal, shipMode) {
       const S = PR.shipping || { enabled:false };
-      if (!S.enabled || !shipOn) return { ok:true, price:0, note:"Abholung/Übergabe" };
+      if (!S.enabled || shipMode !== "dhl") {
+        return { ok:true, price:0, note:"Abholung/Übergabe" };
+      }
 
       if (subtotal >= (S.freeShippingFrom ?? Infinity)) {
         return { ok:true, price:0, note:`Versand frei ab ${eur(S.freeShippingFrom)}` };
@@ -472,7 +494,7 @@
         return { ok:false, price:null, note:`Versand erst ab ${eur(S.minOrderForShipping)} (sonst bitte anfragen)` };
       }
 
-      return { ok:true, price:(S.basePrice ?? 0), note:`Versand ${eur(S.basePrice ?? 0)}` };
+      return { ok:true, price:(S.basePrice ?? 0), note:`Versand (DHL) ${eur(S.basePrice ?? 0)}` };
     }
 
     function resetSelect($s, placeholder="— auswählen —") {
@@ -514,7 +536,9 @@
       variantKey: "",
       formatId: "",
       qty: 0,
-      ship: true,
+
+      // Versand (neu): pickup | dhl
+      shipMode: "dhl",
 
       // metall extras
       color: "",
@@ -733,8 +757,7 @@
       } else {
         row.classList.remove("is-locked");
         cb.disabled = false;
-        // nicht automatisch abwählen – nur wenn User es wirklich nicht will:
-        // hier aber: 1-seitig => Upgrade muss weg, sonst Preis falsch
+        // 1-seitig => Upgrade muss weg, sonst Preis falsch
         cb.checked = false;
         state.upgrades.delete("engrave_inside_and_outside");
       }
@@ -744,15 +767,14 @@
       state.variantKey = $variant.value || "";
       state.formatId = $format.value || "";
       state.qty = Number($qty.value || 0);
-      state.ship = !!$ship.checked;
+
+      // Versand (neu)
+      state.shipMode = getShipMode();
 
       // metall extras
       state.color = $color ? ($color.value || "") : "";
       state.engraving = $engr ? ($engr.value || "") : "";
       state.motif = $motif ? ($motif.value || "") : "";
-
-      // toggle UI
-      if ($shipToggle) $shipToggle.classList.toggle("is-on", state.ship);
 
       // basic validity
       const prod = PR.products[state.matKey];
@@ -791,7 +813,6 @@
 
       // price calc
       let baseUnit = 0;
-      let baseLine = 0;
       let baseNote = "";
 
       // base prices
@@ -801,7 +822,6 @@
           if (!fmt) { ok = false; reasons.push("Format ungültig."); }
           else {
             baseUnit = Number(fmt.price || 0);
-            baseLine = baseUnit; // per piece? schiefer is per item (no qty tiers). handle qty multiplier below.
             baseNote = (v.note || "");
           }
         }
@@ -826,20 +846,14 @@
 
       if (ok && !onRequest) {
         // base subtotal
-        if (state.matKey === "schiefer") {
-          subtotal += (baseUnit * state.qty);
-        } else if (state.matKey === "metall") {
-          subtotal += (baseUnit * state.qty);
-        }
+        subtotal += (baseUnit * state.qty);
 
         // upgrades
         if (state.matKey === "schiefer" && prod && prod.upgrades) {
           for (const uKey of state.upgrades) {
             const u = prod.upgrades[uKey];
             if (!u) continue;
-            // schiefer upgrades are one-time per order? Historically they are per order, except standfuss/wandhalter might be per item.
-            // Your old behavior typically treated upgrades as per order add-ons. We'll keep it per order to stay safe.
-            // If you want per Stück later, we can add a flag.
+            // safe default: per order
             upgradeOnce += Number(u.price || 0);
             upgradeOnceLines.push(`${u.label}: ${eur(Number(u.price || 0))}`);
           }
@@ -902,7 +916,7 @@
       }
 
       // shipping
-      const shipRes = shippingFor(subtotal, state.ship);
+      const shipRes = shippingFor(subtotal, state.shipMode);
       if (!shipRes.ok) {
         onRequest = true;
       }
@@ -911,12 +925,10 @@
 
       // hint text for shipping
       if ($shipHint) {
-        if (!state.ship) $shipHint.textContent = "Abholung/Übergabe";
-        else if (shipRes.ok) $shipHint.textContent = shipRes.note || "";
-        else $shipHint.textContent = shipRes.note || "Versand auf Anfrage";
+        $shipHint.textContent = shipRes.note || "";
       }
 
-      // message
+      // message labels
       const matLabel = prod ? (prod.label || state.matKey) : state.matKey;
       const varLabel = v ? (v.label || v.title || state.variantKey) : state.variantKey;
       const fmtLabel = (() => {
@@ -939,7 +951,7 @@
         });
       }
 
-      const shipText = state.ship ? "ja" : "nein";
+      const shipText = (state.shipMode === "dhl") ? "Versand (DHL)" : "Abholung";
       const noteText = clean($note.value);
 
       let summaryLines = [];
@@ -1042,14 +1054,23 @@
     $format.addEventListener("change", onFormat);
 
     $qty.addEventListener("input", recalc);
-    $ship.addEventListener("change", () => {
-      $shipToggle.classList.toggle("is-on", $ship.checked);
-      recalc();
-    });
 
     if ($color) $color.addEventListener("change", recalc);
     if ($engr)  $engr.addEventListener("change", recalc);
     if ($motif) $motif.addEventListener("change", recalc);
+
+    // Versand-Chips events
+    if ($shipWrap) {
+      const shipChips = els("[data-k-ship-chip]", $shipWrap);
+      shipChips.forEach((lab) => {
+        lab.addEventListener("click", () => {
+          const inp = el("input", lab);
+          if (!inp) return;
+          setShipModeUI(inp.value);
+          recalc();
+        });
+      });
+    }
 
     // init
     buildMaterialChips();
@@ -1057,6 +1078,9 @@
     // fallback: preselect first active material if present
     const firstChip = el(".chip", $matWrap);
     if (firstChip) firstChip.click();
+
+    // initial ship UI hint
+    recalc();
   })();
 </script>
 </body>
