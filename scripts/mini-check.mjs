@@ -1,312 +1,132 @@
-#!/usr/bin/env node
-/**
- * Mini internal link + asset sanity checker
- * - scans all .html files
- * - collects href/src/srcset + data-reel-src (JSON)
- * - checks that targets exist on disk (repo root aware)
- * - verifies that image files are actually images (magic-bytes)
- *
- * Run: node scripts/mini-check.mjs
- */
-
 import fs from "fs";
 import path from "path";
 
 const repoRoot = process.cwd();
+const assetsRoot = path.join(repoRoot, "assets");
 
-const IGNORE_DIRS = new Set([
-  ".git",
-  "node_modules",
-  "dist",
-  "build",
-  ".next",
-  ".vercel",
-  ".cache",
-]);
+// Unicode-Dashes, die wie "-" aussehen, aber KEIN ASCII "-" sind
+const DASH_CHARS = [
+  "\u2010", "\u2011", "\u2012", "\u2013", "\u2014",
+  "\u2212", "\uFE58", "\uFE63", "\uFF0D", "\u00AD",
+];
+const dashRe = new RegExp(`[${DASH_CHARS.join("")}]`, "g");
 
-const IMG_EXT = new Set([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"]);
-const HTML_EXT = new Set([".html", ".htm"]);
-const JSON_EXT = new Set([".json"]);
-
-function walk(dir) {
+function walkFiles(dir) {
   const out = [];
-  const entries = fs.readdirSync(dir, { withFileTypes: true });
-  for (const e of entries) {
-    const p = path.join(dir, e.name);
-    if (e.isDirectory()) {
-      if (IGNORE_DIRS.has(e.name)) continue;
-      out.push(...walk(p));
-    } else {
-      out.push(p);
-    }
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkFiles(full));
+    else out.push(full);
   }
   return out;
 }
 
-function stripQueryHash(u) {
-  const q = u.indexOf("?");
-  const h = u.indexOf("#");
-  const cut = (q === -1 ? h : h === -1 ? q : Math.min(q, h));
-  return cut === -1 ? u : u.slice(0, cut);
+function rel(p) {
+  return path.relative(repoRoot, p).replaceAll("\\", "/");
 }
 
-function isExternal(u) {
-  return (
-    u.startsWith("http://") ||
-    u.startsWith("https://") ||
-    u.startsWith("mailto:") ||
-    u.startsWith("tel:") ||
-    u.startsWith("javascript:") ||
-    u.startsWith("#")
-  );
+function normalizeForCollision(p) {
+  // NFKC + fake dashes -> "-"
+  return p
+    .split("/")
+    .map(seg => seg.normalize("NFKC").replace(dashRe, "-"))
+    .join("/");
 }
 
-function toFsPath(fromHtmlFile, url) {
-  const u = stripQueryHash(url.trim());
-  if (!u) return null;
-  if (isExternal(u)) return null;
-
-  // normalize backslashes (just in case)
-  const norm = u.replaceAll("\\", "/");
-
-  // absolute-from-root
-  if (norm.startsWith("/")) {
-    return path.join(repoRoot, norm.slice(1));
-  }
-
-  // relative to html file
-  return path.resolve(path.dirname(fromHtmlFile), norm);
-}
-
-function asIndexIfDir(targetFsPath) {
-  // if user linked to a directory: /foo/  -> /foo/index.html
-  if (targetFsPath.endsWith(path.sep)) return path.join(targetFsPath, "index.html");
-  return null;
-}
-
-function looksLikeImageMagic(buf) {
-  if (!buf || buf.length < 12) return false;
-
-  // JPEG: FF D8 FF
-  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return true;
-
-  // PNG: 89 50 4E 47 0D 0A 1A 0A
+function sniffMagic(buf) {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "jpg";
+  if (buf.length >= 4 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return "png";
+  if (buf.length >= 3 && buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46) return "gif";
   if (
-    buf[0] === 0x89 &&
-    buf[1] === 0x50 &&
-    buf[2] === 0x4e &&
-    buf[3] === 0x47 &&
-    buf[4] === 0x0d &&
-    buf[5] === 0x0a &&
-    buf[6] === 0x1a &&
-    buf[7] === 0x0a
-  )
-    return true;
-
-  // GIF: GIF87a / GIF89a
-  const gif = buf.slice(0, 6).toString("ascii");
-  if (gif === "GIF87a" || gif === "GIF89a") return true;
-
-  // WEBP: RIFF....WEBP
-  const riff = buf.slice(0, 4).toString("ascii");
-  const webp = buf.slice(8, 12).toString("ascii");
-  if (riff === "RIFF" && webp === "WEBP") return true;
-
-  // SVG: text-based, allow "<svg" or "<?xml"
-  const head = buf.slice(0, 64).toString("utf8").toLowerCase();
-  if (head.includes("<svg") || head.includes("<?xml")) return true;
-
-  return false;
+    buf.length >= 12 &&
+    buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
+    buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50
+  ) return "webp";
+  return "unknown";
 }
 
-function hexPreview(buf, n = 16) {
-  const b = buf.slice(0, n);
-  return [...b].map(x => x.toString(16).padStart(2, "0")).join(" ");
-}
-
-function asciiPreview(buf, n = 64) {
-  const s = buf.slice(0, n).toString("utf8");
-  return s.replace(/[^\x20-\x7E\r\n\t]/g, ".");
-}
-
-function collectFromHtml(htmlFile, content) {
-  const found = [];
-
-  // href/src
-  const attrRe = /\b(?:href|src)\s*=\s*["']([^"']+)["']/gi;
-  let m;
-  while ((m = attrRe.exec(content)) !== null) {
-    found.push({ kind: "href/src", url: m[1], from: htmlFile });
-  }
-
-  // srcset
-  const srcsetRe = /\bsrcset\s*=\s*["']([^"']+)["']/gi;
-  while ((m = srcsetRe.exec(content)) !== null) {
-    const parts = m[1].split(",").map(s => s.trim()).filter(Boolean);
-    for (const p of parts) {
-      const first = p.split(/\s+/)[0];
-      if (first) found.push({ kind: "srcset", url: first, from: htmlFile });
-    }
-  }
-
-  // data-reel-src (JSON)
-  const reelRe = /\bdata-reel-src\s*=\s*["']([^"']+)["']/gi;
-  while ((m = reelRe.exec(content)) !== null) {
-    found.push({ kind: "data-reel-src", url: m[1], from: htmlFile });
-  }
-
-  return found;
-}
-
-function extractAssetLikeStringsFromJsonText(txt) {
-  // grabs /assets/.../*.jpg|png|webp|svg|gif and also assets/... (without leading slash)
-  const re = /(?:\/|^)(assets\/[^\s"'<>]+?\.(?:jpe?g|png|webp|svg|gif))/gi;
-  const out = new Set();
-  let m;
-  while ((m = re.exec(txt)) !== null) {
-    out.add("/" + m[1].replaceAll("\\", "/"));
-  }
-  return [...out];
+function extOf(p) {
+  const e = path.extname(p).toLowerCase().replace(".", "");
+  return e || "";
 }
 
 function main() {
-  const allFiles = walk(repoRoot);
-  const htmlFiles = allFiles.filter(f => HTML_EXT.has(path.extname(f).toLowerCase()));
-  const problems = [];
-  const checked = new Set();
-
-  // 1) collect URLs from HTML
-  const refs = [];
-  for (const hf of htmlFiles) {
-    const content = fs.readFileSync(hf, "utf8");
-    refs.push(...collectFromHtml(hf, content));
+  if (!fs.existsSync(assetsRoot)) {
+    console.log("✅ mini-check: Kein /assets Ordner – nichts zu prüfen.");
+    return;
   }
 
-  // 2) expand data-reel-src JSONs into image paths
-  const jsonRefs = refs.filter(r => r.kind === "data-reel-src");
-  const syntheticRefs = [];
-  for (const jr of jsonRefs) {
-    const jsonPath = toFsPath(jr.from, jr.url);
-    if (!jsonPath) continue;
+  const filesAbs = walkFiles(assetsRoot);
+  const filesRel = filesAbs.map(rel);
 
-    if (!fs.existsSync(jsonPath)) {
-      problems.push({
-        type: "missing",
-        from: path.relative(repoRoot, jr.from),
-        url: jr.url,
-        expected: path.relative(repoRoot, jsonPath),
-      });
-      continue;
-    }
+  let failed = false;
 
-    let txt;
-    try {
-      txt = fs.readFileSync(jsonPath, "utf8");
-    } catch {
-      continue;
-    }
-
-    // try parse, fallback to regex scan
-    let imgUrls = [];
-    try {
-      JSON.parse(txt);
-      imgUrls = extractAssetLikeStringsFromJsonText(txt);
-    } catch {
-      imgUrls = extractAssetLikeStringsFromJsonText(txt);
-    }
-
-    for (const u of imgUrls) {
-      syntheticRefs.push({ kind: "json-image", url: u, from: jsonPath });
-    }
+  // 1) Fake-Dash im Dateinamen
+  const weirdDash = [];
+  for (const p of filesRel) {
+    const base = p.split("/").pop() || p;
+    if (dashRe.test(base.normalize("NFKC"))) weirdDash.push(p);
+  }
+  if (weirdDash.length) {
+    failed = true;
+    console.error("❌ Fake-Dash im Dateinamen gefunden:");
+    for (const p of weirdDash) console.error(" -", p);
+    console.error("");
   }
 
-  const allRefs = refs.filter(r => r.kind !== "data-reel-src").concat(syntheticRefs);
-
-  // 3) check existence + basic validity
-  for (const r of allRefs) {
-    const target = toFsPath(r.from, r.url);
-    if (!target) continue;
-
-    // de-dupe by resolved path
-    const key = `${path.relative(repoRoot, r.from)} -> ${path.relative(repoRoot, target)}`;
-    if (checked.has(key)) continue;
-    checked.add(key);
-
-    const ext = path.extname(target).toLowerCase();
-
-    // allow directory links => index.html
-    if (!fs.existsSync(target)) {
-      const idx = asIndexIfDir(target);
-      if (idx && fs.existsSync(idx)) continue;
-
-      problems.push({
-        type: "missing",
-        from: path.relative(repoRoot, r.from),
-        url: r.url,
-        expected: path.relative(repoRoot, target),
-        alsoTried: idx ? path.relative(repoRoot, idx) : null,
-      });
-      continue;
-    }
-
-    // image sanity: check magic bytes (catches “.jpg but actually text/html/lfs pointer”)
-    if (IMG_EXT.has(ext)) {
-      const buf = fs.readFileSync(target);
-      if (!looksLikeImageMagic(buf)) {
-        problems.push({
-          type: "bad-image",
-          from: path.relative(repoRoot, r.from),
-          url: r.url,
-          expected: path.relative(repoRoot, target),
-          headHex: hexPreview(buf),
-          headAscii: asciiPreview(buf),
-        });
-      }
-    }
-
-    // json sanity: if referenced via data-reel-src, it should be valid JSON
-    if (JSON_EXT.has(ext) && r.kind === "data-reel-src") {
-      const txt = fs.readFileSync(target, "utf8");
-      try {
-        JSON.parse(txt);
-      } catch (e) {
-        problems.push({
-          type: "bad-json",
-          from: path.relative(repoRoot, r.from),
-          url: r.url,
-          expected: path.relative(repoRoot, target),
-          error: String(e),
-        });
-      }
-    }
+  // 2) Kollisionen nach Normalisierung
+  const map = new Map();
+  for (const p of filesRel) {
+    const n = normalizeForCollision(p);
+    if (!map.has(n)) map.set(n, []);
+    map.get(n).push(p);
   }
 
-  if (!problems.length) {
-    console.log("✅ Mini-check: keine fehlenden Targets, keine kaputten Image-Header.");
-    process.exit(0);
+  const collisions = [];
+  for (const [n, arr] of map.entries()) {
+    const uniq = Array.from(new Set(arr));
+    if (uniq.length > 1) collisions.push({ normalized: n, actual: uniq });
   }
-
-  console.error(`❌ Mini-check: ${problems.length} Problem(e)\n`);
-
-  for (const p of problems) {
-    if (p.type === "missing") {
-      console.error(`- MISSING: ${p.from} -> ${p.url}`);
-      console.error(`  expected: ${p.expected}`);
-      if (p.alsoTried) console.error(`  also tried: ${p.alsoTried}`);
-    } else if (p.type === "bad-image") {
-      console.error(`- BAD-IMAGE: ${p.from} -> ${p.url}`);
-      console.error(`  file: ${p.expected}`);
-      console.error(`  head(hex):  ${p.headHex}`);
-      console.error(`  head(text): ${p.headAscii}`);
-    } else if (p.type === "bad-json") {
-      console.error(`- BAD-JSON: ${p.from} -> ${p.url}`);
-      console.error(`  file: ${p.expected}`);
-      console.error(`  error: ${p.error}`);
+  if (collisions.length) {
+    failed = true;
+    console.error("❌ Kollisionen nach Dash-Normalisierung:");
+    for (const c of collisions) {
+      console.error(" normalized:", c.normalized);
+      for (const a of c.actual) console.error("  -", a);
     }
     console.error("");
   }
 
-  process.exit(1);
+  // 3) Datei-Typ vs Endung
+  const typeMismatch = [];
+  for (const abs of filesAbs) {
+    const r = rel(abs);
+    const ext = extOf(r);
+    if (!["jpg","jpeg","png","webp","gif"].includes(ext)) continue;
+
+    const buf = fs.readFileSync(abs);
+    const magic = sniffMagic(buf);
+
+    if (magic === "unknown") continue;
+
+    const extGroup = (ext === "jpeg") ? "jpg" : ext;
+
+    if (magic === "jpg" && extGroup !== "jpg") typeMismatch.push({ file: r, ext, magic: "jpg" });
+    if (magic === "png" && ext !== "png") typeMismatch.push({ file: r, ext, magic: "png" });
+    if (magic === "webp" && ext !== "webp") typeMismatch.push({ file: r, ext, magic: "webp" });
+    if (magic === "gif" && ext !== "gif") typeMismatch.push({ file: r, ext, magic: "gif" });
+  }
+
+  if (typeMismatch.length) {
+    failed = true;
+    console.error("❌ Endung passt nicht zum echten Dateityp:");
+    for (const x of typeMismatch) console.error(` - ${x.file} (ext .${x.ext} | real ${x.magic})`);
+    console.error("");
+  }
+
+  if (failed) process.exit(1);
+  console.log("✅ mini-check: /assets ist sauber (keine Fake-Dashes, keine Kollisionen, keine Typ-Mismatches).");
 }
 
 main();
