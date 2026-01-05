@@ -366,3 +366,68 @@ footer a:hover { color: var(--text); }
 .thumbslider img:first-child {
   opacity: 1;
 }
+/* ================================
+   BRAND – roter Punkt vor Luderbein
+================================ */
+.brand strong{
+  color: var(--text);
+  position: relative;
+}
+.brand strong::before{
+  content: "•";
+  color: var(--accent);
+  margin-right: 8px;
+  font-size: 1.15em;
+  line-height: 1;
+  vertical-align: baseline;
+}
+
+/* ================================
+   FOOTER – Kontakt Buttons
+================================ */
+.footLeft{ display:flex; flex-direction:column; gap:10px; }
+.footBtns{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:stretch;
+}
+
+.iconbtn{
+  gap:10px;
+  align-items:center;
+  justify-content:flex-start;
+  padding:10px 12px;
+  min-width: 220px;
+}
+
+.iconbtn svg{
+  width:18px;
+  height:18px;
+  fill: currentColor;
+  opacity:.92;
+  flex: 0 0 auto;
+}
+
+.iconlbl{
+  display:flex;
+  flex-direction:column;
+  line-height:1.15;
+  min-width: 0;
+}
+.iconlblTop{ font-weight: 700; color: var(--text); }
+.iconlblSub{
+  color: var(--muted);
+  font-size: .92rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 36ch;
+}
+
+.footRight{ align-self:flex-start; }
+
+@media (max-width:560px){
+  .iconbtn{ min-width: 100%; }
+  .iconlblSub{ max-width: 100%; }
+}
