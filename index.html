@@ -11,6 +11,14 @@
 
   <style>
     /* =========================================================
+       START – Brand (Header links): Farbe sauber machen
+       ========================================================= */
+    a.brand { text-decoration: none; color: inherit; }
+    a.brand:visited { color: inherit; }
+    a.brand strong { color: rgba(255,255,255,.92); }
+    a.brand span { color: rgba(255,255,255,.72); }
+
+    /* =========================================================
        START – FEED Reel (wie bei Schiefer/Acryl/Custom)
        ========================================================= */
     .reelwrap { position: relative; margin-top: 10px; }
@@ -76,12 +84,16 @@
       user-select: none;
     }
 
+    /* ✅ FIX: Werkstatt-Fotos sind oft 4:3 (z.B. reel-18 = 1536×1152).
+       16:9 + cover schneidet unten ab. Daher: 4:3 + contain = nix abgeschnitten. */
     .reel__img {
       display: block;
       width: 100%;
-      aspect-ratio: 16/9;
+      aspect-ratio: 4 / 3;   /* statt 16/9 */
       height: auto;
-      object-fit: cover;
+      object-fit: contain;   /* statt cover */
+      object-position: center;
+      background: rgba(11,11,14,1); /* Letterbox-Farbe */
       filter: saturate(1.03) contrast(1.02);
     }
 
