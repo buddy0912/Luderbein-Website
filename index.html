@@ -76,7 +76,7 @@
       user-select: none;
     }
 
-    /* Werkstatt: 4:3 + contain => nichts wird abgeschnitten */
+    /* Werkstatt: 4:3 + contain => nix wird abgeschnitten */
     .reel__img {
       display: block;
       width: 100%;
@@ -101,46 +101,6 @@
     @media (hover:hover) and (pointer:fine) {
       .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
     }
-
-    /* =========================================================
-       Brand-Farbe oben links (Luderbein) – klares Rot, edel
-       ========================================================= */
-    .brand strong{
-      color: rgba(255, 48, 48, .92);
-      text-shadow: 0 1px 18px rgba(255,48,48,.18), 0 1px 12px rgba(0,0,0,.55);
-      letter-spacing: .01em;
-    }
-    .brand span { color: rgba(255,255,255,.72); }
-
-    /* =========================================================
-       Preview-Kacheln: Bild klickbar + Smooth Fade
-       ========================================================= */
-    .thumb a { display:block; width:100%; height:100%; color:inherit; text-decoration:none; }
-    .thumb { position: relative; overflow: hidden; }
-    .thumbslider { position: relative; width:100%; height:100%; display:block; }
-    .thumbslider img {
-      position: absolute;
-      inset: 0;
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      opacity: 0;
-      transition: opacity .65s ease;
-    }
-    .thumbslider img.is-on { opacity: 1; }
-
-    /* =========================================================
-       FIX: Kachel-Aufbau strikt konsistent (Meta/Titel/Text/Buttons)
-       -> sorgt dafür, dass Acryl NICHT anders “formatiert” wirkt.
-       ========================================================= */
-    .productcard .meta { min-height: 1.2em; }
-    .productcard h3 { margin-top: 10px; }
-    .productcard .kicker {
-      min-height: 3.9em; /* ~3 Zeilen bei line-height ~1.3 */
-      display: block;
-    }
-    .productcard .actions { margin-top: 14px; }
   </style>
 </head>
 
@@ -251,10 +211,11 @@
     <div class="products">
       <!-- SCHIEFER -->
       <article class="productcard">
-        <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+        <div class="thumb">
           <a href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
-            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+            <span class="thumbslider" data-rotate="1">
               <img class="is-on" src="/assets/reel/reel-01.jpg" alt="Schiefer – Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-02.jpg" alt="Schiefer – Beispiel" loading="lazy">
               <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
               <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
               <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
@@ -262,9 +223,13 @@
             <span class="thumblabel">Schiefer</span>
           </a>
         </div>
-        <div class="meta"><span class="price">ab 9,95 €</span><span>•</span><span>Foto / Text / Gedenktafeln</span></div>
+
+        <div class="meta meta--price"><span class="price">ab 9,95 €</span></div>
+        <div class="meta meta--type">Foto / Text / Gedenktafeln</div>
+
         <h3>Schiefer</h3>
         <p class="kicker">Fotogravur, Text &amp; Symbole, Gedenktafeln – sauber aufbereitet und versiegelt.</p>
+
         <div class="actions">
           <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
           <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
@@ -273,18 +238,22 @@
 
       <!-- METALL -->
       <article class="productcard">
-        <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+        <div class="thumb">
           <a href="/leistungen/metall/" aria-label="Metall ansehen">
-            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+            <span class="thumbslider" data-rotate="1">
               <img class="is-on" src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel" loading="lazy">
               <img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Metall</span>
           </a>
         </div>
-        <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Tags / Plaketten / Business</span></div>
+
+        <div class="meta meta--price"><span class="price">auf Anfrage</span></div>
+        <div class="meta meta--type">Tags / Plaketten / Business</div>
+
         <h3>Metall</h3>
         <p class="kicker">Edelstahl, Aluminium, Plaketten, Tags – präzise, robust, ehrlich.</p>
+
         <div class="actions">
           <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
           <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
@@ -293,18 +262,22 @@
 
       <!-- HOLZ -->
       <article class="productcard">
-        <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+        <div class="thumb">
           <a href="/leistungen/holz/" aria-label="Holz ansehen">
-            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+            <span class="thumbslider" data-rotate="1">
               <img class="is-on" src="/assets/reel/reel-07.jpg" alt="Holz Beispiel" loading="lazy">
               <img src="/assets/reel/reel-12.jpg" alt="Holz Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Holz</span>
           </a>
         </div>
-        <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur / Zuschnitt / Serien</span></div>
+
+        <div class="meta meta--price"><span class="price">auf Anfrage</span></div>
+        <div class="meta meta--type">Gravur / Zuschnitt / Serien</div>
+
         <h3>Holz</h3>
         <p class="kicker">Lasergravur &amp; Zuschnitt – von Deko bis funktional. Schwibbögen kommen groß.</p>
+
         <div class="actions">
           <a class="btn primary" href="/leistungen/holz/">Ansehen</a>
           <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
@@ -313,18 +286,22 @@
 
       <!-- ACRYL -->
       <article class="productcard">
-        <div class="thumb" style="aspect-ratio:1/1; position:relative;">
+        <div class="thumb">
           <a href="/leistungen/acryl/" aria-label="Acryl ansehen">
-            <span class="thumbslider" data-rotate="1" style="width:100%; height:100%;">
+            <span class="thumbslider" data-rotate="1">
               <img class="is-on" src="/assets/reel/reel-11.jpg" alt="Acryl – Beispiel" loading="lazy">
               <img src="/assets/reel/reel-10.jpg" alt="Acryl – Beispiel" loading="lazy">
             </span>
             <span class="thumblabel">Acryl</span>
           </a>
         </div>
-        <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Schilder / Labels</span></div>
+
+        <div class="meta meta--price"><span class="price">auf Anfrage</span></div>
+        <div class="meta meta--type">Schilder / Labels</div>
+
         <h3>Acryl</h3>
         <p class="kicker">Clean, kontrastreich, modern – Beschriftung, Labels und kleine Serien.</p>
+
         <div class="actions">
           <a class="btn primary" href="/leistungen/acryl/">Ansehen</a>
           <a class="btn" href="/kontakt/?p=Acryl">Anfragen</a>
@@ -336,10 +313,21 @@
 
 <footer>
   <div class="wrap foot">
-    <div class="small">© <span id="y"></span> Luderbein</div>
-    <div class="small">
-      <a href="/rechtliches/impressum.html">Impressum</a> ·
-      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+    <div class="footcol">
+      <div class="small">© <span id="y"></span> Luderbein</div>
+      <div class="small">
+        <a href="/rechtliches/impressum.html">Impressum</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+
+    <div class="footcol">
+      <div class="small foothead">Kontakt</div>
+      <div class="small footlinks">
+        <a href="mailto:DEINE_EMAIL@HIER.DE">E-Mail: DEINE_EMAIL@HIER.DE</a><br />
+        <a href="https://wa.me/DEINE_NUMMER" rel="noopener">WhatsApp: +49 DEINE_NUMMER</a><br />
+        <a href="https://instagram.com/Luderbein_Gravur" rel="noopener">@Luderbein_Gravur</a>
+      </div>
     </div>
   </div>
 </footer>
