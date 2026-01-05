@@ -111,66 +111,15 @@
       .cfg .fields .full { grid-column: 1 / -1; }
     }
 
-    /* =========================================================
-       KONTAKT – "Damit’s schnell geht" (übersichtlich, nicht klotzig)
-       ========================================================= */
-    .quick {
-      display: grid;
-      gap: 10px;
-    }
-    .quick__row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    @media (min-width: 720px) {
-      .quick__row { grid-template-columns: repeat(3, 1fr); }
-    }
-    .quick__item {
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(26,26,31,.62);
-      border-radius: 16px;
-      padding: 12px 12px;
-    }
-    .quick__k {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 800;
-      letter-spacing: .02em;
-      margin: 0 0 6px;
-    }
-    .quick__k i {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(219,16,33,.12);
-    }
-    .quick__p {
-      margin: 0;
-      color: var(--muted);
-    }
-    .quick__addon {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(42,45,51,.20);
-      color: var(--muted);
-    }
-    .quick__addon strong { color: var(--text); }
-
-    /* =========================================================
-       KONTAKT – Direktlinks (rot statt blau, nur hier)
-       ========================================================= */
-    .direct a {
+    /* Direktlinks: kein "blau" */
+    .directlinks a{
       color: var(--accent);
       text-decoration: none;
     }
-    .direct a:hover {
-      color: var(--text);
+    .directlinks a:hover{
+      color: var(--accentHot);
       text-decoration: underline;
+      text-underline-offset: 2px;
     }
   </style>
 </head>
@@ -312,40 +261,50 @@
         <p class="small muted">Drei Infos reichen meistens.</p>
       </div>
 
-      <div class="quick" aria-label="Schnell-Infos">
-        <div class="quick__row">
-          <div class="quick__item">
-            <p class="quick__k"><i aria-hidden="true"></i> 1 – Material</p>
-            <p class="quick__p">Schiefer / Metall / Holz / Acryl / Custom.</p>
-          </div>
-
-          <div class="quick__item">
-            <p class="quick__k"><i aria-hidden="true"></i> 2 – Größe</p>
-            <p class="quick__p">z. B. 10×10 cm · 20 cm rund · oder „so groß wie …“</p>
-          </div>
-
-          <div class="quick__item">
-            <p class="quick__k"><i aria-hidden="true"></i> 3 – Motiv</p>
-            <p class="quick__p">Foto / Text / Symbol / QR / Kombi. Wenn Text: bitte copy&amp;paste, nicht als Bild.</p>
-          </div>
+      <div class="grid">
+        <div class="card">
+          <h3>1 – Motiv</h3>
+          <p>Text, Symbol oder Foto. Bei Fotos: scharf, gut ausgeleuchtet, kein Screenshot.</p>
         </div>
-
-        <div class="quick__addon">
-          <strong>Deadline (wenn wichtig):</strong>
-          Bis wann muss es fertig sein? Wenn’s knapp ist: sag’s direkt – ich bin lieber ehrlich als „vielleicht“.
+        <div class="card">
+          <h3>2 – Größe</h3>
+          <p>z. B. 10×10 cm · 20 cm rund · oder „so groß wie …“</p>
         </div>
-
-        <div class="quick__addon">
-          <strong>Tipp (Qualität):</strong><br>
-          Kein Screenshot-vom-Screenshot. Lieber 1 gutes Originalbild als 5 matschige Kopien.
-          Klar: manchmal klappt’s trotzdem – aber das Ergebnis kann nie besser als die Vorlage sein.
+        <div class="card">
+          <h3>3 – Deadline</h3>
+          <p>Wenn’s eilig ist: sagen. Dann sag ich dir ehrlich, ob’s passt.</p>
         </div>
+      </div>
+
+      <div class="notice" style="margin-top:16px">
+        <strong style="color:var(--text)">Tipp:</strong><br>
+        Kein Screenshot-vom-Screenshot. Lieber 1 gutes Originalbild als 5 matschige Kopien.
+        Wenn’s nicht anders geht, geht’s trotzdem – aber das Ergebnis kann nicht besser sein als die Vorlage.
       </div>
     </section>
 
     <div class="hr"></div>
 
-    <section class="section direct" aria-label="Direktlinks">
+    <section class="section" aria-label="Unentschlossen Hilfe">
+      <div class="notice">
+        <strong style="color:var(--text)">Unentschlossen? Passt.</strong><br>
+        Viele kommen mit „Hochzeit / Geschenk / Firma“ + Material + Foto/Text – aber ohne fertige Idee.
+        Genau dafür bin ich da: Ich mache dir 2–3 saubere Vorschläge (Designrichtung + Format) und sag dir ehrlich,
+        was sinnvoll ist.
+        <br><br>
+        <span style="color:var(--muted)">
+          Budget gern als <b>Rahmen</b> nennen – nicht zum Drücken, sondern damit wir nichts planen, was am Ende keinen Sinn macht.
+        </span>
+        <br><br>
+        <span style="color:var(--muted)"><b>Copy &amp; Paste (wenn du willst):</b><br>
+          Anlass: … · Material: … · Motiv (Foto/Text): … · Stil: … · Rahmen: … · Deadline (optional): …
+        </span>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <section class="section directlinks">
       <h2>Direktlinks</h2>
       <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
       <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 592 5858</a></p>
