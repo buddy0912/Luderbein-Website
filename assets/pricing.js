@@ -185,7 +185,9 @@ window.LUDERBEIN_PRICING = {
           minQty: 1,
 
           formats: [
-            { id: "85x55", label: "85 × 55 mm (Standard-Visitenkarte)" }
+            // WICHTIG: Maße korrigiert auf 86×54 mm (Kreditkartenformat).
+            // ID bewusst NICHT geändert (backward-safe).
+            { id: "85x55", label: "86 × 54 mm (Kreditkartenformat)" }
           ],
 
           tiers: [
@@ -286,6 +288,9 @@ window.LUDERBEIN_PRICING = {
       upgrades: {}
     },
 
+    // ===============================
+    // 🪵 HOLZ (noch deaktiviert)
+    // ===============================
     holz: {
       label: "Holz",
       active: false,
@@ -294,6 +299,9 @@ window.LUDERBEIN_PRICING = {
       upgrades: {}
     },
 
+    // ===============================
+    // 🔷 ACRYL (noch deaktiviert)
+    // ===============================
     acryl: {
       label: "Acryl",
       active: false,
