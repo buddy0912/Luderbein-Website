@@ -82,7 +82,6 @@
     }
     .cfg textarea { min-height: 84px; resize: vertical; }
 
-    /* Placeholder dezenter (damit Demo-Text nicht wie echter Text wirkt) */
     .cfg input::placeholder,
     .cfg textarea::placeholder {
       color: rgba(154,146,142,.70);
@@ -94,6 +93,24 @@
       gap: 10px;
       flex-wrap: wrap;
       align-items: center;
+    }
+    .cfg .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(42,45,51,.18);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cfg .toggle input { display: none; }
+    .cfg .toggle.is-on {
+      border-color: rgba(219,16,33,.55);
+      background: rgba(219,16,33,.12);
     }
 
     .cfg .upgrades {
@@ -263,26 +280,25 @@
           </div>
         </div>
 
-        <!-- Metall-spezifisch (generalisiert: zeigt sich bei Metall-Varianten mit options) -->
+        <!-- Metall-spezifisch -->
         <div class="step" data-k-metall-block hidden aria-label="Metall-Optionen">
           <p class="steptitle">Metall – Optionen</p>
-
           <div class="fields">
-            <div data-k-opt-color>
+            <div>
               <label for="kColor">Farbe</label>
               <select id="kColor" data-k-color>
                 <option value="">— auswählen —</option>
               </select>
             </div>
 
-            <div data-k-opt-engraving>
+            <div>
               <label for="kEngraving">Gravur</label>
               <select id="kEngraving" data-k-engraving>
                 <option value="">— auswählen —</option>
               </select>
             </div>
 
-            <div class="full" data-k-opt-motif>
+            <div class="full">
               <label for="kMotif">Motiv</label>
               <select id="kMotif" data-k-motif>
                 <option value="">— auswählen —</option>
@@ -306,12 +322,12 @@
           <div>
             <label>Versand</label>
             <div class="chips" role="radiogroup" aria-label="Versand auswählen" data-k-shipmode>
-              <label class="chip is-on" data-k-ship-chip>
-                <input type="radio" name="k-shipmode" value="pickup" checked>
+              <label class="chip" data-k-ship-chip>
+                <input type="radio" name="k-shipmode" value="pickup">
                 <span><b>Abholung</b></span>
               </label>
-              <label class="chip" data-k-ship-chip>
-                <input type="radio" name="k-shipmode" value="dhl">
+              <label class="chip is-on" data-k-ship-chip>
+                <input type="radio" name="k-shipmode" value="dhl" checked>
                 <span><b>Versand</b> (DHL)</span>
               </label>
             </div>
@@ -371,69 +387,8 @@
   </section>
 </main>
 
-<!-- FOOTER (wie Startseite) -->
-<footer>
-  <div class="wrap foot">
-    <div class="small">© <span id="y"></span> Luderbein</div>
-
-    <div class="small">
-      <div style="margin-bottom:8px;">Kontakt</div>
-
-      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-        <a class="btn primary" href="https://wa.me/491725925858" rel="noopener">
-          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 3C7.03 3 3 6.7 3 11.25c0 2.15.9 4.1 2.39 5.57L4 21l4.46-1.3c1.08.36 2.27.55 3.54.55 4.97 0 9-3.7 9-8.25S16.97 3 12 3Z"
-                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M8.3 11.4h.01M12 11.4h.01M15.7 11.4h.01"
-                stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-            </svg>
-          </span>
-          WhatsApp
-        </a>
-
-        <a class="btn" href="mailto:luderbein_gravur@icloud.com">
-          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4.5 7.5h15v9h-15v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M5.2 8.2 12 13.2l6.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          E-Mail
-        </a>
-
-        <a class="btn" href="https://instagram.com/Luderbein_Gravur" rel="me noopener">
-          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M8 4.5h8A3.5 3.5 0 0 1 19.5 8v8A3.5 3.5 0 0 1 16 19.5H8A3.5 3.5 0 0 1 4.5 16V8A3.5 3.5 0 0 1 8 4.5Z"
-                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M12 10a2.75 2.75 0 1 0 0 5.5A2.75 2.75 0 0 0 12 10Z"
-                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M16.6 7.6h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-            </svg>
-          </span>
-          Instagram
-        </a>
-
-        <a class="btn" href="/kontakt/">
-          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M12 10.8v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              <path d="M12 8.2h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-            </svg>
-          </span>
-          Kontaktseite
-        </a>
-      </div>
-    </div>
-
-    <div class="small">
-      <a href="/rechtliches/impressum.html">Impressum</a> ·
-      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-    </div>
-  </div>
-</footer>
+<footer id="site-footer"></footer>
+<script src="/assets/footer.js"></script>
 
 <script src="/assets/nav-dropdown.js"></script>
 <script src="/assets/site.js"></script>
@@ -458,19 +413,13 @@
     const $format  = el("[data-k-format]", $root);
 
     const $metallBlock = el("[data-k-metall-block]", $root);
-    const $rulesBox = el("[data-k-metall-rules]", $root);
-
-    const $optColorWrap = el("[data-k-opt-color]", $root);
-    const $optEngrWrap  = el("[data-k-opt-engraving]", $root);
-    const $optMotifWrap = el("[data-k-opt-motif]", $root);
-
     const $color   = el("[data-k-color]", $root);
     const $engr    = el("[data-k-engraving]", $root);
     const $motif   = el("[data-k-motif]", $root);
 
     const $qty     = el("[data-k-qty]", $root);
 
-    // Versand (pickup | dhl)
+    // Versand: 2 Buttons (Abholung / DHL)
     const $shipWrap = el("[data-k-shipmode]", $root);
     const $shipHint = el("[data-k-ship-hint]", $root);
 
@@ -484,7 +433,17 @@
     const phoneWA = "491725925858";
     const mailTo  = "luderbein_gravur@icloud.com";
 
-    const eur = (n) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(n);
+    // ---- Money: immer cent-genau stabilisieren (kein Float-Gedöns) ----
+    const m = (n) => Math.round((Number(n || 0) + Number.EPSILON) * 100) / 100;
+
+    const eurFmt = new Intl.NumberFormat("de-DE", {
+      style: "currency",
+      currency: "EUR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    const eur = (n) => eurFmt.format(m(n));
+
     const clean = (s) => (s || "").toString().trim();
 
     function setDisabled(a, on) {
@@ -505,7 +464,7 @@
 
     function getShipMode() {
       const r = el('input[name="k-shipmode"]:checked', $root);
-      return r ? r.value : "pickup";
+      return r ? r.value : "dhl";
     }
 
     function setShipModeUI(mode) {
@@ -521,19 +480,25 @@
 
     function shippingFor(subtotal, shipMode) {
       const S = PR.shipping || { enabled:false };
+
       if (!S.enabled || shipMode !== "dhl") {
         return { ok:true, price:0, note:"Abholung/Übergabe" };
       }
 
-      if (subtotal >= (S.freeShippingFrom ?? Infinity)) {
-        return { ok:true, price:0, note:`Versand frei ab ${eur(S.freeShippingFrom)}` };
+      const base = m(S.basePrice ?? 0);
+      const freeFrom = m(S.freeShippingFrom ?? Infinity);
+      const minFor = m(S.minOrderForShipping ?? 0);
+
+      if (m(subtotal) >= freeFrom) {
+        return { ok:true, price:0, note:`Versand frei ab ${eur(freeFrom)}` };
       }
 
-      if (subtotal < (S.minOrderForShipping ?? 0)) {
-        return { ok:false, price:null, note:`Versand erst ab ${eur(S.minOrderForShipping)} (sonst bitte anfragen)` };
+      if (m(subtotal) < minFor) {
+        return { ok:false, price:null, note:`Versand erst ab ${eur(minFor)} (sonst bitte anfragen)` };
       }
 
-      return { ok:true, price:(S.basePrice ?? 0), note:`Versand (DHL) ${eur(S.basePrice ?? 0)}` };
+      // Kunden-Text: "ab 6,95 €"
+      return { ok:true, price:base, note:`Versand (DHL) ab ${eur(base)} · frei ab ${eur(freeFrom)}` };
     }
 
     function resetSelect($s, placeholder="— auswählen —") {
@@ -560,6 +525,7 @@
           els(".chip", $matWrap).forEach((x) => x.classList.remove("is-on"));
           lab.classList.add("is-on");
           lab.querySelector("input").checked = true;
+
           onMaterial(key);
         });
       });
@@ -574,9 +540,9 @@
       variantKey: "",
       formatId: "",
       qty: 0,
-      shipMode: "pickup",
 
-      // metall extras
+      shipMode: "dhl",
+
       color: "",
       engraving: "",
       motif: "",
@@ -598,13 +564,12 @@
       resetSelect($engr);
       resetSelect($motif);
 
-      if ($optColorWrap) $optColorWrap.hidden = false;
-      if ($optEngrWrap)  $optEngrWrap.hidden = false;
-      if ($optMotifWrap) $optMotifWrap.hidden = false;
-
       const prod = PR.products[matKey];
-      if (prod && matKey === "metall") $qty.value = 1;
-      else if (!$qty.value) $qty.value = 1;
+      if (prod && matKey === "metall") {
+        $qty.value = 10;
+      } else {
+        if (!$qty.value) $qty.value = 1;
+      }
 
       $steps.hidden = false;
 
@@ -631,7 +596,6 @@
       const prod = PR.products[state.matKey];
       const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
 
-      // formats
       if (v && Array.isArray(v.formats)) {
         v.formats.forEach((f) => {
           const opt = document.createElement("option");
@@ -641,58 +605,37 @@
         });
       }
 
-      // metall options generalisiert
-      const isMetall = (state.matKey === "metall");
-      const hasOpts = !!(v && v.options);
-      const hasColors = !!(hasOpts && Array.isArray(v.options.colors) && v.options.colors.length);
-      const hasEngr   = !!(hasOpts && Array.isArray(v.options.engraving) && v.options.engraving.length);
-      const hasMotif  = !!(hasOpts && Array.isArray(v.options.motif) && v.options.motif.length);
+      const isMetallBottle = (state.matKey === "metall" && state.variantKey === "flaschenoeffner");
 
-      if (isMetall && hasOpts) {
+      if (isMetallBottle && v && v.options) {
         $metallBlock.hidden = false;
 
-        // rules text (variant.rules bevorzugt)
-        const rules = (v && v.rules) ? v.rules : "Mindestmenge 10 · 1 Motiv pro Auftrag · fertiges Logo (SVG/PDF/PNG/JPG) 1-farbig";
-        if ($rulesBox) $rulesBox.innerHTML = `<strong>Regeln:</strong><br>${rules}`;
-
-        // colors
-        if ($optColorWrap) $optColorWrap.hidden = !hasColors;
         resetSelect($color);
-        if (hasColors) {
-          (v.options.colors || []).forEach((c) => {
-            const opt = document.createElement("option");
-            opt.value = c.id;
-            opt.textContent = c.label;
-            $color.appendChild(opt);
-          });
-        }
+        (v.options.colors || []).forEach((c) => {
+          const opt = document.createElement("option");
+          opt.value = c.id;
+          opt.textContent = c.label;
+          $color.appendChild(opt);
+        });
 
-        // engraving
-        if ($optEngrWrap) $optEngrWrap.hidden = !hasEngr;
         resetSelect($engr);
-        if (hasEngr) {
-          (v.options.engraving || []).forEach((e) => {
-            const opt = document.createElement("option");
-            opt.value = e.id;
-            opt.textContent = e.label;
-            $engr.appendChild(opt);
-          });
-        }
+        (v.options.engraving || []).forEach((e) => {
+          const opt = document.createElement("option");
+          opt.value = e.id;
+          opt.textContent = e.label;
+          $engr.appendChild(opt);
+        });
 
-        // motif (optional)
-        if ($optMotifWrap) $optMotifWrap.hidden = !hasMotif;
         resetSelect($motif);
-        if (hasMotif) {
-          (v.options.motif || []).forEach((m) => {
-            const opt = document.createElement("option");
-            opt.value = m.id;
-            opt.textContent = m.label;
-            $motif.appendChild(opt);
-          });
-        }
+        (v.options.motif || []).forEach((mOpt) => {
+          const opt = document.createElement("option");
+          opt.value = mOpt.id;
+          opt.textContent = mOpt.label;
+          $motif.appendChild(opt);
+        });
 
-        // qty min
         if (v.minQty && Number($qty.value || 0) < v.minQty) $qty.value = v.minQty;
+
       } else {
         $metallBlock.hidden = true;
       }
@@ -712,17 +655,17 @@
       const prod = PR.products[state.matKey];
       const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
 
-      // Schiefer: upgrades as object
       if (state.matKey === "schiefer" && prod && prod.upgrades) {
         Object.keys(prod.upgrades).forEach((uKey) => {
           const u = prod.upgrades[uKey];
           const row = document.createElement("label");
           row.className = "up";
-          row.dataset.upRow = uKey;
           row.innerHTML = `
             <div class="left">
               <input type="checkbox" data-up="${uKey}">
-              <div><b>${u.label}</b></div>
+              <div>
+                <b>${u.label}</b>
+              </div>
             </div>
             <div class="price">${eur(u.price)}</div>
           `;
@@ -737,25 +680,32 @@
         return;
       }
 
-      // Metall: upgrades as variant.upgrades object
       if (state.matKey === "metall" && v && v.upgrades) {
         const ups = v.upgrades;
-        const keys = Object.keys(ups);
 
-        keys.forEach((uKey) => {
+        const order = [
+          "engrave_inside_and_outside",
+          "variable_data_list",
+          "clear_coat",
+          "logo_rework",
+          "display_stand_3d_printed",
+          "double_sided",
+          "mixed_colors"
+        ].filter((k) => ups[k]);
+
+        order.forEach((uKey) => {
           const u = ups[uKey];
 
-          const row = document.createElement("label");
-          row.className = "up";
-          row.dataset.upRow = uKey;
-
           const priceText =
-            (u.type === "per_unit") ? `${eur(u.unit || 0)} / Stk` :
-            (u.type === "one_time") ? `${eur(u.once || 0)} einmalig` :
+            (u.type === "per_unit") ? `${eur(u.unit)} / Stk` :
+            (u.type === "one_time") ? `${eur(u.once)} einmalig` :
             (u.type === "per_unit_tiered") ? `Staffel / Stk` :
             (u.type === "setup_plus_per_unit_tiered") ? `${eur(u.setupFee || 0)} Setup + Staffel / Stk` :
             `—`;
 
+          const row = document.createElement("label");
+          row.className = "up";
+          row.dataset.upRow = uKey;
           row.innerHTML = `
             <div class="left">
               <input type="checkbox" data-up="${uKey}">
@@ -781,22 +731,22 @@
       $upWrap.innerHTML = `<div class="small muted">Keine Upgrades für diese Auswahl.</div>`;
     }
 
-    function lockUpgrade(upKey, shouldLockOn) {
-      const row = el(`[data-up-row="${upKey}"]`, $upWrap);
+    function lockBeidseitigUpgrade(shouldLockOn) {
+      const row = el(`[data-up-row="engrave_inside_and_outside"]`, $upWrap);
       if (!row) return;
-      const cb = el(`input[data-up="${upKey}"]`, row);
+      const cb = el(`input[data-up="engrave_inside_and_outside"]`, row);
       if (!cb) return;
 
       if (shouldLockOn) {
         cb.checked = true;
-        state.upgrades.add(upKey);
+        state.upgrades.add("engrave_inside_and_outside");
         row.classList.add("is-locked");
         cb.disabled = true;
       } else {
         row.classList.remove("is-locked");
         cb.disabled = false;
         cb.checked = false;
-        state.upgrades.delete(upKey);
+        state.upgrades.delete("engrave_inside_and_outside");
       }
     }
 
@@ -804,6 +754,7 @@
       state.variantKey = $variant.value || "";
       state.formatId = $format.value || "";
       state.qty = Number($qty.value || 0);
+
       state.shipMode = getShipMode();
 
       state.color = $color ? ($color.value || "") : "";
@@ -813,37 +764,19 @@
       const prod = PR.products[state.matKey];
       const v = prod && prod.variants ? prod.variants[state.variantKey] : null;
 
-      const isMetall = (state.matKey === "metall");
-      const hasOpts = !!(v && v.options);
-      const hasColors = !!(hasOpts && Array.isArray(v.options.colors) && v.options.colors.length);
-      const hasEngr   = !!(hasOpts && Array.isArray(v.options.engraving) && v.options.engraving.length);
-      const hasMotif  = !!(hasOpts && Array.isArray(v.options.motif) && v.options.motif.length);
-
-      // Auto-Upgrades (beidseitig => entsprechendes Upgrade locken)
-      if (isMetall && v && v.upgrades && hasEngr) {
+      const isMetallBottle = (state.matKey === "metall" && state.variantKey === "flaschenoeffner");
+      if (isMetallBottle) {
         const beid = (state.engraving === "beidseitig");
-        const cand = ["engrave_inside_and_outside", "double_sided"].filter((k) => v.upgrades[k]);
-        cand.forEach((k) => lockUpgrade(k, beid));
+        lockBeidseitigUpgrade(beid);
       }
 
-      // Auto-Upgrade (bunt gemischt => mixed_colors locken)
-      if (isMetall && v && v.upgrades && v.upgrades.mixed_colors && hasColors) {
-        const should = (state.color === "bunt_gemischt");
-        lockUpgrade("mixed_colors", should);
-      }
-
-      // validity
       let ok = true;
       let onRequest = false;
       let reasons = [];
 
       if (!state.matKey) { ok = false; reasons.push("Material fehlt."); }
       if (!state.variantKey) { ok = false; reasons.push("Ausführung fehlt."); }
-
-      // Format nur erzwingen, wenn es Formate gibt (Schiefer hat welche, Metall oft nicht)
-      const hasFormats = !!(v && Array.isArray(v.formats) && v.formats.length);
-      if (hasFormats && !state.formatId) { ok = false; reasons.push("Format fehlt."); }
-
+      if (!state.formatId) { ok = false; reasons.push("Format fehlt."); }
       if (!state.qty || state.qty < 1) { ok = false; reasons.push("Stückzahl fehlt."); }
 
       if (v && v.minQty && state.qty < v.minQty) {
@@ -851,27 +784,34 @@
         reasons.push(`Mindestmenge: ${v.minQty} Stück.`);
       }
 
-      // metall required selects – nur, wenn die Option existiert
-      if (isMetall && hasOpts) {
-        if (hasColors && !state.color) { ok = false; reasons.push("Farbe fehlt."); }
-        if (hasEngr && !state.engraving) { ok = false; reasons.push("Gravur fehlt."); }
-        if (hasMotif && !state.motif) { ok = false; reasons.push("Motiv fehlt."); }
+      if (isMetallBottle) {
+        if (!state.color) { ok = false; reasons.push("Farbe fehlt."); }
+        if (!state.engraving) { ok = false; reasons.push("Gravur fehlt."); }
+        if (!state.motif) { ok = false; reasons.push("Motiv fehlt."); }
       }
 
-      // base prices
       let baseUnit = 0;
+      let baseNote = "";
 
       if (ok && v) {
         if (state.matKey === "schiefer") {
           const fmt = (v.formats || []).find((f) => f.id === state.formatId);
           if (!fmt) { ok = false; reasons.push("Format ungültig."); }
-          else baseUnit = Number(fmt.price || 0);
+          else {
+            baseUnit = m(fmt.price || 0);
+            baseNote = (v.note || "");
+          }
         }
 
         if (state.matKey === "metall" && Array.isArray(v.tiers)) {
           const t = tierUnit(v.tiers, state.qty);
-          if (t.unit == null) onRequest = true;
-          else baseUnit = Number(t.unit);
+          if (t.unit == null) {
+            onRequest = true;
+            baseNote = t.note || "Auf Anfrage";
+          } else {
+            baseUnit = m(t.unit);
+            baseNote = t.note || "";
+          }
         }
       }
 
@@ -882,14 +822,14 @@
       let upgradeOnceLines = [];
 
       if (ok && !onRequest) {
-        subtotal += (baseUnit * state.qty);
+        subtotal = m(subtotal + m(baseUnit * state.qty));
 
         if (state.matKey === "schiefer" && prod && prod.upgrades) {
           for (const uKey of state.upgrades) {
             const u = prod.upgrades[uKey];
             if (!u) continue;
-            upgradeOnce += Number(u.price || 0);
-            upgradeOnceLines.push(`${u.label}: ${eur(Number(u.price || 0))}`);
+            upgradeOnce = m(upgradeOnce + m(u.price || 0));
+            upgradeOnceLines.push(`${u.label}: ${eur(u.price || 0)}`);
           }
         }
 
@@ -901,71 +841,79 @@
             if (!u) continue;
 
             if (u.type === "per_unit") {
-              const uUnit = Number(u.unit || 0);
-              upgradeUnit += uUnit;
+              const uUnit = m(u.unit || 0);
+              upgradeUnit = m(upgradeUnit + uUnit);
               upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
             }
 
             if (u.type === "one_time") {
-              const once = Number(u.once || 0);
-              upgradeOnce += once;
+              const once = m(u.once || 0);
+              upgradeOnce = m(upgradeOnce + once);
               upgradeOnceLines.push(`${u.label}: ${eur(once)} einmalig`);
             }
 
             if (u.type === "per_unit_tiered") {
               const t = tierUnit(u.tiers, state.qty);
-              if (t.unit == null) onRequest = true;
-              else {
-                const uUnit = Number(t.unit);
-                upgradeUnit += uUnit;
+              if (t.unit == null) {
+                onRequest = true;
+              } else {
+                const uUnit = m(t.unit);
+                upgradeUnit = m(upgradeUnit + uUnit);
                 upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
               }
             }
 
             if (u.type === "setup_plus_per_unit_tiered") {
-              const setup = Number(u.setupFee || 0);
-              upgradeOnce += setup;
+              const setup = m(u.setupFee || 0);
+              upgradeOnce = m(upgradeOnce + setup);
               upgradeOnceLines.push(`${u.label}: ${eur(setup)} Setup`);
 
               const t = tierUnit(u.tiers, state.qty);
-              if (t.unit == null) onRequest = true;
-              else {
-                const uUnit = Number(t.unit);
-                upgradeUnit += uUnit;
+              if (t.unit == null) {
+                onRequest = true;
+              } else {
+                const uUnit = m(t.unit);
+                upgradeUnit = m(upgradeUnit + uUnit);
                 upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
               }
             }
           }
 
-          if (!onRequest) subtotal += (upgradeUnit * state.qty);
+          if (!onRequest) {
+            subtotal = m(subtotal + m(upgradeUnit * state.qty));
+          }
         }
 
-        subtotal += upgradeOnce;
+        subtotal = m(subtotal + upgradeOnce);
       }
 
-      // shipping
       const shipRes = shippingFor(subtotal, state.shipMode);
       if (!shipRes.ok) onRequest = true;
 
-      const total = (!onRequest) ? (subtotal + (shipRes.price || 0)) : null;
+      const total = (!onRequest) ? m(subtotal + (shipRes.price || 0)) : null;
 
       if ($shipHint) $shipHint.textContent = shipRes.note || "";
 
       const matLabel = prod ? (prod.label || state.matKey) : state.matKey;
       const varLabel = v ? (v.label || v.title || state.variantKey) : state.variantKey;
-
       const fmtLabel = (() => {
         if (!v) return "";
         const f = (v.formats || []).find((x) => x.id === state.formatId);
-        return f ? (f.label || f.id) : (state.formatId || "");
+        return f ? (f.label || f.id) : state.formatId;
       })();
 
       const upgradesList = [];
       if (state.matKey === "schiefer" && prod && prod.upgrades) {
-        state.upgrades.forEach((k) => { const u = prod.upgrades[k]; if (u) upgradesList.push(u.label); });
+        state.upgrades.forEach((k) => {
+          const u = prod.upgrades[k];
+          if (u) upgradesList.push(u.label);
+        });
       }
       if (state.matKey === "metall" && v && v.upgrades) {
-        state.upgrades.forEach((k) => { const u = v.upgrades[k]; if (u) upgradesList.push(u.label); });
+        state.upgrades.forEach((k) => {
+          const u = v.upgrades[k];
+          if (u) upgradesList.push(u.label);
+        });
       }
 
       const shipText = (state.shipMode === "dhl") ? "Versand (DHL)" : "Abholung";
@@ -976,14 +924,12 @@
       else {
         summaryLines.push(`Material: <strong>${matLabel}</strong>`);
         if (state.variantKey) summaryLines.push(`Ausführung: <strong>${varLabel}</strong>`);
-        if (hasFormats && state.formatId) summaryLines.push(`Format: <strong>${fmtLabel}</strong>`);
-
-        if (isMetall && hasOpts) {
-          if (hasColors) summaryLines.push(`Farbe: <strong>${state.color || "—"}</strong>`);
-          if (hasEngr) summaryLines.push(`Gravur: <strong>${state.engraving || "—"}</strong>`);
-          if (hasMotif) summaryLines.push(`Motiv: <strong>${state.motif || "—"}</strong>`);
+        if (state.formatId) summaryLines.push(`Format: <strong>${fmtLabel}</strong>`);
+        if (isMetallBottle) {
+          summaryLines.push(`Farbe: <strong>${state.color || "—"}</strong>`);
+          summaryLines.push(`Gravur: <strong>${state.engraving || "—"}</strong>`);
+          summaryLines.push(`Motiv: <strong>${state.motif || "—"}</strong>`);
         }
-
         if (state.qty) summaryLines.push(`Stückzahl: <strong>${state.qty}</strong>`);
 
         if (upgradesList.length) summaryLines.push(`Upgrades: <strong>${upgradesList.join(", ")}</strong>`);
@@ -1007,11 +953,13 @@
           }
 
           summaryLines.push(`Zwischensumme: <strong>${eur(subtotal)}</strong>`);
-          summaryLines.push(`Versand: <strong>${shipRes.price === 0 ? "0,00 €" : eur(shipRes.price || 0)}</strong>`);
+          summaryLines.push(`Versand: <strong>${shipRes.price === 0 ? eur(0) : eur(shipRes.price || 0)}</strong>`);
           summaryLines.push(`Gesamt: <strong>${eur(total)}</strong>`);
         }
 
-        if (!ok && reasons.length) summaryLines.push(`<br><strong>Fehlt:</strong> ${reasons.join(" ")}`);
+        if (!ok && reasons.length) {
+          summaryLines.push(`<br><strong>Fehlt:</strong> ${reasons.join(" ")}`);
+        }
       }
 
       $sum.innerHTML = summaryLines.join("<br>");
@@ -1022,15 +970,14 @@
         "Hi Luderbein, ich möchte anfragen:",
         "",
         `- Material: ${matLabel}`,
-        `- Ausführung: ${varLabel}`
+        `- Ausführung: ${varLabel}`,
+        `- Format: ${fmtLabel}`,
       ];
 
-      if (hasFormats) msgLines.push(`- Format: ${fmtLabel}`);
-
-      if (isMetall && hasOpts) {
-        if (hasColors) msgLines.push(`- Farbe: ${state.color || ""}`);
-        if (hasEngr) msgLines.push(`- Gravur: ${state.engraving || ""}`);
-        if (hasMotif) msgLines.push(`- Motiv: ${state.motif || ""}`);
+      if (isMetallBottle) {
+        msgLines.push(`- Farbe: ${state.color || ""}`);
+        msgLines.push(`- Gravur: ${state.engraving || ""}`);
+        msgLines.push(`- Motiv: ${state.motif || ""}`);
       }
 
       msgLines.push(`- Stückzahl: ${state.qty || ""}`);
@@ -1041,16 +988,19 @@
 
       if (!onRequest && ok) {
         msgLines.push(`- Zwischensumme: ${eur(subtotal)}`);
-        msgLines.push(`- Versand: ${shipRes.price === 0 ? "0,00 €" : eur(shipRes.price || 0)}`);
+        msgLines.push(`- Versand: ${shipRes.price === 0 ? eur(0) : eur(shipRes.price || 0)}`);
         msgLines.push(`- Gesamt: ${eur(total)}`);
       } else {
         msgLines.push("- Preis: Auf Anfrage");
       }
 
-      if (noteText) msgLines.push(`- Notiz: ${noteText}`);
+      if (noteText) {
+        msgLines.push(`- Notiz: ${noteText}`);
+      }
 
       const msg = msgLines.join("\n");
       const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
+
       const subject = `Anfrage – ${matLabel} – ${varLabel}`;
       const mailBody = msg.replace(/\n/g, "%0D%0A");
       const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${mailBody}`;
