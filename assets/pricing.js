@@ -18,7 +18,7 @@ window.LUDERBEIN_PRICING = {
     enabled: true,
     basePrice: 6.95,          // DHL ab 6,95 €
     minOrderForShipping: 29.95,
-    freeShippingFrom: 80.0    // versandkostenfrei ab 80 €
+    freeShippingFrom: 80.00   // versandkostenfrei ab 80,00 €
   },
 
   // === PRODUKTE ===
@@ -115,7 +115,7 @@ window.LUDERBEIN_PRICING = {
               { id: "silber",  label: "Silber" }
             ],
             engraving: [
-              { id: "einseitig", label: "1-seitig" },
+              { id: "einseitig",  label: "1-seitig" },
               { id: "beidseitig", label: "Beidseitig" }
             ],
             motif: [
@@ -178,12 +178,6 @@ window.LUDERBEIN_PRICING = {
 
         /* --------------------------------------------------------------------------
          * METALL – Eloxierte Alu-Visitenkarten (Gravur)
-         * Regeln:
-         * - Mindestmenge: 1 Stück
-         * - Basis: 1-seitig graviert
-         * - 2-seitig = Upgrade (Aufpreis pro Stück nach Staffel)
-         * - Farben: Schwarz/Rot/Grün/Blau (ohne Aufpreis) | “Bunt gemischt” = Upgrade (einmalig)
-         * - 1 Design pro Auftrag (alle Karten gleich)
          * -------------------------------------------------------------------------- */
         alu_visitenkarten_eloxiert: {
           label: "Eloxierte Alu-Visitenkarten",
@@ -204,7 +198,6 @@ window.LUDERBEIN_PRICING = {
             { min: 250, max: null, price: null, note: "Auf Anfrage" }
           ],
 
-          // (Aktuell im Kalkulator noch nicht angezeigt – wird später „nice to have“)
           options: {
             colors: [
               { id: "schwarz",       label: "Schwarz" },
@@ -240,26 +233,18 @@ window.LUDERBEIN_PRICING = {
               type: "one_time",
               description: "Einmaliger Zuschlag für Sortier-/Handlingaufwand.",
               once: 4.95
-              // Hinweis: „appliesWhen“ wertet der Kalkulator aktuell nicht aus.
             }
           }
         },
 
         /* --------------------------------------------------------------------------
          * METALL – DogTags (Eloxiertes Alu, 29×50 mm, schwarz) (Gravur)
-         * Regeln:
-         * - Mindestmenge: 1 Stück
-         * - Basis: 1-seitig graviert (Standard)
-         * - 2-seitig = Upgrade (Aufpreis pro Stück nach Staffel)
-         * - Schwarz (aktuell only)
-         * - 1 Motiv pro Auftrag (alle Tags gleich)
          * -------------------------------------------------------------------------- */
         dogtags_alu_elox_schwarz_29x50: {
           label: "DogTag – Alu eloxiert (29×50 mm, schwarz)",
           note: "Basis: 1-seitig graviert. Schwarz. 1 Motiv pro Auftrag. 2-seitig als Upgrade.",
           minQty: 1,
 
-          // Muss existieren, weil der Kalkulator ein Format verlangt
           formats: [
             { id: "29x50", label: "29×50 mm (schwarz, eloxiert)" }
           ],
@@ -274,7 +259,6 @@ window.LUDERBEIN_PRICING = {
           ],
 
           upgrades: {
-            // Key bewusst gleich wie beim Flaschenöffner:
             engrave_inside_and_outside: {
               label: "2-seitig graviert",
               type: "per_unit_tiered",
@@ -302,9 +286,6 @@ window.LUDERBEIN_PRICING = {
       upgrades: {}
     },
 
-    // ===============================
-    // 🪵 HOLZ (noch deaktiviert)
-    // ===============================
     holz: {
       label: "Holz",
       active: false,
@@ -313,9 +294,6 @@ window.LUDERBEIN_PRICING = {
       upgrades: {}
     },
 
-    // ===============================
-    // 🔷 ACRYL (noch deaktiviert)
-    // ===============================
     acryl: {
       label: "Acryl",
       active: false,
