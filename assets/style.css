@@ -23,6 +23,7 @@
 
 * { box-sizing: border-box; }
 html, body { height: 100%; }
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -48,6 +49,7 @@ header {
   background: rgba(14,6,11,.78);
   border-bottom: 1px solid rgba(64,62,65,.45);
 }
+
 .nav {
   display: flex;
   align-items: center;
@@ -55,6 +57,7 @@ header {
   padding: 12px 0;
   gap: 14px;
 }
+
 .brand {
   display: flex;
   align-items: center;
@@ -62,26 +65,34 @@ header {
   text-decoration: none;
   min-width: 0;
 }
+
+/* großer roter Punkt links (Logo) – MUSS rund bleiben */
 .logo {
   width: 20px;
   height: 20px;
-  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
+  display: block;
+  border-radius: 999px;
+  overflow: hidden;
   background: linear-gradient(135deg, var(--accent), rgba(255,8,13,.55));
   box-shadow: 0 8px 20px rgba(219,16,33,.16);
 }
 
-/* Brand: clean + roter Punkt vor dem Wort (klein) */
+/* kleiner Punkt vor "Luderbein" (Text) – sauber, kein Doppelpunkt-Müll */
 .brand strong {
   letter-spacing: .3px;
   color: var(--text);
   position: relative;
   padding-left: 14px;
 }
+
 .brand strong::before {
   content: "";
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
+  width: 6px;
+  height: 6px;
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
   background: var(--accent);
   box-shadow: 0 0 0 3px rgba(219,16,33,.14);
   position: absolute;
@@ -89,6 +100,7 @@ header {
   top: 50%;
   transform: translateY(-50%);
 }
+
 .brand span {
   color: var(--muted);
   font-size: .92rem;
@@ -104,16 +116,19 @@ header {
   align-items: center;
   flex-wrap: wrap;
 }
+
 .menu a {
   text-decoration: none;
   padding: 8px 10px;
   border-radius: 12px;
   color: var(--muted);
 }
+
 .menu a[aria-current="page"] {
   color: var(--text);
   background: rgba(42,45,51,.55);
 }
+
 .menu a:hover {
   color: var(--text);
   background: rgba(42,45,51,.35);
@@ -131,11 +146,13 @@ header {
   justify-content: center;
   cursor: pointer;
 }
+
 .navicon {
   width: 18px;
   height: 12px;
   position: relative;
 }
+
 .navicon::before, .navicon::after, .navicon span {
   content: "";
   position: absolute;
@@ -144,6 +161,7 @@ header {
   height: 2px;
   background: rgba(210,207,206,.9);
 }
+
 .navicon::before { top: 0; }
 .navicon span { top: 5px; }
 .navicon::after { bottom: 0; }
@@ -152,6 +170,7 @@ header {
    HERO
 ================================ */
 main { padding: 28px 0 60px; }
+
 .hero {
   border: 1px solid rgba(64,62,65,.55);
   background: linear-gradient(180deg, rgba(26,26,31,.80), rgba(26,26,31,.62));
@@ -161,6 +180,7 @@ main { padding: 28px 0 60px; }
   position: relative;
   overflow: hidden;
 }
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -172,14 +192,21 @@ main { padding: 28px 0 60px; }
   background: rgba(42,45,51,.28);
   color: var(--muted);
 }
+
 .badge i {
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: 999px;
   background: var(--accent);
   box-shadow: 0 0 0 4px rgba(219,16,33,.14);
 }
-h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height: 1.15; }
+
+h1 {
+  font-size: clamp(1.75rem, 3.2vw, 2.6rem);
+  margin: 14px 0 10px;
+  line-height: 1.15;
+}
+
 .lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; }
 
 /* ================================
@@ -191,7 +218,7 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   gap: 14px;
 }
 
-/* WICHTIG: Card als Flex-Column -> alles wirkt identisch, Buttons kleben unten */
+/* Card als Flex-Column -> Buttons kleben unten */
 .productcard {
   grid-column: span 4;
   border-radius: var(--radius);
@@ -236,25 +263,24 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   right: 10px;
 }
 
-/* Meta: jetzt exakt “Preis-Zeile” + “Typ-Zeile” (überall gleich) */
 .productcard .meta {
   color: var(--muted);
   font-size: .95rem;
 }
+
 .productcard .meta--price { margin-bottom: 2px; }
 .productcard .meta--type { margin-bottom: 10px; }
 
 .price { color: var(--text); font-weight: 700; }
 
-/* Titel/3-Zeiler: gleiche Abstände + gleiche Höhe -> wirkt “geordnet” */
 .productcard h3 { margin: 8px 0 0; }
+
 .kicker {
   color: var(--muted);
   margin: 8px 0 0;
-  min-height: 3.9em; /* ~3 Zeilen */
+  min-height: 3.9em;
 }
 
-/* Actions immer unten */
 .actions {
   display: flex;
   gap: 10px;
@@ -262,7 +288,11 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   margin-top: auto;
   padding-top: 12px;
 }
-.actions .btn { flex: 1 1 auto; text-align: center; }
+
+.actions .btn {
+  flex: 1 1 auto;
+  text-align: center;
+}
 
 /* ================================
    BUTTONS
@@ -278,10 +308,12 @@ h1 { font-size: clamp(1.75rem, 3.2vw, 2.6rem); margin: 14px 0 10px; line-height:
   color: var(--text);
   background: rgba(42,45,51,.22);
 }
+
 .btn.primary {
   border-color: rgba(219,16,33,.62);
   background: linear-gradient(180deg, rgba(219,16,33,.20), rgba(70,18,22,.18));
 }
+
 .btn:hover { transform: translateY(-1px); border-color: rgba(219,16,33,.55); }
 
 /* ================================
@@ -292,6 +324,7 @@ footer {
   padding: 18px 0 28px;
   color: var(--muted);
 }
+
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--text); }
 
@@ -311,10 +344,12 @@ footer a:hover { color: var(--text); }
 @media (max-width: 860px) {
   .productcard { grid-column: span 6; }
 }
+
 @media (max-width: 560px) {
   .wrap { padding: 0 14px; }
   .productcard { grid-column: span 12; }
   .navbtn { display: inline-flex; }
+
   .menu {
     display: none;
     position: absolute;
@@ -328,6 +363,7 @@ footer a:hover { color: var(--text); }
     border-radius: 18px;
     padding: 10px;
   }
+
   .menu[data-open="1"] { display: flex; }
 }
 
@@ -339,6 +375,7 @@ footer a:hover { color: var(--text); }
   height: 100%;
   overflow: hidden;
 }
+
 .thumbslider img {
   position: absolute;
   inset: 0;
@@ -348,6 +385,7 @@ footer a:hover { color: var(--text); }
   opacity: 0;
   transition: opacity 600ms ease;
 }
+
 .thumbslider img.is-on,
 .thumbslider img:first-child {
   opacity: 1;
