@@ -3,26 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Acryl – Luderbein</title>
-  <meta name="description" content="Acryl von Luderbein: Schilder, Labels und kleine Serien – clean, kontrastreich, modern. Anfrage per WhatsApp oder Mail." />
+  <title>Luderbein – Schwibbögen & Gravur</title>
+  <meta name="description" content="Luderbein – Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail oder WhatsApp." />
+
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
-    /* FIX: Header Brand-Dot (statt roter „Pille“) */
-    .branddot{
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      display: inline-block;
-      flex: 0 0 auto;
-      background: var(--accent, #c0182a);
-      box-shadow:
-        0 0 0 2px rgba(0,0,0,.55),
-        0 0 0 6px rgba(192,24,42,.18);
-    }
-
-    /* ===== Reel (wie Startseite) ===== */
+    /* =========================================================
+       START – FEED Reel (Werkstatt)
+       ========================================================= */
     .reelwrap { position: relative; margin-top: 10px; }
     .reelwrap::before, .reelwrap::after {
       content: "";
@@ -86,12 +76,14 @@
       user-select: none;
     }
 
+    /* Werkstatt: 4:3 + contain => nix wird abgeschnitten */
     .reel__img {
       display: block;
       width: 100%;
-      aspect-ratio: 16/9;
+      aspect-ratio: 4/3;
       height: auto;
-      object-fit: cover;
+      object-fit: contain;
+      background: rgba(11,11,14,1);
       filter: saturate(1.03) contrast(1.02);
     }
 
@@ -106,175 +98,312 @@
       text-shadow: 0 1px 10px rgba(0,0,0,.45);
     }
 
-    /* Thumb images in Varianten */
-    .thumbimg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
+    @media (hover:hover) and (pointer:fine) {
+      .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <span class="branddot" aria-hidden="true"></span>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
-        </div>
-      </a>
-
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
-
-      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-        <a href="/">Start</a>
-
-        <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </button>
-
-          <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-            <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl/" role="menuitem" aria-current="page">Acryl</a>
-            <a href="/leistungen/custom/" role="menuitem">Custom</a>
-            <div class="navdrop__sep" aria-hidden="true"></div>
-            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
-          </div>
-        </div>
-
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap" id="content">
-    <section class="hero">
-      <span class="badge"><i></i> Leistung – Acryl</span>
-      <h1>Acryl</h1>
-      <p class="lead">
-        Clean, kontrastreich, modern. Ideal für Beschriftung, Labels und kleine Serien.
-        Kein Fake-Shop – du sagst Einsatz &amp; Look, ich mach’s sauber.
-      </p>
-
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Acryl">Anfragen</a>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <strong>Luderbein</strong><br />
+        <span>Schwibbögen • Gravur • Sonderwünsche</span>
       </div>
+    </a>
 
-      <p class="small muted" style="margin-top:.75rem;">
-        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
-      </p>
+    <button
+      class="navbtn"
+      type="button"
+      data-nav-toggle
+      aria-expanded="false"
+      aria-controls="nav-main"
+      aria-label="Menü öffnen"
+    >
+      <span class="navicon"><span></span></span>
+    </button>
 
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Ablauf:</strong> Einsatz klären → Design/Größe festziehen → Anfrage → Freigabe → fertig.
-      </div>
-    </section>
+    <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+      <a href="/">Start</a>
 
-    <section class="section" aria-label="Acryl-Feed">
-      <div class="section-head">
-        <h2>Acryl-Feed</h2>
-        <p class="small muted">Beispiele – wächst mit neuen Fotos.</p>
-      </div>
+      <div class="navdrop" data-navdrop>
+        <button
+          class="navdrop__sum"
+          id="navdrop-leistungen-btn"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="navdrop-leistungen-panel"
+        >
+          Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+        </button>
 
-      <div class="reelwrap">
         <div
-          class="reel"
-          aria-label="Acryl Reel"
-          data-reel
-          data-reel-src="/assets/reel-acryl.json"
-          data-interval="4500"
-          data-reel-default-tag="Acryl"
-        ></div>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <section class="section" aria-label="Acryl Varianten">
-      <h2>Varianten</h2>
-      <p class="small muted">Tippen oder klicken: Schilder, Labels oder kleine Serien. Beispiele kommen nach und nach rein.</p>
-
-      <div class="products">
-        <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
-            <img class="thumbimg" src="/assets/reel/reel-11.jpg" alt="Acryl Schild – Beispiel" loading="lazy">
-            <span class="thumblabel">Schilder</span>
-          </div>
-          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Beschriftung</span></div>
-          <h3>Schilder</h3>
-          <p class="kicker">Werkstatt, Tür, Hinweis, QR – sauber, gut lesbar, optisch „industrial“.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl&amp;v=Schilder">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
-            <img class="thumbimg" src="/assets/reel/reel-11.jpg" alt="Acryl Label – Beispiel" loading="lazy">
-            <span class="thumblabel">Labels</span>
-          </div>
-          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Klein &amp; clean</span></div>
-          <h3>Labels / Tags</h3>
-          <p class="kicker">Schubladen, Kisten, Regale, Maschine – einheitlich, klar, robust.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl&amp;v=Labels">Anfragen</a>
-          </div>
-        </article>
-
-        <article class="productcard">
-          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
-            <img class="thumbimg" src="/assets/reel/reel-11.jpg" alt="Acryl Serie – Beispiel" loading="lazy">
-            <span class="thumblabel">Serie</span>
-          </div>
-          <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>kleine Serien</span></div>
-          <h3>Kleine Serien</h3>
-          <p class="kicker">Wenn’s mehr als 1 ist: wir machen’s gleich sauber und konsistent.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Acryl&amp;v=Serie">Anfragen</a>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <div class="hr"></div>
-
-    <section class="section">
-      <h2>Hinweise</h2>
-      <div class="grid">
-        <div class="card"><h3>Look</h3><p>Matt oder glossy – je nach Einsatz. Kontrast geht auch ohne „Billig-Plastik“-Vibe.</p></div>
-        <div class="card"><h3>Montage</h3><p>Aufkleben, Schrauben, Abstandshalter – sag mir, wo das Ding hin soll.</p></div>
-        <div class="card"><h3>Daten</h3><p>Text, Maße, Logo/QR. Wenn nicht vorhanden: ich helf beim Layout.</p></div>
+          class="navdrop__panel"
+          id="navdrop-leistungen-panel"
+          role="menu"
+          aria-labelledby="navdrop-leistungen-btn"
+        >
+          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+          <a href="/leistungen/metall/" role="menuitem">Metall</a>
+          <a href="/leistungen/holz/" role="menuitem">Holz</a>
+          <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+          <a href="/leistungen/custom/" role="menuitem">Custom</a>
+          <div class="navdrop__sep" aria-hidden="true"></div>
+          <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+          <a href="/service/" role="menuitem">Downloads</a>
+        </div>
       </div>
 
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Acryl">Anfragen</a>
-      </div>
-    </section>
-  </main>
+      <a href="/ueber/">Über</a>
+      <a href="/kontakt/">Kontakt</a>
+      <a href="/rechtliches/impressum.html">Impressum</a>
+    </nav>
+  </div>
+</header>
 
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+<main class="wrap" id="content">
+  <section class="hero">
+    <span class="badge"><i></i> Luderbein</span>
+    <h1>Gravur. Holz. Metall. Schiefer. Acryl.</h1>
+    <p class="lead">
+      Frech im Stil, sauber in der Ausführung. Kein Fake-Shop: du fragst an – ich sag dir kurz, was sinnvoll ist – dann machen wir’s ordentlich.
+    </p>
+
+    <div class="cta">
+      <a class="btn primary" href="/kontakt/">Anfragen</a>
+      <a class="btn" href="/leistungen/">Leistungen ansehen</a>
+      <a class="btn" href="/tools/kalkulator/">Kalkulator</a>
+    </div>
+  </section>
+
+  <!-- Werkstatt-Feed -->
+  <section class="section" aria-label="Werkstatt-Feed">
+    <div class="section-head">
+      <h2>Werkstatt-Feed</h2>
+      <p class="small muted">Einblicke &amp; Beispiele – wächst laufend.</p>
+    </div>
+
+    <div class="reelwrap">
+      <div
+        class="reel"
+        aria-label="Werkstatt Reel"
+        data-reel
+        data-reel-src="/assets/reel-werkstatt.json"
+        data-interval="4500"
+        data-reel-default-tag="Werkstatt"
+      ></div>
+    </div>
+  </section>
+
+  <div class="hr"></div>
+
+  <!-- Leistungen Preview -->
+  <section class="section" aria-label="Leistungen Preview">
+    <div class="section-head">
+      <h2>Leistungen</h2>
+      <p class="small muted">Schnell rein – gucken – weiterklicken.</p>
+    </div>
+
+    <div class="products">
+      <!-- SCHIEFER -->
+      <article class="productcard">
+        <div class="thumb">
+          <a href="/leistungen/schiefer/" aria-label="Schiefer ansehen">
+            <span class="thumbslider" data-rotate="1">
+              <img class="is-on" src="/assets/reel/reel-01.jpg" alt="Schiefer – Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-02.jpg" alt="Schiefer – Beispiel" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-02.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
+              <img src="/assets/schiefer/gedenktafeln/schiefer-gedenk-03.jpg" alt="Schiefer – Gedenktafel Beispiel" loading="lazy">
+            </span>
+            <span class="thumblabel">Schiefer</span>
+          </a>
+        </div>
+
+        <div class="meta meta--price"><span class="price">ab 9,95 €</span></div>
+        <div class="meta meta--type">Foto / Text / Gedenktafeln</div>
+
+        <h3>Schiefer</h3>
+        <p class="kicker">Fotogravur, Text &amp; Symbole, Gedenktafeln – sauber aufbereitet und versiegelt.</p>
+
+        <div class="actions">
+          <a class="btn primary" href="/leistungen/schiefer/">Ansehen</a>
+          <a class="btn" href="/kontakt/?p=Schiefer">Anfragen</a>
+        </div>
+      </article>
+
+      <!-- METALL -->
+      <article class="productcard">
+        <div class="thumb">
+          <a href="/leistungen/metall/" aria-label="Metall ansehen">
+            <span class="thumbslider" data-rotate="1">
+              <img class="is-on" src="/assets/metall/metall-reel-01.jpg" alt="Metall Beispiel" loading="lazy">
+              <img src="/assets/metall/metall-reel-06.jpg" alt="Metall Beispiel" loading="lazy">
+            </span>
+            <span class="thumblabel">Metall</span>
+          </a>
+        </div>
+
+        <div class="meta meta--price"><span class="price">auf Anfrage</span></div>
+        <div class="meta meta--type">Tags / Plaketten / Business</div>
+
+        <h3>Metall</h3>
+        <p class="kicker">Edelstahl, Aluminium, Plaketten, Tags – präzise, robust, ehrlich.</p>
+
+        <div class="actions">
+          <a class="btn primary" href="/leistungen/metall/">Ansehen</a>
+          <a class="btn" href="/kontakt/?p=Metall">Anfragen</a>
+        </div>
+      </article>
+
+      <!-- HOLZ -->
+      <article class="productcard">
+        <div class="thumb">
+          <a href="/leistungen/holz/" aria-label="Holz ansehen">
+            <span class="thumbslider" data-rotate="1">
+              <img class="is-on" src="/assets/reel/reel-07.jpg" alt="Holz Beispiel" loading="lazy">
+              <img src="/assets/reel/reel-12.jpg" alt="Holz Beispiel" loading="lazy">
+            </span>
+            <span class="thumblabel">Holz</span>
+          </a>
+        </div>
+
+        <div class="meta meta--price"><span class="price">auf Anfrage</span></div>
+        <div class="meta meta--type">Gravur / Zuschnitt / Serien</div>
+
+        <h3>Holz</h3>
+        <p class="kicker">Lasergravur &amp; Zuschnitt – von Deko bis funktional. Schwibbögen kommen groß.</p>
+
+        <div class="actions">
+          <a class="btn primary" href="/leistungen/holz/">Ansehen</a>
+          <a class="btn" href="/kontakt/?p=Holz">Anfragen</a>
+        </div>
+      </article>
+
+      <!-- ACRYL -->
+      <article class="productcard">
+        <div class="thumb">
+          <a href="/leistungen/acryl/" aria-label="Acryl ansehen">
+            <span class="thumbslider" data-rotate="0">
+              <img class="is-on" src="/assets/reel/reel-11.jpg" alt="Acryl – Beispiel" loading="lazy">
+            </span>
+            <span class="thumblabel">Acryl</span>
+          </a>
+        </div>
+
+        <div class="meta meta--price"><span class="price">auf Anfrage</span></div>
+        <div class="meta meta--type">Schilder / Labels</div>
+
+        <h3>Acryl</h3>
+        <p class="kicker">Clean, kontrastreich, modern – Beschriftung, Labels und kleine Serien.</p>
+
+        <div class="actions">
+          <a class="btn primary" href="/leistungen/acryl/">Ansehen</a>
+          <a class="btn" href="/kontakt/?p=Acryl">Anfragen</a>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="small">© <span id="y"></span> Luderbein</div>
+
+    <div class="small">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <a class="btn primary" href="https://wa.me/491725925858" rel="noopener">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3C7.03 3 3 6.7 3 11.25c0 2.15.9 4.1 2.39 5.57L4 21l4.46-1.3c1.08.36 2.27.55 3.54.55 4.97 0 9-3.7 9-8.25S16.97 3 12 3Z"
+                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M8.3 11.4h.01M12 11.4h.01M15.7 11.4h.01"
+                stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+          WhatsApp
+        </a>
+
+        <a class="btn" href="mailto:luderbein_gravur@icloud.com">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.5 7.5h15v9h-15v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M5.2 8.2 12 13.2l6.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          E-Mail
+        </a>
+
+        <a class="btn" href="https://instagram.com/Luderbein_Gravur" rel="me noopener">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 4.5h8A3.5 3.5 0 0 1 19.5 8v8A3.5 3.5 0 0 1 16 19.5H8A3.5 3.5 0 0 1 4.5 16V8A3.5 3.5 0 0 1 8 4.5Z"
+                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M12 10a2.75 2.75 0 1 0 0 5.5A2.75 2.75 0 0 0 12 10Z"
+                stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M16.6 7.6h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Instagram
+        </a>
+
+        <a class="btn" href="/kontakt/">
+          <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 10.8v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M12 8.2h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+            </svg>
+          </span>
+          Kontaktseite
+        </a>
       </div>
     </div>
-  </footer>
 
-  <script src="/assets/nav-dropdown.js"></script>
-  <script src="/assets/site.js"></script>
-  <script src="/assets/reel-internal.js"></script>
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+    <div class="small">
+      <a href="/rechtliches/impressum.html">Impressum</a> ·
+      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/nav-dropdown.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/assets/reel-internal.js"></script>
+<script>
+  const y = document.getElementById("y");
+  if (y) y.textContent = new Date().getFullYear();
+
+  (function () {
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+
+    const sliders = Array.from(document.querySelectorAll(".thumbslider[data-rotate='1']"));
+    if (!sliders.length) return;
+
+    sliders.forEach((s, idx) => {
+      const imgs = Array.from(s.querySelectorAll("img"));
+      if (imgs.length < 2) return;
+
+      let i = 0;
+      imgs.forEach((img, k) => img.classList.toggle("is-on", k === 0));
+
+      const interval = 3200;
+      const startDelay = 400 + (idx * 180);
+
+      setTimeout(() => {
+        setInterval(() => {
+          imgs[i].classList.remove("is-on");
+          i = (i + 1) % imgs.length;
+          imgs[i].classList.add("is-on");
+        }, interval);
+      }, startDelay);
+    });
+  })();
+</script>
 </body>
 </html>
