@@ -64,11 +64,12 @@ header {
 }
 
 /* FIX: Logo immer Kreis + niemals “pill” (kein Stretch in Flex) */
+/* Größe reduziert: 44px -> 36px */
 .logo {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  min-width: 44px;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  min-width: 36px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), rgba(255,8,13,.55));
   box-shadow: 0 14px 34px rgba(219,16,33,.22);
