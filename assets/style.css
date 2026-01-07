@@ -62,16 +62,19 @@ header {
   text-decoration: none;
   min-width: 0;
 }
+
+/* FIX: Logo immer Kreis + niemals “pill” (kein Stretch in Flex) */
 .logo {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px; /* FIX: Kreis statt “Pille” */
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  min-width: 44px;
+  border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), rgba(255,8,13,.55));
   box-shadow: 0 14px 34px rgba(219,16,33,.22);
-  overflow: hidden; /* optional, aber safe */
 }
 
-/* Brand: clean + roter Punkt davor (wie früher, nur sauberer) */
+/* Brand: clean + roter Punkt davor (Text-Dot) */
 .brand strong {
   letter-spacing: .3px;
   color: var(--text);
