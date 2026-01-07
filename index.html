@@ -101,6 +101,14 @@
     @media (hover:hover) and (pointer:fine) {
       .reel__item:hover { transform: translateY(-2px); border-color: rgba(160,120,140,.55); }
     }
+
+    /* =========================================================
+       FIX: Thumbslider-Glitch (Schiefer blitzt reel-01 kurz durch)
+       Ursache: style.css Fallback "img:first-child { opacity: 1; }"
+       Lösung: Auf der Startseite first-child-Fallback deaktivieren.
+       ========================================================= */
+    .thumbslider img:first-child { opacity: 0 !important; }
+    .thumbslider img.is-on { opacity: 1 !important; }
   </style>
 </head>
 
