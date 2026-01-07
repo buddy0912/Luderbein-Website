@@ -9,6 +9,19 @@
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 
   <style>
+    /* FIX: Header Brand-Dot (statt roter „Pille“) */
+    .branddot{
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-block;
+      flex: 0 0 auto;
+      background: var(--accent, #c0182a);
+      box-shadow:
+        0 0 0 2px rgba(0,0,0,.55),
+        0 0 0 6px rgba(192,24,42,.18);
+    }
+
     /* ===== Reel (wie Startseite) ===== */
     .reelwrap { position: relative; margin-top: 10px; }
     .reelwrap::before, .reelwrap::after {
@@ -107,7 +120,7 @@
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
-        <div class="logo" aria-hidden="true"></div>
+        <span class="branddot" aria-hidden="true"></span>
         <div>
           <strong>Luderbein</strong><br>
           <span>Schwibbögen • Gravur • Sonderwünsche</span>
