@@ -13,6 +13,20 @@
     /* =========================================================
        START – FEED Reel (Werkstatt)
        ========================================================= */
+
+    /* FIX: Header Brand-Dot (statt roter „Pille“) */
+    .branddot{
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-block;
+      flex: 0 0 auto;
+      background: var(--accent, #c0182a);
+      box-shadow:
+        0 0 0 2px rgba(0,0,0,.55),
+        0 0 0 6px rgba(192,24,42,.18);
+    }
+
     .reelwrap { position: relative; margin-top: 10px; }
     .reelwrap::before, .reelwrap::after {
       content: "";
@@ -108,7 +122,7 @@
 <header>
   <div class="wrap nav">
     <a class="brand" href="/">
-      <div class="logo" aria-hidden="true"></div>
+      <span class="branddot" aria-hidden="true"></span>
       <div>
         <strong>Luderbein</strong><br />
         <span>Schwibbögen • Gravur • Sonderwünsche</span>
@@ -190,7 +204,7 @@
     <div class="reelwrap">
       <div
         class="reel"
-        aria-label="Werkstatt-Feed Reel"
+        aria-label="Werkstatt Reel"
         data-reel
         data-reel-src="/assets/reel-werkstatt.json"
         data-interval="4500"
@@ -316,8 +330,6 @@
     <div class="small">© <span id="y"></span> Luderbein</div>
 
     <div class="small">
-      <div style="margin-bottom:8px;">Kontakt</div>
-
       <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
         <a class="btn primary" href="https://wa.me/491725925858" rel="noopener">
           <span aria-hidden="true" style="display:inline-flex; width:18px; height:18px; margin-right:8px;">
