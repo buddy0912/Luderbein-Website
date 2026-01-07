@@ -65,9 +65,10 @@ header {
 .logo {
   width: 34px;
   height: 34px;
-  border-radius: 12px;
+  border-radius: 999px; /* FIX: Kreis statt “Pille” */
   background: linear-gradient(135deg, var(--accent), rgba(255,8,13,.55));
   box-shadow: 0 14px 34px rgba(219,16,33,.22);
+  overflow: hidden; /* optional, aber safe */
 }
 
 /* Brand: clean + roter Punkt davor (wie früher, nur sauberer) */
@@ -365,21 +366,6 @@ footer a:hover { color: var(--text); }
 .thumbslider img.is-on,
 .thumbslider img:first-child {
   opacity: 1;
-}
-/* ================================
-   BRAND – roter Punkt vor Luderbein
-================================ */
-.brand strong{
-  color: var(--text);
-  position: relative;
-}
-.brand strong::before{
-  content: "•";
-  color: var(--accent);
-  margin-right: 8px;
-  font-size: 1.15em;
-  line-height: 1;
-  vertical-align: baseline;
 }
 
 /* ================================
