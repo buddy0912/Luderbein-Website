@@ -81,20 +81,16 @@ DATEI: /rechtliches/impressum.html
     </section>
   </main>
 
-  <footer>
-    <div class="wrap foot">
-      <div class="small">© <span id="y"></span> Luderbein</div>
-      <div class="small">
-        <a href="/rechtliches/impressum.html" aria-current="page">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-      </div>
-    </div>
-  </footer>
+  <footer id="site-footer"></footer>
+
+  <script src="/assets/footer.js"></script>
 
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
   <script>
-    document.getElementById("y").textContent = new Date().getFullYear();
+    const y = document.getElementById("y");
+
+    if (y) y.textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
