@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /tools/reel-builder/
+Allow: /
+
+Sitemap: https://luderbein-gravur.pages.dev/sitemap.xml
