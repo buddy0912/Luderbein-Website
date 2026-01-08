@@ -1,10 +1,11 @@
 // =========================================================
-// Luderbein Site Core v1.4 (patched)
+// Luderbein Site Core v1.5 (analytics integrated)
 // - Navigation Toggle (Mobile)
 // - Active Menu Marker
 // - Kontakt: Anfrage-Builder (CTA-Autofill + Click-Flow)
 // - PATCH: Prefill-Aliase (z.B. ?p=Acryl-Schilder -> Acryl)
 // - PATCH: NAV-SAFETY (Dropdown-Links siteweit reparieren)
+// - ADD: Cloudflare Web Analytics (idle-load, safe)
 // =========================================================
 (function () {
   "use strict";
@@ -12,6 +13,28 @@
   // Guard: verhindert Doppel-Init (z.B. durch Fallback im HTML)
   if (window.__lbSiteCoreLoaded) return;
   window.__lbSiteCoreLoaded = true;
+
+  // ---------------------------------
+  // Analytics: Cloudflare Web Analytics Token (public)
+  // ---------------------------------
+  const CF_WEB_ANALYTICS_TOKEN = "0dfffdc44a97468d9f46712e66c46119";
+
+  function loadCloudflareWebAnalytics(token) {
+    try {
+      if (!token || typeof token !== "string" || token.trim().length < 10) return;
+
+      // nicht doppelt laden (falls Snippet in HTML steckt)
+      if (document.querySelector('script[src*="static.cloudflareinsights.com/beacon.min.js"]')) return;
+
+      const s = document.createElement("script");
+      s.defer = true;
+      s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+      s.setAttribute("data-cf-beacon", JSON.stringify({ token: token.trim() }));
+      document.head.appendChild(s);
+    } catch (_) {
+      // Analytics darf niemals die Seite brechen → still fail
+    }
+  }
 
   document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------
@@ -49,6 +72,15 @@
     // KONTAKT: Anfrage-Builder
     // ---------------------------------
     initContactRequestBuilder();
+
+    // ---------------------------------
+    // Analytics: möglichst ruhig laden (bricht nie die Seite)
+    // ---------------------------------
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(() => loadCloudflareWebAnalytics(CF_WEB_ANALYTICS_TOKEN));
+    } else {
+      setTimeout(() => loadCloudflareWebAnalytics(CF_WEB_ANALYTICS_TOKEN), 800);
+    }
   });
 
   // =========================================================
