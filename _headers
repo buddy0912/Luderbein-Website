@@ -3,3 +3,9 @@
 
 /tools/reel-builder
   X-Robots-Tag: noindex, nofollow, noarchive
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
