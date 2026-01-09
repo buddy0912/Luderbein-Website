@@ -7,77 +7,6 @@
   <meta name="description" content="Metallgravur von Luderbein: Edelstahl, Aluminium, Tags, Plaketten, Gravuren – präzise, robust und ehrlich." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
-
-  <style>
-    /* =========================================================
-       METALL – HORIZONTAL REEL SLIDER
-       ========================================================= */
-    .reelslider {
-      position: relative;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 14px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
-    .reeltrack {
-      display: flex;
-      gap: 14px;
-      overflow: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      outline: none;
-    }
-    .reeltrack::-webkit-scrollbar { display: none; }
-
-    .reelslide {
-      scroll-snap-align: start;
-      flex: 0 0 calc(33.333% - 10px);
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      display: block;
-    }
-    .reelslide img {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .reelbtn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.45);
-      color: rgba(255,255,255,.92);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      z-index: 2;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .reelbtn.prev { left: 10px; }
-    .reelbtn.next { right: 10px; }
-
-    @media (max-width: 860px) {
-      .reelslide { flex-basis: calc(50% - 7px); }
-      .reelslide img { height: 220px; }
-    }
-    @media (max-width: 520px) {
-      .reelslide { flex-basis: 86%; }
-      .reelslide img { height: 240px; }
-      .reelbtn { display: none; }
-    }
-  </style>
 </head>
 
 <body>
@@ -107,6 +36,7 @@
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+            <a href="/leistungen/#kommt" role="menuitem">Glas (kommt)</a>
             <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -125,18 +55,14 @@
     <section class="hero">
       <span class="badge"><i></i> Leistung – Metall</span>
       <h1>Metallgravur</h1>
-      <p class="lead">Edelstahl, Aluminium, Plaketten, Tags – präzise, robust und ohne unnötigen Firlefanz.</p>
-
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Gravur">Anfragen</a>
-        <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
-        <a class="btn" href="/leistungen/">Zurück</a>
-      </div>
+      <p class="lead">Edelstahl oder Aluminium, Tags oder Plaketten – sauber graviert, robust im Alltag.</p>
     </section>
 
-    <section class="section" aria-label="Metall-Beispiele">
-      <h2>Beispiele</h2>
-      <p class="small muted">Tippen zum Vergrößern – oder wischen für mehr. Läuft automatisch weiter.</p>
+    <section class="section" id="beispiele" aria-label="Metall-Beispiele">
+      <div class="section-head">
+        <h2>Beispiele</h2>
+        <p class="small muted">Wischen für mehr – echte Arbeiten.</p>
+      </div>
 
       <div class="reelslider">
         <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
@@ -159,17 +85,94 @@
       </div>
     </section>
 
-    <section class="section" style="margin-top:30px;">
-      <h2>Anwendung & Hinweise</h2>
-      <div class="grid">
-        <div class="card"><h3>Materialien</h3><p>Edelstahl (V2A/V4A) oder Aluminium eloxiert. Robust und sauber gravierbar.</p></div>
-        <div class="card"><h3>Einsatz</h3><p>Maschinen-Tags, Werkstatt-Labels, Outdoor-Plaketten, personalisierte Deko.</p></div>
-        <div class="card"><h3>Finish</h3><p>Optional mattiert oder glänzend – Gravur bleibt dauerhaft sichtbar.</p></div>
+    <section class="section" aria-label="Metall Kacheln">
+      <div class="section-head">
+        <h2>Was gut geht</h2>
+        <p class="small muted">Kachel klicken = Großansicht + Kurzinfo.</p>
       </div>
 
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Gravur">Anfragen</a>
-        <a class="btn" href="/tools/kalkulator/?t=metall">Kalkulieren</a>
+      <div class="products">
+        <button class="productcard productcard--modal" type="button" data-lb-modal-card
+                data-modal-img="/assets/metall/metall-reel-02.jpg"
+                data-modal-alt="Metall Tags Beispiel"
+                data-modal-title="Maschinen-Tags"
+                data-modal-text="Maschinen-Tags, Werkstatt-Labels, Outdoor-Plaketten."
+                data-modal-product="Metall"
+                data-modal-variant="Gravur">
+          <div class="thumb">
+            <img src="/assets/metall/metall-reel-02.jpg" alt="Metall Tags Beispiel" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="meta">
+            <span class="price">robust</span><span>•</span><span>Edelstahl / Alu</span>
+          </div>
+          <h3>Maschinen-Tags</h3>
+          <p class="kicker">Maschinen-Tags, Werkstatt-Labels, Outdoor-Plaketten.</p>
+        </button>
+
+        <button class="productcard productcard--modal" type="button" data-lb-modal-card
+                data-modal-img="/assets/metall/metall-reel-08.jpg"
+                data-modal-alt="Metall Plaketten Beispiel"
+                data-modal-title="Plaketten &amp; Labels"
+                data-modal-text="Plaketten, Labels, Serien – sauber, klar, dauerhaft sichtbar."
+                data-modal-product="Metall"
+                data-modal-variant="Gravur">
+          <div class="thumb">
+            <img src="/assets/metall/metall-reel-08.jpg" alt="Metall Plaketten Beispiel" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="meta">
+            <span class="price">präzise</span><span>•</span><span>matt oder glänzend</span>
+          </div>
+          <h3>Plaketten &amp; Labels</h3>
+          <p class="kicker">Plaketten, Labels, Serien – sauber, klar, dauerhaft sichtbar.</p>
+        </button>
+
+        <button class="productcard productcard--modal" type="button" data-lb-modal-card
+                data-modal-img="/assets/metall/metall-reel-05.jpg"
+                data-modal-alt="Metall Deko Beispiel"
+                data-modal-title="Personalisierte Deko"
+                data-modal-text="Personalisierte Deko – robust, kantig, präzise."
+                data-modal-product="Metall"
+                data-modal-variant="Gravur">
+          <div class="thumb">
+            <img src="/assets/metall/metall-reel-05.jpg" alt="Metall Deko Beispiel" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div class="meta">
+            <span class="price">kantig</span><span>•</span><span>dauerhaft</span>
+          </div>
+          <h3>Personalisierte Deko</h3>
+          <p class="kicker">Personalisierte Deko – robust, kantig, präzise.</p>
+        </button>
+      </div>
+
+      <div class="listcards" style="margin-top:18px">
+        <div class="listcard">
+          <h3>Was du schickst</h3>
+          <ul>
+            <li>Motiv / Text / Logo</li>
+            <li>Materialwunsch</li>
+            <li>Format + Menge</li>
+          </ul>
+        </div>
+        <div class="listcard">
+          <h3>Ich prüfe</h3>
+          <ul>
+            <li>Lesbarkeit &amp; Gravurtiefe</li>
+            <li>Finish (matt/glänzend)</li>
+            <li>Preis &amp; Ablauf</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Metall CTA">
+      <div class="notice">
+        Metall läuft aktuell nur auf Anfrage – ich sag dir direkt, was geht und was sauber aussieht.
+      </div>
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Gravur">Mach mir ein Angebot</a>
+        <a class="btn" href="#beispiele">Zeig mir Beispiele</a>
+        <a class="btn" href="https://wa.me/491725925858" data-lb-cta="wa" data-product="Metall" data-variant="Gravur">WhatsApp</a>
+        <a class="btn" href="mailto:luderbein_gravur@icloud.com" data-lb-cta="mail" data-product="Metall" data-variant="Gravur">E-Mail</a>
       </div>
     </section>
   </main>

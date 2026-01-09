@@ -87,6 +87,29 @@
       color:rgba(255,255,255,.86);
     }
     .radioStack{display:grid;gap:10px}
+    .cartbox{margin-top:18px}
+    .cartlist{display:grid;gap:12px;margin-top:12px}
+    .cartitem{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      border-radius:16px;
+      padding:12px;
+      display:grid;
+      gap:10px;
+    }
+    .cartitem__row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .cartitem__price{font-weight:700}
+    .cartitem__meta{color:var(--muted);font-size:13px}
+    .cartbtn{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      border-radius:10px;
+      padding:6px 10px;
+      cursor:pointer;
+    }
+    .cartempty{color:var(--muted);font-size:13px}
+    .cartactions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
   </style>
 </head>
 
@@ -113,6 +136,8 @@
           <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
           <a href="/leistungen/metall/" role="menuitem">Metall</a>
           <a href="/leistungen/holz/" role="menuitem">Holz</a>
+          <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
+          <a href="/leistungen/#kommt" role="menuitem">Glas (kommt)</a>
           <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
           <div class="navdrop__sep" aria-hidden="true"></div>
           <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
@@ -143,7 +168,7 @@
   <section class="section">
     <div class="section-head">
       <h2>Konfiguration</h2>
-      <p class="small muted">Fotogravur & Gedenktafel (JL7) – Preise Stand 01/2026.</p>
+      <p class="small muted">Fotogravur &amp; Gedenktafel (JL7) – Preise Stand 01/2026.</p>
     </div>
 
     <div class="calcbox">
@@ -228,12 +253,34 @@
               <textarea id="note" placeholder="z. B. Koordinaten, Symbolwunsch, Deadline, besonderer Wunsch…"></textarea>
             </div>
             <div class="cta" style="margin-top:12px">
+              <button class="btn" id="addToCart" type="button">Zur Sammelanfrage hinzufügen</button>
+            </div>
+            <div class="cta" style="margin-top:12px">
               <a class="btn primary" id="waLink" href="#" rel="noopener">WhatsApp</a>
               <a class="btn" id="mailLink" href="#">E-Mail</a>
             </div>
+            <p class="small muted" style="margin-top:10px">Kalkulator gibt Richtung. Verbindlich wird’s erst nach meiner Bestätigung (Preis &amp; Motiv).</p>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Sammelanfrage">
+    <div class="section-head">
+      <h2>Sammelanfrage</h2>
+      <p class="small muted">Mehrere Positionen sammeln und als eine Anfrage senden.</p>
+    </div>
+
+    <div class="calcbox cartbox">
+      <div class="cartempty" id="cartEmpty">Noch leer – füge Positionen aus der Konfiguration hinzu.</div>
+      <div class="cartlist" id="cartList"></div>
+      <div class="cartactions">
+        <a class="btn primary" id="cartWa" href="#" rel="noopener">Mach mir ein Angebot</a>
+        <a class="btn" id="cartMail" href="#">E-Mail</a>
+        <button class="btn" id="cartClear" type="button">Sammelanfrage leeren</button>
+      </div>
+      <p class="small muted" style="margin-top:12px">Kalkulator gibt Richtung. Verbindlich wird’s erst nach meiner Bestätigung (Preis &amp; Motiv).</p>
     </div>
   </section>
 </main>
@@ -280,7 +327,15 @@ console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
         $mail=document.getElementById('mailLink'),
         $note=document.getElementById('note'),
         $inclPill=document.getElementById('inclPill'),
-        $notePill=document.getElementById('notePill');
+        $notePill=document.getElementById('notePill'),
+        $addToCart=document.getElementById('addToCart'),
+        $cartList=document.getElementById('cartList'),
+        $cartEmpty=document.getElementById('cartEmpty'),
+        $cartWa=document.getElementById('cartWa'),
+        $cartMail=document.getElementById('cartMail'),
+        $cartClear=document.getElementById('cartClear');
+
+  const CART_KEY = 'lb_sammelanfrage';
 
   function euro(n){return (Math.round(n*100)/100).toFixed(2).replace('.',',')+' €';}
   function getSchiefer(){return P.products.schiefer;}
@@ -332,7 +387,11 @@ console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
 
   function calc(){
     const sel=getSelected();
-    if(!sel||!sel.F){$total.textContent='Gesamt: —';return;}
+    if(!sel||!sel.F){
+      $total.textContent='Gesamt: —';
+      $addToCart.disabled=true;
+      return null;
+    }
     const {S,V,F,qty,ups,wantsShip}=sel;
     const base=F.price*qty,up=ups.reduce((a,u)=>a+(u.price||0),0)*qty;
     let subtotal=base+up,ship=0,warn='',ok='';
@@ -346,6 +405,7 @@ console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
     $total.textContent='Gesamt: '+euro(total);
     $warn.style.display=warn?'block':'none';$warn.textContent=warn;
     $oknote.style.display=ok?'block':'none';$oknote.textContent=ok;
+    $addToCart.disabled=false;
 
     const lines=[
       "Hi Luderbein, ich möchte kalkulieren/anfragen:",
@@ -363,8 +423,174 @@ console.log("pricing.js loaded:", window.LUDERBEIN_PRICING?.meta);
     $wa.href='https://wa.me/491725925858?text='+encodeURIComponent(msg);
     const subj=`Kalkulation ${S.label} – ${V.label}`;
     $mail.href='mailto:luderbein_gravur@icloud.com?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(msg+'\n\nDanke!');
+
+    return {
+      product: S.label,
+      variant: V.label,
+      format: F.label,
+      qty,
+      upgrades: ups.map(u => u.label),
+      ship: wantsShip ? 'ja' : 'nein',
+      estimate: total,
+      note: $note.value.trim()
+    };
   }
 
   function bindPrices(){
     const U=getSchiefer().upgrades;
-    document.getElementById('p_widmung').text
+    document.getElementById('p_widmung').textContent = `+ ${euro(U.widmung.price)}`;
+    document.getElementById('p_sf_std').textContent = `+ ${euro(U.standfuss_std.price)}`;
+    document.getElementById('p_wandhalter').textContent = `+ ${euro(U.wandhalter.price)}`;
+    document.getElementById('p_express').textContent = `+ ${euro(U.express.price)}`;
+    document.getElementById('p_ship').textContent = `+ ${euro(P.shipping.basePrice)}`;
+  }
+
+  function loadCart(){
+    try{
+      const raw = localStorage.getItem(CART_KEY);
+      const data = raw ? JSON.parse(raw) : [];
+      return Array.isArray(data) ? data : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function saveCart(items){
+    try{
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+    }catch(e){
+      // ignore
+    }
+  }
+
+  function renderCart(){
+    const items = loadCart();
+    $cartList.innerHTML='';
+    $cartEmpty.style.display = items.length ? 'none' : 'block';
+
+    items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'cartitem';
+      el.dataset.id = item.id;
+
+      const title = [item.product, item.variant, item.format].filter(Boolean).join(' • ');
+      const upgrades = item.upgrades?.length ? item.upgrades.join(', ') : 'keine';
+
+      el.innerHTML = `
+        <div><strong>${title}</strong></div>
+        <div class="cartitem__meta">Upgrades: ${upgrades} · Versand: ${item.ship}</div>
+        ${item.note ? `<div class="cartitem__meta">Notiz: ${item.note}</div>` : ''}
+        <div class="cartitem__row">
+          <label class="smalllab" style="margin:0">
+            Menge
+            <input type="number" min="1" value="${item.qty}" data-cart-qty>
+          </label>
+          <div class="cartitem__price">≈ ${euro(item.estimate)}</div>
+          <button class="cartbtn" type="button" data-cart-remove>Entfernen</button>
+        </div>
+      `;
+      $cartList.appendChild(el);
+    });
+
+    updateCartLinks(items);
+  }
+
+  function updateCartLinks(items){
+    if(!items.length){
+      $cartWa.href = '#';
+      $cartMail.href = '#';
+      return;
+    }
+
+    const lines = [
+      'Hi Luderbein, hier ist meine Sammelanfrage (unverbindlich):',
+      ''
+    ];
+
+    items.forEach((item, idx) => {
+      const head = [item.product, item.variant, item.format].filter(Boolean).join(' • ');
+      lines.push(`${idx + 1}) ${head}`);
+      lines.push(`- Menge: ${item.qty}`);
+      lines.push(`- Preisrichtung: ${euro(item.estimate)}`);
+      if(item.upgrades?.length){
+        lines.push(`- Upgrades: ${item.upgrades.join(', ')}`);
+      }
+      if(item.note){
+        lines.push(`- Notiz: ${item.note}`);
+      }
+      lines.push('');
+    });
+
+    lines.push('Kalkulator gibt Richtung. Verbindlich wird’s erst nach deiner Bestätigung (Preis & Motiv).');
+    lines.push('Foto/Infos schicke ich gleich mit.');
+
+    const msg = lines.join('\n');
+    $cartWa.href = 'https://wa.me/491725925858?text=' + encodeURIComponent(msg);
+    $cartMail.href = 'mailto:luderbein_gravur@icloud.com?subject=' + encodeURIComponent('Sammelanfrage – Luderbein') + '&body=' + encodeURIComponent(msg + '\n\nDanke!');
+  }
+
+  function addToCart(){
+    const item = calc();
+    if(!item) return;
+    const items = loadCart();
+    items.push({
+      id: `${Date.now()}-${Math.random().toString(16).slice(2,7)}`,
+      ...item
+    });
+    saveCart(items);
+    renderCart();
+  }
+
+  function init(){
+    bindPrices();
+    fillVariant();
+    fillFormat();
+    calc();
+    renderCart();
+  }
+
+  $cat.addEventListener('change', () => {fillVariant();fillFormat();calc();});
+  $variant.addEventListener('change', () => {fillFormat();calc();});
+  $format.addEventListener('change', calc);
+  $qty.addEventListener('input', calc);
+  [$widmung,$wandhalter,$express,$sfNone,$sfStd,$shipPickup,$shipSend,$note].forEach(el => {
+    el.addEventListener('change', calc);
+    if (el === $note) el.addEventListener('input', calc);
+  });
+
+  $addToCart.addEventListener('click', addToCart);
+
+  $cartList.addEventListener('input', (e) => {
+    const target = e.target;
+    if(!target.matches('[data-cart-qty]')) return;
+    const itemEl = target.closest('.cartitem');
+    if(!itemEl) return;
+    const items = loadCart();
+    const item = items.find(i => i.id === itemEl.dataset.id);
+    if(!item) return;
+    const newQty = Math.max(1, parseInt(target.value || '1', 10));
+    const perUnit = item.estimate / item.qty;
+    item.qty = newQty;
+    item.estimate = Math.round(perUnit * newQty * 100) / 100;
+    saveCart(items);
+    renderCart();
+  });
+
+  $cartList.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-cart-remove]');
+    if(!btn) return;
+    const itemEl = btn.closest('.cartitem');
+    if(!itemEl) return;
+    const items = loadCart().filter(i => i.id !== itemEl.dataset.id);
+    saveCart(items);
+    renderCart();
+  });
+
+  $cartClear.addEventListener('click', () => {
+    saveCart([]);
+    renderCart();
+  });
+
+  init();
+})();
+</script>

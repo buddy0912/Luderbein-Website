@@ -1,9 +1,11 @@
 // =========================================================
-// Luderbein Site Core v1.6
+// Luderbein Site Core v1.7
 // - Mobile Nav Toggle
 // - Active Nav Link
 // - CTA Autofill (WhatsApp + Mail)
-//   via ?p= &v= &f=  (plus legacy: size=, note=, and "p=Produkt – Variante")
+// - Landingpage Banner
+// - Scroll Indicator
+// - Modal Cards
 // =========================================================
 (function () {
   "use strict";
@@ -151,6 +153,153 @@
     });
   }
 
+  function initBanner() {
+    const banner = document.querySelector("[data-lb-banner]");
+    if (!banner) return;
+
+    const closeBtn = banner.querySelector("[data-banner-close]");
+    const KEY = "lb_banner_dismissed_at";
+    const TTL = 12 * 60 * 60 * 1000;
+    let last = 0;
+
+    try {
+      last = parseInt(localStorage.getItem(KEY) || "0", 10);
+    } catch (e) {
+      last = 0;
+    }
+
+    const now = Date.now();
+    if (now - last > TTL) banner.classList.add("is-visible");
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        banner.classList.remove("is-visible");
+        try {
+          localStorage.setItem(KEY, String(Date.now()));
+        } catch (e) {
+          // ignore
+        }
+      });
+    }
+  }
+
+  function initScrollIndicator() {
+    if (document.querySelector(".scroll-indicator")) return;
+
+    const indicator = document.createElement("div");
+    indicator.className = "scroll-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+    indicator.innerHTML = '<div class="scroll-indicator__thumb"></div>';
+    document.body.appendChild(indicator);
+
+    const thumb = indicator.querySelector(".scroll-indicator__thumb");
+
+    function update() {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollHeight = doc.scrollHeight - doc.clientHeight;
+      const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
+      const travel = indicator.clientHeight - thumb.offsetHeight;
+      const y = Math.max(0, Math.min(travel, travel * progress));
+      thumb.style.transform = `translateY(${y}px)`;
+    }
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+  }
+
+  function initModalCards() {
+    const cards = document.querySelectorAll("[data-lb-modal-card]");
+    if (!cards.length) return;
+
+    let modal = document.querySelector(".lb-modal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.className = "lb-modal";
+      modal.innerHTML = `
+        <div class="lb-modal__panel" role="dialog" aria-modal="true" aria-label="Detailansicht">
+          <button class="lb-modal__close" type="button" data-lb-modal-close aria-label="Schließen">✕</button>
+          <img class="lb-modal__img" alt="" />
+          <h3 class="lb-modal__title"></h3>
+          <p class="lb-modal__text"></p>
+          <div class="cta">
+            <a class="btn primary" data-lb-modal-cta href="/kontakt/">Mach mir ein Angebot</a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    const modalImg = modal.querySelector(".lb-modal__img");
+    const modalTitle = modal.querySelector(".lb-modal__title");
+    const modalText = modal.querySelector(".lb-modal__text");
+    const modalCta = modal.querySelector("[data-lb-modal-cta]");
+
+    function buildContactUrl(product, variant, format) {
+      const params = new URLSearchParams();
+      if (product) params.set("p", product);
+      if (variant) params.set("v", variant);
+      if (format) params.set("f", format);
+      const qs = params.toString();
+      return qs ? `/kontakt/?${qs}` : "/kontakt/";
+    }
+
+    function openModal(card) {
+      const img = card.getAttribute("data-modal-img");
+      const alt = card.getAttribute("data-modal-alt") || "Detailbild";
+      const title = card.getAttribute("data-modal-title") || card.querySelector("h3")?.textContent || "";
+      const text = card.getAttribute("data-modal-text") || card.querySelector(".kicker")?.textContent || "";
+      const product = card.getAttribute("data-modal-product");
+      const variant = card.getAttribute("data-modal-variant");
+      const format = card.getAttribute("data-modal-format");
+
+      if (img) {
+        modalImg.src = img;
+        modalImg.alt = alt;
+        modalImg.style.display = "block";
+      } else {
+        modalImg.src = "";
+        modalImg.alt = "";
+        modalImg.style.display = "none";
+      }
+
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modalCta.setAttribute("href", buildContactUrl(product, variant, format));
+
+      modal.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      document.body.style.overflow = "";
+    }
+
+    document.addEventListener("click", (e) => {
+      const card = e.target.closest("[data-lb-modal-card]");
+      if (card) {
+        openModal(card);
+        return;
+      }
+
+      if (e.target === modal || e.target.closest("[data-lb-modal-close]")) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) {
+        closeModal();
+      }
+      if ((e.key === "Enter" || e.key === " ") && document.activeElement?.matches("[data-lb-modal-card]")) {
+        e.preventDefault();
+        openModal(document.activeElement);
+      }
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     // Mobile Nav Toggle
     const navBtn = document.querySelector("[data-nav-toggle]");
@@ -177,5 +326,9 @@
     // CTA Autofill (Kontaktseite)
     const ctx = getQueryContext();
     applyCtasFromContext(ctx);
+
+    initBanner();
+    initScrollIndicator();
+    initModalCards();
   });
 })();
