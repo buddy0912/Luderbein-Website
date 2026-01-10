@@ -865,3 +865,57 @@ footer a:hover { color: var(--text); }
   outline: 2px solid rgba(219,16,33,.55);
   outline-offset: 2px;
 }
+
+/* ================================
+KONTAKT – SPACING FIX
+================================ */
+body[data-page="kontakt"] main{
+  /* schützt vor "zu breit" bei Speziallayouts */
+  width: 100%;
+}
+
+body[data-page="kontakt"] .wrap{
+  /* Kontakt bekommt exakt das gleiche Padding-Feeling wie global */
+  padding-left: clamp(18px, 3vw, 28px);
+  padding-right: clamp(18px, 3vw, 28px);
+}
+
+/* vertikale Rhythmen: weniger gequetscht, mehr "Premium" */
+body[data-page="kontakt"] .section,
+body[data-page="kontakt"] .card,
+body[data-page="kontakt"] .hero{
+  margin-top: 16px;
+}
+
+body[data-page="kontakt"] .section:first-child,
+body[data-page="kontakt"] .hero:first-child{
+  margin-top: 0;
+}
+
+/* Anfrage-Builder / Formular: saubere Innenabstände + kein Randkanten-Kleben */
+body[data-page="kontakt"] .cfg,
+body[data-page="kontakt"] form,
+body[data-page="kontakt"] .builder,
+body[data-page="kontakt"] .contact-builder{
+  padding: 16px;
+  border-radius: var(--radius);
+}
+
+/* Inputs: volle Breite, gleichmäßige Abstände */
+body[data-page="kontakt"] input,
+body[data-page="kontakt"] select,
+body[data-page="kontakt"] textarea{
+  width: 100%;
+}
+
+body[data-page="kontakt"] .fields{
+  gap: 12px;
+}
+
+/* Mobile: etwas mehr Luft unten/oben */
+@media (max-width: 560px){
+  body[data-page="kontakt"] .wrap{
+    padding-left: clamp(16px, 4vw, 22px);
+    padding-right: clamp(16px, 4vw, 22px);
+  }
+}
