@@ -919,3 +919,66 @@ body[data-page="kontakt"] .fields{
     padding-right: clamp(16px, 4vw, 22px);
   }
 }
+
+/* ================================
+ÜBER – SPACING FIX
+================================ */
+body[data-page="ueber"] .wrap{
+  padding-left: clamp(18px, 3vw, 28px);
+  padding-right: clamp(18px, 3vw, 28px);
+}
+
+/* ruhiger vertikaler Rhythmus */
+body[data-page="ueber"] .hero{
+  margin-bottom: 14px;
+}
+
+body[data-page="ueber"] .section{
+  margin-top: 16px;
+}
+
+body[data-page="ueber"] .section + .section{
+  margin-top: 18px;
+}
+
+/* Textblöcke: weniger "Wand", mehr Scanbarkeit */
+body[data-page="ueber"] h2{
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+body[data-page="ueber"] p{
+  margin: 0 0 10px;
+}
+
+body[data-page="ueber"] p:last-child{
+  margin-bottom: 0;
+}
+
+/* Listen / Feature-Blöcke: konsistenter Abstand */
+body[data-page="ueber"] ul,
+body[data-page="ueber"] ol{
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+body[data-page="ueber"] li{
+  margin: 6px 0;
+}
+
+/* CTA-Reihe: nicht kleben, sauber Luft */
+body[data-page="ueber"] .actions{
+  margin-top: 14px;
+  gap: 10px;
+}
+
+/* Mobile: bisschen mehr „Handy-Luft“ */
+@media (max-width: 560px){
+  body[data-page="ueber"] .wrap{
+    padding-left: clamp(16px, 4vw, 22px);
+    padding-right: clamp(16px, 4vw, 22px);
+  }
+  body[data-page="ueber"] .section{
+    margin-top: 14px;
+  }
+}
