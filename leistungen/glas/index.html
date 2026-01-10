@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Glasgravur – Luderbein</title>
+  <meta name="description" content="Glasgravur von Luderbein: aktuell auf Anfrage. Motiv, Stückzahl und Einsatz nennen – wir melden uns mit einem Angebot." />
+  <link rel="canonical" href="https://luderbein-gravur.pages.dev/leistungen/glas/" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <style>
+    /* Glas – kleiner Reel-Wrapper (wie Start, aber neutral) */
+    .reelwrap { position: relative; margin-top: 10px; }
+    .reelwrap::before, .reelwrap::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 34px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: .85;
+    }
+    .reelwrap::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reelwrap::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 10px 6px 18px;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 10px;
+      scroll-padding-right: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .reel__item {
+      flex: 0 0 clamp(260px, 72vw, 440px);
+      scroll-snap-align: start;
+      border-radius: 18px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      color: inherit;
+      margin: 0;
+      position: relative;
+      text-decoration: none;
+      transform: translateZ(0);
+    }
+    .reel__tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      user-select: none;
+    }
+    .reel__img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      height: auto;
+      object-fit: cover;
+      filter: saturate(1.03) contrast(1.02);
+    }
+    .reel__cap {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 12px 12px 12px;
+      color: rgba(255,255,255,.92);
+      font-size: .95rem;
+      line-height: 1.3;
+      background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="content">
+    <section class="hero">
+      <span class="badge"><i></i> Leistung – Glas</span>
+      <h1>Glasgravur</h1>
+      <p class="lead">Glas ist aktuell auf Anfrage. Nenne Motiv, Stückzahl und Einsatz – wir melden uns mit einem Angebot.</p>
+    </section>
+
+    <!-- FEED (Reel) -->
+    <section class="section" id="glas-feed" aria-label="Glas-Feed">
+      <div class="section-head">
+        <h2>Feed</h2>
+        <p class="small muted">Einblicke &amp; Beispiele rund um Glas.</p>
+      </div>
+
+      <div class="reelwrap">
+        <div
+          class="reel"
+          aria-label="Glas Reel"
+          data-reel
+          data-reel-src="/assets/reel-glas.json"
+          data-interval="4500"
+          data-reel-default-tag="Glas"
+        ></div>
+      </div>
+
+      <div class="actions" style="margin-top: 14px;">
+        <a class="btn" href="/kontakt/?p=Glas">Glas anfragen</a>
+      </div>
+    </section>
+
+    <div class="hr"></div>
+
+    <!-- VARIANTEN -->
+    <section class="section" aria-label="Glas Varianten">
+      <div class="section-head">
+        <h2>Was gut geht</h2>
+        <p class="small muted">Klicken → Anfrage starten. Varianten werden fortlaufend ergänzt.</p>
+      </div>
+
+      <div class="products">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/glas/glas-reel-01.jpg"
+          data-modal-alt="Glasgravur – Beispiel auf Anfrage"
+          data-modal-title="Glas"
+          data-modal-text="Glasgravur ist aktuell auf Anfrage. Sende Motiv, Stückzahl und Einsatz – wir schauen, was geht."
+          data-modal-product="Glas"
+          data-modal-variant="Glas"
+        >
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/glas/glas-reel-01.jpg"
+              alt="Glasgravur – Beispiel auf Anfrage"
+              loading="lazy"
+              style="width:100%; height:100%; object-fit:cover; display:block;"
+            >
+            <span class="thumblabel">Glas</span>
+          </div>
+          <div class="meta">
+            <span class="price">auf Anfrage</span><span>•</span><span>Gravur nach Motiv</span>
+          </div>
+          <h3>Glas</h3>
+          <p class="kicker">Aktuell nur auf Anfrage – sende Motiv, Stückzahl und Einsatz.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Glas Anfrage">
+      <div class="section-head">
+        <h2>Bereit?</h2>
+        <p class="small muted">Sag kurz Motiv, Stückzahl und Einsatz – ich mach dir ein klares Angebot.</p>
+      </div>
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Glas">Mach mir ein Angebot</a>
+        <a class="btn" href="#glas-feed">Zeig mir Beispiele</a>
+      </div>
+      <p class="small muted" style="margin-top:.75rem;">
+        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+      </p>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="/assets/footer.js"></script>
+
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/reel-internal.js"></script>
+  <script src="/assets/site.js"></script>
+  <script>
+    const y = document.getElementById("y");
+
+    if (y) y.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
