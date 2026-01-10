@@ -160,12 +160,47 @@
       margin-top: 12px;
     }
     .cfg .cta .btn { flex: 1 1 180px; }
+    .cfg .btn:disabled {
+      opacity: .55;
+      pointer-events: none;
+      filter: grayscale(.4);
+    }
 
     .cfg a[data-disabled="1"] {
       opacity: .55;
       pointer-events: none;
       filter: grayscale(.4);
     }
+
+    .cfg .batch {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px dashed rgba(64,62,65,.55);
+      background: rgba(32,32,38,.28);
+    }
+    .cfg .batch .inline {
+      gap: 8px;
+    }
+    .cfg .batch-area {
+      margin-top: 10px;
+    }
+    .cfg .batch-list {
+      list-style: none;
+      margin: 10px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .cfg .batch-item {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.20);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .cfg .batch-item strong { color: var(--text); }
+    .cfg .batch-meta { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+    .cfg .batch-price { margin-top: 6px; font-weight: 800; color: var(--text); }
 
     .cfg .warn {
       margin-top: 10px;
@@ -175,6 +210,81 @@
       padding: 10px 12px;
       color: rgba(210,207,206,.92);
     }
+
+    .cfg .cart {
+      margin-top: 16px;
+      border-top: 1px solid rgba(64,62,65,.55);
+      padding-top: 16px;
+    }
+
+    .cfg .cartlist {
+      display: grid;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .cfg .cartitem {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.16);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .cfg .cartitem__head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cfg .cartitem__meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .cfg .cartitem__qty {
+      display: flex;
+      flex-direction: column;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .cfg .cartitem__qty input {
+      max-width: 100px;
+      margin-top: 6px;
+    }
+
+    .cfg .cartitem__price {
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .cfg .cartitem__details {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .cfg .cart-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .cfg .linkbtn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      font-size: .9rem;
+    }
+
+    .cfg .linkbtn:hover { color: var(--text); }
 
     @media (min-width: 760px) {
       .cfg .fields { grid-template-columns: 1fr 1fr; }
@@ -249,13 +359,14 @@
     <span class="badge"><i></i> Kalkulator</span>
     <h1>Preis grob kalkulieren. Dann sauber anfragen.</h1>
     <p class="lead">
-      Schiefer &amp; Metall: Auswahl bauen → Preis/Staffel sehen → per WhatsApp oder E-Mail abschicken.
+      Schiefer &amp; Metall: Auswahl bauen → Preis/Staffel sehen → zur Sammelanfrage hinzufügen → gesammelt abschicken.
       <span class="small muted">Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen.</span>
     </p>
 
     <div class="cfg" data-kalk>
       <h2>Konfigurator</h2>
-      <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → abschicken.</p>
+      <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
+      <p class="small muted">Hinweis: Metall ist bereits teilweise im Kalkulator enthalten – weitere Varianten folgen.</p>
 
       <div class="step" aria-label="Schritt 1 – Material">
         <p class="steptitle">Schritt 1 – Material</p>
@@ -350,14 +461,59 @@
           <span data-k-summary>Bitte Material &amp; Ausführung wählen.</span>
         </div>
 
+        <div class="batch" aria-label="Sammelanfrage">
+          <div class="inline">
+            <label class="toggle" data-k-batch-toggle-label>
+              <input type="checkbox" data-k-batch-toggle>
+              <span><b>Sammelanfrage aktivieren</b></span>
+            </label>
+            <span class="small muted">Mehrere Positionen sammeln und gemeinsam anfragen.</span>
+          </div>
+
+          <div class="batch-area" data-k-batch-area hidden>
+            <div class="cta">
+              <button class="btn" type="button" data-k-batch-add>Position hinzufügen / merken</button>
+              <a class="btn primary" data-k-batch-send data-disabled="1" href="/kontakt/">Sammelanfrage senden</a>
+            </div>
+
+            <div class="batch-list-wrap">
+              <h3 style="margin:12px 0 0;">Gesammelte Positionen</h3>
+              <ul class="batch-list" data-k-batch-list></ul>
+              <p class="small muted" data-k-batch-empty>Keine Positionen gemerkt.</p>
+            </div>
+          </div>
+        </div>
+
         <div class="cta">
-          <a class="btn primary" data-k-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
-          <a class="btn" data-k-mail data-disabled="1" href="#">E-Mail</a>
+          <button class="btn primary" type="button" data-k-add data-disabled="1">Zur Sammelanfrage hinzufügen</button>
         </div>
 
         <p class="small muted" style="margin-top:10px;">
           Wenn „Auf Anfrage“ erscheint: Menge/Deadline/Motiv kurz dazuschreiben – ich antworte schnell.
         </p>
+
+        <div class="cart" data-k-cart>
+          <div class="section-head">
+            <h3>Mach mir ein Angebot</h3>
+            <p class="small muted">Sammelanfrage senden (mehrere Positionen in einer Nachricht).</p>
+          </div>
+
+          <div class="cartlist" data-k-cart-list></div>
+          <p class="small muted" data-k-cart-empty>Noch keine Positionen gesammelt.</p>
+
+          <div class="cart-actions">
+            <button class="linkbtn" type="button" data-k-cart-clear>Sammelanfrage leeren</button>
+          </div>
+
+          <div class="cta">
+            <a class="btn primary" data-k-cart-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
+            <a class="btn" data-k-cart-mail data-disabled="1" href="#">E-Mail</a>
+          </div>
+
+          <p class="small muted" style="margin-top:10px;">
+            Kalkulator gibt Richtung. Verbindlich wird’s erst nach meiner Bestätigung (Preis &amp; Motiv).
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -427,8 +583,20 @@
     const $upWrap  = el("[data-k-upgrades]", $root);
     const $sum     = el("[data-k-summary]", $root);
 
-    const $wa      = el("[data-k-wa]", $root);
-    const $mail    = el("[data-k-mail]", $root);
+    const $add     = el("[data-k-add]", $root);
+    const $cartList = el("[data-k-cart-list]", $root);
+    const $cartEmpty = el("[data-k-cart-empty]", $root);
+    const $cartClear = el("[data-k-cart-clear]", $root);
+    const $cartWa  = el("[data-k-cart-wa]", $root);
+    const $cartMail = el("[data-k-cart-mail]", $root);
+
+    const $batchToggle = el("[data-k-batch-toggle]", $root);
+    const $batchToggleLabel = el("[data-k-batch-toggle-label]", $root);
+    const $batchArea = el("[data-k-batch-area]", $root);
+    const $batchList = el("[data-k-batch-list]", $root);
+    const $batchEmpty = el("[data-k-batch-empty]", $root);
+    const $batchAdd = el("[data-k-batch-add]", $root);
+    const $batchSend = el("[data-k-batch-send]", $root);
 
     const phoneWA = "491725925858";
     const mailTo  = "luderbein_gravur@icloud.com";
@@ -445,11 +613,23 @@
     const eur = (n) => eurFmt.format(m(n));
 
     const clean = (s) => (s || "").toString().trim();
+    const esc = (s) => (s || "").toString().replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[c]));
+
+    let batchItems = [];
+    let currentPosition = null;
 
     function setDisabled(a, on) {
+      if (!a) return;
       a.dataset.disabled = on ? "1" : "0";
       if (on) a.setAttribute("aria-disabled", "true");
       else a.removeAttribute("aria-disabled");
+      if (a.tagName === "BUTTON") a.disabled = !!on;
     }
 
     function tierUnit(tiers, qty) {
@@ -509,6 +689,116 @@
       $s.appendChild(o);
     }
 
+    function buildPositionLines(pos) {
+      const lines = [
+        `Material: ${pos.matLabel}`,
+        `Ausführung: ${pos.varLabel}`,
+        `Format: ${pos.fmtLabel}`,
+      ];
+
+      if (pos.isMetallBottle) {
+        lines.push(`Farbe: ${pos.color || ""}`);
+        lines.push(`Gravur: ${pos.engraving || ""}`);
+        lines.push(`Motiv: ${pos.motif || ""}`);
+      }
+
+      lines.push(`Stückzahl: ${pos.qty || ""}`);
+      lines.push(`Versand: ${pos.shipText}`);
+      lines.push(`Upgrades: ${pos.upgradesList.length ? pos.upgradesList.join(", ") : "keine"}`);
+
+      if (!pos.onRequest && pos.ok) {
+        lines.push(`Zwischensumme: ${eur(pos.subtotal)}`);
+        lines.push(`Versand: ${pos.shipPrice === 0 ? eur(0) : eur(pos.shipPrice || 0)}`);
+        lines.push(`Gesamt: ${eur(pos.total)}`);
+      } else {
+        lines.push("Preis: Auf Anfrage");
+      }
+
+      if (pos.noteText) {
+        lines.push(`Notiz: ${pos.noteText}`);
+      }
+
+      return lines;
+    }
+
+    function buildBatchNote() {
+      const lines = ["Sammelanfrage aus dem Kalkulator:", ""];
+
+      batchItems.forEach((item, idx) => {
+        lines.push(`Position ${idx + 1}:`);
+        item.lines.forEach((line) => lines.push(`- ${line}`));
+        lines.push("");
+      });
+
+      return lines.join("\n").trim();
+    }
+
+    function buildBatchHref() {
+      const params = new URLSearchParams();
+      params.set("p", "Custom");
+      params.set("v", "Sammelanfrage");
+      params.set("f", "custom");
+      params.set("note", buildBatchNote());
+      return `/kontakt/?${params.toString()}`;
+    }
+
+    function renderBatchList() {
+      if (!$batchList) return;
+      $batchList.innerHTML = "";
+
+      batchItems.forEach((item, idx) => {
+        const li = document.createElement("li");
+        li.className = "batch-item";
+
+        const title = `${esc(item.matLabel)} · ${esc(item.varLabel)} · ${esc(item.fmtLabel)}`;
+        const detailBits = [];
+
+        if (item.isMetallBottle) {
+          detailBits.push(`Farbe: ${esc(item.color || "—")}`);
+          detailBits.push(`Gravur: ${esc(item.engraving || "—")}`);
+          detailBits.push(`Motiv: ${esc(item.motif || "—")}`);
+        }
+
+        detailBits.push(`Stückzahl: ${esc(item.qty)}`);
+        detailBits.push(`Versand: ${esc(item.shipText)}`);
+
+        const upgradesText = item.upgradesList.length ? esc(item.upgradesList.join(", ")) : "keine";
+        const priceText = (!item.onRequest && item.ok) ? `Gesamt: ${esc(eur(item.total))}` : "Preis: Auf Anfrage";
+
+        li.innerHTML = `
+          <div><strong>Position ${idx + 1}:</strong> ${title}</div>
+          <div class="batch-meta">${detailBits.join(" · ")}</div>
+          <div class="batch-meta">Upgrades: ${upgradesText}</div>
+          ${item.noteText ? `<div class="batch-meta">Notiz: ${esc(item.noteText)}</div>` : ""}
+          <div class="batch-price">${priceText}</div>
+        `;
+
+        $batchList.appendChild(li);
+      });
+
+      if ($batchEmpty) $batchEmpty.hidden = batchItems.length > 0;
+
+      if ($batchSend) {
+        const canSend = batchItems.length > 0 && $batchToggle && $batchToggle.checked;
+        setDisabled($batchSend, !canSend);
+        $batchSend.href = canSend ? buildBatchHref() : "#";
+      }
+    }
+
+    function updateBatchUI() {
+      if (!$batchToggle) return;
+      const enabled = $batchToggle.checked;
+      if ($batchToggleLabel) $batchToggleLabel.classList.toggle("is-on", enabled);
+      if ($batchArea) $batchArea.hidden = !enabled;
+
+      if ($batchAdd) {
+        const canAdd = enabled && currentPosition && currentPosition.ok;
+        $batchAdd.disabled = !canAdd;
+      }
+
+      renderBatchList();
+    }
+
     function buildMaterialChips() {
       $matWrap.innerHTML = "";
       const activeKeys = Object.keys(PR.products).filter((k) => PR.products[k] && PR.products[k].active);
@@ -549,6 +839,147 @@
 
       upgrades: new Set()
     };
+
+    const CART_KEY = "lb_kalk_cart_v1";
+    let cart = [];
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        cart = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        cart = [];
+      }
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function formatTitle(item) {
+      const parts = [item.material, item.variant, item.format].filter(Boolean);
+      return parts.join(" • ");
+    }
+
+    function buildCartMessage() {
+      if (!cart.length) return "";
+
+      const lines = ["Hi Luderbein, ich möchte folgende Sammelanfrage stellen:", ""];
+
+      cart.forEach((item, i) => {
+        lines.push(`${i + 1}) ${formatTitle(item)}`);
+        lines.push(`- Menge: ${item.qty}`);
+        if (item.color) lines.push(`- Farbe: ${item.color}`);
+        if (item.engraving) lines.push(`- Gravur: ${item.engraving}`);
+        if (item.motif) lines.push(`- Motiv: ${item.motif}`);
+        if (item.upgrades && item.upgrades.length) lines.push(`- Upgrades: ${item.upgrades.join(", ")}`);
+        lines.push(`- Versand: ${item.shipping}`);
+        lines.push(`- Preis: ${item.priceText}`);
+        if (item.note) lines.push(`- Notiz: ${item.note}`);
+        lines.push("");
+      });
+
+      lines.push("Kalkulator gibt Richtung. Verbindlich wird’s erst nach meiner Bestätigung (Preis & Motiv).");
+
+      return lines.join("\n");
+    }
+
+    function updateCartCtas() {
+      const hasItems = cart.length > 0;
+      const msg = buildCartMessage();
+      const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
+      const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent("Sammelanfrage – Luderbein")}&body=${encodeURIComponent(msg)}`;
+
+      if ($cartWa) $cartWa.href = hasItems ? waUrl : "#";
+      if ($cartMail) $cartMail.href = hasItems ? mailUrl : "#";
+      setDisabled($cartWa, !hasItems);
+      setDisabled($cartMail, !hasItems);
+    }
+
+    function renderCart() {
+      if (!$cartList || !$cartEmpty) return;
+
+      $cartList.innerHTML = "";
+      const hasItems = cart.length > 0;
+      $cartEmpty.style.display = hasItems ? "none" : "block";
+
+      cart.forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "cartitem";
+        card.dataset.itemId = item.id;
+
+        const head = document.createElement("div");
+        head.className = "cartitem__head";
+
+        const titleWrap = document.createElement("div");
+        const title = document.createElement("strong");
+        title.textContent = `${item.material}${item.variant ? ` – ${item.variant}` : ""}`;
+        const subtitle = document.createElement("div");
+        subtitle.className = "small muted";
+        subtitle.textContent = item.format ? `Format: ${item.format}` : "Format: —";
+        titleWrap.appendChild(title);
+        titleWrap.appendChild(subtitle);
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "linkbtn";
+        remove.textContent = "Entfernen";
+        remove.dataset.removeId = item.id;
+
+        head.appendChild(titleWrap);
+        head.appendChild(remove);
+
+        const meta = document.createElement("div");
+        meta.className = "cartitem__meta";
+
+        const qtyWrap = document.createElement("label");
+        qtyWrap.className = "cartitem__qty";
+        qtyWrap.textContent = "Menge";
+        const qtyInput = document.createElement("input");
+        qtyInput.type = "number";
+        qtyInput.min = "1";
+        qtyInput.step = "1";
+        qtyInput.value = item.qty;
+        qtyInput.dataset.qtyId = item.id;
+        qtyWrap.appendChild(qtyInput);
+
+        const price = document.createElement("div");
+        price.className = "cartitem__price";
+        price.textContent = `Preis: ${item.priceText}`;
+
+        meta.appendChild(qtyWrap);
+        meta.appendChild(price);
+
+        const details = document.createElement("div");
+        details.className = "cartitem__details";
+        const detailLines = [];
+        if (item.color || item.engraving || item.motif) {
+          detailLines.push(
+            [item.color && `Farbe: ${item.color}`, item.engraving && `Gravur: ${item.engraving}`, item.motif && `Motiv: ${item.motif}`]
+              .filter(Boolean)
+              .join(" · ")
+          );
+        }
+        if (item.upgrades && item.upgrades.length) detailLines.push(`Upgrades: ${item.upgrades.join(", ")}`);
+        detailLines.push(`Versand: ${item.shipping}`);
+        if (item.note) detailLines.push(`Notiz: ${item.note}`);
+        details.textContent = detailLines.join(" | ");
+
+        card.appendChild(head);
+        card.appendChild(meta);
+        card.appendChild(details);
+
+        $cartList.appendChild(card);
+      });
+
+      updateCartCtas();
+    }
+
+    let lastItem = null;
 
     function onMaterial(matKey) {
       state.matKey = matKey;
@@ -964,52 +1395,51 @@
 
       $sum.innerHTML = summaryLines.join("<br>");
 
-      const canSend = ok && !onRequest;
+      // --- Batch (Kontakt-Link) ---
+      currentPosition = {
+        ok,
+        onRequest,
+        matLabel,
+        varLabel,
+        fmtLabel,
+        qty: state.qty,
+        shipText,
+        upgradesList,
+        isMetallBottle,
+        color: state.color,
+        engraving: state.engraving,
+        motif: state.motif,
+        subtotal,
+        shipPrice: shipRes.price,
+        total,
+        noteText
+      };
+      updateBatchUI();
 
-      const msgLines = [
-        "Hi Luderbein, ich möchte anfragen:",
-        "",
-        `- Material: ${matLabel}`,
-        `- Ausführung: ${varLabel}`,
-        `- Format: ${fmtLabel}`,
-      ];
+      // --- Cart (WhatsApp/E-Mail Sammelanfrage) ---
+      const canAdd = ok;
+      setDisabled($add, !canAdd);
 
-      if (isMetallBottle) {
-        msgLines.push(`- Farbe: ${state.color || ""}`);
-        msgLines.push(`- Gravur: ${state.engraving || ""}`);
-        msgLines.push(`- Motiv: ${state.motif || ""}`);
-      }
+      const priceTotal = (!onRequest && ok) ? m(total) : null;
+      const priceText = priceTotal != null ? eur(priceTotal) : "Auf Anfrage";
+      const unitPrice = priceTotal != null && state.qty ? m(priceTotal / state.qty) : null;
 
-      msgLines.push(`- Stückzahl: ${state.qty || ""}`);
-      msgLines.push(`- Versand: ${shipText}`);
-
-      if (upgradesList.length) msgLines.push(`- Upgrades: ${upgradesList.join(", ")}`);
-      else msgLines.push(`- Upgrades: keine`);
-
-      if (!onRequest && ok) {
-        msgLines.push(`- Zwischensumme: ${eur(subtotal)}`);
-        msgLines.push(`- Versand: ${shipRes.price === 0 ? eur(0) : eur(shipRes.price || 0)}`);
-        msgLines.push(`- Gesamt: ${eur(total)}`);
-      } else {
-        msgLines.push("- Preis: Auf Anfrage");
-      }
-
-      if (noteText) {
-        msgLines.push(`- Notiz: ${noteText}`);
-      }
-
-      const msg = msgLines.join("\n");
-      const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
-
-      const subject = `Anfrage – ${matLabel} – ${varLabel}`;
-      const mailBody = msg.replace(/\n/g, "%0D%0A");
-      const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${mailBody}`;
-
-      $wa.href = waUrl;
-      $mail.href = mailUrl;
-
-      setDisabled($wa, !canSend);
-      setDisabled($mail, !canSend);
+      lastItem = canAdd ? {
+        id: "",
+        material: matLabel,
+        variant: varLabel,
+        format: fmtLabel,
+        qty: state.qty,
+        shipping: shipText,
+        upgrades: upgradesList,
+        note: noteText,
+        color: state.color || "",
+        engraving: state.engraving || "",
+        motif: state.motif || "",
+        priceTotal,
+        unitPrice,
+        priceText
+      } : null;
     }
 
     $variant.addEventListener("change", onVariant);
@@ -1031,6 +1461,73 @@
         });
       });
     }
+
+    // Batch events
+    if ($batchToggle) {
+      $batchToggle.addEventListener("change", updateBatchUI);
+    }
+
+    if ($batchAdd) {
+      $batchAdd.addEventListener("click", () => {
+        if (!currentPosition || !currentPosition.ok) return;
+        const lines = buildPositionLines(currentPosition);
+        batchItems.push({ ...currentPosition, lines });
+        renderBatchList();
+        updateBatchUI();
+      });
+    }
+
+    // Cart events
+    if ($add) {
+      $add.addEventListener("click", () => {
+        if (!lastItem) return;
+        const item = {
+          ...lastItem,
+          id: `lb-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+        };
+        cart.push(item);
+        saveCart();
+        renderCart();
+      });
+    }
+
+    if ($cartClear) {
+      $cartClear.addEventListener("click", () => {
+        cart = [];
+        saveCart();
+        renderCart();
+      });
+    }
+
+    if ($cartList) {
+      $cartList.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-remove-id]");
+        if (!btn) return;
+        const id = btn.dataset.removeId;
+        cart = cart.filter((item) => item.id !== id);
+        saveCart();
+        renderCart();
+      });
+
+      $cartList.addEventListener("change", (e) => {
+        const input = e.target.closest("input[data-qty-id]");
+        if (!input) return;
+        const id = input.dataset.qtyId;
+        const item = cart.find((x) => x.id === id);
+        if (!item) return;
+        const nextQty = Math.max(1, Number(input.value || 1));
+        item.qty = nextQty;
+        if (item.unitPrice != null) {
+          item.priceTotal = m(item.unitPrice * nextQty);
+          item.priceText = eur(item.priceTotal);
+        }
+        saveCart();
+        renderCart();
+      });
+    }
+
+    loadCart();
+    renderCart();
 
     buildMaterialChips();
 

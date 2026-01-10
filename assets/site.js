@@ -6,7 +6,7 @@
 // - Kontakt: Anfrage-Builder
 // - CTA Autofill (WhatsApp + Mail)
 // - Landingpage Banner
-// - Scroll Indicator
+// - Laser Scroll Indicator
 // - Modal Cards
 // - Cloudflare Web Analytics (idle-load, safe)
 // =========================================================
@@ -218,32 +218,52 @@
   }
 
   // ---------------------------------
-  // Scroll Indicator
+  // Laser Scroll Indicator
   // ---------------------------------
-  function initScrollIndicator() {
-    if (document.querySelector(".scroll-indicator")) return;
+  function initLaserScrollIndicator() {
+    if (document.querySelector(".laser-scroll")) return;
 
     const indicator = document.createElement("div");
-    indicator.className = "scroll-indicator";
+    indicator.className = "laser-scroll";
     indicator.setAttribute("aria-hidden", "true");
-    indicator.innerHTML = '<div class="scroll-indicator__thumb"></div>';
+    indicator.innerHTML = '<div class="laser-dot"></div>';
     document.body.appendChild(indicator);
 
-    const thumb = indicator.querySelector(".scroll-indicator__thumb");
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let ticking = false;
+    let scrollTimer = 0;
 
     function update() {
+      ticking = false;
       const doc = document.documentElement;
       const scrollTop = doc.scrollTop || document.body.scrollTop;
       const scrollHeight = doc.scrollHeight - doc.clientHeight;
       const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
-      const travel = indicator.clientHeight - thumb.offsetHeight;
-      const y = Math.max(0, Math.min(travel, travel * progress));
-      thumb.style.transform = `translateY(${y}px)`;
+      const clamped = Math.max(0, Math.min(1, progress));
+      indicator.style.setProperty("--laserY", clamped.toFixed(4));
+    }
+
+    function requestUpdate() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+
+    function handleScroll() {
+      requestUpdate();
+      if (prefersReducedMotion) return;
+      indicator.classList.add("is-scrolling");
+      if (scrollTimer) window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        indicator.classList.remove("is-scrolling");
+      }, 280);
     }
 
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", requestUpdate);
   }
 
   // ---------------------------------
@@ -377,6 +397,27 @@
       if (raw.startsWith("/leistungen/") && raw.toLowerCase().includes("/acryl-schilder")) {
         a.setAttribute("href", TARGET.acryl);
         return;
+      }
+    });
+
+    // 3) Glas-Eintrag hinzufügen (kommt in Kürze)
+    const panels = document.querySelectorAll(".navdrop__panel");
+    panels.forEach((panel) => {
+      if (panel.querySelector('[data-nav-glas]')) return;
+
+      const acrylLink = Array.from(panel.querySelectorAll('a[href]'))
+        .find((link) => normHref(link.getAttribute("href")) === TARGET.acryl);
+
+      const glas = document.createElement("a");
+      glas.setAttribute("href", "/leistungen/#glas");
+      glas.setAttribute("role", "menuitem");
+      glas.setAttribute("data-nav-glas", "1");
+      glas.textContent = "Glas (kommt)";
+
+      if (acrylLink && acrylLink.parentNode) {
+        acrylLink.parentNode.insertBefore(glas, acrylLink.nextSibling);
+      } else {
+        panel.appendChild(glas);
       }
     });
   }
@@ -774,9 +815,9 @@
     // Kontakt: Anfrage-Builder
     initContactRequestBuilder();
 
-    // Landing Banner / Scroll Indicator / Modal Cards
+    // Landing Banner / Laser Scroll Indicator / Modal Cards
     initBanner();
-    initScrollIndicator();
+    initLaserScrollIndicator();
     initModalCards();
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
