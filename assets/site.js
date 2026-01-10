@@ -226,7 +226,10 @@
     const indicator = document.createElement("div");
     indicator.className = "scroll-indicator";
     indicator.setAttribute("aria-hidden", "true");
-    indicator.innerHTML = '<div class="scroll-indicator__thumb"></div>';
+    indicator.innerHTML = `
+      <div class="scroll-indicator__track"></div>
+      <div class="scroll-indicator__dot"></div>
+    `;
     document.body.appendChild(indicator);
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -239,7 +242,7 @@
       const scrollHeight = doc.scrollHeight - doc.clientHeight;
       const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
       const clamped = Math.max(0, Math.min(1, progress));
-      indicator.style.setProperty("--laserY", clamped);
+      indicator.style.setProperty("--scrollP", clamped);
       if (!prefersReducedMotion.matches) {
         indicator.classList.add("is-scrolling");
         if (pulseTimer) window.clearTimeout(pulseTimer);

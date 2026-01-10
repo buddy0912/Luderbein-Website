@@ -713,38 +713,39 @@ footer a:hover { color: var(--text); }
 ================================ */
 .scroll-indicator {
   --dot-size: 12px;
-  --laserY: 0;
+  --scrollP: 0;
   position: fixed;
   right: calc(10px + env(safe-area-inset-right, 0px));
-  top: 18%;
-  height: 54vh;
+  top: calc(18% + env(safe-area-inset-top, 0px));
+  height: calc(54vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   width: 14px;
   pointer-events: none;
   z-index: 20;
+  opacity: 0.5;
+  transition: opacity 180ms ease;
 }
 
-.scroll-indicator::before {
-  content: "";
+.scroll-indicator__track {
   position: absolute;
   left: 50%;
   top: 0;
-  width: 2px;
+  width: 1.5px;
   height: 100%;
   transform: translateX(-50%);
-  background: linear-gradient(
+  background: repeating-linear-gradient(
       to bottom,
-      rgba(88,84,90,.2),
-      rgba(88,84,90,.6),
-      rgba(88,84,90,.2)
+      rgba(124,120,128,.4) 0px,
+      rgba(124,120,128,.4) 2px,
+      rgba(124,120,128,.15) 4px
     );
   box-shadow:
-    0 0 6px rgba(219,16,33,.25),
-    0 0 14px rgba(219,16,33,.15);
-  filter: drop-shadow(0 0 1px rgba(255,255,255,.12));
-  opacity: .85;
+    0 0 6px rgba(219,16,33,.2),
+    0 0 10px rgba(219,16,33,.1);
+  filter: blur(0.2px) drop-shadow(0 0 1px rgba(255,255,255,.12));
+  opacity: 0.8;
 }
 
-.scroll-indicator__thumb {
+.scroll-indicator__dot {
   width: var(--dot-size);
   height: var(--dot-size);
   border-radius: 999px;
@@ -754,11 +755,15 @@ footer a:hover { color: var(--text); }
     0 0 18px rgba(219,16,33,.45);
   position: absolute;
   left: 50%;
-  top: calc(var(--laserY) * (100% - var(--dot-size)));
+  top: calc(var(--scrollP) * (100% - var(--dot-size)));
   transform: translateX(-50%);
 }
 
-.scroll-indicator.is-scrolling .scroll-indicator__thumb {
+.scroll-indicator.is-scrolling {
+  opacity: 0.9;
+}
+
+.scroll-indicator.is-scrolling .scroll-indicator__dot {
   animation: laserPulse 220ms ease-out;
 }
 
@@ -787,16 +792,19 @@ footer a:hover { color: var(--text); }
   .scroll-indicator {
     right: calc(6px + env(safe-area-inset-right, 0px));
     width: 12px;
-    height: 46vh;
-    opacity: .8;
+    height: calc(46vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    opacity: .6;
   }
-  .scroll-indicator__thumb {
+  .scroll-indicator__dot {
     --dot-size: 10px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scroll-indicator.is-scrolling .scroll-indicator__thumb {
+  .scroll-indicator {
+    transition: none;
+  }
+  .scroll-indicator.is-scrolling .scroll-indicator__dot {
     animation: none;
   }
 }
