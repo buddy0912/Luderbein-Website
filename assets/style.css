@@ -36,6 +36,34 @@ body {
   line-height: 1.55;
 }
 
+/* ================================
+   SCROLLBAR (Laserstrahl)
+================================ */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(219,16,33,.55) rgba(14,6,11,.7);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(14,6,11,.75);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(219,16,33,.75), rgba(255,8,13,.45));
+  border-radius: 999px;
+  border: 2px solid rgba(14,6,11,.9);
+  box-shadow: inset 0 0 0 1px rgba(219,16,33,.25);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(219,16,33,.9), rgba(255,8,13,.55));
+}
+
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 18px; }
 
 /* ================================
@@ -249,6 +277,27 @@ h1 {
 
 .thumb a { display: block; width: 100%; height: 100%; color: inherit; text-decoration: none; }
 
+.thumb--soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 20%, rgba(219,16,33,.15), rgba(14,6,11,.6)),
+    rgba(26,26,31,.9);
+  border-style: dashed;
+}
+
+.thumb__soon {
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(210,207,206,.85);
+}
+
+.productcard--soon .actions .btn {
+  opacity: .6;
+  pointer-events: none;
+}
+
 .thumblabel {
   font-size: .78rem;
   letter-spacing: .16em;
@@ -317,6 +366,23 @@ h1 {
 .btn:hover { transform: translateY(-1px); border-color: rgba(219,16,33,.55); }
 
 /* ================================
+   BANNER
+================================ */
+.status-banner {
+  margin: 18px 0 6px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(64,62,65,.65);
+  background: rgba(26,26,31,.78);
+  box-shadow: inset 0 0 0 1px rgba(219,16,33,.12);
+}
+
+.status-banner strong {
+  color: var(--text);
+  letter-spacing: .02em;
+}
+
+/* ================================
    FOOTER
 ================================ */
 footer {
@@ -335,6 +401,21 @@ footer a:hover { color: var(--text); }
   gap: 14px;
   flex-wrap: wrap;
 }
+
+.foot__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.foot__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.foot__stack strong { color: var(--text); }
 
 .small { font-size: .92rem; }
 
