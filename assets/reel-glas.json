@@ -1,8 +1,42 @@
 [
   {
-    "src": "/assets/glas/glas-reel-01.jpg",
-    "alt": "Glas – Beispiel 01",
-    "cap": "Glas – Beispiel",
-    "tag": "Glas"
+    "src": "/assets/glas/glas-reel-01.webp",
+    "alt": "glas – Einblick",
+    "cap": "glas – Beispiel",
+    "cats": [
+      "glas"
+    ]
+  },
+  {
+    "src": "/assets/glas/glas-reel-02.webp",
+    "alt": "glas – Einblick",
+    "cap": "glas – Beispiel",
+    "cats": [
+      "glas"
+    ]
+  },
+  {
+    "src": "/assets/glas/glas-reel-03.webp",
+    "alt": "glas – Einblick",
+    "cap": "glas – Beispiel",
+    "cats": [
+      "glas"
+    ]
+  },
+  {
+    "src": "/assets/glas/glas-reel-04.webp",
+    "alt": "glas – Einblick",
+    "cap": "glas – Beispiel",
+    "cats": [
+      "glas"
+    ]
+  },
+  {
+    "src": "/assets/glas/glas-reel-05.webp",
+    "alt": "glas – Einblick",
+    "cap": "glas – Beispiel",
+    "cats": [
+      "glas"
+    ]
   }
 ]
