@@ -982,3 +982,72 @@ body[data-page="ueber"] .actions{
     margin-top: 14px;
   }
 }
+
+/* ================================
+LEISTUNGEN – LAYOUT/TYPE
+================================ */
+body.leistung-page main{
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+body.leistung-page .wrap{
+  padding-left: clamp(18px, 3vw, 28px);
+  padding-right: clamp(18px, 3vw, 28px);
+}
+
+body.leistung-page .leistung-card{
+  border: 1px solid rgba(64,62,65,.55);
+  background: rgba(26,26,31,.72);
+  border-radius: var(--radius);
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+
+body.leistung-page .leistung-hero{
+  background: linear-gradient(180deg, rgba(26,26,31,.82), rgba(26,26,31,.62));
+}
+
+body.leistung-page .leistung-section-head{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+body.leistung-page .leistung-section-head h2,
+body.leistung-page .leistung-section-head p{
+  margin: 0;
+}
+
+body.leistung-page .leistung-grid{
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+body.leistung-page .variant-grid{
+  gap: 16px;
+}
+
+body.leistung-page .leistung-cta{
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+body.leistung-page .leistung-hr{
+  height: 1px;
+  background: rgba(64,62,65,.45);
+  border-radius: 999px;
+  opacity: .75;
+}
+
+@media (max-width: 560px){
+  body.leistung-page .wrap{
+    padding-left: clamp(16px, 4vw, 22px);
+    padding-right: clamp(16px, 4vw, 22px);
+  }
+}
