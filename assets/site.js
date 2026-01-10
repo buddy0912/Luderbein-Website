@@ -265,9 +265,6 @@
   // Modal Cards
   // ---------------------------------
   function initModalCards() {
-    const cards = document.querySelectorAll("[data-lb-modal-card]");
-    if (!cards.length) return;
-
     let modal = document.querySelector(".lb-modal");
     if (!modal) {
       modal = document.createElement("div");
@@ -290,6 +287,7 @@
     const modalTitle = modal.querySelector(".lb-modal__title");
     const modalText = modal.querySelector(".lb-modal__text");
     const modalCta = modal.querySelector("[data-lb-modal-cta]");
+    let lastActive = null;
 
     function buildContactUrl(product, variant, format) {
       const params = new URLSearchParams();
@@ -301,6 +299,7 @@
     }
 
     function openModal(card) {
+      lastActive = card || document.activeElement;
       const img = card.getAttribute("data-modal-img");
       const alt = card.getAttribute("data-modal-alt") || "Detailbild";
       const title = card.getAttribute("data-modal-title") || card.querySelector("h3")?.textContent || "";
@@ -325,16 +324,22 @@
 
       modal.classList.add("is-open");
       document.body.style.overflow = "hidden";
+      modal.querySelector("[data-lb-modal-close]")?.focus();
     }
 
     function closeModal() {
       modal.classList.remove("is-open");
       document.body.style.overflow = "";
+      if (lastActive && typeof lastActive.focus === "function") {
+        lastActive.focus();
+      }
+      lastActive = null;
     }
 
     document.addEventListener("click", (e) => {
       const card = e.target.closest("[data-lb-modal-card]");
       if (card) {
+        e.preventDefault();
         openModal(card);
         return;
       }
