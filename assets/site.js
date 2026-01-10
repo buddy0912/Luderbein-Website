@@ -229,21 +229,36 @@
     indicator.innerHTML = '<div class="scroll-indicator__thumb"></div>';
     document.body.appendChild(indicator);
 
-    const thumb = indicator.querySelector(".scroll-indicator__thumb");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let ticking = false;
+    let pulseTimer = null;
 
     function update() {
       const doc = document.documentElement;
       const scrollTop = doc.scrollTop || document.body.scrollTop;
       const scrollHeight = doc.scrollHeight - doc.clientHeight;
       const progress = scrollHeight > 0 ? scrollTop / scrollHeight : 0;
-      const travel = indicator.clientHeight - thumb.offsetHeight;
-      const y = Math.max(0, Math.min(travel, travel * progress));
-      thumb.style.transform = `translateY(${y}px)`;
+      const clamped = Math.max(0, Math.min(1, progress));
+      indicator.style.setProperty("--laserY", clamped);
+      if (!prefersReducedMotion.matches) {
+        indicator.classList.add("is-scrolling");
+        if (pulseTimer) window.clearTimeout(pulseTimer);
+        pulseTimer = window.setTimeout(() => {
+          indicator.classList.remove("is-scrolling");
+        }, 140);
+      }
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(update);
     }
 
     update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
   }
 
   // ---------------------------------

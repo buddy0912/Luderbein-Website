@@ -543,44 +543,92 @@ footer a:hover { color: var(--text); }
    SCROLL INDICATOR (rechts)
 ================================ */
 .scroll-indicator {
+  --dot-size: 12px;
+  --laserY: 0;
   position: fixed;
   right: calc(10px + env(safe-area-inset-right, 0px));
   top: 18%;
   height: 54vh;
-  width: 8px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(64,62,65,.55);
-  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  width: 14px;
   pointer-events: none;
   z-index: 20;
 }
 
-.scroll-indicator__thumb {
-  width: 12px;
-  height: 12px;
-  margin-left: -2px;
-  border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, #ff4a55, var(--accent));
-  box-shadow:
-    0 0 8px rgba(219,16,33,.65),
-    0 0 20px rgba(219,16,33,.35);
+.scroll-indicator::before {
+  content: "";
   position: absolute;
-  left: 0;
+  left: 50%;
   top: 0;
+  width: 2px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+      to bottom,
+      rgba(88,84,90,.2),
+      rgba(88,84,90,.6),
+      rgba(88,84,90,.2)
+    );
+  box-shadow:
+    0 0 6px rgba(219,16,33,.25),
+    0 0 14px rgba(219,16,33,.15);
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.12));
+  opacity: .85;
+}
+
+.scroll-indicator__thumb {
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ff6a73, var(--accent));
+  box-shadow:
+    0 0 8px rgba(219,16,33,.75),
+    0 0 18px rgba(219,16,33,.45);
+  position: absolute;
+  left: 50%;
+  top: calc(var(--laserY) * (100% - var(--dot-size)));
+  transform: translateX(-50%);
+}
+
+.scroll-indicator.is-scrolling .scroll-indicator__thumb {
+  animation: laserPulse 220ms ease-out;
+}
+
+@keyframes laserPulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    box-shadow:
+      0 0 8px rgba(219,16,33,.75),
+      0 0 18px rgba(219,16,33,.45);
+  }
+  60% {
+    transform: translateX(-50%) scale(1.08);
+    box-shadow:
+      0 0 10px rgba(219,16,33,.9),
+      0 0 24px rgba(219,16,33,.6);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    box-shadow:
+      0 0 8px rgba(219,16,33,.75),
+      0 0 18px rgba(219,16,33,.45);
+  }
 }
 
 @media (max-width: 720px) {
   .scroll-indicator {
     right: calc(6px + env(safe-area-inset-right, 0px));
-    width: 6px;
+    width: 12px;
     height: 46vh;
     opacity: .8;
   }
   .scroll-indicator__thumb {
-    width: 10px;
-    height: 10px;
-    margin-left: -2px;
+    --dot-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-indicator.is-scrolling .scroll-indicator__thumb {
+    animation: none;
   }
 }
 
