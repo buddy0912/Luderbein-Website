@@ -1,4 +1,3 @@
-DATEI: /tools/luderbein-reels.py
 #!/usr/bin/env python3
 """
 LUDERBEIN – One-Button Feed Builder (Werkstatt + Kategorien)

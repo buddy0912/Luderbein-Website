@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "src": "/assets/acryl/acryl-reel-01.webp",
+    "alt": "acryl – Einblick",
+    "cap": "acryl – Beispiel",
+    "cats": [
+      "acryl"
+    ]
+  },
+  {
+    "src": "/assets/acryl/acryl-reel-02.webp",
+    "alt": "acryl – Einblick",
+    "cap": "acryl – Beispiel",
+    "cats": [
+      "acryl"
+    ]
+  },
+  {
+    "src": "/assets/acryl/acryl-reel-03.webp",
+    "alt": "acryl – Einblick",
+    "cap": "acryl – Beispiel",
+    "cats": [
+      "acryl"
+    ]
+  }
+]
