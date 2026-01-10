@@ -67,6 +67,29 @@ html {
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 18px; }
 
 /* ================================
+   GLOBAL LINKS (CONTENT)
+================================ */
+main a:not(.btn):not(.button),
+main a:not(.btn):not(.button):visited {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+main a:not(.btn):not(.button):hover,
+main a:not(.btn):not(.button):focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: rgba(219,16,33,.7);
+  text-underline-offset: 3px;
+}
+
+main a:not(.btn):not(.button):focus-visible {
+  outline: 2px solid rgba(219,16,33,.45);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ================================
    LASER SCROLL INDICATOR
 ================================ */
 .laser-scroll {
