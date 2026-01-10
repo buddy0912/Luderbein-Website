@@ -374,6 +374,7 @@
     as.forEach((a) => {
       const raw = normHref(a.getAttribute("href"));
       if (!raw) return;
+      const label = (a.textContent || "").toString().trim();
 
       // 1) Custom: alte Links -> neue Seite
       if (raw.startsWith("/kontakt/") && raw.includes("p=Custom")) {
@@ -398,6 +399,13 @@
       // 3) Glas: alte Anker -> neue Seite
       if (raw.startsWith("/leistungen/") && raw.includes("#glas")) {
         a.setAttribute("href", TARGET.glas);
+        return;
+      }
+
+      // 3b) Glas: alter Label "Glas (kommt)" -> neue Seite + neues Label
+      if (label.toLowerCase().startsWith("glas") && label.toLowerCase().includes("kommt")) {
+        a.setAttribute("href", TARGET.glas);
+        a.textContent = "Glas";
         return;
       }
     });
