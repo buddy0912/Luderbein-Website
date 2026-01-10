@@ -36,6 +36,34 @@ body {
   line-height: 1.55;
 }
 
+/* ================================
+   SCROLLBAR (Laserstrahl)
+================================ */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(219,16,33,.55) rgba(14,6,11,.7);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(14,6,11,.75);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(219,16,33,.75), rgba(255,8,13,.45));
+  border-radius: 999px;
+  border: 2px solid rgba(14,6,11,.9);
+  box-shadow: inset 0 0 0 1px rgba(219,16,33,.25);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(219,16,33,.9), rgba(255,8,13,.55));
+}
+
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 18px; }
 
 /* ================================
@@ -190,6 +218,50 @@ header {
 .navicon::after { bottom: 0; }
 
 /* ================================
+   LANDING BANNER
+================================ */
+.lb-banner {
+  display: none;
+  position: sticky;
+  top: 60px;
+  z-index: 40;
+  margin: 10px auto 0;
+  max-width: var(--max);
+  padding: 0 18px;
+}
+
+.lb-banner.is-visible { display: block; }
+
+.lb-banner__inner {
+  border: 1px solid rgba(219,16,33,.35);
+  background: linear-gradient(180deg, rgba(44,24,27,.85), rgba(14,6,11,.92));
+  border-radius: 16px;
+  padding: 10px 44px 10px 14px;
+  color: rgba(210,207,206,.92);
+  font-size: .92rem;
+  line-height: 1.4;
+  position: relative;
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+
+.lb-banner__inner strong { color: var(--text); font-weight: 800; }
+.lb-banner__inner p { margin: 0 0 6px; }
+.lb-banner__inner p:last-child { margin-bottom: 0; }
+
+.lb-banner__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(64,62,65,.55);
+  background: rgba(14,6,11,.35);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ================================
    HERO
 ================================ */
 main { padding: 28px 0 60px; }
@@ -272,13 +344,34 @@ h1 {
 
 .thumb a { display: block; width: 100%; height: 100%; color: inherit; text-decoration: none; }
 
+.thumb--soon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 30% 20%, rgba(219,16,33,.15), rgba(14,6,11,.6)),
+    rgba(26,26,31,.9);
+  border-style: dashed;
+}
+
+.thumb__soon {
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(210,207,206,.85);
+}
+
+.productcard--soon .actions .btn {
+  opacity: .6;
+  pointer-events: none;
+}
+
 .thumblabel {
   font-size: .78rem;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: rgba(210,207,206,.72);
-  background: rgba(14,6,11,.40);
-  border: 1px solid rgba(64,62,65,.55);
+  color: rgba(255,255,255,.92);
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,255,255,.18);
   border-radius: 999px;
   padding: 6px 10px;
   position: absolute;
@@ -340,6 +433,23 @@ h1 {
 .btn:hover { transform: translateY(-1px); border-color: rgba(219,16,33,.55); }
 
 /* ================================
+   BANNER
+================================ */
+.status-banner {
+  margin: 18px 0 6px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(64,62,65,.65);
+  background: rgba(26,26,31,.78);
+  box-shadow: inset 0 0 0 1px rgba(219,16,33,.12);
+}
+
+.status-banner strong {
+  color: var(--text);
+  letter-spacing: .02em;
+}
+
+/* ================================
    FOOTER
 ================================ */
 footer {
@@ -358,6 +468,21 @@ footer a:hover { color: var(--text); }
   gap: 14px;
   flex-wrap: wrap;
 }
+
+.foot__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.foot__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.foot__stack strong { color: var(--text); }
 
 .small { font-size: .92rem; }
 
@@ -412,4 +537,114 @@ footer a:hover { color: var(--text); }
 .thumbslider img.is-on,
 .thumbslider img:first-child {
   opacity: 1;
+}
+
+/* ================================
+   SCROLL INDICATOR (rechts)
+================================ */
+.scroll-indicator {
+  position: fixed;
+  right: calc(10px + env(safe-area-inset-right, 0px));
+  top: 18%;
+  height: 54vh;
+  width: 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(64,62,65,.55);
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.scroll-indicator__thumb {
+  width: 12px;
+  height: 12px;
+  margin-left: -2px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #ff4a55, var(--accent));
+  box-shadow:
+    0 0 8px rgba(219,16,33,.65),
+    0 0 20px rgba(219,16,33,.35);
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+@media (max-width: 720px) {
+  .scroll-indicator {
+    right: calc(6px + env(safe-area-inset-right, 0px));
+    width: 6px;
+    height: 46vh;
+    opacity: .8;
+  }
+  .scroll-indicator__thumb {
+    width: 10px;
+    height: 10px;
+    margin-left: -2px;
+  }
+}
+
+/* ================================
+   MODAL (Kacheln)
+================================ */
+.lb-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(6,6,8,.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 80;
+}
+
+.lb-modal.is-open { display: flex; }
+
+.lb-modal__panel {
+  width: min(720px, 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(64,62,65,.65);
+  background: rgba(14,6,11,.95);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.lb-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(64,62,65,.65);
+  background: rgba(42,45,51,.18);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.lb-modal__img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(64,62,65,.55);
+  background: rgba(0,0,0,.35);
+  margin-bottom: 14px;
+}
+
+.lb-modal__title {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+}
+
+.lb-modal__text {
+  margin: 0 0 14px;
+  color: var(--muted);
+}
+
+[data-lb-modal-card] { cursor: pointer; }
+
+[data-lb-modal-card]:focus-visible {
+  outline: 2px solid rgba(219,16,33,.55);
+  outline-offset: 2px;
 }

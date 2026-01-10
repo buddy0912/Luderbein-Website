@@ -176,6 +176,81 @@
       color: rgba(210,207,206,.92);
     }
 
+    .cfg .cart {
+      margin-top: 16px;
+      border-top: 1px solid rgba(64,62,65,.55);
+      padding-top: 16px;
+    }
+
+    .cfg .cartlist {
+      display: grid;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .cfg .cartitem {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.16);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .cfg .cartitem__head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cfg .cartitem__meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .cfg .cartitem__qty {
+      display: flex;
+      flex-direction: column;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .cfg .cartitem__qty input {
+      max-width: 100px;
+      margin-top: 6px;
+    }
+
+    .cfg .cartitem__price {
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .cfg .cartitem__details {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .cfg .cart-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .cfg .linkbtn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+      font-size: .9rem;
+    }
+
+    .cfg .linkbtn:hover { color: var(--text); }
+
     @media (min-width: 760px) {
       .cfg .fields { grid-template-columns: 1fr 1fr; }
       .cfg .fields .full { grid-column: 1 / -1; }
@@ -249,13 +324,13 @@
     <span class="badge"><i></i> Kalkulator</span>
     <h1>Preis grob kalkulieren. Dann sauber anfragen.</h1>
     <p class="lead">
-      Schiefer &amp; Metall: Auswahl bauen → Preis/Staffel sehen → per WhatsApp oder E-Mail abschicken.
+      Schiefer &amp; Metall: Auswahl bauen → Preis/Staffel sehen → zur Sammelanfrage hinzufügen → gesammelt abschicken.
       <span class="small muted">Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen.</span>
     </p>
 
     <div class="cfg" data-kalk>
       <h2>Konfigurator</h2>
-      <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → abschicken.</p>
+      <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
 
       <div class="step" aria-label="Schritt 1 – Material">
         <p class="steptitle">Schritt 1 – Material</p>
@@ -351,13 +426,35 @@
         </div>
 
         <div class="cta">
-          <a class="btn primary" data-k-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
-          <a class="btn" data-k-mail data-disabled="1" href="#">E-Mail</a>
+          <button class="btn primary" type="button" data-k-add data-disabled="1">Zur Sammelanfrage hinzufügen</button>
         </div>
 
         <p class="small muted" style="margin-top:10px;">
           Wenn „Auf Anfrage“ erscheint: Menge/Deadline/Motiv kurz dazuschreiben – ich antworte schnell.
         </p>
+
+        <div class="cart" data-k-cart>
+          <div class="section-head">
+            <h3>Mach mir ein Angebot</h3>
+            <p class="small muted">Sammelanfrage senden (mehrere Positionen in einer Nachricht).</p>
+          </div>
+
+          <div class="cartlist" data-k-cart-list></div>
+          <p class="small muted" data-k-cart-empty>Noch keine Positionen gesammelt.</p>
+
+          <div class="cart-actions">
+            <button class="linkbtn" type="button" data-k-cart-clear>Sammelanfrage leeren</button>
+          </div>
+
+          <div class="cta">
+            <a class="btn primary" data-k-cart-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
+            <a class="btn" data-k-cart-mail data-disabled="1" href="#">E-Mail</a>
+          </div>
+
+          <p class="small muted" style="margin-top:10px;">
+            Kalkulator gibt Richtung. Verbindlich wird’s erst nach meiner Bestätigung (Preis &amp; Motiv).
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -427,8 +524,12 @@
     const $upWrap  = el("[data-k-upgrades]", $root);
     const $sum     = el("[data-k-summary]", $root);
 
-    const $wa      = el("[data-k-wa]", $root);
-    const $mail    = el("[data-k-mail]", $root);
+    const $add     = el("[data-k-add]", $root);
+    const $cartList = el("[data-k-cart-list]", $root);
+    const $cartEmpty = el("[data-k-cart-empty]", $root);
+    const $cartClear = el("[data-k-cart-clear]", $root);
+    const $cartWa  = el("[data-k-cart-wa]", $root);
+    const $cartMail = el("[data-k-cart-mail]", $root);
 
     const phoneWA = "491725925858";
     const mailTo  = "luderbein_gravur@icloud.com";
@@ -447,9 +548,11 @@
     const clean = (s) => (s || "").toString().trim();
 
     function setDisabled(a, on) {
+      if (!a) return;
       a.dataset.disabled = on ? "1" : "0";
       if (on) a.setAttribute("aria-disabled", "true");
       else a.removeAttribute("aria-disabled");
+      if (a.tagName === "BUTTON") a.disabled = !!on;
     }
 
     function tierUnit(tiers, qty) {
@@ -549,6 +652,147 @@
 
       upgrades: new Set()
     };
+
+    const CART_KEY = "lb_kalk_cart_v1";
+    let cart = [];
+
+    function loadCart() {
+      try {
+        const raw = localStorage.getItem(CART_KEY);
+        cart = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        cart = [];
+      }
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function formatTitle(item) {
+      const parts = [item.material, item.variant, item.format].filter(Boolean);
+      return parts.join(" • ");
+    }
+
+    function buildCartMessage() {
+      if (!cart.length) return "";
+
+      const lines = ["Hi Luderbein, ich möchte folgende Sammelanfrage stellen:", ""];
+
+      cart.forEach((item, i) => {
+        lines.push(`${i + 1}) ${formatTitle(item)}`);
+        lines.push(`- Menge: ${item.qty}`);
+        if (item.color) lines.push(`- Farbe: ${item.color}`);
+        if (item.engraving) lines.push(`- Gravur: ${item.engraving}`);
+        if (item.motif) lines.push(`- Motiv: ${item.motif}`);
+        if (item.upgrades && item.upgrades.length) lines.push(`- Upgrades: ${item.upgrades.join(", ")}`);
+        lines.push(`- Versand: ${item.shipping}`);
+        lines.push(`- Preis: ${item.priceText}`);
+        if (item.note) lines.push(`- Notiz: ${item.note}`);
+        lines.push("");
+      });
+
+      lines.push("Kalkulator gibt Richtung. Verbindlich wird’s erst nach meiner Bestätigung (Preis & Motiv).");
+
+      return lines.join("\n");
+    }
+
+    function updateCartCtas() {
+      const hasItems = cart.length > 0;
+      const msg = buildCartMessage();
+      const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
+      const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent("Sammelanfrage – Luderbein")}&body=${encodeURIComponent(msg)}`;
+
+      if ($cartWa) $cartWa.href = hasItems ? waUrl : "#";
+      if ($cartMail) $cartMail.href = hasItems ? mailUrl : "#";
+      setDisabled($cartWa, !hasItems);
+      setDisabled($cartMail, !hasItems);
+    }
+
+    function renderCart() {
+      if (!$cartList || !$cartEmpty) return;
+
+      $cartList.innerHTML = "";
+      const hasItems = cart.length > 0;
+      $cartEmpty.style.display = hasItems ? "none" : "block";
+
+      cart.forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "cartitem";
+        card.dataset.itemId = item.id;
+
+        const head = document.createElement("div");
+        head.className = "cartitem__head";
+
+        const titleWrap = document.createElement("div");
+        const title = document.createElement("strong");
+        title.textContent = `${item.material}${item.variant ? ` – ${item.variant}` : ""}`;
+        const subtitle = document.createElement("div");
+        subtitle.className = "small muted";
+        subtitle.textContent = item.format ? `Format: ${item.format}` : "Format: —";
+        titleWrap.appendChild(title);
+        titleWrap.appendChild(subtitle);
+
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "linkbtn";
+        remove.textContent = "Entfernen";
+        remove.dataset.removeId = item.id;
+
+        head.appendChild(titleWrap);
+        head.appendChild(remove);
+
+        const meta = document.createElement("div");
+        meta.className = "cartitem__meta";
+
+        const qtyWrap = document.createElement("label");
+        qtyWrap.className = "cartitem__qty";
+        qtyWrap.textContent = "Menge";
+        const qtyInput = document.createElement("input");
+        qtyInput.type = "number";
+        qtyInput.min = "1";
+        qtyInput.step = "1";
+        qtyInput.value = item.qty;
+        qtyInput.dataset.qtyId = item.id;
+        qtyWrap.appendChild(qtyInput);
+
+        const price = document.createElement("div");
+        price.className = "cartitem__price";
+        price.textContent = `Preis: ${item.priceText}`;
+
+        meta.appendChild(qtyWrap);
+        meta.appendChild(price);
+
+        const details = document.createElement("div");
+        details.className = "cartitem__details";
+        const detailLines = [];
+        if (item.color || item.engraving || item.motif) {
+          detailLines.push(
+            [item.color && `Farbe: ${item.color}`, item.engraving && `Gravur: ${item.engraving}`, item.motif && `Motiv: ${item.motif}`]
+              .filter(Boolean)
+              .join(" · ")
+          );
+        }
+        if (item.upgrades && item.upgrades.length) detailLines.push(`Upgrades: ${item.upgrades.join(", ")}`);
+        detailLines.push(`Versand: ${item.shipping}`);
+        if (item.note) detailLines.push(`Notiz: ${item.note}`);
+        details.textContent = detailLines.join(" | ");
+
+        card.appendChild(head);
+        card.appendChild(meta);
+        card.appendChild(details);
+
+        $cartList.appendChild(card);
+      });
+
+      updateCartCtas();
+    }
+
+    let lastItem = null;
 
     function onMaterial(matKey) {
       state.matKey = matKey;
@@ -964,52 +1208,29 @@
 
       $sum.innerHTML = summaryLines.join("<br>");
 
-      const canSend = ok && !onRequest;
+      const canAdd = ok;
+      setDisabled($add, !canAdd);
 
-      const msgLines = [
-        "Hi Luderbein, ich möchte anfragen:",
-        "",
-        `- Material: ${matLabel}`,
-        `- Ausführung: ${varLabel}`,
-        `- Format: ${fmtLabel}`,
-      ];
+      const priceTotal = (!onRequest && ok) ? m(total) : null;
+      const priceText = priceTotal != null ? eur(priceTotal) : "Auf Anfrage";
+      const unitPrice = priceTotal != null && state.qty ? m(priceTotal / state.qty) : null;
 
-      if (isMetallBottle) {
-        msgLines.push(`- Farbe: ${state.color || ""}`);
-        msgLines.push(`- Gravur: ${state.engraving || ""}`);
-        msgLines.push(`- Motiv: ${state.motif || ""}`);
-      }
-
-      msgLines.push(`- Stückzahl: ${state.qty || ""}`);
-      msgLines.push(`- Versand: ${shipText}`);
-
-      if (upgradesList.length) msgLines.push(`- Upgrades: ${upgradesList.join(", ")}`);
-      else msgLines.push(`- Upgrades: keine`);
-
-      if (!onRequest && ok) {
-        msgLines.push(`- Zwischensumme: ${eur(subtotal)}`);
-        msgLines.push(`- Versand: ${shipRes.price === 0 ? eur(0) : eur(shipRes.price || 0)}`);
-        msgLines.push(`- Gesamt: ${eur(total)}`);
-      } else {
-        msgLines.push("- Preis: Auf Anfrage");
-      }
-
-      if (noteText) {
-        msgLines.push(`- Notiz: ${noteText}`);
-      }
-
-      const msg = msgLines.join("\n");
-      const waUrl = `https://wa.me/${phoneWA}?text=${encodeURIComponent(msg)}`;
-
-      const subject = `Anfrage – ${matLabel} – ${varLabel}`;
-      const mailBody = msg.replace(/\n/g, "%0D%0A");
-      const mailUrl = `mailto:${mailTo}?subject=${encodeURIComponent(subject)}&body=${mailBody}`;
-
-      $wa.href = waUrl;
-      $mail.href = mailUrl;
-
-      setDisabled($wa, !canSend);
-      setDisabled($mail, !canSend);
+      lastItem = canAdd ? {
+        id: "",
+        material: matLabel,
+        variant: varLabel,
+        format: fmtLabel,
+        qty: state.qty,
+        shipping: shipText,
+        upgrades: upgradesList,
+        note: noteText,
+        color: state.color || "",
+        engraving: state.engraving || "",
+        motif: state.motif || "",
+        priceTotal,
+        unitPrice,
+        priceText
+      } : null;
     }
 
     $variant.addEventListener("change", onVariant);
@@ -1031,6 +1252,57 @@
         });
       });
     }
+
+    if ($add) {
+      $add.addEventListener("click", () => {
+        if (!lastItem) return;
+        const item = {
+          ...lastItem,
+          id: `lb-${Date.now()}-${Math.floor(Math.random() * 10000)}`
+        };
+        cart.push(item);
+        saveCart();
+        renderCart();
+      });
+    }
+
+    if ($cartClear) {
+      $cartClear.addEventListener("click", () => {
+        cart = [];
+        saveCart();
+        renderCart();
+      });
+    }
+
+    if ($cartList) {
+      $cartList.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-remove-id]");
+        if (!btn) return;
+        const id = btn.dataset.removeId;
+        cart = cart.filter((item) => item.id !== id);
+        saveCart();
+        renderCart();
+      });
+
+      $cartList.addEventListener("change", (e) => {
+        const input = e.target.closest("input[data-qty-id]");
+        if (!input) return;
+        const id = input.dataset.qtyId;
+        const item = cart.find((x) => x.id === id);
+        if (!item) return;
+        const nextQty = Math.max(1, Number(input.value || 1));
+        item.qty = nextQty;
+        if (item.unitPrice != null) {
+          item.priceTotal = m(item.unitPrice * nextQty);
+          item.priceText = eur(item.priceTotal);
+        }
+        saveCart();
+        renderCart();
+      });
+    }
+
+    loadCart();
+    renderCart();
 
     buildMaterialChips();
 
