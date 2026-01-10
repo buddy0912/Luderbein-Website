@@ -1,14 +1,21 @@
+DATEI: /tools/luderbein-reels.py
 #!/usr/bin/env python3
 """
 LUDERBEIN – One-Button Feed Builder (Werkstatt + Kategorien)
+
+NEU: Werkstatt-Feed kann automatisch aus den Kategorie-Ordnern gebaut werden,
+ohne doppelte Ablage in incoming/werkstatt/.
+
+- Wenn incoming/werkstatt/** existiert, wird es zusätzlich genutzt (optional, für kuratierte Extras).
+- Wenn es NICHT existiert, nimmt Werkstatt alles aus incoming/<kategorie>/** (gemischt, stabil-random).
 
 Fix: Erzeugt die erwarteten JSON-Dateien IMMER (auch wenn noch keine Bilder da sind),
 damit der GitHub Action "link_check" nicht wegen fehlender Targets scheitert.
 
 Input (lokal, NICHT committen/deployen):
   ../luderbein-incoming/
-    werkstatt/** (Bilder für Werkstatt-Reel)
-    metall/**, holz/**, schiefer/** ... (Bilder für Leistungs-Reels)
+    metall/**, holz/**, schiefer/** ... (Bilder für Leistungen)
+    optional: werkstatt/** (zusätzliche/kuratierte Werkstattbilder)
 
 Output (ins Repo, wird deployed):
   assets/reel-werkstatt.json                 (IMMER vorhanden, notfalls [])
@@ -23,6 +30,7 @@ Requirements:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from dataclasses import dataclass
@@ -161,37 +169,68 @@ def write_json(path: Path, data: List[Dict]) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def stable_mix_key(s: str) -> str:
+    # stable "random-looking" ordering key
+    return hashlib.sha1(s.encode("utf-8")).hexdigest()
+
+
 def build_werkstatt(
     incoming_root: Path,
     assets_root: Path,
     quality: int,
     clean: bool,
+    max_items: int,
 ) -> Tuple[int, Path]:
     """
-    Always writes: assets/reel-werkstatt.json  (empty list if no images)
-    If images exist, also writes: assets/reel/reel-XX.webp
+    Always writes assets/reel-werkstatt.json (empty list if none).
+
+    Sources:
+    - If incoming/werkstatt exists: include those images (cats from subfolders)
+    - PLUS: include images from each category folder incoming/<cat>/** (cats include <cat> + subfolders)
+      -> no double sorting needed.
     """
-    src_root = incoming_root / "werkstatt"
     out_img_dir = assets_root / "reel"
     out_json = assets_root / "reel-werkstatt.json"
-
     ensure_dir(out_img_dir)
 
     if clean:
         clean_prefix(out_img_dir, re.compile(r"^reel-\d{2}\.webp$"))
         out_json.unlink(missing_ok=True)
 
-    images: List[Path] = []
-    if src_root.exists():
-        images = sorted([p for p in src_root.rglob("*") if is_image(p)], key=lambda p: str(p).lower())
+    sources: List[Tuple[str, Path, List[str]]] = []
+
+    # 1) Optional incoming/werkstatt/**
+    werk_src_root = incoming_root / "werkstatt"
+    if werk_src_root.exists():
+        for p in sorted([x for x in werk_src_root.rglob("*") if is_image(x)], key=lambda x: str(x).lower()):
+            rel = p.relative_to(werk_src_root)
+            cats = cats_from_relative(rel) or ["werkstatt"]
+            sources.append(("werkstatt", p, cats))
+
+    # 2) Categories incoming/<cat>/**
+    if incoming_root.exists():
+        for cat_dir in sorted([d for d in incoming_root.iterdir() if d.is_dir() and d.name.lower() != "werkstatt"], key=lambda d: d.name.lower()):
+            cat_slug = slug(cat_dir.name)
+            imgs = list_category_images(cat_dir)
+            for img in imgs:
+                rel = img.relative_to(cat_dir)
+                extra = cats_from_relative(rel)  # subfolders as tags
+                cats = [cat_slug] + [c for c in extra if c != cat_slug]
+                sources.append((cat_slug, img, cats))
+
+    # stable mixed order
+    sources_sorted = sorted(
+        sources,
+        key=lambda t: stable_mix_key(f"{t[0]}::{t[1].as_posix()}")
+    )
+
+    if max_items > 0:
+        sources_sorted = sources_sorted[:max_items]
 
     items: List[Dict] = []
-    for i, src in enumerate(images, start=1):
+    for i, (_src_group, src_path, cats) in enumerate(sources_sorted, start=1):
         n = f"{i:02d}"
-        rel = src.relative_to(src_root)
-        cats = cats_from_relative(rel) or ["werkstatt"]
-
-        with Image.open(src) as im:
+        with Image.open(src_path) as im:
             out_img = render_variant(im, SPEC_REEL)
         out_path = out_img_dir / f"reel-{n}.webp"
         save_webp(out_img, out_path, quality=quality)
@@ -203,7 +242,6 @@ def build_werkstatt(
             "cats": cats
         })
 
-    # IMPORTANT: always write JSON (even if empty)
     write_json(out_json, items)
     return len(items), out_json
 
@@ -215,10 +253,6 @@ def build_category_assets(
     quality: int,
     clean: bool,
 ) -> Dict[str, int | str]:
-    """
-    Creates cover + reel + thumbs for category folder if images exist.
-    Does NOT write reel-<cat>.json here (handled separately).
-    """
     cat = slug(cat_name)
     out_dir = assets_root / cat
     ensure_dir(out_dir)
@@ -262,10 +296,6 @@ def build_category_reel_json(
     assets_root: Path,
     cat_display: str,
 ) -> Path:
-    """
-    Always writes assets/reel-<cat>.json.
-    If category images exist in assets/<cat>/<cat>-reel-XX.webp, list them; else [].
-    """
     out_json = assets_root / f"reel-{cat_slug}.json"
     out_dir = assets_root / cat_slug
     items: List[Dict] = []
@@ -291,6 +321,7 @@ def main() -> int:
     ap.add_argument("--quality", type=int, default=82, help="WebP quality (default: 82)")
     ap.add_argument("--clean", action="store_true", help="Remove previously generated webp/json for processed targets")
     ap.add_argument("--category-reels", action="store_true", help="Write /assets/reel-<cat>.json for each category (always, even empty)")
+    ap.add_argument("--werkstatt-max", type=int, default=0, help="Max items for Werkstatt reel (0 = all)")
     args = ap.parse_args()
 
     incoming_root = Path(args.src)
@@ -301,7 +332,7 @@ def main() -> int:
         return 2
 
     # Werkstatt (always writes JSON)
-    w_count, w_json = build_werkstatt(incoming_root, assets_root, args.quality, args.clean)
+    w_count, w_json = build_werkstatt(incoming_root, assets_root, args.quality, args.clean, args.werkstatt_max)
     print(f"[OK] Werkstatt JSON: {w_json.as_posix()} (items: {w_count})")
 
     # Categories
@@ -322,12 +353,7 @@ def main() -> int:
         total += int(res["count"])
 
         if args.category_reels:
-            # IMPORTANT: always write reel-<cat>.json (even if empty)
             build_category_reel_json(str(res["category"]), assets_root, cat_dir.name)
-
-    if args.category_reels and not cats:
-        # Even if there are no incoming categories, still nothing to do. (Werkstatt JSON already exists.)
-        pass
 
     print(f"[DONE] Kategorie-Assets verarbeitet: {total}")
     if args.category_reels:
