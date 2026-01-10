@@ -387,6 +387,23 @@ h1 {
   flex-direction: column;
 }
 
+.tile.is-preview { position: relative; }
+
+.tile.is-preview::after {
+  content: "KOMMT";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--text);
+  background: rgba(14,6,11,0.55);
+  box-shadow: 0 0 10px rgba(219,16,33,0.25);
+  letter-spacing: 0.06em;
+}
+
 .productcard:hover {
   border-color: rgba(219,16,33,.45);
   box-shadow: 0 18px 52px rgba(219,16,33,.07), var(--shadow);
