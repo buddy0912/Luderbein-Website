@@ -12,8 +12,112 @@
     /* =========================================================
        KONTAKT – ANFRAGE-BUILDER (isoliert, safe)
        ========================================================= */
-    .cfg {
+    .kontakt-hero {
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    .kontakt-card {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      max-width: 65ch;
+      width: 100%;
+    }
+    .kontakt-card h2,
+    .kontakt-card h3 { margin-top: 0; }
+    .kontakt-card p { margin-top: 0; }
+
+    .kontakt-hero .kontakt-card {
+      max-width: 70ch;
+    }
+    .kontakt-hero .lead { margin-bottom: 16px; }
+    .kontakt-hero .cta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .kontakt-hero .cta-row .btn { flex: 1 1 170px; }
+    .kontakt-hero .hero-note { margin: 8px 0 0; }
+
+    .builder-card {
+      max-width: none;
+      padding: 20px;
+    }
+    .builder-steps {
+      display: grid;
+      gap: 16px;
+    }
+    .builder-summary {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.20);
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .builder-summary strong { color: var(--text); }
+    .builder-cta {
+      position: sticky;
+      bottom: 0;
+      background: rgba(26,26,31,.92);
+      padding: 12px 0 6px;
+      border-top: 1px solid rgba(64,62,65,.55);
+      margin-top: 12px;
+    }
+
+    .kontakt-grid {
+      display: grid;
+      gap: 14px;
+    }
+    .kontakt-grid .kontakt-card { max-width: none; }
+    .kontakt-tip {
       margin-top: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.20);
+      padding: 12px 14px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .copyblock {
+      font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+      background: rgba(14,6,11,.45);
+      border: 1px solid rgba(64,62,65,.55);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: .95rem;
+    }
+
+    .directlinks .kontakt-card { max-width: none; }
+    .directlinks-list {
+      display: grid;
+      gap: 10px;
+    }
+    .directlinks-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      align-items: center;
+      font-size: .98rem;
+    }
+    .directlinks-row span { color: var(--muted); }
+
+    @media (min-width: 760px) {
+      .kontakt-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 620px) {
+      .directlinks-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    .cfg {
       border: 1px solid rgba(64,62,65,.55);
       background: rgba(26,26,31,.62);
       border-radius: 18px;
@@ -79,17 +183,6 @@
       outline: none;
     }
     .cfg textarea { min-height: 84px; resize: vertical; }
-
-    .cfg .summary {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(42,45,51,.20);
-      color: var(--muted);
-      font-size: .95rem;
-    }
-    .cfg .summary strong { color: var(--text); }
 
     .cfg .cta {
       display: flex;
@@ -186,70 +279,82 @@
   </header>
 
   <main class="wrap" id="content">
-    <section class="hero">
-      <span class="badge"><i></i> Kontakt</span>
-      <h1>Kurzer Draht.</h1>
-      <p class="lead">
-        Kein Shop-Klickirrsinn. Du stellst dir deine Anfrage zusammen → WhatsApp oder Mail → fertig.
-        Idee, Skizze oder Foto dazu? Perfekt. Ich sag dir schnell, ob’s taugt und was sinnvoll ist.
-      </p>
+    <section class="hero kontakt-hero">
+      <div class="kontakt-card">
+        <span class="badge"><i></i> Kontakt</span>
+        <h1>Kurzer Draht.</h1>
+        <p class="lead">
+          Kein Shop-Klickirrsinn: Anfrage zusammenstellen, per WhatsApp oder Mail raus – fertig.
+          Idee, Skizze oder Foto? Perfekt. Ich sag dir schnell, ob’s taugt und was sinnvoll ist.
+        </p>
 
-      <div class="cfg" data-contact-config>
-        <h2>Anfrage-Builder</h2>
-        <p class="hint">1) Material wählen → 2) Variante/Format → 3) abschicken. (Format wird erst nach Material sichtbar.)</p>
-
-        <div class="step" aria-label="Schritt 1 – Material">
-          <p class="steptitle">Schritt 1 – Material</p>
-          <div class="chips" role="radiogroup" aria-label="Material auswählen">
-            <label class="chip"><input type="radio" name="cfg-mat" value="Schiefer"><span><b>Schiefer</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Metall"><span><b>Metall</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Holz"><span><b>Holz</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Acryl"><span><b>Acryl</b></span></label>
-            <label class="chip"><input type="radio" name="cfg-mat" value="Custom"><span><b>Custom</b></span></label>
-          </div>
+        <div class="cta-row">
+          <a class="btn primary" href="https://wa.me/491725925858" rel="noopener">WhatsApp</a>
+          <a class="btn" href="mailto:luderbein_gravur@icloud.com">E-Mail</a>
         </div>
+        <p class="small muted hero-note">Kein Shop. Du fragst an – ich antworte sauber.</p>
+      </div>
+    </section>
 
-        <div class="step" data-cfg-steps hidden aria-label="Schritt 2 und 3">
-          <p class="steptitle">Schritt 2 – Variante</p>
-          <div class="fields">
-            <div>
-              <label for="cfgVariant">Variante (Auswahl)</label>
-              <select id="cfgVariant" data-cfg-variant aria-label="Variante auswählen">
-                <option value="">— auswählen —</option>
-              </select>
-            </div>
-            <div>
-              <label for="cfgVariantCustom">Variante (frei, optional)</label>
-              <input id="cfgVariantCustom" data-cfg-variant-custom type="text" placeholder="z. B. Hundemarke, Plakette, Schild..." autocomplete="off">
-            </div>
-          </div>
+    <section class="section">
+      <div class="cfg builder-card kontakt-card" data-contact-config>
+        <h2>Anfrage-Builder</h2>
+        <p class="hint">1) Material → 2) Variante/Format → 3) Abschicken</p>
 
-          <p class="steptitle" style="margin-top:14px;">Schritt 3 – Größe / Format</p>
-          <div class="fields">
-            <div>
-              <label for="cfgFormat">Format (Auswahl)</label>
-              <select id="cfgFormat" data-cfg-format aria-label="Format auswählen">
-                <option value="">— auswählen —</option>
-              </select>
-            </div>
-            <div>
-              <label for="cfgFormatCustom">Format (frei, optional)</label>
-              <input id="cfgFormatCustom" data-cfg-format-custom type="text" placeholder="z. B. 12mm rund, 30×20, nach Maß..." autocomplete="off">
-            </div>
-
-            <div class="full">
-              <label for="cfgNote">Notiz (optional)</label>
-              <textarea id="cfgNote" data-cfg-note placeholder="Was soll drauf? Text, Symbol, Stil, Einsatz (Outdoor?), Deadline …"></textarea>
+        <div class="builder-steps">
+          <div class="step" aria-label="Schritt 1 – Material">
+            <p class="steptitle">Schritt 1 – Material</p>
+            <div class="chips" role="radiogroup" aria-label="Material auswählen">
+              <label class="chip"><input type="radio" name="cfg-mat" value="Schiefer"><span><b>Schiefer</b></span></label>
+              <label class="chip"><input type="radio" name="cfg-mat" value="Metall"><span><b>Metall</b></span></label>
+              <label class="chip"><input type="radio" name="cfg-mat" value="Holz"><span><b>Holz</b></span></label>
+              <label class="chip"><input type="radio" name="cfg-mat" value="Acryl"><span><b>Acryl</b></span></label>
+              <label class="chip"><input type="radio" name="cfg-mat" value="Custom"><span><b>Custom</b></span></label>
             </div>
           </div>
 
-          <div class="summary" aria-live="polite">
-            <strong>Auswahl:</strong> <span data-cfg-summary>Bitte Material wählen.</span>
-          </div>
+          <div class="step" data-cfg-steps hidden aria-label="Schritt 2 und 3">
+            <p class="steptitle">Schritt 2 – Variante</p>
+            <div class="fields">
+              <div>
+                <label for="cfgVariant">Variante (Auswahl)</label>
+                <select id="cfgVariant" data-cfg-variant aria-label="Variante auswählen">
+                  <option value="">— auswählen —</option>
+                </select>
+              </div>
+              <div>
+                <label for="cfgVariantCustom">Variante (frei, optional)</label>
+                <input id="cfgVariantCustom" data-cfg-variant-custom type="text" placeholder="z. B. Hundemarke, Plakette, Schild..." autocomplete="off">
+              </div>
+            </div>
 
-          <div class="cta">
-            <a class="btn primary" data-cfg-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
-            <a class="btn" data-cfg-mail data-disabled="1" href="#">E-Mail</a>
+            <p class="steptitle" style="margin-top:14px;">Schritt 3 – Größe / Format</p>
+            <div class="fields">
+              <div>
+                <label for="cfgFormat">Format (Auswahl)</label>
+                <select id="cfgFormat" data-cfg-format aria-label="Format auswählen">
+                  <option value="">— auswählen —</option>
+                </select>
+              </div>
+              <div>
+                <label for="cfgFormatCustom">Format (frei, optional)</label>
+                <input id="cfgFormatCustom" data-cfg-format-custom type="text" placeholder="z. B. 12mm rund, 30×20, nach Maß..." autocomplete="off">
+              </div>
+
+              <div class="full">
+                <label for="cfgNote">Notiz (optional)</label>
+                <textarea id="cfgNote" data-cfg-note placeholder="Was soll drauf? Text, Symbol, Stil, Einsatz (Outdoor?), Deadline …"></textarea>
+              </div>
+            </div>
+
+            <div class="summary builder-summary" aria-live="polite">
+              <strong>Auswahl:</strong> <span data-cfg-summary>Bitte Material wählen.</span>
+            </div>
+
+            <div class="cta builder-cta">
+              <a class="btn primary" data-cfg-wa data-disabled="1" href="#" rel="noopener">WhatsApp</a>
+              <a class="btn" data-cfg-mail data-disabled="1" href="#">E-Mail</a>
+            </div>
           </div>
         </div>
       </div>
@@ -261,54 +366,61 @@
         <p class="small muted">Drei Infos reichen meistens.</p>
       </div>
 
-      <div class="grid">
-        <div class="card">
-          <h3>1 – Motiv</h3>
+      <div class="kontakt-grid">
+        <div class="kontakt-card">
+          <h3>Motiv</h3>
           <p>Text, Symbol oder Foto. Bei Fotos: scharf, gut ausgeleuchtet, kein Screenshot.</p>
         </div>
-        <div class="card">
-          <h3>2 – Größe</h3>
-          <p>z. B. 10×10 cm · 20 cm rund · oder „so groß wie …“</p>
+        <div class="kontakt-card">
+          <h3>Größe</h3>
+          <p>Zum Beispiel 10×10 cm, 20 cm rund oder „so groß wie …“</p>
         </div>
-        <div class="card">
-          <h3>3 – Deadline</h3>
-          <p>Wenn’s eilig ist: sagen. Dann sag ich dir ehrlich, ob’s passt.</p>
+        <div class="kontakt-card">
+          <h3>Deadline</h3>
+          <p>Wenn’s eilig ist: sag’s. Dann sag ich dir ehrlich, ob’s passt.</p>
         </div>
       </div>
 
-      <div class="notice" style="margin-top:16px">
-        <strong style="color:var(--text)">Tipp:</strong><br>
-        Kein Screenshot-vom-Screenshot. Lieber 1 gutes Originalbild als 5 matschige Kopien.
+      <div class="kontakt-tip">
+        <strong style="color:var(--text)">Tipp:</strong> Kein Screenshot-vom-Screenshot. Lieber 1 gutes Originalbild als 5 matschige Kopien.
         Wenn’s nicht anders geht, geht’s trotzdem – aber das Ergebnis kann nicht besser sein als die Vorlage.
       </div>
     </section>
 
-    <div class="hr"></div>
-
     <section class="section" aria-label="Unentschlossen Hilfe">
-      <div class="notice">
-        <strong style="color:var(--text)">Unentschlossen? Passt.</strong><br>
-        Viele kommen mit „Hochzeit / Geschenk / Firma“ + Material + Foto/Text – aber ohne fertige Idee.
-        Genau dafür bin ich da: Ich mache dir 2–3 saubere Vorschläge (Designrichtung + Format) und sag dir ehrlich,
-        was sinnvoll ist.
-        <br><br>
-        <span style="color:var(--muted)">
+      <div class="kontakt-card">
+        <h2>Unentschlossen? Passt.</h2>
+        <p>
+          Viele kommen mit „Hochzeit / Geschenk / Firma“ plus Material und Foto/Text – aber ohne fertige Idee.
+          Genau dafür bin ich da: Ich mache dir 2–3 saubere Vorschläge und sag dir ehrlich, was sinnvoll ist.
+        </p>
+        <p class="muted">
           Budget gern als <b>Rahmen</b> nennen – nicht zum Drücken, sondern damit wir nichts planen, was am Ende keinen Sinn macht.
-        </span>
-        <br><br>
-        <span style="color:var(--muted)"><b>Copy &amp; Paste (wenn du willst):</b><br>
+        </p>
+        <div class="copyblock">
           Anlass: … · Material: … · Motiv (Foto/Text): … · Stil: … · Rahmen: … · Deadline (optional): …
-        </span>
+        </div>
       </div>
     </section>
 
-    <div class="hr"></div>
-
     <section class="section directlinks">
-      <h2>Direktlinks</h2>
-      <p class="small">E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
-      <p class="small">WhatsApp: <a href="https://wa.me/491725925858" rel="noopener">+49 172 592 5858</a></p>
-      <p class="small">Instagram: <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a></p>
+      <div class="kontakt-card">
+        <h2>Direktlinks</h2>
+        <div class="directlinks-list">
+          <div class="directlinks-row">
+            <span>E-Mail</span>
+            <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a>
+          </div>
+          <div class="directlinks-row">
+            <span>WhatsApp</span>
+            <a href="https://wa.me/491725925858" rel="noopener">+49 172 592 5858</a>
+          </div>
+          <div class="directlinks-row">
+            <span>Instagram</span>
+            <a href="https://instagram.com/luderbein_gravur" rel="noopener">@Luderbein_Gravur</a>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
