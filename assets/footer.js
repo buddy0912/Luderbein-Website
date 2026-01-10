@@ -7,10 +7,29 @@
   if (!host) return;
 
   const year = new Date().getFullYear();
+  const variant = host.dataset.variant;
 
   const WA_NUMBER = "491725925858";
   const MAIL_toggle = "luderbein_gravur@icloud.com";
   const INSTA_URL = "https://instagram.com/Luderbein_Gravur";
+
+  const legalLinks = `
+    <a href="/rechtliches/impressum.html">Impressum</a> ·
+    <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+  `;
+
+  if (variant === "minimal") {
+    host.innerHTML = `
+      <div class="wrap foot">
+        <div class="small">© <span>${year}</span> Luderbein</div>
+
+        <div class="small">
+          ${legalLinks}
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   host.innerHTML = `
     <div class="wrap foot">
@@ -67,8 +86,7 @@
       </div>
 
       <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+        ${legalLinks}
       </div>
     </div>
   `;
