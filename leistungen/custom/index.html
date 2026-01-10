@@ -130,12 +130,29 @@
       aspect-ratio: 16/9;
       margin-bottom: 10px;
     }
+    .cardthumb--soon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 20%, rgba(219,16,33,.15), rgba(14,6,11,.6)),
+        rgba(26,26,31,.9);
+      border-style: dashed;
+    }
+    .cardthumb--soon .cardsoon {
+      position: static;
+      transform: none;
+      max-width: 80%;
+    }
     .cardthumb img {
       width: 100%;
       height: 100%;
       display: block;
       object-fit: cover;
       filter: saturate(1.02) contrast(1.02);
+    }
+    .cardthumb[data-thumb-rotator] img {
+      position: absolute;
+      inset: 0;
     }
     .cardtag {
       position: absolute;
@@ -351,16 +368,14 @@
           class="card"
           data-lb-modal-card
           tabindex="0"
-          data-modal-img="/assets/reel/reel-05.jpg"
-          data-modal-alt="Custom – Sonderholzschnitt Beispiel"
           data-modal-title="Sonderholzschnitt bis 35 mm"
           data-modal-text="Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile."
           data-modal-product="Custom"
           data-modal-variant="Sonderholzschnitt 35mm"
         >
-          <div class="cardthumb">
+          <div class="cardthumb cardthumb--soon">
             <span class="cardtag">Holz (dick)</span>
-            <img src="/assets/reel/reel-05.jpg" alt="Custom – Sonderholzschnitt Beispiel" loading="lazy">
+            <span class="cardsoon">Folgt in Kürze</span>
           </div>
           <h3>Sonderholzschnitt bis 35 mm</h3>
           <p class="small muted">Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile.</p>
@@ -371,16 +386,18 @@
           class="card"
           data-lb-modal-card
           tabindex="0"
-          data-modal-img="/assets/reel/reel-14.jpg"
-          data-modal-alt="Custom – Schmuck Beispiel"
+          data-modal-img="/assets/metall/metall-reel-07.webp"
+          data-modal-alt="Custom – Schmuck aus Metall"
           data-modal-title="Schmuck / Kleinzeug"
           data-modal-text="Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig."
           data-modal-product="Custom"
           data-modal-variant="Schmuck"
         >
-          <div class="cardthumb">
+          <div class="cardthumb" data-thumb-rotator>
             <span class="cardtag">Schmuck</span>
-            <img src="/assets/reel/reel-14.jpg" alt="Custom – Schmuck Beispiel" loading="lazy">
+            <img src="/assets/metall/metall-reel-07.webp" alt="Custom – Schmuck aus Metall" loading="lazy">
+            <img src="/assets/metall/metall-reel-08.webp" alt="Custom – Schmuck Detail" loading="lazy">
+            <img src="/assets/metall/metall-reel-09.webp" alt="Custom – Schmuck Detail" loading="lazy">
           </div>
           <h3>Schmuck / Kleinzeug</h3>
           <p class="small muted">Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig.</p>
@@ -437,6 +454,7 @@
 
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
+  <script src="/assets/thumb-rotator.js"></script>
   <script src="/assets/reel-internal.js"></script>
   <script>
     const y = document.getElementById("y");
