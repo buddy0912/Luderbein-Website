@@ -1,7 +1,22 @@
 [
   {
+    "src": "/assets/acryl/acryl-01.jpg",
+    "alt": "Acryl – Beispiel 01",
+    "cap": "Acryl – Beispiel"
+  },
+  {
+    "src": "/assets/reel/reel-10.jpg",
+    "alt": "Acryl – Beispiel 10",
+    "cap": "Acryl – Beispiel"
+  },
+  {
     "src": "/assets/reel/reel-11.jpg",
     "alt": "Acryl – Beispiel 11",
+    "cap": "Acryl – Beispiel"
+  },
+  {
+    "src": "/assets/reel/reel-16.jpg",
+    "alt": "Acryl – Beispiel 16",
     "cap": "Acryl – Beispiel"
   }
 ]
