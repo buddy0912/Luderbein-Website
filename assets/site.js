@@ -363,6 +363,7 @@
     const TARGET = {
       custom: "/leistungen/custom/",
       acryl: "/leistungen/acryl/",
+      glas: "/leistungen/glas/",
     };
 
     function normHref(h) {
@@ -393,21 +394,28 @@
         a.setAttribute("href", TARGET.acryl);
         return;
       }
+
+      // 3) Glas: alte Anker -> neue Seite
+      if (raw.startsWith("/leistungen/") && raw.includes("#glas")) {
+        a.setAttribute("href", TARGET.glas);
+        return;
+      }
     });
 
-    // 3) Glas-Eintrag hinzufügen (kommt in Kürze)
+    // 4) Glas-Eintrag hinzufügen
     const panels = document.querySelectorAll(".navdrop__panel");
     panels.forEach((panel) => {
       if (panel.querySelector('[data-nav-glas]')) return;
+      if (panel.querySelector(`a[href="${TARGET.glas}"]`)) return;
 
       const acrylLink = Array.from(panel.querySelectorAll('a[href]'))
         .find((link) => normHref(link.getAttribute("href")) === TARGET.acryl);
 
       const glas = document.createElement("a");
-      glas.setAttribute("href", "/leistungen/#glas");
+      glas.setAttribute("href", TARGET.glas);
       glas.setAttribute("role", "menuitem");
       glas.setAttribute("data-nav-glas", "1");
-      glas.textContent = "Glas (kommt)";
+      glas.textContent = "Glas";
 
       if (acrylLink && acrylLink.parentNode) {
         acrylLink.parentNode.insertBefore(glas, acrylLink.nextSibling);
