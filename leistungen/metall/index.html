@@ -10,72 +10,84 @@
 
   <style>
     /* =========================================================
-       METALL – HORIZONTAL REEL SLIDER
+       FEED – Reel (wie bei Holz / Start)
        ========================================================= */
-    .reelslider {
-      position: relative;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      padding: 14px;
-      overflow: hidden;
-      margin-top: 10px;
+    .reelwrap { position: relative; margin-top: 10px; }
+    .reelwrap::before, .reelwrap::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 34px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: .85;
     }
-    .reeltrack {
+    .reelwrap::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reelwrap::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reel {
       display: flex;
       gap: 14px;
-      overflow: auto;
+      overflow-x: auto;
+      padding: 10px 6px 18px;
       scroll-snap-type: x mandatory;
+      scroll-padding-left: 10px;
+      scroll-padding-right: 10px;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      outline: none;
     }
-    .reeltrack::-webkit-scrollbar { display: none; }
-
-    .reelslide {
+    .reel__item {
+      flex: 0 0 clamp(260px, 72vw, 440px);
       scroll-snap-align: start;
-      flex: 0 0 calc(33.333% - 10px);
-      border-radius: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      box-shadow: var(--shadow);
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      display: block;
+      color: inherit;
+      margin: 0;
+      position: relative;
+      text-decoration: none;
+      transform: translateZ(0);
     }
-    .reelslide img {
-      width: 100%;
-      height: 240px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .reelbtn {
+    .reel__tag {
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 44px;
-      height: 44px;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.45);
+      font-size: .78rem;
+      letter-spacing: .02em;
       color: rgba(255,255,255,.92);
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      z-index: 2;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
     }
-    .reelbtn.prev { left: 10px; }
-    .reelbtn.next { right: 10px; }
-
-    @media (max-width: 860px) {
-      .reelslide { flex-basis: calc(50% - 7px); }
-      .reelslide img { height: 220px; }
+    .reel__img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      height: auto;
+      object-fit: cover;
+      filter: saturate(1.03) contrast(1.02);
     }
-    @media (max-width: 520px) {
-      .reelslide { flex-basis: 86%; }
-      .reelslide img { height: 240px; }
-      .reelbtn { display: none; }
+    .reel__cap {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 12px 12px 12px;
+      color: rgba(255,255,255,.92);
+      font-size: .95rem;
+      line-height: 1.3;
+      background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
     }
 
     /* =========================================================
@@ -158,82 +170,53 @@
       <span class="badge"><i></i> Leistung – Metall</span>
       <h1>Metallgravur</h1>
       <p class="lead">Edelstahl, Aluminium, Plaketten, Tags – präzise, robust und ohne unnötigen Firlefanz.</p>
-
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Metall">Anfragen</a>
-      </div>
-
-      <p class="small muted" style="margin-top:.75rem;">
-        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
-      </p>
     </section>
 
-    <section class="section" aria-label="Metall-Beispiele">
-      <h2>Beispiele</h2>
-      <p class="small muted">Tippen zum Vergrößern – oder wischen für mehr. Läuft automatisch weiter.</p>
+    <!-- FEED (Reel) -->
+    <section class="section" id="metall-feed" aria-label="Metall-Feed">
+      <div class="section-head">
+        <h2>Feed</h2>
+        <p class="small muted">Einblicke &amp; Beispiele rund um Metall.</p>
+      </div>
 
-      <div class="reelslider">
-        <button class="reelbtn prev" type="button" aria-label="Zurück">‹</button>
-        <button class="reelbtn next" type="button" aria-label="Weiter">›</button>
+      <div class="reelwrap">
+        <div
+          class="reel"
+          aria-label="Metall Reel"
+          data-reel
+          data-reel-src="/assets/reel-metall.json"
+          data-interval="4500"
+          data-reel-default-tag="Metall"
+        ></div>
+      </div>
 
-        <div class="reeltrack" id="metalTrack" aria-label="Metallgalerie">
-          <a class="reelslide" href="/assets/metall/metall-reel-01.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-01.jpg" alt="Metallgravur – Beispiel 01" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-02.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-02.jpg" alt="Metallgravur – Beispiel 02" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-03.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-03.jpg" alt="Metallgravur – Beispiel 03" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-04.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-04.jpg" alt="Metallgravur – Beispiel 04" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-05.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-05.jpg" alt="Metallgravur – Beispiel 05" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-06.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-06.jpg" alt="Metallgravur – Beispiel 06" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-07.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-07.jpg" alt="Metallgravur – Beispiel 07" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-08.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-08.jpg" alt="Metallgravur – Beispiel 08" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-09.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-09.jpg" alt="Metallgravur – Beispiel 09" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-10.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-10.jpg" alt="Metallgravur – Beispiel 10" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-11.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-11.jpg" alt="Metallgravur – Beispiel 11" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-12.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-12.jpg" alt="Metallgravur – Beispiel 12" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-13.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-13.jpg" alt="Metallgravur – Beispiel 13" loading="lazy">
-          </a>
-          <a class="reelslide" href="/assets/metall/metall-reel-14.jpg" target="_blank" rel="noopener noreferrer">
-            <img src="/assets/metall/metall-reel-14.jpg" alt="Metallgravur – Beispiel 14" loading="lazy">
-          </a>
-        </div>
+      <div class="actions" style="margin-top: 14px;">
+        <a class="btn" href="/kontakt/?p=Metall">Metall anfragen</a>
       </div>
     </section>
 
     <div class="hr"></div>
 
+    <!-- VARIANTEN -->
     <section class="section" aria-label="Metall Varianten">
       <div class="section-head">
-        <h2>Varianten</h2>
+        <h2>Was gut geht</h2>
         <p class="small muted">Klicken → Anfrage starten. Varianten werden fortlaufend ergänzt.</p>
       </div>
 
       <div class="products">
         <!-- HUNDEMARKEN / TAGS -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/metall/metall-reel-04.jpg"
+          data-modal-alt="Hundemarken und Tags aus Metall – graviert"
+          data-modal-title="Hundemarken &amp; Tags"
+          data-modal-text="Name, Nummer, QR – sauber lesbar, langlebig, ohne Klimbim. Genau dein Style."
+          data-modal-product="Metall"
+          data-modal-variant="Hundemarken &amp; Tags"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/metall/metall-reel-04.jpg"
@@ -248,13 +231,20 @@
           </div>
           <h3>Hundemarken &amp; Tags</h3>
           <p class="kicker">Name, Nummer, QR – sauber lesbar, langlebig, ohne Klimbim. Genau dein Style.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Hundemarken%20%26%20Tags">Anfragen</a>
-          </div>
         </article>
 
         <!-- SCHILDER / PLAKETTEN -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/metall/metall-reel-12.jpg"
+          data-modal-alt="Schilder und Plaketten aus Metall – graviert"
+          data-modal-title="Schilder &amp; Plaketten"
+          data-modal-text="Typenschilder, Werkstatt-Labels, Warnhinweise – stabil, klar, dauerhaft."
+          data-modal-product="Metall"
+          data-modal-variant="Schilder &amp; Plaketten"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/metall/metall-reel-12.jpg"
@@ -269,13 +259,20 @@
           </div>
           <h3>Schilder &amp; Plaketten</h3>
           <p class="kicker">Typenschilder, Werkstatt-Labels, Warnhinweise – stabil, klar, dauerhaft.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Schilder%20%26%20Plaketten">Anfragen</a>
-          </div>
         </article>
 
         <!-- SCHLÜSSELANHÄNGER (2er Preview Switch) -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/metall/metall-reel-01.jpg"
+          data-modal-alt="Schlüsselanhänger aus Metall – graviert (verschiedene Beispiele)"
+          data-modal-title="Schlüsselanhänger"
+          data-modal-text="Text, Icon, Koordinaten – minimal oder provokant. Aber sauber."
+          data-modal-product="Metall"
+          data-modal-variant="Schlüsselanhänger"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               class="tile-rot"
@@ -292,13 +289,20 @@
           </div>
           <h3>Schlüsselanhänger</h3>
           <p class="kicker">Text, Icon, Koordinaten – minimal oder provokant. Aber sauber.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Schl%C3%BCsselanh%C3%A4nger">Anfragen</a>
-          </div>
         </article>
 
         <!-- VISITENKARTEN / BUSINESS -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/metall/metall-reel-09.jpg"
+          data-modal-alt="Metall-Visitenkarten und Business-Plaketten – graviert"
+          data-modal-title="Visitenkarten &amp; Business"
+          data-modal-text="Metall-Visitenkarten, Branding-Plaketten, QR – wenn du ernst machst, mach’s richtig."
+          data-modal-product="Metall"
+          data-modal-variant="Business"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/metall/metall-reel-09.jpg"
@@ -313,13 +317,20 @@
           </div>
           <h3>Visitenkarten &amp; Business</h3>
           <p class="kicker">Metall-Visitenkarten, Branding-Plaketten, QR – wenn du ernst machst, mach’s richtig.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Business">Anfragen</a>
-          </div>
         </article>
 
         <!-- SCHMUCK / ANHÄNGER (5er Preview Switch) -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/metall/metall-reel-08.jpg"
+          data-modal-alt="Schmuck und Anhänger aus Metall – graviert (verschiedene Beispiele)"
+          data-modal-title="Schmuck &amp; Anhänger"
+          data-modal-text="Initialen, Symbole, kleine Serien – sauber graviert, ohne dass es nach „Bastel“ aussieht."
+          data-modal-product="Metall"
+          data-modal-variant="Schmuck"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               class="tile-rot"
@@ -336,87 +347,36 @@
           </div>
           <h3>Schmuck &amp; Anhänger</h3>
           <p class="kicker">Initialen, Symbole, kleine Serien – sauber graviert, ohne dass es nach „Bastel“ aussieht.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Metall&amp;v=Schmuck">Anfragen</a>
-          </div>
         </article>
       </div>
     </section>
 
-    <div class="hr"></div>
-
-    <section class="section" style="margin-top:30px;">
-      <h2>Anwendung &amp; Hinweise</h2>
-      <div class="grid">
-        <div class="card"><h3>Materialien</h3><p>Edelstahl (V2A/V4A) oder Aluminium eloxiert. Robust und sauber gravierbar.</p></div>
-        <div class="card"><h3>Einsatz</h3><p>Maschinen-Tags, Werkstatt-Labels, Outdoor-Plaketten, personalisierte Deko.</p></div>
-        <div class="card"><h3>Finish</h3><p>Optional mattiert oder glänzend – Gravur bleibt dauerhaft sichtbar.</p></div>
+    <!-- ANFRAGE -->
+    <section class="section" aria-label="Metall Anfrage">
+      <div class="section-head">
+        <h2>Bereit?</h2>
+        <p class="small muted">Sag kurz Einsatz, Stückzahl und Motiv – ich mach dir ein klares Angebot.</p>
       </div>
-
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Metall">Anfragen</a>
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Metall">Mach mir ein Angebot</a>
+        <a class="btn" href="#metall-feed">Zeig mir Beispiele</a>
       </div>
+      <p class="small muted" style="margin-top:.75rem;">
+        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+      </p>
     </section>
   </main>
 
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
-
   <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/reel-internal.js"></script>
   <script src="/assets/site.js"></script>
+
   <script>
     const y = document.getElementById("y");
-
     if (y) y.textContent = new Date().getFullYear();
-
-    // Reel slider buttons + autoplay
-    (function(){
-      const track = document.getElementById("metalTrack");
-      if (!track) return;
-
-      const prev = document.querySelector(".reelbtn.prev");
-      const next = document.querySelector(".reelbtn.next");
-
-      const slideWidth = () => {
-        const first = track.querySelector(".reelslide");
-        return first ? first.getBoundingClientRect().width + 14 : 320;
-      };
-
-      prev?.addEventListener("click", () => {
-        track.scrollBy({ left: -slideWidth(), behavior: "smooth" });
-      });
-      next?.addEventListener("click", () => {
-        track.scrollBy({ left: slideWidth(), behavior: "smooth" });
-      });
-
-      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) return;
-
-      let paused = false;
-      const AUTOPLAY_MS = 4600;
-      const atEnd = () => (track.scrollLeft + track.clientWidth) >= (track.scrollWidth - 6);
-
-      function tick() {
-        if (paused) return;
-        if (atEnd()) track.scrollTo({ left: 0, behavior: "smooth" });
-        else track.scrollBy({ left: slideWidth(), behavior: "smooth" });
-      }
-
-      let timer = setInterval(tick, AUTOPLAY_MS);
-
-      ["mouseenter","touchstart"].forEach(e =>
-        track.addEventListener(e, () => paused = true, { passive:true })
-      );
-      ["mouseleave","touchend"].forEach(e =>
-        track.addEventListener(e, () => paused = false, { passive:true })
-      );
-
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden) { clearInterval(timer); timer = null; }
-        else if (!timer) timer = setInterval(tick, AUTOPLAY_MS);
-      });
-    })();
 
     // Mini-rotator für Produkt-Kacheln (fade + preload)
     (function(){
@@ -450,7 +410,6 @@
         const list = parseList(img.getAttribute("data-rot-srcs"));
         if (list.length < 2) return;
 
-        // sicherstellen, dass wir transition class haben
         if (!img.classList.contains("tile-rot")) img.classList.add("tile-rot");
 
         let i = 0;
@@ -471,18 +430,14 @@
           const nextIndex = (i + 1) % list.length;
           const nextSrc = list[nextIndex];
 
-          // Fade out
           img.classList.add("is-fading");
 
-          // Preload während/kurz nach Fade-Out
           await new Promise(r => setTimeout(r, FADE_OUT_MS));
           await preload(nextSrc);
 
-          // Swap
           img.src = nextSrc;
           i = nextIndex;
 
-          // Fade in (next frame)
           setTimeout(() => {
             img.classList.remove("is-fading");
             busy = false;

@@ -379,6 +379,27 @@
         return;
       }
     });
+
+    // 3) Glas-Eintrag hinzufügen (kommt in Kürze)
+    const panels = document.querySelectorAll(".navdrop__panel");
+    panels.forEach((panel) => {
+      if (panel.querySelector('[data-nav-glas]')) return;
+
+      const acrylLink = Array.from(panel.querySelectorAll('a[href]'))
+        .find((link) => normHref(link.getAttribute("href")) === TARGET.acryl);
+
+      const glas = document.createElement("a");
+      glas.setAttribute("href", "/leistungen/#glas");
+      glas.setAttribute("role", "menuitem");
+      glas.setAttribute("data-nav-glas", "1");
+      glas.textContent = "Glas (kommt)";
+
+      if (acrylLink && acrylLink.parentNode) {
+        acrylLink.parentNode.insertBefore(glas, acrylLink.nextSibling);
+      } else {
+        panel.appendChild(glas);
+      }
+    });
   }
 
   // =========================================================
