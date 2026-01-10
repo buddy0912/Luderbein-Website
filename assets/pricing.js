@@ -3,14 +3,14 @@
  * V1.6 – Stand Januar 2026
  * Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen
  *
- * Aktiv: Schiefer + Metall
+ * Aktiv: Schiefer + Metall (teilweise)
  */
 
 window.LUDERBEIN_PRICING = {
   meta: {
     version: "1.6",
     updated: "01/2026",
-    note: "Schiefer + Metall aktiv. Weitere Materialien folgen."
+    note: "Schiefer aktiv, Metall teilweise enthalten. Weitere Materialien folgen."
   },
 
   // === Versandregeln ===
