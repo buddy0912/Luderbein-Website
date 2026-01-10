@@ -160,12 +160,47 @@
       margin-top: 12px;
     }
     .cfg .cta .btn { flex: 1 1 180px; }
+    .cfg .btn:disabled {
+      opacity: .55;
+      pointer-events: none;
+      filter: grayscale(.4);
+    }
 
     .cfg a[data-disabled="1"] {
       opacity: .55;
       pointer-events: none;
       filter: grayscale(.4);
     }
+
+    .cfg .batch {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px dashed rgba(64,62,65,.55);
+      background: rgba(32,32,38,.28);
+    }
+    .cfg .batch .inline {
+      gap: 8px;
+    }
+    .cfg .batch-area {
+      margin-top: 10px;
+    }
+    .cfg .batch-list {
+      list-style: none;
+      margin: 10px 0 0;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+    .cfg .batch-item {
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.20);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .cfg .batch-item strong { color: var(--text); }
+    .cfg .batch-meta { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+    .cfg .batch-price { margin-top: 6px; font-weight: 800; color: var(--text); }
 
     .cfg .warn {
       margin-top: 10px;
@@ -331,6 +366,7 @@
     <div class="cfg" data-kalk>
       <h2>Konfigurator</h2>
       <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
+      <p class="small muted">Hinweis: Metall ist bereits teilweise im Kalkulator enthalten – weitere Varianten folgen.</p>
 
       <div class="step" aria-label="Schritt 1 – Material">
         <p class="steptitle">Schritt 1 – Material</p>
@@ -423,6 +459,29 @@
         <div class="summary" aria-live="polite">
           <strong>Zusammenfassung:</strong><br>
           <span data-k-summary>Bitte Material &amp; Ausführung wählen.</span>
+        </div>
+
+        <div class="batch" aria-label="Sammelanfrage">
+          <div class="inline">
+            <label class="toggle" data-k-batch-toggle-label>
+              <input type="checkbox" data-k-batch-toggle>
+              <span><b>Sammelanfrage aktivieren</b></span>
+            </label>
+            <span class="small muted">Mehrere Positionen sammeln und gemeinsam anfragen.</span>
+          </div>
+
+          <div class="batch-area" data-k-batch-area hidden>
+            <div class="cta">
+              <button class="btn" type="button" data-k-batch-add>Position hinzufügen / merken</button>
+              <a class="btn primary" data-k-batch-send data-disabled="1" href="/kontakt/">Sammelanfrage senden</a>
+            </div>
+
+            <div class="batch-list-wrap">
+              <h3 style="margin:12px 0 0;">Gesammelte Positionen</h3>
+              <ul class="batch-list" data-k-batch-list></ul>
+              <p class="small muted" data-k-batch-empty>Keine Positionen gemerkt.</p>
+            </div>
+          </div>
         </div>
 
         <div class="cta">
@@ -531,6 +590,14 @@
     const $cartWa  = el("[data-k-cart-wa]", $root);
     const $cartMail = el("[data-k-cart-mail]", $root);
 
+    const $batchToggle = el("[data-k-batch-toggle]", $root);
+    const $batchToggleLabel = el("[data-k-batch-toggle-label]", $root);
+    const $batchArea = el("[data-k-batch-area]", $root);
+    const $batchList = el("[data-k-batch-list]", $root);
+    const $batchEmpty = el("[data-k-batch-empty]", $root);
+    const $batchAdd = el("[data-k-batch-add]", $root);
+    const $batchSend = el("[data-k-batch-send]", $root);
+
     const phoneWA = "491725925858";
     const mailTo  = "luderbein_gravur@icloud.com";
 
@@ -546,6 +613,16 @@
     const eur = (n) => eurFmt.format(m(n));
 
     const clean = (s) => (s || "").toString().trim();
+    const esc = (s) => (s || "").toString().replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[c]));
+
+    let batchItems = [];
+    let currentPosition = null;
 
     function setDisabled(a, on) {
       if (!a) return;
@@ -610,6 +687,116 @@
       o.value = "";
       o.textContent = placeholder;
       $s.appendChild(o);
+    }
+
+    function buildPositionLines(pos) {
+      const lines = [
+        `Material: ${pos.matLabel}`,
+        `Ausführung: ${pos.varLabel}`,
+        `Format: ${pos.fmtLabel}`,
+      ];
+
+      if (pos.isMetallBottle) {
+        lines.push(`Farbe: ${pos.color || ""}`);
+        lines.push(`Gravur: ${pos.engraving || ""}`);
+        lines.push(`Motiv: ${pos.motif || ""}`);
+      }
+
+      lines.push(`Stückzahl: ${pos.qty || ""}`);
+      lines.push(`Versand: ${pos.shipText}`);
+      lines.push(`Upgrades: ${pos.upgradesList.length ? pos.upgradesList.join(", ") : "keine"}`);
+
+      if (!pos.onRequest && pos.ok) {
+        lines.push(`Zwischensumme: ${eur(pos.subtotal)}`);
+        lines.push(`Versand: ${pos.shipPrice === 0 ? eur(0) : eur(pos.shipPrice || 0)}`);
+        lines.push(`Gesamt: ${eur(pos.total)}`);
+      } else {
+        lines.push("Preis: Auf Anfrage");
+      }
+
+      if (pos.noteText) {
+        lines.push(`Notiz: ${pos.noteText}`);
+      }
+
+      return lines;
+    }
+
+    function buildBatchNote() {
+      const lines = ["Sammelanfrage aus dem Kalkulator:", ""];
+
+      batchItems.forEach((item, idx) => {
+        lines.push(`Position ${idx + 1}:`);
+        item.lines.forEach((line) => lines.push(`- ${line}`));
+        lines.push("");
+      });
+
+      return lines.join("\n").trim();
+    }
+
+    function buildBatchHref() {
+      const params = new URLSearchParams();
+      params.set("p", "Custom");
+      params.set("v", "Sammelanfrage");
+      params.set("f", "custom");
+      params.set("note", buildBatchNote());
+      return `/kontakt/?${params.toString()}`;
+    }
+
+    function renderBatchList() {
+      if (!$batchList) return;
+      $batchList.innerHTML = "";
+
+      batchItems.forEach((item, idx) => {
+        const li = document.createElement("li");
+        li.className = "batch-item";
+
+        const title = `${esc(item.matLabel)} · ${esc(item.varLabel)} · ${esc(item.fmtLabel)}`;
+        const detailBits = [];
+
+        if (item.isMetallBottle) {
+          detailBits.push(`Farbe: ${esc(item.color || "—")}`);
+          detailBits.push(`Gravur: ${esc(item.engraving || "—")}`);
+          detailBits.push(`Motiv: ${esc(item.motif || "—")}`);
+        }
+
+        detailBits.push(`Stückzahl: ${esc(item.qty)}`);
+        detailBits.push(`Versand: ${esc(item.shipText)}`);
+
+        const upgradesText = item.upgradesList.length ? esc(item.upgradesList.join(", ")) : "keine";
+        const priceText = (!item.onRequest && item.ok) ? `Gesamt: ${esc(eur(item.total))}` : "Preis: Auf Anfrage";
+
+        li.innerHTML = `
+          <div><strong>Position ${idx + 1}:</strong> ${title}</div>
+          <div class="batch-meta">${detailBits.join(" · ")}</div>
+          <div class="batch-meta">Upgrades: ${upgradesText}</div>
+          ${item.noteText ? `<div class="batch-meta">Notiz: ${esc(item.noteText)}</div>` : ""}
+          <div class="batch-price">${priceText}</div>
+        `;
+
+        $batchList.appendChild(li);
+      });
+
+      if ($batchEmpty) $batchEmpty.hidden = batchItems.length > 0;
+
+      if ($batchSend) {
+        const canSend = batchItems.length > 0 && $batchToggle && $batchToggle.checked;
+        setDisabled($batchSend, !canSend);
+        $batchSend.href = canSend ? buildBatchHref() : "#";
+      }
+    }
+
+    function updateBatchUI() {
+      if (!$batchToggle) return;
+      const enabled = $batchToggle.checked;
+      if ($batchToggleLabel) $batchToggleLabel.classList.toggle("is-on", enabled);
+      if ($batchArea) $batchArea.hidden = !enabled;
+
+      if ($batchAdd) {
+        const canAdd = enabled && currentPosition && currentPosition.ok;
+        $batchAdd.disabled = !canAdd;
+      }
+
+      renderBatchList();
     }
 
     function buildMaterialChips() {
@@ -1208,6 +1395,28 @@
 
       $sum.innerHTML = summaryLines.join("<br>");
 
+      // --- Batch (Kontakt-Link) ---
+      currentPosition = {
+        ok,
+        onRequest,
+        matLabel,
+        varLabel,
+        fmtLabel,
+        qty: state.qty,
+        shipText,
+        upgradesList,
+        isMetallBottle,
+        color: state.color,
+        engraving: state.engraving,
+        motif: state.motif,
+        subtotal,
+        shipPrice: shipRes.price,
+        total,
+        noteText
+      };
+      updateBatchUI();
+
+      // --- Cart (WhatsApp/E-Mail Sammelanfrage) ---
       const canAdd = ok;
       setDisabled($add, !canAdd);
 
@@ -1253,6 +1462,22 @@
       });
     }
 
+    // Batch events
+    if ($batchToggle) {
+      $batchToggle.addEventListener("change", updateBatchUI);
+    }
+
+    if ($batchAdd) {
+      $batchAdd.addEventListener("click", () => {
+        if (!currentPosition || !currentPosition.ok) return;
+        const lines = buildPositionLines(currentPosition);
+        batchItems.push({ ...currentPosition, lines });
+        renderBatchList();
+        updateBatchUI();
+      });
+    }
+
+    // Cart events
     if ($add) {
       $add.addEventListener("click", () => {
         if (!lastItem) return;

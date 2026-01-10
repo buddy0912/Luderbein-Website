@@ -1,0 +1,20 @@
+HowTo – PDF ausfüllen & senden (kurz)
+
+Desktop (Chrome/Firefox):
+1) PDF öffnen
+2) Formularfelder ausfüllen
+3) Download/Speichern
+4) Per Mail oder WhatsApp senden
+
+iOS (Safari):
+1) PDF öffnen
+2) Teilen → „In Dateien sichern“
+3) Datei öffnen, ausfüllen
+4) Über „Teilen“ an Mail/WhatsApp
+
+Android:
+1) PDF öffnen
+2) Mit PDF-Viewer ausfüllen
+3) Teilen an Mail/WhatsApp
+
+Wenn’s hakt: kurz schreiben, ich schick dir eine Alternative.
