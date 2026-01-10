@@ -64,7 +64,13 @@ html {
   background: linear-gradient(180deg, rgba(219,16,33,.9), rgba(255,8,13,.55));
 }
 
-.wrap { max-width: var(--max); margin: 0 auto; padding: 0 18px; }
+.wrap{
+  max-width: var(--max);
+  margin: 0 auto;
+  /* mehr Luft + skaliert sauber je nach Viewport */
+  padding-left: clamp(18px, 3vw, 28px);
+  padding-right: clamp(18px, 3vw, 28px);
+}
 
 /* ================================
    GLOBAL LINKS (CONTENT)
@@ -654,7 +660,10 @@ footer a:hover { color: var(--text); }
 }
 
 @media (max-width: 560px) {
-  .wrap { padding: 0 14px; }
+  .wrap{
+    padding-left: clamp(16px, 4vw, 22px);
+    padding-right: clamp(16px, 4vw, 22px);
+  }
   .productcard { grid-column: span 12; }
   .navbtn { display: inline-flex; }
 
