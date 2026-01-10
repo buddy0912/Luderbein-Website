@@ -223,7 +223,7 @@
   </style>
 </head>
 
-<body>
+<body class="leistung-page">
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -266,14 +266,14 @@
   </header>
 
   <main class="wrap" id="content">
-    <section class="hero">
+    <section class="hero leistung-hero leistung-card">
       <span class="badge"><i></i> Leistung – Custom</span>
       <h1>Custom</h1>
       <p class="lead">Sonderwunsch? Mischmaterial? „Gibt’s nicht“ als Startpunkt? Ich sag dir schnell, was geht.</p>
     </section>
 
-    <section class="section" id="custom-feed" aria-label="Custom-Feed">
-      <div class="sectionHead">
+    <section class="section leistung-section leistung-card" id="custom-feed" aria-label="Custom-Feed">
+      <div class="section-head leistung-section-head">
         <h2>Feed</h2>
       </div>
       <p class="muted">Alles, was nicht in Schubladen passt. Genau dafür ist Custom da.</p>
@@ -290,42 +290,42 @@
       </div>
     </section>
 
-    <div class="hr"></div>
+    <div class="hr leistung-hr" role="separator" aria-hidden="true"></div>
 
-    <section class="section" aria-label="Custom-Details">
-      <div class="section-head">
+    <section class="section leistung-section leistung-card" aria-label="Custom-Details">
+      <div class="section-head leistung-section-head">
         <h2>So läuft Custom</h2>
         <p class="small muted">Kurz &amp; klar, damit du schnell entscheiden kannst.</p>
       </div>
 
-      <div class="grid">
-        <div class="card">
+      <div class="grid leistung-grid">
+        <div class="card leistung-card">
           <h3>Was du schickst</h3>
           <p>Idee, Skizze oder Foto + grobe Maße/Einsatz. Mehr brauch ich erstmal nicht.</p>
         </div>
-        <div class="card">
+        <div class="card leistung-card">
           <h3>Was gut geht</h3>
           <p>Mischmaterial, Sondermaße, Prototypen – wenn’s sauber planbar ist.</p>
         </div>
-        <div class="card">
+        <div class="card leistung-card">
           <h3>Ich prüfe</h3>
           <p>Machbarkeit, Materialstärke, Finish – und sag dir schnell ja/nein.</p>
         </div>
-        <div class="card">
+        <div class="card leistung-card">
           <h3>Unverbindlich</h3>
           <p>Erst Richtung &amp; Preisrahmen, verbindlich wird’s nach meiner Bestätigung.</p>
         </div>
       </div>
 
-      <div class="section-head" style="margin-top:20px;">
+      <div class="section-head leistung-section-head" style="margin-top:20px;">
         <h2>Bereiche</h2>
         <p class="small muted">Tippen für Details – Bild + Text kommen im Modal.</p>
       </div>
 
-      <div class="customgrid">
+      <div class="customgrid variant-grid">
         <!-- Lampenbau -->
         <div
-          class="card"
+          class="card leistung-card"
           data-lb-modal-card
           tabindex="0"
           data-modal-img="/assets/reel/reel-09.jpg"
@@ -345,7 +345,7 @@
 
         <!-- Schwibbögen Teaser -->
         <div
-          class="card"
+          class="card leistung-card"
           data-lb-modal-card
           tabindex="0"
           data-modal-img="/assets/reel/reel-18.jpg"
@@ -365,7 +365,7 @@
 
         <!-- Holz dick -->
         <div
-          class="card"
+          class="card leistung-card"
           data-lb-modal-card
           tabindex="0"
           data-modal-title="Sonderholzschnitt bis 35 mm"
@@ -383,7 +383,7 @@
 
         <!-- Schmuck -->
         <div
-          class="card"
+          class="card leistung-card"
           data-lb-modal-card
           tabindex="0"
           data-modal-img="/assets/metall/metall-reel-07.webp"
@@ -405,7 +405,7 @@
 
         <!-- Freie Idee (Mini-Reel läuft) -->
         <div
-          class="card"
+          class="card leistung-card"
           data-lb-modal-card
           tabindex="0"
           data-modal-img="/assets/reel/reel-16.jpg"
@@ -433,17 +433,16 @@
       </div>
     </section>
 
-    <section class="section" aria-label="Custom Anfrage">
-      <div class="section-head">
+    <section class="section leistung-section leistung-card" aria-label="Custom Anfrage">
+      <div class="section-head leistung-section-head">
         <h2>Bereit?</h2>
         <p class="small muted">Schick mir die Idee – ich sag dir ehrlich, was machbar ist.</p>
       </div>
-      <div class="cta">
+      <div class="cta leistung-cta">
         <a class="btn primary" href="/kontakt/?p=Custom">Mach mir ein Angebot</a>
-        <a class="btn" href="#custom-feed">Zeig mir Beispiele</a>
       </div>
       <p class="small muted" style="margin-top:.75rem;">
-        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+        Beispiele: <a href="#custom-feed">zum Feed</a> · <a href="/leistungen/">alle Leistungen</a>
       </p>
     </section>
   </main>
