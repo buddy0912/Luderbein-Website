@@ -14,6 +14,7 @@
     metall: "/leistungen/metall/",
     holz: "/leistungen/holz/",
     acryl: "/leistungen/acryl/",
+    glas: "/leistungen/glas/",
     schwibbogen: "/leistungen/holz/", // später eigene Kategorie -> dann hier ändern
     custom: "/leistungen/custom/"      // "Spezialbau" ist Copy/Label, Route bleibt
   };
@@ -77,6 +78,29 @@
     return CAT_ROUTES[best] || null;
   }
 
+  function routeFromLabel(label) {
+    const raw = safeTrim(label).toLowerCase();
+    if (!raw) return null;
+    if (raw.includes("metall")) return CAT_ROUTES.metall;
+    if (raw.includes("holz")) return CAT_ROUTES.holz;
+    if (raw.includes("schiefer")) return CAT_ROUTES.schiefer;
+    if (raw.includes("acryl")) return CAT_ROUTES.acryl;
+    if (raw.includes("glas")) return CAT_ROUTES.glas;
+    if (raw.includes("custom") || raw.includes("spezial")) return CAT_ROUTES.custom;
+    if (raw.includes("schwibbogen")) return CAT_ROUTES.schwibbogen;
+    return null;
+  }
+
+  function isSamePageHref(href) {
+    if (!href) return false;
+    try {
+      const url = new URL(href, window.location.origin);
+      return url.pathname.replace(/index\.html$/, "") === window.location.pathname.replace(/index\.html$/, "");
+    } catch (_) {
+      return false;
+    }
+  }
+
   function shuffleInPlace(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -125,15 +149,23 @@
     container.appendChild($("div", { class: "muted", text: msg }));
   }
 
-  function buildCard(item) {
-    const cardTag = item.href ? "a" : "div";
+  function buildCard(item, options = {}) {
+    const isModalCard = Boolean(options.modal);
+    const cardTag = isModalCard ? "div" : item.href ? "a" : "div";
 
     const card = $(cardTag, {
       class: "reel__item",
-      href: item.href || null
+      href: isModalCard ? null : item.href || null,
+      "data-lb-modal-card": isModalCard ? "" : null,
+      "data-modal-img": isModalCard ? item.src : null,
+      "data-modal-alt": isModalCard ? item.alt : null,
+      "data-modal-title": isModalCard ? (item.cap || item.alt || "") : null,
+      "data-modal-text": isModalCard ? "" : null,
+      role: isModalCard ? "button" : null,
+      tabindex: isModalCard ? "0" : null
     });
 
-    if (item.href) {
+    if (item.href && !isModalCard) {
       // Sauber klickbar
       card.setAttribute("role", "link");
       card.setAttribute("aria-label", (item.cap || item.alt || "Zum Eintrag").trim());
@@ -201,6 +233,9 @@
     const src = container.getAttribute("data-reel-src");
     const interval = Number(container.getAttribute("data-interval") || "4500");
     const defaultTag = container.getAttribute("data-reel-default-tag") || "";
+    const path = window.location.pathname;
+    const isHome = path === "/" || path.endsWith("/index.html");
+    const isLeistungen = path.startsWith("/leistungen/");
 
     // default: random an (bei Reload), aus per data-random="0"
     const doRandom = container.getAttribute("data-random") !== "0";
@@ -227,7 +262,22 @@
       if (doRandom) shuffleInPlace(items);
 
       container.innerHTML = "";
-      for (const it of items) container.appendChild(buildCard(it));
+      for (const it of items) {
+        if (isHome) {
+          const labelRoute = routeFromLabel(it.tag || it.cap || it.alt);
+          const autoRoute = routeFromCats(it.cats) || labelRoute;
+          if (!it.href || isSamePageHref(it.href)) {
+            it.href = autoRoute || it.href;
+          }
+        }
+
+        if (isLeistungen) {
+          it.href = null;
+          container.appendChild(buildCard(it, { modal: true }));
+        } else {
+          container.appendChild(buildCard(it));
+        }
+      }
 
       setupAutoScroll(container, Number.isFinite(interval) ? interval : 4500);
     } catch (e) {
