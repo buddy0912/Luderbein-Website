@@ -252,18 +252,10 @@
     <section class="hero">
       <span class="badge"><i></i> Leistung – Custom</span>
       <h1>Custom</h1>
-      <p class="lead">Sonderwunsch? Mischmaterial? “Gibt’s nicht” als Startpunkt? Passt. Ich sag dir schnell, ob’s machbar ist.</p>
-
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Custom">Custom anfragen</a>
-      </div>
-
-      <p class="small muted" style="margin-top:.75rem;">
-        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
-      </p>
+      <p class="lead">Sonderwunsch? Mischmaterial? „Gibt’s nicht“ als Startpunkt? Ich sag dir schnell, was geht.</p>
     </section>
 
-    <section class="section" aria-label="Custom-Feed">
+    <section class="section" id="custom-feed" aria-label="Custom-Feed">
       <div class="sectionHead">
         <h2>Feed</h2>
       </div>
@@ -281,67 +273,131 @@
       </div>
     </section>
 
-    <section class="section" aria-label="Custom-Kacheln">
+    <div class="hr"></div>
+
+    <section class="section" aria-label="Custom-Details">
       <div class="section-head">
+        <h2>So läuft Custom</h2>
+        <p class="small muted">Kurz &amp; klar, damit du schnell entscheiden kannst.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Was du schickst</h3>
+          <p>Idee, Skizze oder Foto + grobe Maße/Einsatz. Mehr brauch ich erstmal nicht.</p>
+        </div>
+        <div class="card">
+          <h3>Was gut geht</h3>
+          <p>Mischmaterial, Sondermaße, Prototypen – wenn’s sauber planbar ist.</p>
+        </div>
+        <div class="card">
+          <h3>Ich prüfe</h3>
+          <p>Machbarkeit, Materialstärke, Finish – und sag dir schnell ja/nein.</p>
+        </div>
+        <div class="card">
+          <h3>Unverbindlich</h3>
+          <p>Erst Richtung &amp; Preisrahmen, verbindlich wird’s nach meiner Bestätigung.</p>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top:20px;">
         <h2>Bereiche</h2>
-        <p class="small muted">Wähl grob die Richtung – dann klären wir Machbarkeit &amp; Design.</p>
+        <p class="small muted">Tippen für Details – Bild + Text kommen im Modal.</p>
       </div>
 
       <div class="customgrid">
         <!-- Lampenbau -->
-        <div class="card">
+        <div
+          class="card"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-09.jpg"
+          data-modal-alt="Custom – Lampenbau Beispiel"
+          data-modal-title="Lampenbau"
+          data-modal-text="Individuelle Lampen/Teile/Gravur + Cut. Wenn’s leuchtet, darf’s auch Haltung haben."
+          data-modal-product="Custom"
+          data-modal-variant="Lampenbau"
+        >
           <div class="cardthumb">
             <span class="cardtag">Lampenbau</span>
             <img src="/assets/reel/reel-09.jpg" alt="Custom – Lampenbau Beispiel" loading="lazy">
           </div>
           <h3>Lampenbau</h3>
-          <p class="small muted">Individuelle Lampen / Teile / Gravur + Cut. Wenn’s leuchtet, darf’s auch Haltung haben.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/kontakt/?p=Custom&v=Lampenbau">Anfragen</a>
-          </div>
+          <p class="small muted">Individuelle Lampen/Teile/Gravur + Cut. Wenn’s leuchtet, darf’s auch Haltung haben.</p>
         </div>
 
-        <!-- Schwibbögen Teaser (Bild kommt gleich) -->
-        <div class="card">
+        <!-- Schwibbögen Teaser -->
+        <div
+          class="card"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-18.jpg"
+          data-modal-alt="Custom – Schwibbögen Teaser"
+          data-modal-title="Schwibbögen (Teaser)"
+          data-modal-text="Schon jetzt möglich: Sonderwünsche, Namen, Motive, Anpassungen – bevor der große Bereich live ist."
+          data-modal-product="Custom"
+          data-modal-variant="Schwibbögen"
+        >
           <div class="cardthumb">
             <span class="cardtag">Schwibbögen</span>
             <img src="/assets/reel/reel-18.jpg" alt="Custom – Schwibbögen Teaser" loading="lazy">
           </div>
           <h3>Schwibbögen (Teaser)</h3>
           <p class="small muted">Schon jetzt möglich: Sonderwünsche, Namen, Motive, Anpassungen – bevor der große Bereich live ist.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/kontakt/?p=Custom&v=Schwibbogen">Anfragen</a>
-          </div>
         </div>
 
-        <!-- Holz dick (noch kein Bild) -->
-        <div class="card">
+        <!-- Holz dick -->
+        <div
+          class="card"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-05.jpg"
+          data-modal-alt="Custom – Sonderholzschnitt Beispiel"
+          data-modal-title="Sonderholzschnitt bis 35 mm"
+          data-modal-text="Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile."
+          data-modal-product="Custom"
+          data-modal-variant="Sonderholzschnitt 35mm"
+        >
           <div class="cardthumb">
             <span class="cardtag">Holz (dick)</span>
-            <span class="cardsoon" aria-hidden="true">Bilder folgen in Kürze</span>
+            <img src="/assets/reel/reel-05.jpg" alt="Custom – Sonderholzschnitt Beispiel" loading="lazy">
           </div>
           <h3>Sonderholzschnitt bis 35 mm</h3>
           <p class="small muted">Wenn Standard-Holz zu dünn ist: stärkere Materialien, tieferer Look, robuste Teile.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/kontakt/?p=Custom&v=Sonderholzschnitt%2035mm">Anfragen</a>
-          </div>
         </div>
 
-        <!-- Schmuck (später) -->
-        <div class="card">
+        <!-- Schmuck -->
+        <div
+          class="card"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-14.jpg"
+          data-modal-alt="Custom – Schmuck Beispiel"
+          data-modal-title="Schmuck / Kleinzeug"
+          data-modal-text="Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig."
+          data-modal-product="Custom"
+          data-modal-variant="Schmuck"
+        >
           <div class="cardthumb">
             <span class="cardtag">Schmuck</span>
-            <span class="cardsoon" aria-hidden="true">Bilder folgen später</span>
+            <img src="/assets/reel/reel-14.jpg" alt="Custom – Schmuck Beispiel" loading="lazy">
           </div>
           <h3>Schmuck / Kleinzeug</h3>
           <p class="small muted">Winzige Teile, feine Gravur, Serien oder Unikate – clean, kantig, nicht kitschig.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/kontakt/?p=Custom&v=Schmuck">Anfragen</a>
-          </div>
         </div>
 
         <!-- Freie Idee (Mini-Reel läuft) -->
-        <div class="card">
+        <div
+          class="card"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-16.jpg"
+          data-modal-alt="Custom – Freie Idee"
+          data-modal-title="Freie Idee"
+          data-modal-text="Du hast nur „so ungefähr“ im Kopf? Schick’s. Ich mache daraus was Laserbares."
+          data-modal-product="Custom"
+          data-modal-variant="Freie Idee"
+        >
           <div class="cardthumb" aria-label="Freie Idee – Mini Reel">
             <span class="cardtag">Freie Idee</span>
             <div
@@ -355,29 +411,23 @@
           </div>
 
           <h3>Freie Idee</h3>
-          <p class="small muted">Du hast nur “so ungefähr” im Kopf? Schick’s. Ich mache daraus was Laserbares.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/kontakt/?p=Custom&v=Freie%20Idee">Anfragen</a>
-          </div>
+          <p class="small muted">Du hast nur „so ungefähr“ im Kopf? Schick’s. Ich mache daraus was Laserbares.</p>
         </div>
-      </div>
-
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Custom">Custom anfragen</a>
       </div>
     </section>
 
-    <section class="section" aria-label="Custom-Info">
-      <h2>So läuft’s</h2>
-      <div class="grid">
-        <div class="card"><h3>1 – Idee</h3><p>Foto, Skizze, Text – egal. Hauptsache ich sehe, worum’s geht.</p></div>
-        <div class="card"><h3>2 – Machbarkeit</h3><p>Ich sage dir schnell: ja / nein / ja, aber anders.</p></div>
-        <div class="card"><h3>3 – Entwurf</h3><p>Sauberer Entwurf + Freigabe. Dann erst geht’s an die Maschine.</p></div>
+    <section class="section" aria-label="Custom Anfrage">
+      <div class="section-head">
+        <h2>Bereit?</h2>
+        <p class="small muted">Schick mir die Idee – ich sag dir ehrlich, was machbar ist.</p>
       </div>
-
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Custom">Anfragen</a>
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Custom">Mach mir ein Angebot</a>
+        <a class="btn" href="#custom-feed">Zeig mir Beispiele</a>
       </div>
+      <p class="small muted" style="margin-top:.75rem;">
+        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+      </p>
     </section>
   </main>
 

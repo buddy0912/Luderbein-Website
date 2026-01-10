@@ -154,30 +154,14 @@
   <main class="wrap" id="content">
     <section class="hero">
       <span class="badge"><i></i> Leistung – Holz</span>
-      <h1>Holz</h1>
-      <p class="lead">
-        Natürlich, sauber, individuell. Schilder, Deko und kleine Serien – ohne Bastel-Look.
-        Du sagst Einsatz & Stil, ich mach’s ordentlich.
-      </p>
-
-      <div class="cta">
-        <a class="btn primary" href="/kontakt/?p=Holz">Anfragen</a>
-      </div>
-
-      <p class="small muted" style="margin-top:.75rem;">
-        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
-      </p>
-
-      <div class="notice" style="margin-top:14px">
-        <strong style="color:var(--text)">Ablauf:</strong>
-        Einsatz klären → Design/Größe festziehen → Freigabe → fertig.
-      </div>
+      <h1>Holzgravur</h1>
+      <p class="lead">Schilder, Deko und kleine Serien – sauber gelasert, ohne Bastel-Look.</p>
     </section>
 
-    <section class="section" aria-label="Holz-Feed">
+    <section class="section" id="holz-feed" aria-label="Holz-Feed">
       <div class="section-head">
         <h2>Feed</h2>
-        <p class="small muted">Einblicke & Beispiele rund um Holz.</p>
+        <p class="small muted">Einblicke &amp; Beispiele rund um Holz.</p>
       </div>
 
       <div class="reelwrap">
@@ -190,21 +174,53 @@
           data-reel-default-tag="Holz"
         ></div>
       </div>
-
-      <div class="actions" style="margin-top: 14px;">
-        <a class="btn" href="/kontakt/?p=Holz">Holz anfragen</a>
-      </div>
     </section>
 
     <div class="hr"></div>
 
-    <section class="section" aria-label="Holz Varianten">
-      <h2>Varianten</h2>
-      <p class="small muted">Tippen oder klicken: Schilder, Deko oder kleine Serien.</p>
+    <section class="section" aria-label="Holz Details">
+      <div class="section-head">
+        <h2>So läuft Holz</h2>
+        <p class="small muted">Kurz &amp; klar, damit du schnell entscheiden kannst.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>Was du schickst</h3>
+          <p>Idee + Maße/Verwendung. Foto reicht, Skizze ist Bonus.</p>
+        </div>
+        <div class="card">
+          <h3>Was gut geht</h3>
+          <p>Schilder, Deko, kleine Serien – klare Linien, guter Kontrast.</p>
+        </div>
+        <div class="card">
+          <h3>Ich prüfe</h3>
+          <p>Materialstärke, Lesbarkeit, Finish. Ich sag dir, was sauber wirkt.</p>
+        </div>
+        <div class="card">
+          <h3>Unverbindlich</h3>
+          <p>Erst Richtung &amp; Preisrahmen, verbindlich wird’s nach meiner Bestätigung.</p>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top:20px;">
+        <h2>Varianten</h2>
+        <p class="small muted">Tippen für Details – Bild + Text kommen im Modal.</p>
+      </div>
 
       <div class="products">
         <!-- SCHILDER -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-03.jpg"
+          data-modal-alt="Holz – Schlüsselanhänger &amp; Kleinzeug Beispiel"
+          data-modal-title="Schlüsselanhänger &amp; Kleinzeug"
+          data-modal-text="Schlüssel dran, Statement drauf: Name, Koordinaten, QR Code – präzise, keine Kirmesoptik."
+          data-modal-product="Holz"
+          data-modal-variant="Schlüsselanhänger &amp; Kleinzeug"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/reel/reel-03.jpg"
@@ -216,14 +232,21 @@
           </div>
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Gravur</span></div>
           <h3>Schlüsselanhänger &amp; Kleinzeug</h3>
-          <p class="kicker">Schlüssel dran, Statement drauf: Name, Koordinaten, QR Code, – präzise, keine Kirmesoptik</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Holz&amp;v=Schilder">Anfragen</a>
-          </div>
+          <p class="kicker">Schlüssel dran, Statement drauf: Name, Koordinaten, QR Code – präzise, keine Kirmesoptik.</p>
         </article>
 
         <!-- DEKO -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-08.jpg"
+          data-modal-alt="Holz – Deko Beispiel"
+          data-modal-title="Deko"
+          data-modal-text="Clean bis rustikal – je nach Einsatz. Gravur, Schnitt, Layer – sauber aufgebaut."
+          data-modal-product="Holz"
+          data-modal-variant="Deko"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/reel/reel-08.jpg"
@@ -236,13 +259,20 @@
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>Geschenk &amp; Zuhause</span></div>
           <h3>Deko</h3>
           <p class="kicker">Clean bis rustikal – je nach Einsatz. Gravur, Schnitt, Layer – sauber aufgebaut.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Holz&amp;v=Deko">Anfragen</a>
-          </div>
         </article>
 
         <!-- KLEINE SERIEN -->
-        <article class="productcard">
+        <article
+          class="productcard"
+          data-lb-modal-card
+          tabindex="0"
+          data-modal-img="/assets/reel/reel-12.jpg"
+          data-modal-alt="Holz – Kleine Serien Beispiel"
+          data-modal-title="Kleine Serien"
+          data-modal-text="Wenn’s mehr als 1 ist: wir machen’s konsistent – Maße, Look, Wiederholung."
+          data-modal-product="Holz"
+          data-modal-variant="Serie"
+        >
           <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
             <img
               src="/assets/reel/reel-12.jpg"
@@ -255,15 +285,22 @@
           <div class="meta"><span class="price">auf Anfrage</span><span>•</span><span>kleine Serien</span></div>
           <h3>Kleine Serien</h3>
           <p class="kicker">Wenn’s mehr als 1 ist: wir machen’s konsistent – Maße, Look, Wiederholung.</p>
-          <div class="actions">
-            <a class="btn primary" href="/kontakt/?p=Holz&amp;v=Serie">Anfragen</a>
-          </div>
         </article>
       </div>
+    </section>
 
-      <div class="cta" style="margin-top:16px;">
-        <a class="btn primary" href="/kontakt/?p=Holz">Anfragen</a>
+    <section class="section" aria-label="Holz Anfrage">
+      <div class="section-head">
+        <h2>Bereit?</h2>
+        <p class="small muted">Sag kurz Einsatz &amp; Stil – ich mach dir ein klares Angebot.</p>
       </div>
+      <div class="cta">
+        <a class="btn primary" href="/kontakt/?p=Holz">Mach mir ein Angebot</a>
+        <a class="btn" href="#holz-feed">Zeig mir Beispiele</a>
+      </div>
+      <p class="small muted" style="margin-top:.75rem;">
+        <a href="/leistungen/">← Zurück zu allen Leistungen</a>
+      </p>
     </section>
   </main>
 
