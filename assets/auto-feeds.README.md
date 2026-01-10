@@ -1,40 +1,77 @@
 DATEI: /assets/auto-feeds.README.md
 
-# Auto-Feeds – so fütterst du Seiten automatisch
+# Auto-Feeds – so fütterst du Seiten automatisch (ohne Overkill)
 
-## 1) Script erzeugt Manifeste
-Für jede Kategorie entsteht:
-/assets/<kategorie>/manifest.json
+## Grundsatz
+- Originalbilder bleiben lokal (z.B. in `incoming/`) und müssen NICHT ins Repo.
+- Ins Repo kommen nur die Web-Versionen in `/assets/` + JSON-Dateien.
 
-Beispiele:
-- /assets/metall/manifest.json
-- /assets/glas/manifest.json
-- /assets/werkstatt/manifest.json
+---
 
-## 2) Auto-Feeds aktivieren
-Binde die Datei ein:
-<script src="/assets/auto-feeds.js"></script>
+## 1) Werkstatt-Feed (Startseite) – Reel-System (aktueller Stand)
+Der Werkstatt-Feed läuft als Reel und wird so eingebunden:
 
-## 3) Feed-Container markieren
-Du brauchst irgendwo auf der Seite ein Element mit data-feed.
+<div
+  class="reel"
+  aria-label="Werkstatt Reel"
+  data-reel
+  data-reel-src="/assets/reel-werkstatt.json"
+  data-interval="4500"
+  data-reel-default-tag="Werkstatt"
+></div>
 
-Beispiel (perfekt, weil dein CSS dafür schon Grid kann):
-<div class="products" data-feed="/assets/metall/manifest.json"></div>
+### Erwartetes JSON-Format (/assets/reel-werkstatt.json)
+Array aus Objekten, z.B.:
+[
+  {
+    "src": "/assets/reel/reel-01.jpg",
+    "alt": "Werkstatt – Einblick",
+    "cap": "Werkstatt – Einblick",
+    "cats": ["schiefer"]
+  }
+]
 
-Optionen:
-- data-feed-limit="12"          (Standard 12)
-- data-feed-use="thumb"         (nimmt thumb statt src)
-- data-feed-item-class="productcard"  (Standard productcard)
+Felder:
+- src  (Pfad zum Bild)
+- alt  (Alt-Text)
+- cap  (Caption/Text im Reel)
+- cats (Kategorien/Tags als Array)
+Optional:
+- tag  (z.B. für spezielle Label/Anzeige)
 
-## 4) Werkstattfeed auf Startseite
-Genauso – nur mit werkstatt:
-<div class="products" data-feed="/assets/werkstatt/manifest.json" data-feed-limit="12"></div>
+### Bilder-Pfad (wie aktuell genutzt)
+- /assets/reel/reel-01.jpg
+- /assets/reel/reel-02.jpg
+- ...
 
-## Vorschaubild / Kachelbild ändern (später “Foto XX soll Kachelbild sein”)
-Lege in incoming/<kategorie>/ eine cover.jpg ab:
+Du kannst später problemlos auf .webp wechseln – wichtig ist nur: src muss stimmen.
+
+---
+
+## 2) Leistungsseiten-Feeds – Empfehlung (einheitlich)
+Empfehlung: Für Leistungsseiten ebenfalls Reel-JSONs nutzen, damit du nur EIN System hast.
+
+Beispiel (Metall-Seite):
+data-reel-src="/assets/reel-metall.json"
+
+Dann erzeugst du pro Leistung:
+- /assets/reel-metall.json
+- /assets/reel-holz.json
+- /assets/reel-schiefer.json
+- /assets/reel-glas.json
+- ...
+
+Format wie Werkstatt (src/alt/cap/cats).
+
+---
+
+## 3) Vorschaubild / Kachelbild ändern (später, simpel)
+Wenn du für eine Leistung ein bestimmtes Kachelbild willst:
+Lege lokal in incoming/<kategorie>/ eine cover.jpg ab, z.B.
 incoming/metall/cover.jpg
 
-Script laufen lassen → dann ist das hier dein Kachelbild:
-- /assets/metall/cover-square.webp
-und für normal:
-- /assets/metall/cover.webp
+Pipeline laufen lassen → erzeugt:
+- /assets/metall/cover.webp          (normal)
+- /assets/metall/cover-square.webp   (für 1:1 Kacheln)
+
+Dann kannst du in HTML gezielt dieses Cover als Vorschaubild verwenden.
