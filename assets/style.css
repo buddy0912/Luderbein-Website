@@ -67,6 +67,67 @@ html {
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 18px; }
 
 /* ================================
+   LASER SCROLL INDICATOR
+================================ */
+.laser-scroll {
+  position: fixed;
+  right: calc(clamp(10px, 2.5vw, 16px) + env(safe-area-inset-right));
+  top: calc(12px + env(safe-area-inset-top));
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(219,16,33,.12),
+    rgba(241,8,13,.35) 50%,
+    rgba(219,16,33,.12)
+  );
+  box-shadow: 0 0 10px rgba(219,16,33,.12);
+  opacity: .75;
+  pointer-events: none;
+  z-index: 40;
+  --laserY: 0;
+  --laser-dot-size: 8px;
+}
+
+.laser-dot {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--laserY, 0) * (100% - var(--laser-dot-size)));
+  width: var(--laser-dot-size);
+  height: var(--laser-dot-size);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle at 30% 30%, var(--accentHot), var(--accent) 60%, #a50c18 100%);
+  box-shadow: 0 0 6px rgba(241,8,13,.65), 0 0 14px rgba(219,16,33,.4);
+}
+
+.laser-scroll.is-scrolling .laser-dot {
+  animation: laser-pulse .35s ease-out;
+}
+
+@keyframes laser-pulse {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: .95;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: .95;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .laser-scroll.is-scrolling .laser-dot {
+    animation: none;
+  }
+}
+
+/* ================================
    HEADER + NAVIGATION
 ================================ */
 header {
