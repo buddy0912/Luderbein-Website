@@ -659,7 +659,7 @@ footer a:hover { color: var(--text); }
   .productcard { grid-column: span 6; }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 480px) {
   .wrap{
     padding-left: clamp(16px, 4vw, 22px);
     padding-right: clamp(16px, 4vw, 22px);
@@ -1067,7 +1067,7 @@ body.leistung-page .leistung-hr{
 #lb-chat-launcher {
   position: fixed;
   right: 16px;
-  bottom: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   padding: 12px 18px;
   border-radius: 999px;
   border: 1px solid rgba(219, 16, 33, 0.55);
@@ -1086,12 +1086,13 @@ body.leistung-page .leistung-hr{
 #lb-chat {
   position: fixed;
   right: 16px;
-  bottom: 76px;
+  bottom: calc(76px + env(safe-area-inset-bottom));
   width: min(360px, calc(100vw - 32px));
   background: rgba(26, 26, 31, 0.98);
   border: 1px solid rgba(64, 62, 65, 0.6);
   border-radius: 16px;
   box-shadow: var(--shadow);
+  max-height: min(70vh, 560px);
   display: none;
   flex-direction: column;
   overflow: hidden;
@@ -1135,8 +1136,10 @@ body.leistung-page .leistung-hr{
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 300px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .lb-chat-msg {
@@ -1184,6 +1187,7 @@ body.leistung-page .leistung-hr{
 .lb-chat-input {
   display: flex;
   gap: 10px;
+  align-items: stretch;
 }
 
 .lb-chat-input textarea {
@@ -1193,23 +1197,30 @@ body.leistung-page .leistung-hr{
   border: 1px solid rgba(64, 62, 65, 0.6);
   background: rgba(14, 6, 11, 0.8);
   color: var(--text);
-  padding: 8px 10px;
+  padding: 10px 12px;
   font-family: inherit;
+  min-height: 48px;
 }
 
 .lb-chat-input button {
-  padding: 10px 14px;
+  padding: 10px 16px;
   border-radius: 12px;
   border: none;
   background: var(--accent);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
+  min-height: 48px;
 }
 
 .lb-chat-form.is-loading button {
   opacity: 0.7;
   cursor: wait;
+}
+
+.lb-chat-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .lb-chat-actions {
@@ -1233,15 +1244,23 @@ body.leistung-page .leistung-hr{
   color: #fff;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 480px) {
   #lb-chat {
-    right: 12px;
-    bottom: 70px;
-    width: calc(100vw - 24px);
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: min(92dvh, 720px);
+    max-height: none;
+    border-radius: 18px 18px 0 0;
   }
 
   #lb-chat-launcher {
     right: 12px;
-    bottom: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  .lb-chat-form {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
 }
