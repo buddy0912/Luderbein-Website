@@ -1051,7 +1051,7 @@
     initBanner();
     initScrollIndicator();
     initModalCards();
-    initLuderBot();
+    // initChatWidget wird absichtlich NICHT aufgerufen, um den Bot auszublenden.
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
     if ("requestIdleCallback" in window) {
