@@ -107,6 +107,98 @@ function buildSuggestionFromMessages(messages) {
   };
 }
 
+function findFirstLabel(normalizedText, list) {
+  for (const item of list) {
+    if (item.terms.some((term) => normalizedText.includes(term))) {
+      return item.label;
+    }
+  }
+  return "";
+}
+
+function extractQuantity(text) {
+  const match = text.match(/\b(\d{1,4})\s*(stueck|stück|stk|exemplare|teile|pcs)\b/i);
+  if (match) {
+    return `${match[1]} ${match[2]}`;
+  }
+  return "";
+}
+
+function extractDeadline(text) {
+  const dateMatch = text.match(/\b\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?\b/);
+  if (dateMatch) {
+    return dateMatch[0];
+  }
+  const phraseMatch = text.match(/\b(bis|sp[aä]testens|zum|termin|deadline|lieferung|fertig|abholung)\b[^.!?\n]{0,48}/i);
+  return phraseMatch ? phraseMatch[0].trim() : "";
+}
+
+function extractSpecial(text) {
+  const match = text.match(/\b(sonder\w*|spezial\w*|extra\w*|wunsch\w*|individuell\w*|bitte)\b[^.!?\n]{0,64}/i);
+  return match ? match[0].trim() : "";
+}
+
+function buildHandoffFromMessages(messages) {
+  const convoText = messages.map((m) => m.content).join("\n");
+  const normalizedText = normalize(convoText);
+
+  const product = findFirstLabel(normalizedText, [
+    { label: "Schlüsselanhänger", terms: ["schluesselanhaenger", "schluessel", "anhaenger"] },
+    { label: "Schwibbogen", terms: ["schwibbogen"] },
+    { label: "Holzlampe", terms: ["holzlampe"] },
+    { label: "Lampe", terms: ["lampe", "leuchte"] },
+    { label: "Schild", terms: ["schild", "plakette", "typenschild"] },
+    { label: "Schiefer", terms: ["schiefer"] },
+    { label: "Metall", terms: ["metall", "edelstahl", "alu", "aluminium", "messing"] },
+    { label: "Acryl", terms: ["acryl", "plexi"] },
+    { label: "Glas", terms: ["glas"] },
+    { label: "Holz", terms: ["holz"] }
+  ]) || "Unklar";
+
+  const material = findFirstLabel(normalizedText, [
+    { label: "Metall", terms: ["metall", "edelstahl", "alu", "aluminium", "messing"] },
+    { label: "Holz", terms: ["holz"] },
+    { label: "Acryl", terms: ["acryl", "plexi"] },
+    { label: "Schiefer", terms: ["schiefer"] },
+    { label: "Glas", terms: ["glas"] }
+  ]) || "Unklar";
+
+  const textNegative = /(?:kein|keine|ohne)\s+(text|motiv|foto|bild|logo|gravur|schrift)/.test(normalizedText);
+  const textPositive = /(text|motiv|foto|bild|logo|gravur|schrift)/.test(normalizedText);
+  const textMotif = textNegative ? "Nein" : (textPositive ? "Ja" : "Unklar");
+
+  const quantity = extractQuantity(convoText) || "Unklar";
+  const deadline = extractDeadline(convoText) || "Unklar";
+  const special = extractSpecial(convoText) || "Unklar";
+
+  const missing = [];
+  if (product === "Unklar") missing.push("Produkt/Art");
+  if (material === "Unklar") missing.push("Material");
+  if (textMotif === "Unklar") missing.push("Text/Motiv/Foto");
+  if (quantity === "Unklar") missing.push("Menge");
+  if (deadline === "Unklar") missing.push("Deadline/Termin");
+  if (special === "Unklar") missing.push("Sonderwünsche");
+
+  const openQuestions = missing.length ? `Offen: ${missing.join(", ")}` : "Keine offenen Punkte.";
+  const summaryLines = [
+    `• Produkt/Art: ${product}`,
+    `• Material: ${material}`,
+    `• Text/Motiv/Foto: ${textMotif}`,
+    `• Menge: ${quantity}`,
+    `• Deadline/Termin: ${deadline}`,
+    `• Sonderwünsche: ${special}`,
+    `• Offene Fragen: ${openQuestions}`
+  ];
+  const summary = summaryLines.join("\n");
+  const subjectTopic = product !== "Unklar" ? product : (material !== "Unklar" ? material : "Luderbein");
+
+  return {
+    subject: `LuderBot Anfrage – ${subjectTopic}`,
+    mailBody: `Hi Luderbein,\n\nhier die Chat-Zusammenfassung:\n${summary}\n\nDanke!`,
+    whatsappText: `Hi Luderbein! Hier die Chat-Zusammenfassung:\n${summary}`
+  };
+}
+
 function normalize(text) {
   return (text || "")
     .toLowerCase()
@@ -256,12 +348,14 @@ function buildSuggestions(category) {
 function buildReply(messages) {
   const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content || "";
   const intent = classifyIntent(lastUser);
+  const handoff = buildHandoffFromMessages(messages);
 
   if (intent.offTopic) {
     return {
       reply:
         "Dazu kann ich dir nicht helfen – ich bin auf Gravur, Laser & Sonderanfertigungen bei Luderbein spezialisiert. Schau gern hier vorbei: /leistungen/ (z.B. /leistungen/holz/, /leistungen/metall/) – oder schreib direkt über /kontakt/.",
-      suggestion: buildSuggestionFromMessages(messages)
+      suggestion: buildSuggestionFromMessages(messages),
+      handoff
     };
   }
 
@@ -269,7 +363,8 @@ function buildReply(messages) {
     return {
       reply:
         "Kein Stress! Wenn du noch unschlüssig bist, stöbere kurz auf /leistungen/ und den Unterseiten wie /leistungen/holz/, /leistungen/acryl/, /leistungen/schiefer/ oder /leistungen/metall/. Wenn du magst, klären wir alles direkt über /kontakt/.",
-      suggestion: buildSuggestionFromMessages(messages)
+      suggestion: buildSuggestionFromMessages(messages),
+      handoff
     };
   }
 
@@ -288,7 +383,8 @@ function buildReply(messages) {
 
   return {
     reply: replyParts.join("\n"),
-    suggestion: buildSuggestionFromMessages(messages)
+    suggestion: buildSuggestionFromMessages(messages),
+    handoff
   };
 }
 

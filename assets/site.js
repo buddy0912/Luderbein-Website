@@ -824,14 +824,14 @@
       </div>
       <div class="lb-chat-messages" role="log" aria-live="polite"></div>
       <form class="lb-chat-form">
+        <div class="lb-chat-input">
+          <textarea rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
+          <button type="submit" disabled>Senden</button>
+        </div>
         <label class="lb-chat-consent">
           <input type="checkbox" required />
           Ich stimme zu, dass meine Nachricht zur Verarbeitung an Cloudflare Workers AI übermittelt wird.
         </label>
-        <div class="lb-chat-input">
-          <textarea rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
-          <button type="submit">Senden</button>
-        </div>
         <div class="lb-chat-actions" hidden>
           <a class="lb-chat-action" data-action="wa" target="_blank" rel="noopener">WhatsApp übernehmen</a>
           <a class="lb-chat-action" data-action="mail">Mail übernehmen</a>
@@ -845,12 +845,14 @@
     const closeBtn = panel.querySelector(".lb-chat-close");
     const form = panel.querySelector(".lb-chat-form");
     const textarea = panel.querySelector("textarea");
+    const sendBtn = panel.querySelector("button[type=\"submit\"]");
     const messages = panel.querySelector(".lb-chat-messages");
     const consent = panel.querySelector("input[type=\"checkbox\"]");
     const actions = panel.querySelector(".lb-chat-actions");
     const waBtn = panel.querySelector("[data-action=\"wa\"]");
     const mailBtn = panel.querySelector("[data-action=\"mail\"]");
     const chatMessages = [];
+    let lastHandoff = null;
 
     function setOpen(isOpen) {
       panel.classList.toggle("is-open", isOpen);
@@ -908,22 +910,28 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    function setSuggestion(suggestion) {
-      const text =
-        suggestion?.whatsappText ||
-        suggestion?.mailBody ||
-        suggestion?.text ||
-        "";
-      if (!text) {
+    function setHandoff(handoff) {
+      lastHandoff = handoff || null;
+      const waText = lastHandoff?.whatsappText || "";
+      const mailBody = lastHandoff?.mailBody || waText;
+      if (!waText || !mailBody) {
+        waBtn.removeAttribute("href");
+        mailBtn.removeAttribute("href");
         actions.hidden = true;
         return;
       }
-      const subject = suggestion?.subject || "Anfrage via LuderBot";
-      const waHref = `https://wa.me/${LB_CONTACT.waNumber}?text=${encodeURIComponent(text)}`;
-      const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      const subject = lastHandoff?.subject || "Anfrage via LuderBot";
+      const waHref = `https://wa.me/${LB_CONTACT.waNumber}?text=${encodeURIComponent(waText)}`;
+      const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailBody)}`;
       waBtn.setAttribute("href", waHref);
       mailBtn.setAttribute("href", mailHref);
       actions.hidden = false;
+    }
+
+    function updateSendState() {
+      const hasText = norm(textarea.value).length > 0;
+      const canSend = hasText && consent.checked;
+      sendBtn.disabled = !canSend;
     }
 
     function pushMessage(role, content) {
@@ -931,8 +939,13 @@
       if (chatMessages.length > 16) chatMessages.splice(0, chatMessages.length - 16);
     }
 
-    launcher.addEventListener("click", () => setOpen(!panel.classList.contains("is-open")));
+    launcher.addEventListener("click", () => {
+      setOpen(!panel.classList.contains("is-open"));
+      updateSendState();
+    });
     closeBtn.addEventListener("click", () => setOpen(false));
+    textarea.addEventListener("input", updateSendState);
+    consent.addEventListener("change", updateSendState);
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -940,13 +953,15 @@
       if (!text) return;
       if (!consent.checked) {
         addMessage("system", "Bitte bestätige die Einwilligung, damit ich antworten darf.");
+        updateSendState();
         return;
       }
 
       addMessage("user", text);
       pushMessage("user", text);
       textarea.value = "";
-      actions.hidden = true;
+      updateSendState();
+      setHandoff(null);
       form.classList.add("is-loading");
 
       try {
@@ -965,9 +980,7 @@
         if (data && data.reply) {
           addMessage("bot", data.reply);
           pushMessage("assistant", data.reply);
-          if (data.suggestion) {
-            setSuggestion(data.suggestion);
-          }
+          setHandoff(data.handoff);
         } else {
           addMessage("system", "Ich konnte gerade keine Antwort erzeugen.");
         }
