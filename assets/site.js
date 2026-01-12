@@ -799,6 +799,134 @@
   }
 
   // ---------------------------------
+  // LuderBot Chat Widget
+  // ---------------------------------
+  function initLuderBot() {
+    if (document.getElementById("lb-chat-launcher")) return;
+
+    const launcher = document.createElement("button");
+    launcher.id = "lb-chat-launcher";
+    launcher.type = "button";
+    launcher.setAttribute("aria-expanded", "false");
+    launcher.setAttribute("aria-controls", "lb-chat");
+    launcher.textContent = "LuderBot";
+
+    const panel = document.createElement("section");
+    panel.id = "lb-chat";
+    panel.setAttribute("aria-hidden", "true");
+    panel.innerHTML = `
+      <div class="lb-chat-header">
+        <div>
+          <strong>LuderBot</strong>
+          <span>Frag mich alles rund um Gravuren.</span>
+        </div>
+        <button type="button" class="lb-chat-close" aria-label="Chat schließen">×</button>
+      </div>
+      <div class="lb-chat-messages" role="log" aria-live="polite"></div>
+      <form class="lb-chat-form">
+        <label class="lb-chat-consent">
+          <input type="checkbox" required />
+          Ich stimme zu, dass meine Nachricht an OpenAI übermittelt wird.
+        </label>
+        <div class="lb-chat-input">
+          <textarea rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
+          <button type="submit">Senden</button>
+        </div>
+        <div class="lb-chat-actions" hidden>
+          <a class="lb-chat-action" data-action="wa" target="_blank" rel="noopener">WhatsApp übernehmen</a>
+          <a class="lb-chat-action" data-action="mail">Mail übernehmen</a>
+        </div>
+      </form>
+    `;
+
+    document.body.appendChild(launcher);
+    document.body.appendChild(panel);
+
+    const closeBtn = panel.querySelector(".lb-chat-close");
+    const form = panel.querySelector(".lb-chat-form");
+    const textarea = panel.querySelector("textarea");
+    const messages = panel.querySelector(".lb-chat-messages");
+    const consent = panel.querySelector("input[type=\"checkbox\"]");
+    const actions = panel.querySelector(".lb-chat-actions");
+    const waBtn = panel.querySelector("[data-action=\"wa\"]");
+    const mailBtn = panel.querySelector("[data-action=\"mail\"]");
+
+    function setOpen(isOpen) {
+      panel.classList.toggle("is-open", isOpen);
+      panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      launcher.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      if (isOpen) {
+        textarea.focus();
+      }
+    }
+
+    function addMessage(role, text) {
+      const bubble = document.createElement("div");
+      bubble.className = `lb-chat-msg ${role}`;
+      bubble.textContent = text;
+      messages.appendChild(bubble);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function setSuggestion(text) {
+      if (!text) {
+        actions.hidden = true;
+        return;
+      }
+      const waHref = `https://wa.me/${LB_CONTACT.waNumber}?text=${encodeURIComponent(text)}`;
+      const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent("Anfrage via LuderBot")}&body=${encodeURIComponent(text)}`;
+      waBtn.setAttribute("href", waHref);
+      mailBtn.setAttribute("href", mailHref);
+      actions.hidden = false;
+    }
+
+    launcher.addEventListener("click", () => setOpen(!panel.classList.contains("is-open")));
+    closeBtn.addEventListener("click", () => setOpen(false));
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = norm(textarea.value);
+      if (!text) return;
+      if (!consent.checked) {
+        addMessage("system", "Bitte bestätige die Einwilligung, damit ich antworten darf.");
+        return;
+      }
+
+      addMessage("user", text);
+      textarea.value = "";
+      actions.hidden = true;
+      form.classList.add("is-loading");
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
+
+        if (!response.ok) {
+          addMessage("system", "Ups, der Chat ist gerade nicht verfügbar.");
+          return;
+        }
+
+        const data = await response.json();
+        if (data && data.reply) {
+          addMessage("bot", data.reply);
+          if (data.suggestion && data.suggestion.text) {
+            setSuggestion(data.suggestion.text);
+          }
+        } else {
+          addMessage("system", "Ich konnte gerade keine Antwort erzeugen.");
+        }
+      } catch (_) {
+        addMessage("system", "Verbindung fehlgeschlagen. Bitte versuche es später.");
+      } finally {
+        form.classList.remove("is-loading");
+      }
+    });
+  }
+
+  // ---------------------------------
   // DOM Ready
   // ---------------------------------
   document.addEventListener("DOMContentLoaded", () => {
@@ -838,6 +966,7 @@
     initBanner();
     initScrollIndicator();
     initModalCards();
+    initLuderBot();
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
     if ("requestIdleCallback" in window) {
