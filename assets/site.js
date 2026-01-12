@@ -825,8 +825,8 @@
       <div class="lb-chat-messages" role="log" aria-live="polite"></div>
       <form class="lb-chat-form">
         <div class="lb-chat-input">
-          <textarea rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
-          <button type="submit" disabled>Senden</button>
+          <textarea id="lb-chat-input" rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
+          <button id="lb-chat-send" type="submit" disabled>Senden</button>
         </div>
         <label class="lb-chat-consent">
           <input type="checkbox" required />
@@ -854,12 +854,28 @@
     const chatMessages = [];
     let lastHandoff = null;
 
+    function shouldAutofocus() {
+      return !(
+        window.matchMedia("(pointer: coarse)").matches ||
+        window.matchMedia("(max-width: 480px)").matches
+      );
+    }
+
+    function focusInput() {
+      if (!shouldAutofocus()) return;
+      try {
+        textarea.focus({ preventScroll: true });
+      } catch (_) {
+        textarea.focus();
+      }
+    }
+
     function setOpen(isOpen) {
       panel.classList.toggle("is-open", isOpen);
       panel.setAttribute("aria-hidden", isOpen ? "false" : "true");
       launcher.setAttribute("aria-expanded", isOpen ? "true" : "false");
       if (isOpen) {
-        textarea.focus();
+        focusInput();
       }
     }
 
