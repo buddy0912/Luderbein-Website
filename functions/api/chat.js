@@ -1,172 +1,126 @@
-// =========================================================
-// Cloudflare Pages Function: /api/chat  (Workers AI Version)
-// Datei: /functions/api/chat.js
-//
-// Voraussetzung:
-// - In Cloudflare Pages unter "Einstellungen → Bindungen" ein AI-Binding anlegen:
-//   Name: AI
-//
-// Kein OpenAI Key nötig.
-// =========================================================
+DATEI: /functions/api/chat.js
 
-const MAX_BODY_CHARS = 12000;
-const MAX_MESSAGES = 14;
-const MAX_CONTENT_CHARS = 1200;
-
-// Workers AI Modell (klein & flott)
-const CF_MODEL = "@cf/meta/llama-3.1-8b-instruct";
-
-function json(data, status = 200, headers = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      ...headers
-    }
+export async function onRequestOptions() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders(),
   });
 }
 
-function corsHeaders(request, env) {
-  const origin = request.headers.get("Origin") || "";
-  const allowed = (env.ALLOWED_ORIGIN || "").trim();
-
-  if (allowed) {
-    if (origin === allowed) {
-      return {
-        "Access-Control-Allow-Origin": origin,
-        "Vary": "Origin",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "content-type"
-      };
-    }
-    return {};
-  }
-
-  return origin
-    ? {
-        "Access-Control-Allow-Origin": origin,
-        "Vary": "Origin",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "content-type"
-      }
-    : {
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "content-type"
-      };
-}
-
-function clampMessages(messages) {
-  if (!Array.isArray(messages)) return [];
-  const sliced = messages.slice(-MAX_MESSAGES);
-
-  return sliced
-    .map((m) => {
-      const role = (m && m.role) || "user";
-      const content = String((m && m.content) || "").slice(0, MAX_CONTENT_CHARS);
-      if (!content.trim()) return null;
-      if (!["user", "assistant"].includes(role)) return null;
-      return { role, content };
-    })
-    .filter(Boolean);
-}
-
-function buildSystemPrompt() {
-  return [
-    "Du bist „LuderBot“, der Website-Chat von Luderbein (urban/industrial, frech aber professionell).",
-    "Ziel: Besucher in unter 1 Minute zu einer klaren Anfrage führen.",
-    "Regeln:",
-    "- Erfinde KEINE Preise/Lieferzeiten/technische Limits. Wenn unsicher: sag es & frag kurz nach.",
-    "- Maximal 1 Rückfrage pro Antwort.",
-    "- Keine sensiblen Daten erfragen. Wenn Nutzer sowas sendet: kurz warnen.",
-    "",
-    "Produktfokus: Schlüsselanhänger (Holz/Metall), Geschenksets (4mm Pappel-Box), Schiefer (Foto + Text/Symbole).",
-    "",
-    "Antworte ausschließlich als gültiges JSON im Format:",
-    '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "..." } }',
-    "suggestion nur ausgeben, wenn genug Infos da sind."
-  ].join("\n");
-}
-
-function safeJsonParse(s) {
-  try { return JSON.parse(s); } catch (_) { return null; }
-}
-
-export async function onRequest(context) {
-  const { request, env } = context;
-  const cors = corsHeaders(request, env);
-
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: { ...cors } });
-  }
-  if (request.method !== "POST") {
-    return json({ error: "Method not allowed" }, 405, { ...cors });
-  }
-
-  // ALLOWED_ORIGIN optional (Preview lieber leer lassen)
-  if ((env.ALLOWED_ORIGIN || "").trim()) {
-    const origin = request.headers.get("Origin") || "";
-    if (origin !== env.ALLOWED_ORIGIN.trim()) {
-      return json({ error: "Origin nicht erlaubt." }, 403, { ...cors });
-    }
-  }
-
-  let raw = "";
+export async function onRequestPost({ request, env }) {
   try {
-    raw = await request.text();
-  } catch (_) {
-    return json({ error: "Body konnte nicht gelesen werden." }, 400, { ...cors });
-  }
+    if (!env || !env.AI) {
+      return json(
+        {
+          ok: false,
+          error: "missing_workers_ai_binding",
+          hint:
+            "Cloudflare Pages → Einstellungen → Bindungen: Workers AI hinzufügen und als Variablenname exakt 'AI' setzen (für die passende Umgebung: Produktion/Vorschau).",
+        },
+        500
+      );
+    }
 
-  if (raw.length > MAX_BODY_CHARS) {
-    return json({ error: "Payload zu groß." }, 413, { ...cors });
-  }
+    const body = await safeJson(request);
+    const incoming = Array.isArray(body?.messages) ? body.messages : [];
 
-  const body = safeJsonParse(raw || "{}");
-  if (!body || !Array.isArray(body.messages)) {
-    return json({ error: "Bitte JSON senden: { messages: [...] }" }, 400, { ...cors });
-  }
+    const userMsgs = incoming
+      .filter((m) => m && typeof m === "object" && typeof m.content === "string")
+      .map((m) => ({
+        role: normalizeRole(m.role),
+        content: String(m.content).slice(0, 2000),
+      }))
+      .slice(-12);
 
-  const userMessages = clampMessages(body.messages);
-  if (userMessages.length === 0) {
-    return json({ error: "Keine Nachrichten gefunden." }, 400, { ...cors });
-  }
+    if (userMsgs.length === 0) {
+      return json(
+        {
+          ok: false,
+          error: "bad_request",
+          hint: "Body muss JSON mit { messages: [{role, content}, ...] } sein.",
+        },
+        400
+      );
+    }
 
-  if (!env.AI || typeof env.AI.run !== "function") {
-    return json(
-      { error: "Workers AI Binding fehlt. In Cloudflare Pages unter Einstellungen → Bindungen AI=AI anlegen." },
-      500,
-      { ...cors }
-    );
-  }
+    const system = {
+      role: "system",
+      content:
+        "Du bist 'LuderBot' von Luderbein (Gravur/Werkstatt). Ton: frech, unangepasst, provozierend – aber professionell, elegant, liebevoll. " +
+        "Hilf bei Materialwahl (Holz/Metall/Schiefer/Acryl/Glas), Motiven, Dateiformaten, Pflege/Versiegelung, Lieferzeit, grober Preiseinschätzung. " +
+        "Wenn Infos fehlen: stelle 1–3 kurze Rückfragen. Keine Halluzinationen. Keine rechtlichen Versprechen. " +
+        "Antworte kurz & klar. Wenn passend: schlage am Ende eine WhatsApp- oder Mail-Anfrageformulierung vor.",
+    };
 
-  const messages = [
-    { role: "system", content: buildSystemPrompt() },
-    ...userMessages
-  ];
+    // Model: wenn OPENAI_MODEL auf ein @cf/... gesetzt ist, nutzen wir das; sonst Default.
+    const model =
+      typeof env.OPENAI_MODEL === "string" && env.OPENAI_MODEL.startsWith("@cf/")
+        ? env.OPENAI_MODEL
+        : "@cf/meta/llama-3.1-8b-instruct";
 
-  try {
-    const result = await env.AI.run(CF_MODEL, {
-      messages,
-      temperature: 0.4,
-      max_tokens: 450
+    const messages = [system, ...userMsgs];
+
+    const result = await env.AI.run(model, { messages });
+
+    const reply =
+      typeof result === "string"
+        ? result
+        : typeof result?.response === "string"
+        ? result.response
+        : typeof result?.result === "string"
+        ? result.result
+        : typeof result?.text === "string"
+        ? result.text
+        : JSON.stringify(result);
+
+    return json({
+      ok: true,
+      provider: "cloudflare_workers_ai",
+      model,
+      reply,
+      // extra Keys, damit dein Frontend ziemlich sicher was findet:
+      content: reply,
+      message: reply,
+      text: reply,
     });
-
-    // Workers AI liefert meist { response: "..." }
-    const text = String(result?.response || result?.result || result || "").trim();
-    const parsed = safeJsonParse(text);
-
-    if (parsed && typeof parsed === "object" && typeof parsed.reply === "string") {
-      return json(parsed, 200, { ...cors });
-    }
-
-    // Fallback wenn Modell kein JSON liefert
-    return json({ reply: text || "Ich hab kurz geschluckt. Nochmal?" }, 200, { ...cors });
   } catch (err) {
     return json(
-      { error: "ai_error", detail: err?.message || String(err) },
-      502,
-      { ...cors }
+      {
+        ok: false,
+        error: "server_error",
+        details: String(err?.message || err),
+      },
+      500
     );
+  }
+}
+
+function normalizeRole(role) {
+  const r = String(role || "").toLowerCase();
+  if (r === "assistant" || r === "system" || r === "user") return r;
+  return "user";
+}
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Content-Type": "application/json; charset=utf-8",
+  };
+}
+
+function json(obj, status = 200) {
+  return new Response(JSON.stringify(obj), {
+    status,
+    headers: corsHeaders(),
+  });
+}
+
+async function safeJson(request) {
+  try {
+    return await request.json();
+  } catch {
+    return null;
   }
 }
