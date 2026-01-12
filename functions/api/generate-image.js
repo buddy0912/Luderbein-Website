@@ -2,7 +2,7 @@ DATEI: /functions/api/generate-image.js
 
 // =========================================================
 // Cloudflare Pages Function: /api/generate-image
-// IMPORTANT: No "@cloudflare/ai" import (Pages build has no npm install)
+// IMPORTANT: No Cloudflare AI npm import (Pages build has no npm install)
 // Uses Workers AI binding directly: context.env.AI.run(...)
 // =========================================================
 
