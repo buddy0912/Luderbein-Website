@@ -1,10 +1,24 @@
-// Cloudflare Pages Function: /api/chat (Workers AI)
-// Voraussetzung: Cloudflare Pages → Einstellungen → Bindungen → Workers AI mit Binding-Name "AI"
+// =========================================================
+// Cloudflare Pages Function: /api/chat  (Workers AI)
+// Datei: /functions/api/chat.js
+//
+// Cloudflare Setup (Pages Projekt):
+// - Einstellungen → Bindungen → Hinzufügen → Workers AI
+// - Variablenname/Binging name: AI
+//
+// Kein OpenAI API Key nötig.
+// Optional:
+// - ALLOWED_ORIGIN (Text) für Production: https://deine-domain.tld
+//   (Für pages.dev/Preview am besten leer lassen.)
+// =========================================================
 
-const MODEL = "@cf/meta/llama-3.1-8b-instruct";
 const MAX_BODY_CHARS = 12000;
 const MAX_MESSAGES = 14;
 const MAX_CONTENT_CHARS = 1200;
+
+// Modell (Workers AI). Falls das bei dir nicht verfügbar ist,
+// sag mir den Fehlertext aus der Response, dann switchen wir auf ein anderes.
+const CF_MODEL = "@cf/meta/llama-3.1-8b-instruct";
 
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
@@ -12,25 +26,55 @@ function json(data, status = 200, headers = {}) {
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
-      ...headers,
-    },
+      ...headers
+    }
   });
 }
 
-function corsHeaders(request) {
-  const origin = request.headers.get("Origin") || "*";
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Vary": "Origin",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "content-type",
-  };
+function corsHeaders(request, env) {
+  const origin = request.headers.get("Origin") || "";
+  const allowed = (env.ALLOWED_ORIGIN || "").trim();
+
+  // Wenn ALLOWED_ORIGIN gesetzt: nur exakt dieser Origin.
+  // Wenn nicht gesetzt: Origin dynamisch erlauben (praktisch für Preview).
+  if (allowed) {
+    if (origin === allowed) {
+      return {
+        "Access-Control-Allow-Origin": origin,
+        "Vary": "Origin",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "content-type"
+      };
+    }
+    return {};
+  }
+
+  return origin
+    ? {
+        "Access-Control-Allow-Origin": origin,
+        "Vary": "Origin",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "content-type"
+      }
+    : {
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "content-type"
+      };
+}
+
+function safeJsonParse(s) {
+  try {
+    return JSON.parse(s);
+  } catch (_) {
+    return null;
+  }
 }
 
 function clampMessages(messages) {
   if (!Array.isArray(messages)) return [];
-  return messages
-    .slice(-MAX_MESSAGES)
+  const sliced = messages.slice(-MAX_MESSAGES);
+
+  return sliced
     .map((m) => {
       const role = (m && m.role) || "user";
       const content = String((m && m.content) || "").slice(0, MAX_CONTENT_CHARS);
@@ -41,52 +85,101 @@ function clampMessages(messages) {
     .filter(Boolean);
 }
 
-function systemPrompt() {
+function buildSystemPrompt() {
   return [
-    "Du bist „LuderBot“, der Website-Chat von Luderbein (Gravur/Laser).",
-    "Ton: frech, unangepasst – aber professionell, elegant, liebevoll.",
-    "Ziel: Besucher schnell zu einer klaren Anfrage führen.",
+    "Du bist „LuderBot“, der Website-Chat von Luderbein (urban/industrial, frech aber professionell).",
+    "Ziel: Besucher in unter 1 Minute zu einer klaren Anfrage führen.",
+    "",
     "Regeln:",
-    "- Erfinde KEINE Preise/Lieferzeiten/technische Grenzen. Wenn unklar: sag es & frag kurz nach (max 1 Frage).",
+    "- Erfinde KEINE Preise/Lieferzeiten/technische Limits. Wenn unsicher: sag es und frag kurz nach.",
+    "- Maximal 1 Rückfrage pro Antwort.",
     "- Keine sensiblen Daten erfragen.",
     "",
-    "Antworte ausschließlich als gültiges JSON:",
+    "Produktfokus: Schlüsselanhänger (Holz/Metall), Geschenksets (4mm Pappel-Box), Schiefer (Foto + Text/Symbole).",
+    "",
+    "Antworte ausschließlich als gültiges JSON im Format:",
     '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "..." } }',
-    "suggestion nur ausgeben, wenn genug Infos da sind.",
+    "„suggestion“ nur ausgeben, wenn genug Infos da sind."
   ].join("\n");
-}
-
-function safeJsonParse(s) {
-  try { return JSON.parse(s); } catch { return null; }
 }
 
 export async function onRequest(context) {
   const { request, env } = context;
-  const cors = corsHeaders(request);
+  const cors = corsHeaders(request, env);
 
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: cors });
+    return new Response(null, { status: 204, headers: { ...cors } });
   }
 
   if (request.method !== "POST") {
-    return json({ error: "Method not allowed" }, 405, cors);
+    return json({ error: "Method not allowed" }, 405, { ...cors });
   }
 
-  // Body lesen
+  // Wenn ALLOWED_ORIGIN gesetzt ist und nicht passt → blocken
+  if ((env.ALLOWED_ORIGIN || "").trim()) {
+    const origin = request.headers.get("Origin") || "";
+    if (origin !== env.ALLOWED_ORIGIN.trim()) {
+      return json({ error: "Origin nicht erlaubt." }, 403, { ...cors });
+    }
+  }
+
+  // Workers AI Binding vorhanden?
+  if (!env.AI || typeof env.AI.run !== "function") {
+    return json(
+      {
+        error: "missing_workers_ai_binding",
+        detail:
+          "Workers AI Binding fehlt. In Cloudflare Pages: Einstellungen → Bindungen → Hinzufügen → Workers AI, Name: AI"
+      },
+      500,
+      { ...cors }
+    );
+  }
+
   let raw = "";
   try {
     raw = await request.text();
-  } catch {
-    return json({ error: "Body konnte nicht gelesen werden." }, 400, cors);
+  } catch (_) {
+    return json({ error: "Body konnte nicht gelesen werden." }, 400, { ...cors });
   }
 
   if (raw.length > MAX_BODY_CHARS) {
-    return json({ error: "Payload zu groß." }, 413, cors);
+    return json({ error: "Payload zu groß." }, 413, { ...cors });
   }
 
   const body = safeJsonParse(raw || "{}");
   if (!body || !Array.isArray(body.messages)) {
-    return json({ error: "Bitte JSON senden: { messages: [...] }" }, 400, cors);
+    return json({ error: "Bitte JSON senden: { messages: [...] }" }, 400, { ...cors });
   }
 
-  const msgs = clampMessages(body.
+  const userMessages = clampMessages(body.messages);
+  if (userMessages.length === 0) {
+    return json({ error: "Keine Nachrichten gefunden." }, 400, { ...cors });
+  }
+
+  const messages = [{ role: "system", content: buildSystemPrompt() }, ...userMessages];
+
+  try {
+    const result = await env.AI.run(CF_MODEL, {
+      messages,
+      temperature: 0.4,
+      max_tokens: 450
+    });
+
+    const text = String(result?.response || result?.result || result || "").trim();
+    const parsed = safeJsonParse(text);
+
+    if (parsed && typeof parsed === "object" && typeof parsed.reply === "string") {
+      return json(parsed, 200, { ...cors });
+    }
+
+    // Fallback, falls Modell kein JSON liefert
+    return json({ reply: text || "Kurz Blackout. Nochmal?" }, 200, { ...cors });
+  } catch (err) {
+    return json(
+      { error: "workers_ai_error", detail: err?.message || String(err) },
+      502,
+      { ...cors }
+    );
+  }
+}
