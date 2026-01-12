@@ -1176,7 +1176,9 @@
     initBanner();
     initScrollIndicator();
     initModalCards();
-    initLuderBot();
+    if (document.body.getAttribute("data-enablebot") === "1") {
+      initLuderBot();
+    }
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
     if ("requestIdleCallback" in window) {
