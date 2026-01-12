@@ -826,5 +826,154 @@
     } else {
       setTimeout(() => loadCloudflareWebAnalytics(CF_WEB_ANALYTICS_TOKEN), 800);
     }
+
+    // LuderBot Chat Widget
+    initChatWidget();
   });
+
+  // ---------------------------------
+  // LuderBot Chat Widget
+  // ---------------------------------
+  function initChatWidget() {
+    if (!document.body) return;
+    if (document.getElementById("lb-chat-launcher")) return;
+
+    const launcher = document.createElement("button");
+    launcher.id = "lb-chat-launcher";
+    launcher.type = "button";
+    launcher.setAttribute("aria-expanded", "false");
+    launcher.setAttribute("aria-controls", "lb-chat");
+    launcher.textContent = "LuderBot";
+
+    const panel = document.createElement("section");
+    panel.id = "lb-chat";
+    panel.setAttribute("aria-hidden", "true");
+    panel.innerHTML = `
+      <div class="lb-chat__header">
+        <strong>LuderBot</strong>
+        <button type="button" class="lb-chat__close" aria-label="Chat schließen">×</button>
+      </div>
+      <div class="lb-chat__body" role="log" aria-live="polite"></div>
+      <div class="lb-chat__consent">
+        <label>
+          <input type="checkbox" id="lb-chat-consent" />
+          Ich stimme zu, dass meine Anfrage zur Antwort an die KI gesendet wird.
+        </label>
+      </div>
+      <form class="lb-chat__form">
+        <textarea rows="2" placeholder="Schreib mir kurz dein Anliegen..." required></textarea>
+        <button type="submit">Senden</button>
+      </form>
+      <div class="lb-chat__actions" hidden>
+        <a class="lb-chat__btn lb-chat__wa" href="#" rel="noopener">WhatsApp übernehmen</a>
+        <a class="lb-chat__btn lb-chat__mail" href="#" rel="noopener">Mail übernehmen</a>
+      </div>
+    `;
+
+    document.body.appendChild(launcher);
+    document.body.appendChild(panel);
+
+    const log = panel.querySelector(".lb-chat__body");
+    const form = panel.querySelector(".lb-chat__form");
+    const textarea = panel.querySelector("textarea");
+    const consent = panel.querySelector("#lb-chat-consent");
+    const closeBtn = panel.querySelector(".lb-chat__close");
+    const actions = panel.querySelector(".lb-chat__actions");
+    const waBtn = panel.querySelector(".lb-chat__wa");
+    const mailBtn = panel.querySelector(".lb-chat__mail");
+
+    const history = [];
+
+    function setOpen(open) {
+      panel.classList.toggle("is-open", open);
+      panel.setAttribute("aria-hidden", open ? "false" : "true");
+      launcher.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) textarea.focus();
+    }
+
+    function pushMessage(role, text) {
+      const bubble = document.createElement("div");
+      bubble.className = `lb-chat__bubble lb-chat__bubble--${role}`;
+      bubble.textContent = text;
+      log.appendChild(bubble);
+      log.scrollTop = log.scrollHeight;
+      return bubble;
+    }
+
+    function updateActions(suggestion) {
+      if (!suggestion) {
+        actions.hidden = true;
+        waBtn.setAttribute("href", "#");
+        mailBtn.setAttribute("href", "#");
+        return;
+      }
+
+      const waText = suggestion.whatsappText || "";
+      const mailSubject = suggestion.mailSubject || "Anfrage – LuderBot";
+      const mailBody = suggestion.mailBody || waText || "";
+
+      const waHref = `https://wa.me/${LB_CONTACT.waNumber}?text=${encodeURIComponent(waText || "Hi Luderbein,")}`;
+      const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
+
+      waBtn.setAttribute("href", waHref);
+      mailBtn.setAttribute("href", mailHref);
+      actions.hidden = false;
+    }
+
+    launcher.addEventListener("click", () => setOpen(!panel.classList.contains("is-open")));
+    closeBtn.addEventListener("click", () => setOpen(false));
+
+    pushMessage("bot", "Hi! Ich bin LuderBot. Wie kann ich dir helfen?");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = (textarea.value || "").trim();
+      if (!text) return;
+
+      if (!consent.checked) {
+        pushMessage("bot", "Bitte bestätige die Zustimmung, damit ich deine Anfrage senden darf.");
+        return;
+      }
+
+      textarea.value = "";
+      updateActions(null);
+      pushMessage("user", text);
+      history.push({ role: "user", content: text });
+
+      const typingBubble = pushMessage("bot", "LuderBot schreibt ...");
+      form.querySelector("button").disabled = true;
+
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            history: history.slice(-8),
+          }),
+        });
+
+        const data = await response.json();
+        typingBubble.remove();
+
+        if (!response.ok) {
+          pushMessage("bot", "Ups, da hat etwas nicht geklappt. Bitte versuch es gleich nochmal.");
+          return;
+        }
+
+        const reply = (data.reply || "").toString().trim();
+        if (reply) {
+          pushMessage("bot", reply);
+          history.push({ role: "assistant", content: reply });
+        }
+
+        updateActions(data.suggestion || null);
+      } catch (_) {
+        typingBubble.remove();
+        pushMessage("bot", "Gerade ist ein Fehler passiert. Bitte probiere es später erneut.");
+      } finally {
+        form.querySelector("button").disabled = false;
+      }
+    });
+  }
 })();
