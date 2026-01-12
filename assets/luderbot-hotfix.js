@@ -1,5 +1,5 @@
 // /assets/luderbot-hotfix.js
-// Hotfix: Consent-Text "OpenAI" -> "Cloudflare Workers AI", Share-Buttons verdrahten,
+// Hotfix: Consent-Text auf Cloudflare Workers AI setzen, Share-Buttons verdrahten,
 // und Chat-Historie für WhatsApp/Mail nutzen.
 
 (() => {
@@ -87,7 +87,7 @@
 
   function setConsentText() {
     const all = Array.from(document.querySelectorAll("label, span, p, div"));
-    const node = all.find(n => (n.textContent || "").includes("an OpenAI übermittelt"));
+    const node = all.find(n => (n.textContent || "").includes("übermittelt wird"));
     if (node) {
       node.textContent = "Ich stimme zu, dass meine Nachricht an Cloudflare Workers AI übermittelt wird.";
       return true;

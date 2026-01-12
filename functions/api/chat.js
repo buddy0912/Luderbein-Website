@@ -1,18 +1,10 @@
 // =========================================================
 // Cloudflare Pages Function: /api/chat  (Workers AI only)
 // Datei: /functions/api/chat.js
-//
-// Voraussetzung (Cloudflare Pages Projekt):
-// - Einstellungen → Bindungen → Workers AI
-// - Variablenname/Binding: AI
-//
-// Optional:
-// - ALLOWED_ORIGIN (Text): eigene Domain, wenn du CORS hart machen willst.
-//   Für pages.dev/Preview lieber leer lassen.
 // =========================================================
 
 const MAX_BODY_CHARS = 12000;
-const MAX_MESSAGES = 16;
+const MAX_MESSAGES = 18;
 const MAX_CONTENT_CHARS = 1400;
 
 const MODEL_CANDIDATES = [
@@ -62,7 +54,11 @@ function corsHeaders(request, env) {
 }
 
 function safeJsonParse(s) {
-  try { return JSON.parse(s); } catch { return null; }
+  try {
+    return JSON.parse(s);
+  } catch {
+    return null;
+  }
 }
 
 function clampMessages(messages) {
@@ -74,7 +70,10 @@ function clampMessages(messages) {
       const role = (m && m.role) || "user";
       const content = String((m && m.content) || "").slice(0, MAX_CONTENT_CHARS);
       if (!content.trim()) return null;
-      if (!["user", "assistant"].includes(role)) return null;
+      if (![
+        "user",
+        "assistant"
+      ].includes(role)) return null;
       return { role, content };
     })
     .filter(Boolean);
@@ -82,34 +81,35 @@ function clampMessages(messages) {
 
 function buildSystemPrompt() {
   return [
-    "Du bist „LuderBot“, der Website-Chat von Luderbein. Sprache: Deutsch.",
+    "Du bist LuderBot, der Website-Chat von Luderbein. Sprache: Deutsch.",
     "Stil: frech, direkt, aber professionell, elegant und hilfreich.",
+    "Bleibe immer freundlich und lösungsorientiert.",
     "",
     "SCOPE (WICHTIG): Du bist NUR für Luderbein + nahe Themen zuständig:",
     "- Individuelle Schwibbögen",
     "- Lampenbau/Leuchten (Werkstatt, Sonderanfertigung)",
     "- Lasergravur & Laserschnitt: Holz, Metall, Schiefer, Acryl, Glas",
-    "- Custom / Sonderbau",
+    "- Gravur/Personalisierung, Sonderbau, Custom",
     "- 3D-Druck (wenn passend zum Projekt)",
     "- Tools: Kalkulator/Generator auf der Website",
     "",
     "OFF-TOPIC GUARD:",
-    "Wenn jemand nach Politik, Geschichte (z.B. 30jähriger Krieg), Medizin, Jura, Promis, Random-Wissen fragt:",
-    "-> Antworte kurz: Du bist auf Luderbein/Gravur/Laser spezialisiert und lenke zurück.",
+    "Wenn jemand nach Politik, Geschichte (z.B. 30jähriger Krieg), Medizin, Jura, Promis oder Random-Wissen fragt:",
+    "-> Antworte kurz, dass du auf Luderbein/Gravur/Laser spezialisiert bist, und lenke zurück.",
     "",
     "FAKTEN:",
-    "- Erkläre Gravur korrekt: Bei Luderbein hauptsächlich Lasergravur/Laserbearbeitung (kein Stempel/Schlagen).",
+    "- Luderbein arbeitet hauptsächlich mit Lasergravur/Laserbearbeitung.",
     "- Keine Preise/Lieferzeiten erfinden. Wenn unklar: sag das und frag nach.",
     "",
     "Ablauf pro Antwort:",
     "1) Kurz helfen/erklären.",
     "2) Max. 2 gezielte Rückfragen (Material/Produkt/Größe/Stückzahl/Motiv/Deadline).",
-    "3) Wenn genug Infos: eine klare Empfehlung + nächster Schritt (Anfrage).",
+    "3) Wenn genug Infos: klare Empfehlung + nächster Schritt (Anfrage).",
     "",
     "Antwortformat (STRICT): Gib NUR gültiges JSON aus:",
-    '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "..." } }',
-    "Wenn noch nicht genug Infos: suggestion weglassen oder nur minimal füllen.",
-    "Am Ende von reply (wenn möglich) eine Zeile beginnen mit: ANFRAGE_DRAFT: ...",
+    '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "...", "text": "..." } }',
+    "Wenn noch nicht genug Infos: suggestion weglassen oder minimal füllen.",
+    "Am Ende von reply (wenn möglich) eine Zeile beginnen mit: ANFRAGE_DRAFT: ..."
   ].join("\n");
 }
 
@@ -152,6 +152,19 @@ function inferSubjectFromText(text) {
   return `Luderbein Anfrage – ${material} – ${item}`;
 }
 
+function buildSuggestionFromMessages(messages) {
+  const convo = messages.map(m => `${m.role}: ${m.content}`).join("\n");
+  const subject = inferSubjectFromText(convo);
+  const mailBody = `Hi Luderbein,\n\nich möchte anfragen:\n\n${convo}\n\nViele Grüße`;
+  const whatsappText = `Hi! Kurze Anfrage:\n\n${convo}`;
+  return {
+    subject,
+    mailBody,
+    whatsappText,
+    text: whatsappText
+  };
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const cors = corsHeaders(request, env);
@@ -192,12 +205,18 @@ export async function onRequest(context) {
     return json({ error: "Payload zu groß." }, 413, { ...cors });
   }
 
-  const body = safeJsonParse(raw || "{}");
-  if (!body || !Array.isArray(body.messages)) {
+  const body = safeJsonParse(raw || "{}") || {};
+  const incomingMessages = Array.isArray(body.messages)
+    ? body.messages
+    : typeof body.message === "string"
+      ? [{ role: "user", content: body.message }]
+      : [];
+
+  if (!incomingMessages.length) {
     return json({ error: "Bitte JSON senden: { messages: [...] }" }, 400, { ...cors });
   }
 
-  const userMessages = clampMessages(body.messages);
+  const userMessages = clampMessages(incomingMessages);
   if (userMessages.length === 0) {
     return json({ error: "Keine Nachrichten gefunden." }, 400, { ...cors });
   }
@@ -215,28 +234,19 @@ export async function onRequest(context) {
     const parsed = safeJsonParse(text);
 
     if (parsed && typeof parsed === "object" && typeof parsed.reply === "string") {
-      // Falls suggestion fehlt, minimal ergänzen
       if (!parsed.suggestion) {
-        const convo = userMessages.map(m => `${m.role}: ${m.content}`).join("\n");
-        parsed.suggestion = {
-          subject: inferSubjectFromText(convo),
-          mailBody: `Hi Luderbein,\n\nich möchte anfragen:\n\n${convo}\n\nViele Grüße`,
-          whatsappText: `Hi! Kurze Anfrage:\n\n${convo}`
-        };
+        parsed.suggestion = buildSuggestionFromMessages(userMessages);
+      } else {
+        parsed.suggestion.text = parsed.suggestion.text || parsed.suggestion.whatsappText;
       }
       return json(parsed, 200, { ...cors });
     }
 
-    // Fallback wenn Modell kein JSON liefert
-    const convo = userMessages.map(m => `${m.role}: ${m.content}`).join("\n");
+    const suggestion = buildSuggestionFromMessages(userMessages);
     return json(
       {
         reply: text || "Kurz Blackout. Nochmal?",
-        suggestion: {
-          subject: inferSubjectFromText(convo),
-          mailBody: `Hi Luderbein,\n\nich möchte anfragen:\n\n${convo}\n\nViele Grüße`,
-          whatsappText: `Hi! Kurze Anfrage:\n\n${convo}`
-        }
+        suggestion
       },
       200,
       { ...cors }
