@@ -138,29 +138,28 @@ function extractSpecial(text) {
   return match ? match[0].trim() : "";
 }
 
-function buildHandoffFromMessages(messages) {
+function extractDetailsFromMessages(messages) {
   const convoText = messages.map((m) => m.content).join("\n");
   const normalizedText = normalize(convoText);
 
   const product = findFirstLabel(normalizedText, [
     { label: "Schlüsselanhänger", terms: ["schluesselanhaenger", "schluessel", "anhaenger"] },
+    { label: "Geschenkset", terms: ["geschenkset", "geschenk box", "geschenkbox"] },
     { label: "Schwibbogen", terms: ["schwibbogen"] },
     { label: "Holzlampe", terms: ["holzlampe"] },
     { label: "Lampe", terms: ["lampe", "leuchte"] },
     { label: "Schild", terms: ["schild", "plakette", "typenschild"] },
-    { label: "Schiefer", terms: ["schiefer"] },
-    { label: "Metall", terms: ["metall", "edelstahl", "alu", "aluminium", "messing"] },
-    { label: "Acryl", terms: ["acryl", "plexi"] },
-    { label: "Glas", terms: ["glas"] },
-    { label: "Holz", terms: ["holz"] }
+    { label: "Schieferplatte", terms: ["schieferplatte", "schiefer"] },
+    { label: "Acrylschild", terms: ["acrylschild", "acryl", "plexi"] },
+    { label: "Holzprodukt", terms: ["holz"] },
+    { label: "Metallprodukt", terms: ["metall", "edelstahl", "alu", "aluminium", "messing"] }
   ]) || "Unklar";
 
   const material = findFirstLabel(normalizedText, [
-    { label: "Metall", terms: ["metall", "edelstahl", "alu", "aluminium", "messing"] },
     { label: "Holz", terms: ["holz"] },
-    { label: "Acryl", terms: ["acryl", "plexi"] },
+    { label: "Metall", terms: ["metall", "edelstahl", "alu", "aluminium", "messing"] },
     { label: "Schiefer", terms: ["schiefer"] },
-    { label: "Glas", terms: ["glas"] }
+    { label: "Acryl", terms: ["acryl", "plexi"] }
   ]) || "Unklar";
 
   const textNegative = /(?:kein|keine|ohne)\s+(text|motiv|foto|bild|logo|gravur|schrift)/.test(normalizedText);
@@ -169,34 +168,65 @@ function buildHandoffFromMessages(messages) {
 
   const quantity = extractQuantity(convoText) || "Unklar";
   const deadline = extractDeadline(convoText) || "Unklar";
-  const special = extractSpecial(convoText) || "Unklar";
 
   const missing = [];
-  if (product === "Unklar") missing.push("Produkt/Art");
+  if (product === "Unklar") missing.push("Produkt");
   if (material === "Unklar") missing.push("Material");
   if (textMotif === "Unklar") missing.push("Text/Motiv/Foto");
   if (quantity === "Unklar") missing.push("Menge");
-  if (deadline === "Unklar") missing.push("Deadline/Termin");
-  if (special === "Unklar") missing.push("Sonderwünsche");
-
-  const openQuestions = missing.length ? `Offen: ${missing.join(", ")}` : "Keine offenen Punkte.";
-  const summaryLines = [
-    `• Produkt/Art: ${product}`,
-    `• Material: ${material}`,
-    `• Text/Motiv/Foto: ${textMotif}`,
-    `• Menge: ${quantity}`,
-    `• Deadline/Termin: ${deadline}`,
-    `• Sonderwünsche: ${special}`,
-    `• Offene Fragen: ${openQuestions}`
-  ];
-  const summary = summaryLines.join("\n");
-  const subjectTopic = product !== "Unklar" ? product : (material !== "Unklar" ? material : "Luderbein");
+  if (deadline === "Unklar") missing.push("Termin");
 
   return {
-    subject: `LuderBot Anfrage – ${subjectTopic}`,
-    mailBody: `Hi Luderbein,\n\nhier die Chat-Zusammenfassung:\n${summary}\n\nDanke!`,
-    whatsappText: `Hi Luderbein! Hier die Chat-Zusammenfassung:\n${summary}`
+    product,
+    material,
+    textMotif,
+    quantity,
+    deadline,
+    missing
   };
+}
+
+function buildSummaryLines(details) {
+  return [
+    `• Produkt: ${details.product}`,
+    `• Material: ${details.material}`,
+    `• Text/Motiv/Foto: ${details.textMotif}`,
+    `• Menge: ${details.quantity}`,
+    `• Termin: ${details.deadline}`
+  ];
+}
+
+function buildHandoff(details) {
+  const summary = buildSummaryLines(details).join("\n");
+  return {
+    subject: `Gravur-Anfrage: ${details.product} aus ${details.material}`,
+    mailBody: `Hallo Luderbein,
+
+hier die Eckdaten meiner Anfrage:
+${summary}
+
+Vielen Dank!`,
+    whatsappText: `Hallo Luderbein, hier die Eckdaten meiner Anfrage:
+${summary}`
+  };
+}
+
+function buildMissingQuestion(details) {
+  const nextMissing = details.missing[0] || "";
+  switch (nextMissing) {
+    case "Produkt":
+      return "Danke! Welches Produkt wünschst du dir (z. B. Schlüsselanhänger, Schild, Geschenkset)?";
+    case "Material":
+      return "Welches Material möchtest du verwenden (Holz, Metall, Schiefer oder Acryl)?";
+    case "Text/Motiv/Foto":
+      return "Welchen Text, welches Motiv oder Foto soll graviert werden?";
+    case "Menge":
+      return "Wie viele Stück brauchst du ungefähr?";
+    case "Termin":
+      return "Bis wann benötigst du die Gravur?";
+    default:
+      return "Kannst du mir noch kurz die fehlenden Eckdaten nennen?";
+  }
 }
 
 function normalize(text) {
@@ -345,10 +375,13 @@ function buildSuggestions(category) {
   }
 }
 
-const SYSTEM_PROMPT = `Du bist LuderBot, der freundliche Assistent von Luderbein Gravur & Laser.
-Antworte kurz, klar und hilfsbereit auf Deutsch.
-Bleibe beim Thema Gravur, Laser, Materialien, Produkte und Anfragen.
-Wenn sinnvoll, gib 1-2 konkrete Rückfragen oder nächste Schritte.`;
+const SYSTEM_PROMPT = `Du bist LuderBot, der freundliche Assistent von Luderbein, einem Dienstleister für Gravur- und Laserarbeiten.
+Luderbein fertigt z. B. Schlüsselanhänger, Geschenksets, Schieferplatten, Acrylschilder, Holz- und Metallprodukte.
+Bleibe beim Thema Gravur, Laserarbeiten, Materialien, Produkte und Kundenanfragen.
+Stelle pro Nachricht maximal eine kurze Rückfrage und vermeide Verhör-Charakter.
+Wenn Informationen fehlen, frage knapp nach Material, Termin oder Menge.
+Sobald alle Eckdaten (Produkt, Material, Text/Motiv/Foto, Menge, Termin) vorliegen, fasse stichpunktartig zusammen.
+Antworte freundlich, klar und ausschließlich auf Deutsch.`;
 
 function buildAiMessages(messages) {
   return [{ role: "system", content: SYSTEM_PROMPT }, ...messages];
@@ -424,24 +457,32 @@ export async function onRequest(context) {
   }
 
   try {
-    const reply = await generateReply(env, userMessages);
-    const handoff = buildHandoffFromMessages(userMessages);
-    const lastUser = [...userMessages].reverse().find((m) => m.role === "user")?.content || "";
-    const intent = classifyIntent(lastUser);
+    const details = extractDetailsFromMessages(userMessages);
+    const hasAllDetails = details.missing.length === 0;
 
+    if (!hasAllDetails) {
+      return json(
+        {
+          reply: buildMissingQuestion(details)
+        },
+        200,
+        { ...cors }
+      );
+    }
+
+    const summary = buildSummaryLines(details).join("\n");
     return json(
       {
-        reply,
-        suggestion: buildSuggestions(intent.category),
-        handoff
+        reply: `Danke! Hier ist die Zusammenfassung deiner Anfrage:\n${summary}`,
+        handoff: buildHandoff(details)
       },
       200,
       { ...cors }
     );
   } catch (error) {
     return json(
-      { error: "Antwort konnte nicht erzeugt werden. Bitte erneut versuchen." },
-      502,
+      { reply: "Entschuldigung, die KI ist gerade offline. Bitte später erneut versuchen." },
+      200,
       { ...cors }
     );
   }
