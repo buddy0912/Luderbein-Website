@@ -89,7 +89,7 @@
     const all = Array.from(document.querySelectorAll("label, span, p, div"));
     const node = all.find(n => (n.textContent || "").includes("übermittelt wird"));
     if (node) {
-      node.textContent = "Ich stimme zu, dass meine Nachricht an Cloudflare Workers AI übermittelt wird.";
+      node.textContent = "Ich stimme zu, dass meine Nachricht zur Verarbeitung an Cloudflare Workers AI übermittelt wird.";
       return true;
     }
     return false;

@@ -826,7 +826,7 @@
       <form class="lb-chat-form">
         <label class="lb-chat-consent">
           <input type="checkbox" required />
-          Ich stimme zu, dass meine Nachricht an Cloudflare Workers AI übermittelt wird.
+          Ich stimme zu, dass meine Nachricht zur Verarbeitung an Cloudflare Workers AI übermittelt wird.
         </label>
         <div class="lb-chat-input">
           <textarea rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
@@ -861,10 +861,49 @@
       }
     }
 
+    function escapeHtml(text) {
+      return (text || "").replace(/[&<>"']/g, (char) => {
+        switch (char) {
+          case "&":
+            return "&amp;";
+          case "<":
+            return "&lt;";
+          case ">":
+            return "&gt;";
+          case "\"":
+            return "&quot;";
+          case "'":
+            return "&#39;";
+          default:
+            return char;
+        }
+      });
+    }
+
+    function linkifyText(text) {
+      const escaped = escapeHtml(text);
+      const pattern = /(https?:\/\/[^\s<]+|\/[A-Za-z0-9._~!$&'()*+,;=:@/%-]+)/g;
+      return escaped.replace(pattern, (match) => {
+        let url = match;
+        let trailing = "";
+        if (/[.,!?)]$/.test(url)) {
+          trailing = url.slice(-1);
+          url = url.slice(0, -1);
+        }
+        const isExternal = url.startsWith("http://") || url.startsWith("https://");
+        const attrs = isExternal ? " target=\"_blank\" rel=\"noopener\"" : "";
+        return `<a href=\"${url}\"${attrs}>${url}</a>${trailing}`;
+      });
+    }
+
     function addMessage(role, text) {
       const bubble = document.createElement("div");
       bubble.className = `lb-chat-msg ${role}`;
-      bubble.textContent = text;
+      if (role === "bot") {
+        bubble.innerHTML = linkifyText(text);
+      } else {
+        bubble.textContent = text;
+      }
       messages.appendChild(bubble);
       messages.scrollTop = messages.scrollHeight;
     }
