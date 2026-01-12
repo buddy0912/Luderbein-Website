@@ -6,6 +6,7 @@
 const MAX_BODY_CHARS = 12000;
 const MAX_MESSAGES = 18;
 const MAX_CONTENT_CHARS = 1400;
+const MAX_QUESTION_COUNT = 2;
 
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
@@ -133,9 +134,56 @@ function extractDeadline(text) {
   return phraseMatch ? phraseMatch[0].trim() : "";
 }
 
+function extractFormat(text) {
+  const match = text.match(/\b\d{1,4}(?:[.,]\d+)?\s*(?:cm|mm)?\s*(?:x|×)\s*\d{1,4}(?:[.,]\d+)?\s*(?:cm|mm)?(?:\s*(?:x|×)\s*\d{1,4}(?:[.,]\d+)?\s*(?:cm|mm)?)?\b/i);
+  return match ? match[0].replace(/\s+/g, " ").trim() : "";
+}
+
+function extractMotifText(text) {
+  const quoteMatch = text.match(/[„“"']([^„“"']{2,80})[„“"']/);
+  if (quoteMatch) return quoteMatch[1].trim();
+  const labelMatch = text.match(/\b(text|schriftzug|gravur|motiv)\s*[:\-]\s*([^\n]{2,80})/i);
+  if (labelMatch) return labelMatch[2].trim();
+  return "";
+}
+
 function extractSpecial(text) {
   const match = text.match(/\b(sonder\w*|spezial\w*|extra\w*|wunsch\w*|individuell\w*|bitte)\b[^.!?\n]{0,64}/i);
   return match ? match[0].trim() : "";
+}
+
+function buildFollowUpQuestions(missing) {
+  const questionMap = {
+    "Produkt/Art": "Was genau möchtest du gravieren lassen (Produkt/Objekt)?",
+    "Material": "Welches Material ist es (z.B. Holz, Metall, Acryl, Glas, Schiefer)?",
+    "Text/Motiv/Foto": "Welcher Text oder welches Motiv soll drauf?",
+    "Größe/Format": "Welche Größe bzw. welches Format hat es?",
+    "Menge": "Wie viele Stück benötigst du?",
+    "Deadline/Termin": "Gibt es einen Termin oder eine Deadline?",
+    "Sonderwünsche": "Gibt es Sonderwünsche (z.B. Kanten, Bohrungen, Farbe)?"
+  };
+
+  return missing
+    .map((key) => questionMap[key])
+    .filter(Boolean)
+    .slice(0, MAX_QUESTION_COUNT);
+}
+
+function buildImagePrompt({ product, material, motifText, format }) {
+  const parts = [];
+  if (product && product !== "Unklar") parts.push(product);
+  if (material && material !== "Unklar") parts.push(material);
+  if (format && format !== "Unklar") parts.push(`Format ${format}`);
+  const subject = parts.length ? parts.join(", ") : "Gravurplatte";
+  const motif = motifText ? `Motiv/Text: "${motifText}"` : "schlichtes Motiv oder Monogramm";
+  if (!parts.length && !motifText) return "";
+
+  return [
+    "Minimalistische Gravur-Vorschau, schwarze Lasergravur auf hellem Hintergrund.",
+    `${subject}.`,
+    `${motif}.`,
+    "Klare Linien, vektorartig, ohne Farbe, ohne Fotostil."
+  ].join(" ");
 }
 
 function buildHandoffFromMessages(messages) {
@@ -169,21 +217,26 @@ function buildHandoffFromMessages(messages) {
 
   const quantity = extractQuantity(convoText) || "Unklar";
   const deadline = extractDeadline(convoText) || "Unklar";
+  const format = extractFormat(convoText) || "Unklar";
+  const motifText = extractMotifText(convoText);
   const special = extractSpecial(convoText) || "Unklar";
 
   const missing = [];
   if (product === "Unklar") missing.push("Produkt/Art");
   if (material === "Unklar") missing.push("Material");
   if (textMotif === "Unklar") missing.push("Text/Motiv/Foto");
+  if (format === "Unklar") missing.push("Größe/Format");
   if (quantity === "Unklar") missing.push("Menge");
   if (deadline === "Unklar") missing.push("Deadline/Termin");
   if (special === "Unklar") missing.push("Sonderwünsche");
 
+  const followUpQuestions = buildFollowUpQuestions(missing);
   const openQuestions = missing.length ? `Offen: ${missing.join(", ")}` : "Keine offenen Punkte.";
   const summaryLines = [
     `• Produkt/Art: ${product}`,
     `• Material: ${material}`,
     `• Text/Motiv/Foto: ${textMotif}`,
+    `• Größe/Format: ${format}`,
     `• Menge: ${quantity}`,
     `• Deadline/Termin: ${deadline}`,
     `• Sonderwünsche: ${special}`,
@@ -191,11 +244,14 @@ function buildHandoffFromMessages(messages) {
   ];
   const summary = summaryLines.join("\n");
   const subjectTopic = product !== "Unklar" ? product : (material !== "Unklar" ? material : "Luderbein");
+  const imagePrompt = buildImagePrompt({ product, material, motifText, format });
 
   return {
     subject: `LuderBot Anfrage – ${subjectTopic}`,
     mailBody: `Hi Luderbein,\n\nhier die Chat-Zusammenfassung:\n${summary}\n\nDanke!`,
-    whatsappText: `Hi Luderbein! Hier die Chat-Zusammenfassung:\n${summary}`
+    whatsappText: `Hi Luderbein! Hier die Chat-Zusammenfassung:\n${summary}`,
+    followUpQuestions,
+    imagePrompt
   };
 }
 
@@ -259,8 +315,31 @@ function classifyIntent(text) {
   return { offTopic, indecisive, category };
 }
 
-function buildSuggestions(category) {
-  switch (category) {
+function buildSuggestions(intent, handoff) {
+  if (intent?.offTopic) {
+    return {
+      question: "Ich helfe gern bei Gravur- und Laserfragen. Worum geht es bei deinem Projekt?",
+      suggestions: [
+        { label: "Gravur anfragen", link: "/kontakt/" },
+        { label: "Leistungen ansehen", link: "/leistungen/" }
+      ],
+      followUps: handoff?.followUpQuestions || []
+    };
+  }
+
+  if (intent?.indecisive) {
+    return {
+      question: "Kein Stress – wofür soll die Gravur sein?",
+      suggestions: [
+        { label: "Geschenkidee", link: "/leistungen/" },
+        { label: "Business/Typenschilder", link: "/leistungen/metall/" },
+        { label: "Deko/Interior", link: "/leistungen/holz/" }
+      ],
+      followUps: handoff?.followUpQuestions || []
+    };
+  }
+
+  switch (intent?.category) {
     case "holz":
       return {
         question: "Soll es eher ein Schild, eine Box oder ein Schwibbogen werden?",
@@ -268,7 +347,8 @@ function buildSuggestions(category) {
           { label: "Graviertes Holzschild", link: "/leistungen/holz/" },
           { label: "Personalisierte Holzbox", link: "/leistungen/holz/" },
           { label: "Schwibbogen als Sonderanfertigung", link: "/leistungen/custom/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "metall":
       return {
@@ -277,7 +357,8 @@ function buildSuggestions(category) {
           { label: "Metallplakette mit Logo", link: "/leistungen/metall/" },
           { label: "Graviertes Typenschild", link: "/leistungen/metall/" },
           { label: "Namensschild für Werkstatt/Shop", link: "/leistungen/metall/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "glas":
       return {
@@ -286,7 +367,8 @@ function buildSuggestions(category) {
           { label: "Graviertes Glas-Accessoire", link: "/leistungen/glas/" },
           { label: "Glasplatte mit Motiv", link: "/leistungen/glas/" },
           { label: "Personalisierte Glaskante", link: "/leistungen/glas/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "acryl":
       return {
@@ -295,7 +377,8 @@ function buildSuggestions(category) {
           { label: "Acryl-Schild mit Logo", link: "/leistungen/acryl-schilder/" },
           { label: "Acryl-Display für Deko", link: "/leistungen/acryl/" },
           { label: "Personalisierter Acryl-Aufsteller", link: "/leistungen/acryl/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "schiefer":
       return {
@@ -304,7 +387,8 @@ function buildSuggestions(category) {
           { label: "Schieferplatte mit Gravur", link: "/leistungen/schiefer/" },
           { label: "Schiefer-Gedenkstück", link: "/leistungen/schiefer/" },
           { label: "Schiefer-Tafel mit Wunschtext", link: "/leistungen/schiefer-text/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "lampe":
       return {
@@ -313,7 +397,8 @@ function buildSuggestions(category) {
           { label: "Individuelle Leuchte (Sonderanfertigung)", link: "/leistungen/custom/" },
           { label: "Leuchte mit graviertem Element", link: "/leistungen/holz/" },
           { label: "Design-Leuchte mit Logo/Motiv", link: "/leistungen/custom/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "schmuck":
       return {
@@ -322,7 +407,8 @@ function buildSuggestions(category) {
           { label: "Metall-Anhänger mit Gravur", link: "/leistungen/metall/" },
           { label: "Acryl-Anhänger mit Namen", link: "/leistungen/acryl/" },
           { label: "Holz-Anhänger mit Motiv", link: "/leistungen/holz/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     case "geschenk":
       return {
@@ -331,7 +417,8 @@ function buildSuggestions(category) {
           { label: "Schieferplatte mit Wunschtext", link: "/leistungen/schiefer/" },
           { label: "Acryl-Schild mit Gravur", link: "/leistungen/acryl-schilder/" },
           { label: "Graviertes Holzstück", link: "/leistungen/holz/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
     default:
       return {
@@ -340,7 +427,8 @@ function buildSuggestions(category) {
           { label: "Holzgravur", link: "/leistungen/holz/" },
           { label: "Acryl- oder Glasschnitt", link: "/leistungen/acryl/" },
           { label: "Metallgravur", link: "/leistungen/metall/" }
-        ]
+        ],
+        followUps: handoff?.followUpQuestions || []
       };
   }
 }
@@ -348,7 +436,9 @@ function buildSuggestions(category) {
 const SYSTEM_PROMPT = `Du bist LuderBot, der freundliche Assistent von Luderbein Gravur & Laser.
 Antworte kurz, klar und hilfsbereit auf Deutsch.
 Bleibe beim Thema Gravur, Laser, Materialien, Produkte und Anfragen.
-Wenn sinnvoll, gib 1-2 konkrete Rückfragen oder nächste Schritte.`;
+Erfrage gezielt fehlende Details: Produkt/Objekt, Material, Größe/Format, Motiv/Text, Menge, Deadline und Sonderwünsche.
+Stelle maximal 1-2 konkrete Rückfragen und biete nächste Schritte an (z.B. Foto/Skizze senden).
+Wenn ein Motiv oder Text genannt ist, erwähne optional eine einfache Vorschau.`;
 
 function buildAiMessages(messages) {
   return [{ role: "system", content: SYSTEM_PROMPT }, ...messages];
@@ -432,7 +522,7 @@ export async function onRequest(context) {
     return json(
       {
         reply,
-        suggestion: buildSuggestions(intent.category),
+        suggestion: buildSuggestions(intent, handoff),
         handoff
       },
       200,

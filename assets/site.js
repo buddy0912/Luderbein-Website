@@ -823,6 +823,20 @@
         <button type="button" class="lb-chat-close" aria-label="Chat schließen">×</button>
       </div>
       <div class="lb-chat-messages" role="log" aria-live="polite"></div>
+      <div class="lb-chat-suggestions" hidden>
+        <div class="lb-chat-suggestions-question"></div>
+        <div class="lb-chat-suggestions-actions"></div>
+      </div>
+      <div class="lb-chat-preview" hidden>
+        <div class="lb-chat-preview-head">
+          <strong>Gravur-Vorschau</strong>
+          <button type="button" class="lb-chat-preview-btn">Vorschau erzeugen</button>
+        </div>
+        <div class="lb-chat-preview-body">
+          <span class="lb-chat-preview-status">Optional: einfache Schwarzweiß-Vorschau.</span>
+          <img class="lb-chat-preview-image" alt="Gravur Vorschau" loading="lazy" />
+        </div>
+      </div>
       <form class="lb-chat-form">
         <div class="lb-chat-input">
           <textarea id="lb-chat-input" rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
@@ -847,12 +861,20 @@
     const textarea = panel.querySelector("textarea");
     const sendBtn = panel.querySelector("button[type=\"submit\"]");
     const messages = panel.querySelector(".lb-chat-messages");
+    const suggestions = panel.querySelector(".lb-chat-suggestions");
+    const suggestionsQuestion = panel.querySelector(".lb-chat-suggestions-question");
+    const suggestionsActions = panel.querySelector(".lb-chat-suggestions-actions");
+    const preview = panel.querySelector(".lb-chat-preview");
+    const previewBtn = panel.querySelector(".lb-chat-preview-btn");
+    const previewStatus = panel.querySelector(".lb-chat-preview-status");
+    const previewImage = panel.querySelector(".lb-chat-preview-image");
     const consent = panel.querySelector("input[type=\"checkbox\"]");
     const actions = panel.querySelector(".lb-chat-actions");
     const waBtn = panel.querySelector("[data-action=\"wa\"]");
     const mailBtn = panel.querySelector("[data-action=\"mail\"]");
     const chatMessages = [];
     let lastHandoff = null;
+    let lastImagePrompt = "";
 
     function shouldAutofocus() {
       return !(
@@ -901,7 +923,7 @@
     function linkifyText(text) {
       const escaped = escapeHtml(text);
       const pattern = /(https?:\/\/[^\s<]+|\/[A-Za-z0-9._~!$&'()*+,;=:@/%-]+)/g;
-      return escaped.replace(pattern, (match) => {
+      const withLinks = escaped.replace(pattern, (match) => {
         let url = match;
         let trailing = "";
         if (/[.,!?)]$/.test(url)) {
@@ -912,6 +934,47 @@
         const attrs = isExternal ? " target=\"_blank\" rel=\"noopener\"" : "";
         return `<a href=\"${url}\"${attrs}>${url}</a>${trailing}`;
       });
+      return withLinks.replace(/\n/g, "<br>");
+    }
+
+    function clearSuggestions() {
+      suggestionsQuestion.textContent = "";
+      suggestionsActions.innerHTML = "";
+      suggestions.hidden = true;
+    }
+
+    function setSuggestions(data) {
+      if (!data || (!data.question && (!data.suggestions || !data.suggestions.length))) {
+        clearSuggestions();
+        return;
+      }
+      if (data.question) {
+        suggestionsQuestion.textContent = data.question;
+      } else {
+        suggestionsQuestion.textContent = "";
+      }
+      suggestionsActions.innerHTML = "";
+
+      (data.suggestions || []).forEach((item) => {
+        if (!item || !item.label) return;
+        const link = document.createElement("a");
+        link.className = "lb-chat-chip";
+        link.textContent = item.label;
+        link.setAttribute("href", item.link || "#");
+        if (item.link && item.link.startsWith("http")) {
+          link.setAttribute("target", "_blank");
+          link.setAttribute("rel", "noopener");
+        }
+        suggestionsActions.appendChild(link);
+      });
+
+      suggestions.hidden = suggestionsActions.childElementCount === 0 && !suggestionsQuestion.textContent;
+    }
+
+    function addFollowUps(list) {
+      if (!Array.isArray(list) || !list.length) return;
+      const lines = ["Noch kurz zwei Details:", ...list.map((q) => `- ${q}`)];
+      addMessage("bot", lines.join("\n"));
     }
 
     function addMessage(role, text) {
@@ -926,6 +989,17 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
+    function setPreviewPrompt(prompt) {
+      lastImagePrompt = norm(prompt);
+      previewImage.removeAttribute("src");
+      previewImage.hidden = true;
+      previewStatus.textContent = lastImagePrompt
+        ? "Optional: einfache Schwarzweiß-Vorschau."
+        : "Für eine Vorschau fehlen noch Details.";
+      preview.hidden = !lastImagePrompt;
+      previewBtn.disabled = !lastImagePrompt || !consent.checked;
+    }
+
     function setHandoff(handoff) {
       lastHandoff = handoff || null;
       const waText = lastHandoff?.whatsappText || "";
@@ -934,6 +1008,7 @@
         waBtn.removeAttribute("href");
         mailBtn.removeAttribute("href");
         actions.hidden = true;
+        setPreviewPrompt(lastHandoff?.imagePrompt || "");
         return;
       }
       const subject = lastHandoff?.subject || "Anfrage via LuderBot";
@@ -942,12 +1017,49 @@
       waBtn.setAttribute("href", waHref);
       mailBtn.setAttribute("href", mailHref);
       actions.hidden = false;
+      setPreviewPrompt(lastHandoff?.imagePrompt || "");
     }
 
     function updateSendState() {
       const hasText = norm(textarea.value).length > 0;
       const canSend = hasText && consent.checked;
       sendBtn.disabled = !canSend;
+      previewBtn.disabled = !lastImagePrompt || !consent.checked;
+    }
+
+    async function generatePreview() {
+      if (!lastImagePrompt || !consent.checked) return;
+      previewBtn.disabled = true;
+      previewStatus.textContent = "Vorschau wird erzeugt...";
+      preview.classList.add("is-loading");
+
+      try {
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: lastImagePrompt }),
+        });
+
+        if (!response.ok) {
+          previewStatus.textContent = "Vorschau konnte nicht erzeugt werden.";
+          return;
+        }
+
+        const data = await response.json();
+        if (data && data.image) {
+          const mime = data.mime || "image/png";
+          previewImage.src = `data:${mime};base64,${data.image}`;
+          previewImage.hidden = false;
+          previewStatus.textContent = "Vorschau erstellt (unverbindlich).";
+        } else {
+          previewStatus.textContent = "Vorschau konnte nicht erzeugt werden.";
+        }
+      } catch (_) {
+        previewStatus.textContent = "Vorschau konnte nicht geladen werden.";
+      } finally {
+        preview.classList.remove("is-loading");
+        updateSendState();
+      }
     }
 
     function pushMessage(role, content) {
@@ -962,6 +1074,7 @@
     closeBtn.addEventListener("click", () => setOpen(false));
     textarea.addEventListener("input", updateSendState);
     consent.addEventListener("change", updateSendState);
+    previewBtn.addEventListener("click", generatePreview);
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -978,6 +1091,7 @@
       textarea.value = "";
       updateSendState();
       setHandoff(null);
+      clearSuggestions();
       form.classList.add("is-loading");
 
       try {
@@ -1007,6 +1121,8 @@
           addMessage("bot", data.reply);
           pushMessage("assistant", data.reply);
           setHandoff(data.handoff);
+          setSuggestions(data.suggestion);
+          addFollowUps(data.handoff?.followUpQuestions);
         } else if (data && data.error) {
           addMessage("system", `${data.error} Bitte versuche es erneut.`);
         } else {
