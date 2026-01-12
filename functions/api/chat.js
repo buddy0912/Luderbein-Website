@@ -7,12 +7,6 @@ const MAX_BODY_CHARS = 12000;
 const MAX_MESSAGES = 18;
 const MAX_CONTENT_CHARS = 1400;
 
-const MODEL_CANDIDATES = [
-  "@cf/meta/llama-3.1-8b-instruct",
-  "@cf/meta/llama-3-8b-instruct",
-  "@cf/meta/llama-2-7b-chat-int8"
-];
-
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -70,62 +64,10 @@ function clampMessages(messages) {
       const role = (m && m.role) || "user";
       const content = String((m && m.content) || "").slice(0, MAX_CONTENT_CHARS);
       if (!content.trim()) return null;
-      if (![
-        "user",
-        "assistant"
-      ].includes(role)) return null;
+      if (!["user", "assistant"].includes(role)) return null;
       return { role, content };
     })
     .filter(Boolean);
-}
-
-function buildSystemPrompt() {
-  return [
-    "Du bist LuderBot, der Website-Chat von Luderbein. Sprache: Deutsch.",
-    "Stil: frech, direkt, aber professionell, elegant und hilfreich.",
-    "Bleibe immer freundlich und lösungsorientiert.",
-    "",
-    "SCOPE (WICHTIG): Du bist NUR für Luderbein + nahe Themen zuständig:",
-    "- Individuelle Schwibbögen",
-    "- Lampenbau/Leuchten (Werkstatt, Sonderanfertigung)",
-    "- Lasergravur & Laserschnitt: Holz, Metall, Schiefer, Acryl, Glas",
-    "- Gravur/Personalisierung, Sonderbau, Custom",
-    "- 3D-Druck (wenn passend zum Projekt)",
-    "- Tools: Kalkulator/Generator auf der Website",
-    "",
-    "OFF-TOPIC GUARD:",
-    "Wenn jemand nach Politik, Geschichte (z.B. 30jähriger Krieg), Medizin, Jura, Promis oder Random-Wissen fragt:",
-    "-> Antworte kurz, dass du auf Luderbein/Gravur/Laser spezialisiert bist, und lenke zurück.",
-    "",
-    "FAKTEN:",
-    "- Luderbein arbeitet hauptsächlich mit Lasergravur/Laserbearbeitung.",
-    "- Keine Preise/Lieferzeiten erfinden. Wenn unklar: sag das und frag nach.",
-    "",
-    "Ablauf pro Antwort:",
-    "1) Kurz helfen/erklären.",
-    "2) Max. 2 gezielte Rückfragen (Material/Produkt/Größe/Stückzahl/Motiv/Deadline).",
-    "3) Wenn genug Infos: klare Empfehlung + nächster Schritt (Anfrage).",
-    "",
-    "Antwortformat (STRICT): Gib NUR gültiges JSON aus:",
-    '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "...", "text": "..." } }',
-    "Wenn noch nicht genug Infos: suggestion weglassen oder minimal füllen.",
-    "Am Ende von reply (wenn möglich) eine Zeile beginnen mit: ANFRAGE_DRAFT: ..."
-  ].join("\n");
-}
-
-async function runWithFallbackModels(env, payload) {
-  let lastErr = null;
-  for (const model of MODEL_CANDIDATES) {
-    try {
-      return await env.AI.run(model, payload);
-    } catch (err) {
-      lastErr = err;
-      const msg = err?.message ? err.message : String(err);
-      if (/model|not found|unknown/i.test(msg)) continue;
-      throw err;
-    }
-  }
-  throw lastErr || new Error("No Workers AI model available");
 }
 
 function inferSubjectFromText(text) {
@@ -165,6 +107,191 @@ function buildSuggestionFromMessages(messages) {
   };
 }
 
+function normalize(text) {
+  return (text || "")
+    .toLowerCase()
+    .replace(/[ä]/g, "ae")
+    .replace(/[ö]/g, "oe")
+    .replace(/[ü]/g, "ue")
+    .replace(/[ß]/g, "ss")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function includesAny(text, list) {
+  return list.some((term) => text.includes(term));
+}
+
+function classifyIntent(text) {
+  const t = normalize(text);
+  const offTopic = includesAny(t, [
+    "30jaehrig",
+    "dreissigjaehrig",
+    "krieg",
+    "geschichte",
+    "politik",
+    "medizin",
+    "arzt",
+    "recht",
+    "anwalt",
+    "promi",
+    "prominent",
+    "beruehmt",
+    "wikipedia"
+  ]);
+
+  const indecisive = includesAny(t, [
+    "weiss nicht",
+    "weis nicht",
+    "keine ahnung",
+    "keine idee",
+    "unsicher",
+    "unschluessig",
+    "egal",
+    "planlos"
+  ]);
+
+  const categories = [
+    { key: "holz", terms: ["holz", "schwibbogen"] },
+    { key: "metall", terms: ["metall", "edelstahl", "alu", "aluminium"] },
+    { key: "glas", terms: ["glas"] },
+    { key: "acryl", terms: ["acryl", "plexi"] },
+    { key: "schiefer", terms: ["schiefer"] },
+    { key: "lampe", terms: ["lampe", "leuchte", "lampen"] },
+    { key: "schmuck", terms: ["schmuck", "anhanger", "anhaenger"] },
+    { key: "geschenk", terms: ["geschenk", "geschenkidee", "praesent"] },
+    { key: "gravur", terms: ["gravur", "laser", "gravieren", "graviert"] }
+  ];
+
+  const category = categories.find((c) => includesAny(t, c.terms))?.key || null;
+  return { offTopic, indecisive, category };
+}
+
+function buildSuggestions(category) {
+  switch (category) {
+    case "holz":
+      return {
+        question: "Soll es eher ein Schild, eine Box oder ein Schwibbogen werden?",
+        suggestions: [
+          { label: "Graviertes Holzschild", link: "/leistungen/holz/" },
+          { label: "Personalisierte Holzbox", link: "/leistungen/holz/" },
+          { label: "Schwibbogen als Sonderanfertigung", link: "/leistungen/custom/" }
+        ]
+      };
+    case "metall":
+      return {
+        question: "Welche Oberfläche passt besser: Edelstahl, Aluminium oder Messing?",
+        suggestions: [
+          { label: "Metallplakette mit Logo", link: "/leistungen/metall/" },
+          { label: "Graviertes Typenschild", link: "/leistungen/metall/" },
+          { label: "Namensschild für Werkstatt/Shop", link: "/leistungen/metall/" }
+        ]
+      };
+    case "glas":
+      return {
+        question: "Soll die Gravur eher dezent oder als Blickfang wirken?",
+        suggestions: [
+          { label: "Graviertes Glas-Accessoire", link: "/leistungen/glas/" },
+          { label: "Glasplatte mit Motiv", link: "/leistungen/glas/" },
+          { label: "Personalisierte Glaskante", link: "/leistungen/glas/" }
+        ]
+      };
+    case "acryl":
+      return {
+        question: "Eher klar, satiniert oder farbiges Acryl?",
+        suggestions: [
+          { label: "Acryl-Schild mit Logo", link: "/leistungen/acryl-schilder/" },
+          { label: "Acryl-Display für Deko", link: "/leistungen/acryl/" },
+          { label: "Personalisierter Acryl-Aufsteller", link: "/leistungen/acryl/" }
+        ]
+      };
+    case "schiefer":
+      return {
+        question: "Welche Größe schwebt dir vor?",
+        suggestions: [
+          { label: "Schieferplatte mit Gravur", link: "/leistungen/schiefer/" },
+          { label: "Schiefer-Gedenkstück", link: "/leistungen/schiefer/" },
+          { label: "Schiefer-Tafel mit Wunschtext", link: "/leistungen/schiefer-text/" }
+        ]
+      };
+    case "lampe":
+      return {
+        question: "Soll es eine Tischlampe oder eine Wand-/Deckenleuchte werden?",
+        suggestions: [
+          { label: "Individuelle Leuchte (Sonderanfertigung)", link: "/leistungen/custom/" },
+          { label: "Leuchte mit graviertem Element", link: "/leistungen/holz/" },
+          { label: "Design-Leuchte mit Logo/Motiv", link: "/leistungen/custom/" }
+        ]
+      };
+    case "schmuck":
+      return {
+        question: "Aus welchem Material soll der Schmuck sein?",
+        suggestions: [
+          { label: "Metall-Anhänger mit Gravur", link: "/leistungen/metall/" },
+          { label: "Acryl-Anhänger mit Namen", link: "/leistungen/acryl/" },
+          { label: "Holz-Anhänger mit Motiv", link: "/leistungen/holz/" }
+        ]
+      };
+    case "geschenk":
+      return {
+        question: "Für wen ist das Geschenk gedacht?",
+        suggestions: [
+          { label: "Schieferplatte mit Wunschtext", link: "/leistungen/schiefer/" },
+          { label: "Acryl-Schild mit Gravur", link: "/leistungen/acryl-schilder/" },
+          { label: "Graviertes Holzstück", link: "/leistungen/holz/" }
+        ]
+      };
+    default:
+      return {
+        question: "Welches Material oder Produkt schwebt dir vor?",
+        suggestions: [
+          { label: "Holzgravur", link: "/leistungen/holz/" },
+          { label: "Acryl- oder Glasschnitt", link: "/leistungen/acryl/" },
+          { label: "Metallgravur", link: "/leistungen/metall/" }
+        ]
+      };
+  }
+}
+
+function buildReply(messages) {
+  const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content || "";
+  const intent = classifyIntent(lastUser);
+
+  if (intent.offTopic) {
+    return {
+      reply:
+        "Dazu kann ich dir nicht helfen – ich bin auf Gravur, Laser & Sonderanfertigungen bei Luderbein spezialisiert. Schau gern hier vorbei: /leistungen/ (z.B. /leistungen/holz/, /leistungen/metall/) – oder schreib direkt über /kontakt/.",
+      suggestion: buildSuggestionFromMessages(messages)
+    };
+  }
+
+  if (intent.indecisive) {
+    return {
+      reply:
+        "Kein Stress! Wenn du noch unschlüssig bist, stöbere kurz auf /leistungen/ und den Unterseiten wie /leistungen/holz/, /leistungen/acryl/, /leistungen/schiefer/ oder /leistungen/metall/. Wenn du magst, klären wir alles direkt über /kontakt/.",
+      suggestion: buildSuggestionFromMessages(messages)
+    };
+  }
+
+  const { question, suggestions } = buildSuggestions(intent.category);
+  const suggestionLines = suggestions
+    .slice(0, 3)
+    .map((item) => `- ${item.label} (${item.link})`)
+    .join("\n");
+
+  const replyParts = [
+    "Alles klar – hier ein paar konkrete Ideen:",
+    suggestionLines,
+    question ? `Kurze Rückfrage: ${question}` : null,
+    "Wenn das passt, schick mir kurz die Eckdaten über /kontakt/."
+  ].filter(Boolean);
+
+  return {
+    reply: replyParts.join("\n"),
+    suggestion: buildSuggestionFromMessages(messages)
+  };
+}
+
 export async function onRequest(context) {
   const { request, env } = context;
   const cors = corsHeaders(request, env);
@@ -181,17 +308,6 @@ export async function onRequest(context) {
     if (origin !== env.ALLOWED_ORIGIN.trim()) {
       return json({ error: "Origin nicht erlaubt." }, 403, { ...cors });
     }
-  }
-
-  if (!env.AI || typeof env.AI.run !== "function") {
-    return json(
-      {
-        error: "missing_workers_ai_binding",
-        detail: "Workers AI Binding fehlt. Cloudflare Pages → Einstellungen → Bindungen → Workers AI, Variablenname: AI"
-      },
-      500,
-      { ...cors }
-    );
   }
 
   let raw = "";
@@ -221,41 +337,6 @@ export async function onRequest(context) {
     return json({ error: "Keine Nachrichten gefunden." }, 400, { ...cors });
   }
 
-  const messages = [{ role: "system", content: buildSystemPrompt() }, ...userMessages];
-
-  try {
-    const result = await runWithFallbackModels(env, {
-      messages,
-      temperature: 0.35,
-      max_tokens: 520
-    });
-
-    const text = String(result?.response || result?.result || result || "").trim();
-    const parsed = safeJsonParse(text);
-
-    if (parsed && typeof parsed === "object" && typeof parsed.reply === "string") {
-      if (!parsed.suggestion) {
-        parsed.suggestion = buildSuggestionFromMessages(userMessages);
-      } else {
-        parsed.suggestion.text = parsed.suggestion.text || parsed.suggestion.whatsappText;
-      }
-      return json(parsed, 200, { ...cors });
-    }
-
-    const suggestion = buildSuggestionFromMessages(userMessages);
-    return json(
-      {
-        reply: text || "Kurz Blackout. Nochmal?",
-        suggestion
-      },
-      200,
-      { ...cors }
-    );
-  } catch (err) {
-    return json(
-      { error: "workers_ai_error", detail: err?.message || String(err) },
-      502,
-      { ...cors }
-    );
-  }
+  const response = buildReply(userMessages);
+  return json(response, 200, { ...cors });
 }

@@ -9,7 +9,7 @@
   const TRANSCRIPT_KEY = "luderbot_transcript_v2";
   const SUGGESTION_KEY = "luderbot_suggestion_v1";
   const CONSENT_TEXT =
-    "Ich stimme zu, dass meine Nachricht an Cloudflare Workers AI übermittelt wird.";
+    "Ich stimme zu, dass meine Nachricht zur Verarbeitung an Cloudflare Workers AI übermittelt wird.";
 
   function safeJsonParse(s) {
     try {
