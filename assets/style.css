@@ -1264,3 +1264,24 @@ body.leistung-page .leistung-hr{
     padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
 }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+#lb-chat-input {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#lb-chat-send {
+  font-size: 16px;
+}
+
+#lb-chat-launcher,
+#lb-chat-send,
+.lb-chip,
+.lb-chat-actions a,
+.lb-chat__actions a {
+  touch-action: manipulation;
+}
