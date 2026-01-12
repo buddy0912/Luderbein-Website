@@ -1059,3 +1059,189 @@ body.leistung-page .leistung-hr{
     padding-right: clamp(16px, 4vw, 22px);
   }
 }
+
+/* ================================
+   LuderBot Chat Widget
+   ================================ */
+
+#lb-chat-launcher {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(219, 16, 33, 0.55);
+  background: linear-gradient(135deg, rgba(219, 16, 33, 0.9), rgba(241, 8, 13, 0.85));
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  z-index: 9999;
+}
+
+#lb-chat-launcher:hover {
+  filter: brightness(1.08);
+}
+
+#lb-chat {
+  position: fixed;
+  right: 16px;
+  bottom: 76px;
+  width: min(360px, calc(100vw - 32px));
+  background: rgba(26, 26, 31, 0.98);
+  border: 1px solid rgba(64, 62, 65, 0.6);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9998;
+}
+
+#lb-chat.is-open {
+  display: flex;
+}
+
+.lb-chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(44, 24, 27, 0.85);
+  border-bottom: 1px solid rgba(64, 62, 65, 0.5);
+}
+
+.lb-chat-header strong {
+  display: block;
+  font-size: 16px;
+}
+
+.lb-chat-header span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.lb-chat-close {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.lb-chat-messages {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.lb-chat-msg {
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  background: rgba(42, 45, 51, 0.9);
+  border: 1px solid rgba(64, 62, 65, 0.4);
+}
+
+.lb-chat-msg.user {
+  background: rgba(219, 16, 33, 0.15);
+  border-color: rgba(219, 16, 33, 0.4);
+  align-self: flex-end;
+}
+
+.lb-chat-msg.bot {
+  align-self: flex-start;
+}
+
+.lb-chat-msg.system {
+  align-self: center;
+  font-size: 12px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+}
+
+.lb-chat-form {
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lb-chat-consent {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.lb-chat-input {
+  display: flex;
+  gap: 10px;
+}
+
+.lb-chat-input textarea {
+  flex: 1;
+  resize: none;
+  border-radius: 12px;
+  border: 1px solid rgba(64, 62, 65, 0.6);
+  background: rgba(14, 6, 11, 0.8);
+  color: var(--text);
+  padding: 8px 10px;
+  font-family: inherit;
+}
+
+.lb-chat-input button {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.lb-chat-form.is-loading button {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.lb-chat-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lb-chat-action {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(42, 45, 51, 0.9);
+  color: var(--text);
+  border: 1px solid rgba(64, 62, 65, 0.6);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.lb-chat-action:hover {
+  border-color: rgba(219, 16, 33, 0.6);
+  color: #fff;
+}
+
+@media (max-width: 560px) {
+  #lb-chat {
+    right: 12px;
+    bottom: 70px;
+    width: calc(100vw - 24px);
+  }
+
+  #lb-chat-launcher {
+    right: 12px;
+    bottom: 12px;
+  }
+}
