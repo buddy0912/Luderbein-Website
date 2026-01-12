@@ -375,16 +375,23 @@ function buildSuggestions(category) {
   }
 }
 
-const SYSTEM_PROMPT = `Du bist LuderBot, der freundliche Assistent von Luderbein, einem Dienstleister für Gravur- und Laserarbeiten.
-Luderbein fertigt z. B. Schlüsselanhänger, Geschenksets, Schieferplatten, Acrylschilder, Holz- und Metallprodukte.
-Bleibe beim Thema Gravur, Laserarbeiten, Materialien, Produkte und Kundenanfragen.
-Stelle pro Nachricht maximal eine kurze Rückfrage und vermeide Verhör-Charakter.
-Wenn Informationen fehlen, frage knapp nach Material, Termin oder Menge.
-Sobald alle Eckdaten (Produkt, Material, Text/Motiv/Foto, Menge, Termin) vorliegen, fasse stichpunktartig zusammen.
-Antworte freundlich, klar und ausschließlich auf Deutsch.`;
+function buildSystemPrompt() {
+  return [
+    "Du bist „LuderBot“, der Chat-Assistent von Luderbein, einem Gravur- und Laserdienstleister.",
+    "",
+    "Unser Angebot: Gravuren auf Holz, Metall, Schiefer, Acryl und Geschenksets. Wir verkaufen KEINE Gravur- oder Lasermaschinen.",
+    "",
+    "Ziel: Sammle freundlich diese Eckdaten: Produkt/Art, Material, Text/Motiv/Fotos, Menge, Termin. Frage nur eine Sache auf einmal, und nur wenn etwas fehlt.",
+    "Erfinde keine Produkte oder Dienstleistungen, die wir nicht anbieten.",
+    "",
+    "Wenn alle Eckdaten vorliegen, gib eine kurze Zusammenfassung zurück und ein suggestion/handoff-Objekt mit subject, mailBody und whatsappText.",
+    "Wenn noch Informationen fehlen, gib nur reply mit einer höflichen Frage und KEIN suggestion/handoff.",
+    ""
+  ].join("\n");
+}
 
 function buildAiMessages(messages) {
-  return [{ role: "system", content: SYSTEM_PROMPT }, ...messages];
+  return [{ role: "system", content: buildSystemPrompt() }, ...messages];
 }
 
 async function generateReply(env, messages) {
@@ -436,19 +443,30 @@ export async function onRequest(context) {
     return json({ error: "Body konnte nicht gelesen werden." }, 400, { ...cors });
   }
 
+  if (!raw.trim()) {
+    return json({ error: "Body fehlt." }, 400, { ...cors });
+  }
+
   if (raw.length > MAX_BODY_CHARS) {
     return json({ error: "Payload zu groß." }, 413, { ...cors });
   }
 
-  const body = safeJsonParse(raw || "{}") || {};
-  const incomingMessages = Array.isArray(body.messages)
-    ? body.messages
-    : typeof body.message === "string"
-      ? [{ role: "user", content: body.message }]
-      : [];
+  const body = safeJsonParse(raw);
+  if (!body || typeof body !== "object") {
+    return json({ error: "Ungültiges JSON." }, 400, { ...cors });
+  }
 
-  if (!incomingMessages.length) {
-    return json({ error: "Bitte JSON senden: { messages: [...] }" }, 400, { ...cors });
+  const incomingMessages = Array.isArray(body.messages) ? body.messages : null;
+  if (!incomingMessages || incomingMessages.length === 0) {
+    return json({ error: "messages fehlen." }, 400, { ...cors });
+  }
+
+  if (!env.OPENAI_API_KEY) {
+    return json(
+      { reply: "Entschuldigung, unsere KI ist gerade offline. Bitte später erneut versuchen." },
+      200,
+      { ...cors }
+    );
   }
 
   const userMessages = clampMessages(incomingMessages);
@@ -474,14 +492,14 @@ export async function onRequest(context) {
     return json(
       {
         reply: `Danke! Hier ist die Zusammenfassung deiner Anfrage:\n${summary}`,
-        handoff: buildHandoff(details)
+        suggestion: buildHandoff(details)
       },
       200,
       { ...cors }
     );
   } catch (error) {
     return json(
-      { reply: "Entschuldigung, die KI ist gerade offline. Bitte später erneut versuchen." },
+      { reply: "Entschuldigung, unsere KI ist gerade offline. Bitte später erneut versuchen." },
       200,
       { ...cors }
     );

@@ -852,7 +852,7 @@
     const waBtn = panel.querySelector("[data-action=\"wa\"]");
     const mailBtn = panel.querySelector("[data-action=\"mail\"]");
     const chatMessages = [];
-    let lastHandoff = null;
+    let lastSuggestion = null;
 
     function shouldAutofocus() {
       return !(
@@ -926,17 +926,17 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    function setHandoff(handoff) {
-      lastHandoff = handoff || null;
-      const waText = lastHandoff?.whatsappText || "";
-      const mailBody = lastHandoff?.mailBody || waText;
+    function setSuggestion(suggestion) {
+      lastSuggestion = suggestion || null;
+      const waText = lastSuggestion?.whatsappText || "";
+      const mailBody = lastSuggestion?.mailBody || waText;
       if (!waText || !mailBody) {
         waBtn.removeAttribute("href");
         mailBtn.removeAttribute("href");
         actions.hidden = true;
         return;
       }
-      const subject = lastHandoff?.subject || "Anfrage via LuderBot";
+      const subject = lastSuggestion?.subject || "Anfrage via LuderBot";
       const waHref = `https://wa.me/${LB_CONTACT.waNumber}?text=${encodeURIComponent(waText)}`;
       const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailBody)}`;
       waBtn.setAttribute("href", waHref);
@@ -977,7 +977,7 @@
       pushMessage("user", text);
       textarea.value = "";
       updateSendState();
-      setHandoff(null);
+      setSuggestion(null);
       form.classList.add("is-loading");
 
       try {
@@ -988,32 +988,23 @@
           body: JSON.stringify({ message: text, messages: outgoingMessages }),
         });
 
+        const data = await response.json();
         if (!response.ok) {
-          let errorDetail = "Der Chat ist gerade nicht verfügbar. Bitte versuche es erneut.";
-          try {
-            const errorData = await response.json();
-            if (errorData && errorData.error) {
-              errorDetail = `${errorData.error} Bitte versuche es erneut.`;
-            }
-          } catch (_) {
-            // ignore parse errors, use default message
+          if (data && data.error) {
+            addMessage("system", data.error);
           }
-          addMessage("system", errorDetail);
           return;
         }
 
-        const data = await response.json();
         if (data && data.reply) {
           addMessage("bot", data.reply);
           pushMessage("assistant", data.reply);
-          setHandoff(data.handoff);
+          setSuggestion(data.suggestion);
         } else if (data && data.error) {
-          addMessage("system", `${data.error} Bitte versuche es erneut.`);
-        } else {
-          addMessage("system", "Ich konnte gerade keine Antwort erzeugen. Bitte versuche es erneut.");
+          addMessage("system", data.error);
         }
       } catch (_) {
-        addMessage("system", "Verbindung fehlgeschlagen. Bitte prüfe deine Verbindung und versuche es erneut.");
+        // no-op
       } finally {
         form.classList.remove("is-loading");
       }
