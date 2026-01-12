@@ -1,155 +1,172 @@
-const DEFAULT_MODEL = "gpt-4o-mini";
-const MAX_PAYLOAD_BYTES = 8000;
-const MAX_MESSAGE_CHARS = 1200;
-const MAX_HISTORY_MESSAGES = 8;
+// =========================================================
+// Cloudflare Pages Function: /api/chat  (Workers AI Version)
+// Datei: /functions/api/chat.js
+//
+// Voraussetzung:
+// - In Cloudflare Pages unter "Einstellungen → Bindungen" ein AI-Binding anlegen:
+//   Name: AI
+//
+// Kein OpenAI Key nötig.
+// =========================================================
 
-function buildHeaders(origin) {
-  const headers = new Headers();
-  headers.set("Content-Type", "application/json");
-  headers.set("Cache-Control", "no-store");
-  headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  headers.set("Access-Control-Allow-Headers", "Content-Type");
-  headers.set("Access-Control-Max-Age", "86400");
-  if (origin) {
-    headers.set("Access-Control-Allow-Origin", origin);
-    headers.set("Vary", "Origin");
-  }
-  return headers;
-}
+const MAX_BODY_CHARS = 12000;
+const MAX_MESSAGES = 14;
+const MAX_CONTENT_CHARS = 1200;
 
-function jsonResponse(body, status, origin) {
-  return new Response(JSON.stringify(body), {
+// Workers AI Modell (klein & flott)
+const CF_MODEL = "@cf/meta/llama-3.1-8b-instruct";
+
+function json(data, status = 200, headers = {}) {
+  return new Response(JSON.stringify(data), {
     status,
-    headers: buildHeaders(origin),
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      ...headers
+    }
   });
 }
 
-function limitHistory(history) {
-  if (!Array.isArray(history)) return [];
-  return history
-    .filter((entry) => entry && typeof entry.content === "string" && typeof entry.role === "string")
-    .filter((entry) => ["user", "assistant", "system"].includes(entry.role))
-    .slice(-MAX_HISTORY_MESSAGES)
-    .map((entry) => ({
-      role: entry.role,
-      content: entry.content.slice(0, MAX_MESSAGE_CHARS),
-    }));
+function corsHeaders(request, env) {
+  const origin = request.headers.get("Origin") || "";
+  const allowed = (env.ALLOWED_ORIGIN || "").trim();
+
+  if (allowed) {
+    if (origin === allowed) {
+      return {
+        "Access-Control-Allow-Origin": origin,
+        "Vary": "Origin",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "content-type"
+      };
+    }
+    return {};
+  }
+
+  return origin
+    ? {
+        "Access-Control-Allow-Origin": origin,
+        "Vary": "Origin",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "content-type"
+      }
+    : {
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "content-type"
+      };
+}
+
+function clampMessages(messages) {
+  if (!Array.isArray(messages)) return [];
+  const sliced = messages.slice(-MAX_MESSAGES);
+
+  return sliced
+    .map((m) => {
+      const role = (m && m.role) || "user";
+      const content = String((m && m.content) || "").slice(0, MAX_CONTENT_CHARS);
+      if (!content.trim()) return null;
+      if (!["user", "assistant"].includes(role)) return null;
+      return { role, content };
+    })
+    .filter(Boolean);
+}
+
+function buildSystemPrompt() {
+  return [
+    "Du bist „LuderBot“, der Website-Chat von Luderbein (urban/industrial, frech aber professionell).",
+    "Ziel: Besucher in unter 1 Minute zu einer klaren Anfrage führen.",
+    "Regeln:",
+    "- Erfinde KEINE Preise/Lieferzeiten/technische Limits. Wenn unsicher: sag es & frag kurz nach.",
+    "- Maximal 1 Rückfrage pro Antwort.",
+    "- Keine sensiblen Daten erfragen. Wenn Nutzer sowas sendet: kurz warnen.",
+    "",
+    "Produktfokus: Schlüsselanhänger (Holz/Metall), Geschenksets (4mm Pappel-Box), Schiefer (Foto + Text/Symbole).",
+    "",
+    "Antworte ausschließlich als gültiges JSON im Format:",
+    '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "..." } }',
+    "suggestion nur ausgeben, wenn genug Infos da sind."
+  ].join("\n");
+}
+
+function safeJsonParse(s) {
+  try { return JSON.parse(s); } catch (_) { return null; }
 }
 
 export async function onRequest(context) {
   const { request, env } = context;
-  const origin = request.headers.get("Origin") || "";
-  const allowedOrigin = env.ALLOWED_ORIGIN || "";
-  const corsOrigin = allowedOrigin || origin || "*";
-
-  if (allowedOrigin && origin && origin !== allowedOrigin) {
-    return jsonResponse({ error: "forbidden_origin" }, 403, allowedOrigin);
-  }
+  const cors = corsHeaders(request, env);
 
   if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: buildHeaders(corsOrigin) });
+    return new Response(null, { status: 204, headers: { ...cors } });
   }
-
   if (request.method !== "POST") {
-    return jsonResponse({ error: "method_not_allowed" }, 405, corsOrigin);
+    return json({ error: "Method not allowed" }, 405, { ...cors });
   }
 
-  if (!env.OPENAI_API_KEY) {
-    return jsonResponse({ error: "missing_openai_api_key" }, 500, corsOrigin);
+  // ALLOWED_ORIGIN optional (Preview lieber leer lassen)
+  if ((env.ALLOWED_ORIGIN || "").trim()) {
+    const origin = request.headers.get("Origin") || "";
+    if (origin !== env.ALLOWED_ORIGIN.trim()) {
+      return json({ error: "Origin nicht erlaubt." }, 403, { ...cors });
+    }
   }
 
-  const contentLength = parseInt(request.headers.get("Content-Length") || "0", 10);
-  if (contentLength && contentLength > MAX_PAYLOAD_BYTES) {
-    return jsonResponse({ error: "payload_too_large" }, 413, corsOrigin);
-  }
-
-  let rawBody = "";
+  let raw = "";
   try {
-    rawBody = await request.text();
+    raw = await request.text();
   } catch (_) {
-    return jsonResponse({ error: "invalid_body" }, 400, corsOrigin);
+    return json({ error: "Body konnte nicht gelesen werden." }, 400, { ...cors });
   }
 
-  if (rawBody.length > MAX_PAYLOAD_BYTES) {
-    return jsonResponse({ error: "payload_too_large" }, 413, corsOrigin);
+  if (raw.length > MAX_BODY_CHARS) {
+    return json({ error: "Payload zu groß." }, 413, { ...cors });
   }
 
-  let payload;
+  const body = safeJsonParse(raw || "{}");
+  if (!body || !Array.isArray(body.messages)) {
+    return json({ error: "Bitte JSON senden: { messages: [...] }" }, 400, { ...cors });
+  }
+
+  const userMessages = clampMessages(body.messages);
+  if (userMessages.length === 0) {
+    return json({ error: "Keine Nachrichten gefunden." }, 400, { ...cors });
+  }
+
+  if (!env.AI || typeof env.AI.run !== "function") {
+    return json(
+      { error: "Workers AI Binding fehlt. In Cloudflare Pages unter Einstellungen → Bindungen AI=AI anlegen." },
+      500,
+      { ...cors }
+    );
+  }
+
+  const messages = [
+    { role: "system", content: buildSystemPrompt() },
+    ...userMessages
+  ];
+
   try {
-    payload = JSON.parse(rawBody || "{}");
-  } catch (_) {
-    return jsonResponse({ error: "invalid_json" }, 400, corsOrigin);
-  }
-
-  const message = typeof payload.message === "string" ? payload.message.trim() : "";
-  if (!message) {
-    return jsonResponse({ error: "message_required" }, 400, corsOrigin);
-  }
-
-  if (message.length > MAX_MESSAGE_CHARS) {
-    return jsonResponse({ error: "message_too_long" }, 400, corsOrigin);
-  }
-
-  const history = limitHistory(payload.history);
-
-  const systemPrompt =
-    "Du bist LuderBot, ein freundlicher Assistent für Luderbein. Antworte kurz, klar und hilfreich. " +
-    "Antworte IMMER als JSON-Objekt mit dem Schlüssel 'reply' (String) und optional 'suggestion' (Objekt mit 'text'). " +
-    "Nutze 'suggestion.text' nur, wenn ein konkreter Text für WhatsApp oder E-Mail sinnvoll ist.";
-
-  const model = (env.OPENAI_MODEL || DEFAULT_MODEL).trim() || DEFAULT_MODEL;
-
-  let openAiResponse;
-  try {
-    openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: "system", content: systemPrompt }, ...history, { role: "user", content: message }],
-        temperature: 0.6,
-        response_format: { type: "json_object" },
-      }),
+    const result = await env.AI.run(CF_MODEL, {
+      messages,
+      temperature: 0.4,
+      max_tokens: 450
     });
-  } catch (_) {
-    return jsonResponse({ error: "openai_unreachable" }, 502, corsOrigin);
+
+    // Workers AI liefert meist { response: "..." }
+    const text = String(result?.response || result?.result || result || "").trim();
+    const parsed = safeJsonParse(text);
+
+    if (parsed && typeof parsed === "object" && typeof parsed.reply === "string") {
+      return json(parsed, 200, { ...cors });
+    }
+
+    // Fallback wenn Modell kein JSON liefert
+    return json({ reply: text || "Ich hab kurz geschluckt. Nochmal?" }, 200, { ...cors });
+  } catch (err) {
+    return json(
+      { error: "ai_error", detail: err?.message || String(err) },
+      502,
+      { ...cors }
+    );
   }
-
-  if (!openAiResponse.ok) {
-    return jsonResponse({ error: "openai_error", status: openAiResponse.status }, 502, corsOrigin);
-  }
-
-  let data;
-  try {
-    data = await openAiResponse.json();
-  } catch (_) {
-    return jsonResponse({ error: "openai_invalid_response" }, 502, corsOrigin);
-  }
-
-  const content = data?.choices?.[0]?.message?.content?.trim();
-  if (!content) {
-    return jsonResponse({ error: "empty_response" }, 502, corsOrigin);
-  }
-
-  let parsed;
-  try {
-    parsed = JSON.parse(content);
-  } catch (_) {
-    return jsonResponse({ reply: content }, 200, corsOrigin);
-  }
-
-  const reply = typeof parsed.reply === "string" ? parsed.reply.trim() : "";
-  const suggestionText = parsed?.suggestion?.text;
-  const suggestion = typeof suggestionText === "string" && suggestionText.trim()
-    ? { text: suggestionText.trim() }
-    : undefined;
-
-  if (!reply) {
-    return jsonResponse({ reply: content }, 200, corsOrigin);
-  }
-
-  return jsonResponse({ reply, ...(suggestion ? { suggestion } : {}) }, 200, corsOrigin);
 }
