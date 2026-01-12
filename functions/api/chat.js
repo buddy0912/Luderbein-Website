@@ -345,47 +345,37 @@ function buildSuggestions(category) {
   }
 }
 
-function buildReply(messages) {
-  const lastUser = [...messages].reverse().find((m) => m.role === "user")?.content || "";
-  const intent = classifyIntent(lastUser);
-  const handoff = buildHandoffFromMessages(messages);
+const SYSTEM_PROMPT = `Du bist LuderBot, der freundliche Assistent von Luderbein Gravur & Laser.
+Antworte kurz, klar und hilfsbereit auf Deutsch.
+Bleibe beim Thema Gravur, Laser, Materialien, Produkte und Anfragen.
+Wenn sinnvoll, gib 1-2 konkrete Rückfragen oder nächste Schritte.`;
 
-  if (intent.offTopic) {
-    return {
-      reply:
-        "Dazu kann ich dir nicht helfen – ich bin auf Gravur, Laser & Sonderanfertigungen bei Luderbein spezialisiert. Schau gern hier vorbei: /leistungen/ (z.B. /leistungen/holz/, /leistungen/metall/) – oder schreib direkt über /kontakt/.",
-      suggestion: buildSuggestionFromMessages(messages),
-      handoff
-    };
+function buildAiMessages(messages) {
+  return [{ role: "system", content: SYSTEM_PROMPT }, ...messages];
+}
+
+async function generateReply(env, messages) {
+  if (!env || !env.AI) {
+    throw new Error("AI binding fehlt.");
   }
 
-  if (intent.indecisive) {
-    return {
-      reply:
-        "Kein Stress! Wenn du noch unschlüssig bist, stöbere kurz auf /leistungen/ und den Unterseiten wie /leistungen/holz/, /leistungen/acryl/, /leistungen/schiefer/ oder /leistungen/metall/. Wenn du magst, klären wir alles direkt über /kontakt/.",
-      suggestion: buildSuggestionFromMessages(messages),
-      handoff
-    };
+  const model = (env.AI_MODEL || "@cf/meta/llama-3.1-8b-instruct").trim();
+  const result = await env.AI.run(model, {
+    messages: buildAiMessages(messages)
+  });
+
+  const reply =
+    result?.response ||
+    result?.result?.response ||
+    result?.output_text ||
+    result?.text ||
+    "";
+
+  if (!reply.trim()) {
+    throw new Error("Leere Antwort vom Modell.");
   }
 
-  const { question, suggestions } = buildSuggestions(intent.category);
-  const suggestionLines = suggestions
-    .slice(0, 3)
-    .map((item) => `- ${item.label} (${item.link})`)
-    .join("\n");
-
-  const replyParts = [
-    "Alles klar – hier ein paar konkrete Ideen:",
-    suggestionLines,
-    question ? `Kurze Rückfrage: ${question}` : null,
-    "Wenn das passt, schick mir kurz die Eckdaten über /kontakt/."
-  ].filter(Boolean);
-
-  return {
-    reply: replyParts.join("\n"),
-    suggestion: buildSuggestionFromMessages(messages),
-    handoff
-  };
+  return reply.trim();
 }
 
 export async function onRequest(context) {
@@ -433,6 +423,26 @@ export async function onRequest(context) {
     return json({ error: "Keine Nachrichten gefunden." }, 400, { ...cors });
   }
 
-  const response = buildReply(userMessages);
-  return json(response, 200, { ...cors });
+  try {
+    const reply = await generateReply(env, userMessages);
+    const handoff = buildHandoffFromMessages(userMessages);
+    const lastUser = [...userMessages].reverse().find((m) => m.role === "user")?.content || "";
+    const intent = classifyIntent(lastUser);
+
+    return json(
+      {
+        reply,
+        suggestion: buildSuggestions(intent.category),
+        handoff
+      },
+      200,
+      { ...cors }
+    );
+  } catch (error) {
+    return json(
+      { error: "Antwort konnte nicht erzeugt werden. Bitte erneut versuchen." },
+      502,
+      { ...cors }
+    );
+  }
 }

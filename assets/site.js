@@ -981,14 +981,24 @@
       form.classList.add("is-loading");
 
       try {
+        const outgoingMessages = chatMessages.slice(-16);
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: chatMessages }),
+          body: JSON.stringify({ message: text, messages: outgoingMessages }),
         });
 
         if (!response.ok) {
-          addMessage("system", "Ups, der Chat ist gerade nicht verfügbar.");
+          let errorDetail = "Der Chat ist gerade nicht verfügbar. Bitte versuche es erneut.";
+          try {
+            const errorData = await response.json();
+            if (errorData && errorData.error) {
+              errorDetail = `${errorData.error} Bitte versuche es erneut.`;
+            }
+          } catch (_) {
+            // ignore parse errors, use default message
+          }
+          addMessage("system", errorDetail);
           return;
         }
 
@@ -997,11 +1007,13 @@
           addMessage("bot", data.reply);
           pushMessage("assistant", data.reply);
           setHandoff(data.handoff);
+        } else if (data && data.error) {
+          addMessage("system", `${data.error} Bitte versuche es erneut.`);
         } else {
-          addMessage("system", "Ich konnte gerade keine Antwort erzeugen.");
+          addMessage("system", "Ich konnte gerade keine Antwort erzeugen. Bitte versuche es erneut.");
         }
       } catch (_) {
-        addMessage("system", "Verbindung fehlgeschlagen. Bitte versuche es später.");
+        addMessage("system", "Verbindung fehlgeschlagen. Bitte prüfe deine Verbindung und versuche es erneut.");
       } finally {
         form.classList.remove("is-loading");
       }
