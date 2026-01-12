@@ -2,23 +2,24 @@
 // Cloudflare Pages Function: /api/chat  (Workers AI)
 // Datei: /functions/api/chat.js
 //
-// Cloudflare Setup (Pages Projekt):
+// Voraussetzung (Cloudflare Pages Projekt):
 // - Einstellungen → Bindungen → Hinzufügen → Workers AI
-// - Variablenname/Binging name: AI
+// - Variablenname: AI
 //
-// Kein OpenAI API Key nötig.
-// Optional:
-// - ALLOWED_ORIGIN (Text) für Production: https://deine-domain.tld
-//   (Für pages.dev/Preview am besten leer lassen.)
+// Kein OpenAI Key nötig.
+// Optional: ALLOWED_ORIGIN (nur für eigene Domain; pages.dev/Preview lieber leer lassen)
 // =========================================================
 
 const MAX_BODY_CHARS = 12000;
 const MAX_MESSAGES = 14;
 const MAX_CONTENT_CHARS = 1200;
 
-// Modell (Workers AI). Falls das bei dir nicht verfügbar ist,
-// sag mir den Fehlertext aus der Response, dann switchen wir auf ein anderes.
-const CF_MODEL = "@cf/meta/llama-3.1-8b-instruct";
+// Wir probieren mehrere Modelle (falls eins in deinem Account/Region nicht verfügbar ist)
+const MODEL_CANDIDATES = [
+  "@cf/meta/llama-3.1-8b-instruct",
+  "@cf/meta/llama-3-8b-instruct",
+  "@cf/meta/llama-2-7b-chat-int8"
+];
 
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
@@ -91,16 +92,32 @@ function buildSystemPrompt() {
     "Ziel: Besucher in unter 1 Minute zu einer klaren Anfrage führen.",
     "",
     "Regeln:",
-    "- Erfinde KEINE Preise/Lieferzeiten/technische Limits. Wenn unsicher: sag es und frag kurz nach.",
-    "- Maximal 1 Rückfrage pro Antwort.",
-    "- Keine sensiblen Daten erfragen.",
+    "- Erfinde KEINE Preise/Lieferzeiten/technische Limits. Wenn unsicher: sag es und stell genau 1 Rückfrage.",
+    "- Keine sensiblen Daten erfragen (Adresse, Zahlungsdaten etc.).",
     "",
     "Produktfokus: Schlüsselanhänger (Holz/Metall), Geschenksets (4mm Pappel-Box), Schiefer (Foto + Text/Symbole).",
     "",
-    "Antworte ausschließlich als gültiges JSON im Format:",
+    "Antworte als gültiges JSON:",
     '{ "reply": "Text", "suggestion": { "subject": "...", "mailBody": "...", "whatsappText": "..." } }',
     "„suggestion“ nur ausgeben, wenn genug Infos da sind."
   ].join("\n");
+}
+
+async function runWithFallbackModels(env, payload) {
+  let lastErr = null;
+  for (const model of MODEL_CANDIDATES) {
+    try {
+      return await env.AI.run(model, payload);
+    } catch (err) {
+      lastErr = err;
+      const msg = (err && err.message) ? err.message : String(err);
+      // Wenn Modell nicht existiert/gesperrt: nächstes versuchen
+      if (/model|not found|unknown/i.test(msg)) continue;
+      // Sonst: echter Fehler → raus
+      throw err;
+    }
+  }
+  throw lastErr || new Error("No Workers AI model available");
 }
 
 export async function onRequest(context) {
@@ -129,7 +146,7 @@ export async function onRequest(context) {
       {
         error: "missing_workers_ai_binding",
         detail:
-          "Workers AI Binding fehlt. In Cloudflare Pages: Einstellungen → Bindungen → Hinzufügen → Workers AI, Name: AI"
+          "Workers AI Binding fehlt. Cloudflare Pages: Einstellungen → Bindungen → Hinzufügen → Workers AI, Variablenname: AI"
       },
       500,
       { ...cors }
@@ -160,7 +177,7 @@ export async function onRequest(context) {
   const messages = [{ role: "system", content: buildSystemPrompt() }, ...userMessages];
 
   try {
-    const result = await env.AI.run(CF_MODEL, {
+    const result = await runWithFallbackModels(env, {
       messages,
       temperature: 0.4,
       max_tokens: 450
