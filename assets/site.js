@@ -826,7 +826,7 @@
       <form class="lb-chat-form">
         <label class="lb-chat-consent">
           <input type="checkbox" required />
-          Ich stimme zu, dass meine Nachricht an OpenAI übermittelt wird.
+          Ich stimme zu, dass meine Nachricht an Cloudflare Workers AI übermittelt wird.
         </label>
         <div class="lb-chat-input">
           <textarea rows="2" placeholder="Deine Frage..." maxlength="1200" required></textarea>
@@ -850,6 +850,7 @@
     const actions = panel.querySelector(".lb-chat-actions");
     const waBtn = panel.querySelector("[data-action=\"wa\"]");
     const mailBtn = panel.querySelector("[data-action=\"mail\"]");
+    const chatMessages = [];
 
     function setOpen(isOpen) {
       panel.classList.toggle("is-open", isOpen);
@@ -868,16 +869,27 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
-    function setSuggestion(text) {
+    function setSuggestion(suggestion) {
+      const text =
+        suggestion?.whatsappText ||
+        suggestion?.mailBody ||
+        suggestion?.text ||
+        "";
       if (!text) {
         actions.hidden = true;
         return;
       }
+      const subject = suggestion?.subject || "Anfrage via LuderBot";
       const waHref = `https://wa.me/${LB_CONTACT.waNumber}?text=${encodeURIComponent(text)}`;
-      const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent("Anfrage via LuderBot")}&body=${encodeURIComponent(text)}`;
+      const mailHref = `mailto:${LB_CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
       waBtn.setAttribute("href", waHref);
       mailBtn.setAttribute("href", mailHref);
       actions.hidden = false;
+    }
+
+    function pushMessage(role, content) {
+      chatMessages.push({ role, content });
+      if (chatMessages.length > 16) chatMessages.splice(0, chatMessages.length - 16);
     }
 
     launcher.addEventListener("click", () => setOpen(!panel.classList.contains("is-open")));
@@ -893,6 +905,7 @@
       }
 
       addMessage("user", text);
+      pushMessage("user", text);
       textarea.value = "";
       actions.hidden = true;
       form.classList.add("is-loading");
@@ -901,7 +914,7 @@
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text }),
+          body: JSON.stringify({ messages: chatMessages }),
         });
 
         if (!response.ok) {
@@ -912,8 +925,9 @@
         const data = await response.json();
         if (data && data.reply) {
           addMessage("bot", data.reply);
-          if (data.suggestion && data.suggestion.text) {
-            setSuggestion(data.suggestion.text);
+          pushMessage("assistant", data.reply);
+          if (data.suggestion) {
+            setSuggestion(data.suggestion);
           }
         } else {
           addMessage("system", "Ich konnte gerade keine Antwort erzeugen.");
