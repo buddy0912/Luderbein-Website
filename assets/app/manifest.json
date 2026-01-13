@@ -1,0 +1,21 @@
+{
+  "version": "2026-01-13",
+  "baseUrl": "https://luderbein-gravur.pages.dev",
+  "feeds": {
+    "werkstatt": "/assets/reel-werkstatt.json",
+    "metall": "/assets/reel-metall.json",
+    "schiefer": "/assets/reel-schiefer.json",
+    "holz": "/assets/reel-holz.json",
+    "acryl": "/assets/reel-acryl.json",
+    "custom": "/assets/reel-custom.json",
+    "schwibbogen": "/assets/reel-schwibbogen.json",
+    "glas": "/assets/reel-glas.json"
+  },
+  "pricing": "/assets/app/pricing.json",
+  "products": "/assets/app/products.json",
+  "cta": {
+    "website": "https://luderbein-gravur.pages.dev",
+    "instagram": "https://www.instagram.com/luderbein_gravur",
+    "whatsapp": "https://wa.me/491725925858"
+  }
+}
