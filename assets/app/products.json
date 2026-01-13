@@ -1,0 +1,36 @@
+{
+  "sections": [
+    {
+      "id": "schiefer",
+      "title": "Schiefer",
+      "subtitle": "Foto · Memorial · Text/Symbol",
+      "cover": "/assets/schiefer/schiefer-reel-01.jpg",
+      "items": [
+        {
+          "id": "schiefer_fotogravur",
+          "title": "Schiefer Fotogravur",
+          "desc": "Fotoaufbereitung + Gravur + Versiegelung.",
+          "category": "schiefer",
+          "variant": "fotogravur",
+          "image": "/assets/schiefer/schiefer-reel-02.jpg"
+        },
+        {
+          "id": "schiefer_gedenktafel",
+          "title": "Gedenktafel / Memorial",
+          "desc": "Bild, Name, Daten, Spruch – optional Symbol/Widmung.",
+          "category": "schiefer",
+          "variant": "gedenktafel",
+          "image": "/assets/schiefer/schiefer-reel-03.jpg"
+        },
+        {
+          "id": "schiefer_textsymbol",
+          "title": "Text / Symbol",
+          "desc": "Kurz & clean: Koordinaten, Widmung, Icon.",
+          "category": "schiefer",
+          "variant": "textsymbol",
+          "image": "/assets/schiefer/schiefer-reel-04.jpg"
+        }
+      ]
+    }
+  ]
+}
