@@ -35,7 +35,7 @@
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  background: rgba(10, 10, 12, 0.9);
+  background: #0b0b0f;
   color: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
@@ -48,11 +48,12 @@
 }
 
 .cfg .lb-select > select:hover {
+  background: #101016;
   border-color: rgba(255, 255, 255, 0.22);
 }
 
 .cfg .lb-select > select:focus {
-  border-color: rgba(255, 60, 60, 0.85);
+  border-color: #ff3c3c;
   box-shadow: 0 0 0 3px rgba(255, 60, 60, 0.18);
 }
 
