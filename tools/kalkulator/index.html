@@ -287,6 +287,7 @@
       .cfg .fields .full { grid-column: 1 / -1; }
     }
   </style>
+  <link rel="stylesheet" href="/tools/kalkulator/kalkulator.css" />
 </head>
 
 <body data-enablebot="0">
@@ -423,7 +424,8 @@
         <div class="fields">
           <div>
             <label for="kQty">Stückzahl</label>
-            <input id="kQty" data-k-qty type="number" min="1" step="1" placeholder="z. B. 25" inputmode="numeric" />
+            <input id="kQty" data-k-qty type="number" min="1" step="1" value="1" placeholder="z. B. 25" inputmode="numeric" />
+            <p class="small muted minqty-hint" data-k-minqty hidden></p>
           </div>
 
           <div>
@@ -450,6 +452,11 @@
         <div class="step" aria-label="Schritt 4 – Upgrades">
           <p class="steptitle">Schritt 4 – Upgrades</p>
           <div class="upgrades" data-k-upgrades></div>
+        </div>
+
+        <div class="unit-price" data-k-unit-price>
+          <span>Einzelpreis:</span>
+          <strong data-k-unit-price-value>Preis auf Anfrage</strong>
         </div>
 
         <div class="summary" aria-live="polite">
@@ -579,6 +586,8 @@
     const $note    = el("[data-k-note]", $root);
     const $upWrap  = el("[data-k-upgrades]", $root);
     const $sum     = el("[data-k-summary]", $root);
+    const $unitPriceValue = el("[data-k-unit-price-value]", $root);
+    const $minQtyHint = el("[data-k-minqty]", $root);
 
     const $add     = el("[data-k-add]", $root);
     const $cartList = el("[data-k-cart-list]", $root);
@@ -599,7 +608,8 @@
     const mailTo  = "luderbein_gravur@icloud.com";
 
     // ---- Money: immer cent-genau stabilisieren (kein Float-Gedöns) ----
-    const isPriceMissing = (v) => v === null || v === undefined || Number.isNaN(v);
+    const isPriceNull = (v) => v === null;
+    const isPriceInvalid = (v) => v === undefined || Number.isNaN(v);
     const asNumber = (v) => {
       if (typeof v === "number" || typeof v === "string") {
         const num = Number(v);
@@ -626,8 +636,9 @@
       return eurFmt.format(m(num));
     };
     const renderPrice = (v) => {
+      if (isPriceNull(v)) return "Preis auf Anfrage";
       const num = asNumber(v);
-      if (isPriceMissing(num)) return "Preis auf Anfrage";
+      if (isPriceInvalid(num)) return "Preis auf Anfrage";
       return formatEUR(num);
     };
     const eur = (n) => formatEUR(n);
@@ -652,29 +663,27 @@
       if (a.tagName === "BUTTON") a.disabled = !!on;
     }
 
-    function warnMissingPrice({
-      productKey,
-      variantKey,
-      mode,
-      formatId,
+    function warnInvalidPrice({
+      material,
+      category,
+      variant,
+      format,
       qty,
-      rawValue,
-      upgradeKey
+      resolvedPathOrTier
     }) {
-      console.warn("[KALK] Missing/invalid price", {
-        productKey,
-        variantKey,
-        mode,
-        formatId,
+      console.warn("Invalid price", {
+        material,
+        category,
+        variant,
+        format,
         qty,
-        rawValue,
-        upgradeKey
+        resolvedPathOrTier
       });
     }
 
     function tierUnit(tiers, qty, context = {}) {
       if (!Array.isArray(tiers)) {
-        warnMissingPrice({ ...context, rawValue: tiers });
+        warnInvalidPrice({ ...context, resolvedPathOrTier: "tiers" });
         return { unit: null, note: "Auf Anfrage" };
       }
       const tier = tiers.find((t) => {
@@ -683,13 +692,16 @@
         return minOk && maxOk;
       });
       if (!tier) {
-        warnMissingPrice({ ...context, rawValue: tiers });
+        warnInvalidPrice({ ...context, resolvedPathOrTier: "tier_not_found" });
         return { unit: null, note: "Auf Anfrage" };
       }
       const raw = (tier.unit ?? tier.price ?? null);
       const unit = asNumber(raw);
-      if (isPriceMissing(unit)) {
-        warnMissingPrice({ ...context, rawValue: raw });
+      if (isPriceNull(raw)) {
+        return { unit: null, note: tier.note || "Auf Anfrage" };
+      }
+      if (isPriceInvalid(unit)) {
+        warnInvalidPrice({ ...context, resolvedPathOrTier: tier });
         return { unit: null, note: tier.note || "Auf Anfrage" };
       }
       return { unit, note: tier.note || "" };
@@ -756,6 +768,9 @@
       }
 
       lines.push(`Stückzahl: ${pos.qty || ""}`);
+      if (pos.billableQty && pos.billableQty !== pos.qty) {
+        lines.push(`Berechnet: ${pos.billableQty} Stück (Eingabe: ${pos.qty})`);
+      }
       lines.push(`Versand: ${pos.shipText}`);
       lines.push(`Upgrades: ${pos.upgradesList.length ? pos.upgradesList.join(", ") : "keine"}`);
 
@@ -813,6 +828,9 @@
         }
 
         detailBits.push(`Stückzahl: ${esc(item.qty)}`);
+        if (item.billableQty && item.billableQty !== item.qty) {
+          detailBits.push(`Berechnet: ${esc(item.billableQty)} (Eingabe: ${esc(item.qty)})`);
+        }
         detailBits.push(`Versand: ${esc(item.shipText)}`);
 
         const upgradesText = item.upgradesList.length ? esc(item.upgradesList.join(", ")) : "keine";
@@ -882,7 +900,7 @@
       matKey: "",
       variantKey: "",
       formatId: "",
-      qty: 0,
+      qty: 1,
 
       shipMode: "dhl",
 
@@ -926,6 +944,9 @@
       cart.forEach((item, i) => {
         lines.push(`${i + 1}) ${formatTitle(item)}`);
         lines.push(`- Menge: ${item.qty}`);
+        if (item.billableQty && item.billableQty !== item.qty) {
+          lines.push(`- Berechnet: ${item.billableQty} (Eingabe: ${item.qty})`);
+        }
         if (item.color) lines.push(`- Farbe: ${item.color}`);
         if (item.engraving) lines.push(`- Gravur: ${item.engraving}`);
         if (item.motif) lines.push(`- Motiv: ${item.motif}`);
@@ -1049,11 +1070,7 @@
       resetSelect($motif);
 
       const prod = PR.products[matKey];
-      if (prod && matKey === "metall") {
-        $qty.value = 10;
-      } else {
-        if (!$qty.value) $qty.value = 1;
-      }
+      if (!$qty.value || Number($qty.value || 0) < 1) $qty.value = 1;
 
       $steps.hidden = false;
 
@@ -1117,8 +1134,6 @@
           opt.textContent = mOpt.label;
           $motif.appendChild(opt);
         });
-
-        if (v.minQty && Number($qty.value || 0) < v.minQty) $qty.value = v.minQty;
 
       } else {
         $metallBlock.hidden = true;
@@ -1244,7 +1259,8 @@
     function recalc() {
       state.variantKey = $variant.value || "";
       state.formatId = $format.value || "";
-      state.qty = Number($qty.value || 0);
+      const qtyRaw = Number($qty.value || 0);
+      state.qty = Number.isNaN(qtyRaw) ? 0 : qtyRaw;
 
       state.shipMode = getShipMode();
 
@@ -1261,19 +1277,29 @@
         lockBeidseitigUpgrade(beid);
       }
 
+      const minQty = (v && v.minQty) ? v.minQty : 0;
+      const billableQty = state.qty >= 1 ? Math.max(state.qty, minQty) : state.qty;
+      const showMinQtyHint = minQty > 0 && state.qty >= 1 && state.qty < minQty;
+
+      if ($minQtyHint) {
+        if (showMinQtyHint) {
+          $minQtyHint.textContent = `Hinweis: Mindestbestellmenge ${minQty}. Kalkulation erfolgt mit ${billableQty} Stück.`;
+          $minQtyHint.hidden = false;
+        } else {
+          $minQtyHint.textContent = "";
+          $minQtyHint.hidden = true;
+        }
+      }
+
       let ok = true;
       let onRequest = false;
+      let unitPriceOnRequest = false;
       let reasons = [];
 
       if (!state.matKey) { ok = false; reasons.push("Material fehlt."); }
       if (!state.variantKey) { ok = false; reasons.push("Ausführung fehlt."); }
       if (!state.formatId) { ok = false; reasons.push("Format fehlt."); }
       if (!state.qty || state.qty < 1) { ok = false; reasons.push("Stückzahl fehlt."); }
-
-      if (v && v.minQty && state.qty < v.minQty) {
-        ok = false;
-        reasons.push(`Mindestmenge: ${v.minQty} Stück.`);
-      }
 
       if (isMetallBottle) {
         if (!state.color) { ok = false; reasons.push("Farbe fehlt."); }
@@ -1286,33 +1312,41 @@
 
       if (ok && v) {
         const baseContext = {
-          productKey: state.matKey,
-          variantKey: state.variantKey,
-          formatId: state.formatId,
-          qty: state.qty
+          material: state.matKey,
+          category: "base",
+          variant: state.variantKey,
+          format: state.formatId,
+          qty: billableQty
         };
         if (state.matKey === "schiefer") {
           const fmt = (v.formats || []).find((f) => f.id === state.formatId);
           if (!fmt) {
             ok = false;
             reasons.push("Format ungültig.");
-            warnMissingPrice({ ...baseContext, mode: "formats", rawValue: state.formatId });
+            warnInvalidPrice({ ...baseContext, resolvedPathOrTier: state.formatId });
           } else {
-            const priceNum = asNumber(fmt.price);
-            if (isPriceMissing(priceNum)) {
+            if (isPriceNull(fmt.price)) {
               onRequest = true;
-              warnMissingPrice({ ...baseContext, mode: "formats", rawValue: fmt.price });
+              unitPriceOnRequest = true;
             } else {
-              baseUnit = m(priceNum);
-              baseNote = (v.note || "");
+              const priceNum = asNumber(fmt.price);
+              if (isPriceInvalid(priceNum)) {
+                onRequest = true;
+                unitPriceOnRequest = true;
+                warnInvalidPrice({ ...baseContext, resolvedPathOrTier: fmt.price });
+              } else {
+                baseUnit = m(priceNum);
+                baseNote = (v.note || "");
+              }
             }
           }
         }
 
-        if (state.matKey === "metall" && Array.isArray(v.tiers)) {
-          const t = tierUnit(v.tiers, state.qty, { ...baseContext, mode: "tiers" });
+        if (state.matKey === "metall") {
+          const t = tierUnit(v.tiers, billableQty, { ...baseContext, resolvedPathOrTier: "tiers" });
           if (t.unit == null) {
             onRequest = true;
+            unitPriceOnRequest = true;
             baseNote = t.note || "Auf Anfrage";
           } else {
             baseUnit = m(t.unit);
@@ -1328,23 +1362,26 @@
       let upgradeOnceLines = [];
 
       if (ok && !onRequest) {
-        subtotal = m(subtotal + m(baseUnit * state.qty));
+        subtotal = m(subtotal + m(baseUnit * billableQty));
 
         if (state.matKey === "schiefer" && prod && prod.upgrades) {
           for (const uKey of state.upgrades) {
             const u = prod.upgrades[uKey];
             if (!u) continue;
-            const priceNum = asNumber(u.price);
-            if (isPriceMissing(priceNum)) {
+            if (isPriceNull(u.price)) {
               onRequest = true;
-              warnMissingPrice({
-                productKey: state.matKey,
-                variantKey: state.variantKey,
-                formatId: state.formatId,
-                qty: state.qty,
-                mode: "upgrade",
-                rawValue: u.price,
-                upgradeKey: uKey
+              continue;
+            }
+            const priceNum = asNumber(u.price);
+            if (isPriceInvalid(priceNum)) {
+              onRequest = true;
+              warnInvalidPrice({
+                material: state.matKey,
+                category: "upgrade",
+                variant: uKey,
+                format: state.formatId,
+                qty: billableQty,
+                resolvedPathOrTier: u.price
               });
               continue;
             }
@@ -1361,56 +1398,65 @@
             if (!u) continue;
 
             if (u.type === "per_unit") {
-              const uUnitRaw = asNumber(u.unit);
-              if (isPriceMissing(uUnitRaw)) {
+              if (isPriceNull(u.unit)) {
                 onRequest = true;
-                warnMissingPrice({
-                  productKey: state.matKey,
-                  variantKey: state.variantKey,
-                  formatId: state.formatId,
-                  qty: state.qty,
-                  mode: "upgrade",
-                  rawValue: u.unit,
-                  upgradeKey: uKey
-                });
+                unitPriceOnRequest = true;
               } else {
-                const uUnit = m(uUnitRaw);
-                upgradeUnit = m(upgradeUnit + uUnit);
-                upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
+                const uUnitRaw = asNumber(u.unit);
+                if (isPriceInvalid(uUnitRaw)) {
+                  onRequest = true;
+                  unitPriceOnRequest = true;
+                  warnInvalidPrice({
+                    material: state.matKey,
+                    category: "upgrade",
+                    variant: uKey,
+                    format: state.formatId,
+                    qty: billableQty,
+                    resolvedPathOrTier: u.unit
+                  });
+                } else {
+                  const uUnit = m(uUnitRaw);
+                  upgradeUnit = m(upgradeUnit + uUnit);
+                  upgradePerUnitLines.push(`${u.label}: ${eur(uUnit)} / Stk`);
+                }
               }
             }
 
             if (u.type === "one_time") {
-              const onceRaw = asNumber(u.once);
-              if (isPriceMissing(onceRaw)) {
+              if (isPriceNull(u.once)) {
                 onRequest = true;
-                warnMissingPrice({
-                  productKey: state.matKey,
-                  variantKey: state.variantKey,
-                  formatId: state.formatId,
-                  qty: state.qty,
-                  mode: "upgrade",
-                  rawValue: u.once,
-                  upgradeKey: uKey
-                });
               } else {
-                const once = m(onceRaw);
-                upgradeOnce = m(upgradeOnce + once);
-                upgradeOnceLines.push(`${u.label}: ${eur(once)} einmalig`);
+                const onceRaw = asNumber(u.once);
+                if (isPriceInvalid(onceRaw)) {
+                  onRequest = true;
+                  warnInvalidPrice({
+                    material: state.matKey,
+                    category: "upgrade",
+                    variant: uKey,
+                    format: state.formatId,
+                    qty: billableQty,
+                    resolvedPathOrTier: u.once
+                  });
+                } else {
+                  const once = m(onceRaw);
+                  upgradeOnce = m(upgradeOnce + once);
+                  upgradeOnceLines.push(`${u.label}: ${eur(once)} einmalig`);
+                }
               }
             }
 
             if (u.type === "per_unit_tiered") {
-              const t = tierUnit(u.tiers, state.qty, {
-                productKey: state.matKey,
-                variantKey: state.variantKey,
-                formatId: state.formatId,
-                qty: state.qty,
-                mode: "upgrade",
-                upgradeKey: uKey
+              const t = tierUnit(u.tiers, billableQty, {
+                material: state.matKey,
+                category: "upgrade",
+                variant: uKey,
+                format: state.formatId,
+                qty: billableQty,
+                resolvedPathOrTier: "tiers"
               });
               if (t.unit == null) {
                 onRequest = true;
+                unitPriceOnRequest = true;
               } else {
                 const uUnit = m(t.unit);
                 upgradeUnit = m(upgradeUnit + uUnit);
@@ -1419,34 +1465,38 @@
             }
 
             if (u.type === "setup_plus_per_unit_tiered") {
-              const setupRaw = asNumber(u.setupFee);
-              if (isPriceMissing(setupRaw)) {
+              if (isPriceNull(u.setupFee)) {
                 onRequest = true;
-                warnMissingPrice({
-                  productKey: state.matKey,
-                  variantKey: state.variantKey,
-                  formatId: state.formatId,
-                  qty: state.qty,
-                  mode: "upgrade",
-                  rawValue: u.setupFee,
-                  upgradeKey: uKey
-                });
               } else {
-                const setup = m(setupRaw);
-                upgradeOnce = m(upgradeOnce + setup);
-                upgradeOnceLines.push(`${u.label}: ${eur(setup)} Setup`);
+                const setupRaw = asNumber(u.setupFee);
+                if (isPriceInvalid(setupRaw)) {
+                  onRequest = true;
+                  warnInvalidPrice({
+                    material: state.matKey,
+                    category: "upgrade",
+                    variant: uKey,
+                    format: state.formatId,
+                    qty: billableQty,
+                    resolvedPathOrTier: u.setupFee
+                  });
+                } else {
+                  const setup = m(setupRaw);
+                  upgradeOnce = m(upgradeOnce + setup);
+                  upgradeOnceLines.push(`${u.label}: ${eur(setup)} Setup`);
+                }
               }
 
-              const t = tierUnit(u.tiers, state.qty, {
-                productKey: state.matKey,
-                variantKey: state.variantKey,
-                formatId: state.formatId,
-                qty: state.qty,
-                mode: "upgrade",
-                upgradeKey: uKey
+              const t = tierUnit(u.tiers, billableQty, {
+                material: state.matKey,
+                category: "upgrade",
+                variant: uKey,
+                format: state.formatId,
+                qty: billableQty,
+                resolvedPathOrTier: "tiers"
               });
               if (t.unit == null) {
                 onRequest = true;
+                unitPriceOnRequest = true;
               } else {
                 const uUnit = m(t.unit);
                 upgradeUnit = m(upgradeUnit + uUnit);
@@ -1456,7 +1506,7 @@
           }
 
           if (!onRequest) {
-            subtotal = m(subtotal + m(upgradeUnit * state.qty));
+            subtotal = m(subtotal + m(upgradeUnit * billableQty));
           }
         }
 
@@ -1507,6 +1557,9 @@
           summaryLines.push(`Motiv: <strong>${state.motif || "—"}</strong>`);
         }
         if (state.qty) summaryLines.push(`Stückzahl: <strong>${state.qty}</strong>`);
+        if (showMinQtyHint) {
+          summaryLines.push(`Berechnet: <strong>${billableQty}</strong> Stück (Eingabe: <strong>${state.qty}</strong>)`);
+        }
 
         if (upgradesList.length) summaryLines.push(`Upgrades: <strong>${upgradesList.join(", ")}</strong>`);
         else summaryLines.push(`Upgrades: <strong>keine</strong>`);
@@ -1540,13 +1593,21 @@
 
       $sum.innerHTML = summaryLines.join("<br>");
 
+      const unitPrice = (!unitPriceOnRequest && ok) ? m(baseUnit + upgradeUnit) : null;
+      if ($unitPriceValue) {
+        const unitPriceText = ok
+          ? (unitPrice != null ? eur(unitPrice) : "Preis auf Anfrage")
+          : "—";
+        $unitPriceValue.textContent = unitPriceText;
+      }
+
       // --- Cart: "Zur Sammelanfrage hinzufügen" ---
       const canAdd = ok;
       setDisabled($add, !canAdd);
 
       const priceTotal = (!onRequest && ok) ? m(total) : null;
       const priceText = priceTotal != null ? eur(priceTotal) : "Auf Anfrage";
-      const unitPrice = priceTotal != null && state.qty ? m(priceTotal / state.qty) : null;
+      const unitPriceForCart = unitPrice != null ? unitPrice : null;
 
       lastItem = canAdd ? {
         id: "",
@@ -1554,6 +1615,8 @@
         variant: varLabel,
         format: fmtLabel,
         qty: state.qty,
+        billableQty,
+        minQty,
         shipping: shipText,
         upgrades: upgradesList,
         note: noteText,
@@ -1561,7 +1624,7 @@
         engraving: state.engraving || "",
         motif: state.motif || "",
         priceTotal,
-        unitPrice,
+        unitPrice: unitPriceForCart,
         priceText
       } : null;
 
@@ -1573,6 +1636,7 @@
         varLabel,
         fmtLabel,
         qty: state.qty,
+        billableQty,
         shipText,
         upgradesList,
         isMetallBottle,
@@ -1661,8 +1725,10 @@
         if (!item) return;
         const nextQty = Math.max(1, Number(input.value || 1));
         item.qty = nextQty;
+        const nextBillableQty = item.minQty ? Math.max(nextQty, item.minQty) : nextQty;
+        item.billableQty = nextBillableQty;
         if (item.unitPrice != null) {
-          item.priceTotal = m(item.unitPrice * nextQty);
+          item.priceTotal = m(item.unitPrice * nextBillableQty);
           item.priceText = eur(item.priceTotal);
         }
         saveCart();
