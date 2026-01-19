@@ -40,10 +40,10 @@ window.LUDERBEIN_PRICING = {
             { id: "jl7-10r",   label: "10 cm rund",         price: 14.95 },
             { id: "jl7-20x20", label: "20 × 20 cm (eckig)", price: 19.95 },
             { id: "jl7-20r",   label: "20 cm rund",         price: 19.95 },
-            { id: "jl7-25x25", label: "25 × 25 cm (eckig)", price: 39.95 },
-            { id: "jl7-30r",   label: "30 cm rund",         price: 44.95 },
-            { id: "jl7-38x13", label: "38 × 13 cm (Langtafel)", price: 34.95 },
-            { id: "jl7-45x30", label: "45 × 30 cm",             price: 89.95 }
+            { id: "jl7-25x25", label: "25 × 25 cm (eckig)", price: 29.95 },
+            { id: "jl7-30r",   label: "30 cm rund",         price: 34.95 },
+            { id: "jl7-38x13", label: "38 × 13 cm (Langtafel)", price: 39.95 },
+            { id: "jl7-45x30", label: "45 × 30 cm",             price: 49.95 }
           ]
         },
 
