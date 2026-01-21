@@ -9,24 +9,56 @@
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
   <style>
-    .preview-inline {
+    .lb-headRow {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .lb-headText {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .lb-previewCard {
+      width: 180px;
+      flex: 0 0 auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.28);
       overflow: hidden;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+      outline: 1px solid rgba(255, 0, 0, 0.1);
     }
 
-    .preview-inline img {
-      float: right;
-      width: 120px;
-      max-width: 35%;
-      margin: 0 0 10px 14px;
-      border-radius: 10px;
-      opacity: 0.95;
+    .lb-previewImg {
+      display: block;
+      width: 100%;
+      height: auto;
     }
 
-    @media (max-width: 720px) {
-      .preview-inline img {
-        width: 90px;
-        max-width: 45%;
-        margin: 0 0 8px 10px;
+    .lb-previewMeta {
+      padding: 10px 12px 12px;
+    }
+
+    .lb-previewTitle {
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .lb-previewSub {
+      opacity: 0.8;
+      font-size: 0.95em;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 700px) {
+      .lb-headRow {
+        flex-direction: column;
+      }
+
+      .lb-previewCard {
+        width: min(320px, 100%);
       }
     }
   </style>
@@ -115,19 +147,24 @@
 ```
 <section class="section leistung-section leistung-card" data-config-section hidden>
   <div class="section-head leistung-section-head">
-    <h2 data-product-title>Epidemic Scorn Schwibbogen</h2>
-    <p class="small muted">Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.</p>
-  </div>
-
-  <div class="section-head leistung-section-head" style="margin-top:18px;">
-    <div class="preview-inline">
-      <h3>Vorschau</h3>
-      <img
-        data-product-image
-        src=""
-        alt="Epidemic Scorn Schwibbogen – Vorschau"
-        loading="lazy"
-      />
+    <div class="lb-headRow">
+      <div class="lb-headText">
+        <h2 data-product-title>Epidemic Scorn Schwibbogen</h2>
+        <p class="small muted">Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.</p>
+      </div>
+      <div class="lb-previewCard" aria-label="Produktvorschau">
+        <img
+          class="lb-previewImg"
+          data-product-image
+          src="/assets/schwibbogen/schwibbogen-thumb-03.webp"
+          alt="Epidemic Scorn Schwibbogen – Vorschau"
+          loading="lazy"
+        />
+        <div class="lb-previewMeta">
+          <div class="lb-previewTitle">Epidemic Scorn</div>
+          <div class="lb-previewSub">Schwibbogen – Vorschau</div>
+        </div>
+      </div>
     </div>
   </div>
 
