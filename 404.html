@@ -23,24 +23,45 @@
         </div>
       </a>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-label="Menü öffnen">
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
         <span class="navicon"><span></span></span>
       </button>
 
-      <nav class="menu" data-nav aria-label="Hauptmenü" data-open="0">
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" type="button" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
             Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
           </button>
 
-          <div class="navdrop__panel" role="menu" aria-label="Leistungen">
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
             <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl-schilder/" role="menuitem">Acryl</a>
-            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+
+            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
             <a href="/service/" role="menuitem">Downloads</a>
