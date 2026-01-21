@@ -93,6 +93,17 @@
       </div>
 
       <div class="section-head leistung-section-head" style="margin-top:18px;">
+        <h3>Vorschau</h3>
+        <img
+          data-product-image
+          src=""
+          alt="Epidemic Scorn Schwibbogen – Vorschau"
+          loading="lazy"
+          style="margin-top:8px; max-width:100%; height:auto; border-radius:12px;"
+        />
+      </div>
+
+      <div class="section-head leistung-section-head" style="margin-top:18px;">
         <h3>Größe</h3>
         <div class="fields" style="margin-top:8px;">
           <div>
@@ -140,7 +151,14 @@
     const params = new URLSearchParams(window.location.search);
     const productKey = params.get("product");
     const supportedProductKey = "epidemic-scorn";
-    const PRODUCT_NAME = "Epidemic Scorn";
+    const PRODUCTS = {
+      "epidemic-scorn": {
+        title: "Epidemic Scorn Schwibbogen",
+        image: "/assets/schwibbogen/schwibbogen-thumb-03.webp"
+      }
+    };
+    const product = PRODUCTS[supportedProductKey];
+    const PRODUCT_NAME = product.title;
     const BASE_PRICE = 59.95;
     const upgrades = [
       { id: "dimmer", label: "Dimmer", price: 10 },
@@ -165,6 +183,7 @@
     const summaryDeadline = document.querySelector("[data-summary-deadline]");
     const whatsappLink = document.querySelector("[data-config-wa]");
     const mailLink = document.querySelector("[data-config-mail]");
+    const productImage = document.querySelector("[data-product-image]");
 
     const formatPrice = (value) =>
       new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value);
@@ -259,6 +278,7 @@
       productCopy.hidden = false;
       generalCopy.hidden = true;
       generalCta.hidden = true;
+      productImage.src = product.image;
       renderUpgrades();
       updateSummary();
 
