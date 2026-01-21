@@ -1,5 +1,7 @@
-<!doctype html>
+DATEI: tools/schwibbogen-konfigurator/index.html
+(kompletter Inhalt – Copy/Paste)
 
+<!doctype html>
 <html lang="de">
 <head>
   <meta charset="utf-8" />
@@ -52,6 +54,36 @@
       margin-top: 2px;
     }
 
+    .lb-inlineField {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .lb-inlineField label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .lb-inlineField input[type="date"] {
+      width: 100%;
+      max-width: 220px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.35);
+      color: inherit;
+    }
+
+    .lb-inlineField .lb-hint {
+      margin-top: 6px;
+      font-size: 0.9em;
+      opacity: 0.75;
+    }
+
     @media (max-width: 700px) {
       .lb-headRow {
         flex-direction: column;
@@ -74,58 +106,55 @@
         </div>
       </a>
 
-```
-  <button
-    class="navbtn"
-    type="button"
-    data-nav-toggle
-    aria-expanded="false"
-    aria-controls="nav-main"
-    aria-label="Menü öffnen"
-  >
-    <span class="navicon"><span></span></span>
-  </button>
-
-  <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-    <a href="/">Start</a>
-
-    <div class="navdrop" data-navdrop>
       <button
-        class="navdrop__sum"
-        id="navdrop-leistungen-btn"
+        class="navbtn"
         type="button"
-        aria-haspopup="true"
+        data-nav-toggle
         aria-expanded="false"
-        aria-controls="navdrop-leistungen-panel"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
       >
-        Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+        <span class="navicon"><span></span></span>
       </button>
 
-      <div
-        class="navdrop__panel"
-        id="navdrop-leistungen-panel"
-        role="menu"
-        aria-labelledby="navdrop-leistungen-btn"
-      >
-        <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-        <a href="/leistungen/metall/" role="menuitem">Metall</a>
-        <a href="/leistungen/holz/" role="menuitem">Holz</a>
-        <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-        <a href="/leistungen/schwibbboegen/" role="menuitem">Schwibbögen</a>
-        <a href="/leistungen/custom/" role="menuitem">Custom</a>
-        <div class="navdrop__sep" aria-hidden="true"></div>
-        <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-        <a href="/service/" role="menuitem">Downloads</a>
-      </div>
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/schwibbboegen/" role="menuitem">Schwibbögen</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
     </div>
-
-    <a href="/ueber/">Über</a>
-    <a href="/kontakt/">Kontakt</a>
-    <a href="/rechtliches/impressum.html">Impressum</a>
-  </nav>
-</div>
-```
-
   </header>
 
   <main class="wrap" id="content">
@@ -144,79 +173,82 @@
       </div>
     </section>
 
-```
-<section class="section leistung-section leistung-card" data-config-section hidden>
-  <div class="section-head leistung-section-head">
-    <div class="lb-headRow">
-      <div class="lb-headText">
-        <h2 data-product-title>Epidemic Scorn Schwibbogen</h2>
-        <p class="small muted">Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.</p>
-      </div>
-      <div class="lb-previewCard" aria-label="Produktvorschau">
-        <img
-          class="lb-previewImg"
-          data-product-image
-          src="/assets/schwibbogen/schwibbogen-thumb-03.webp"
-          alt="Epidemic Scorn Schwibbogen – Vorschau"
-          loading="lazy"
-        />
-        <div class="lb-previewMeta">
-          <div class="lb-previewTitle">Epidemic Scorn</div>
-          <div class="lb-previewSub">Schwibbogen – Vorschau</div>
+    <section class="section leistung-section leistung-card" data-config-section hidden>
+      <div class="section-head leistung-section-head">
+        <div class="lb-headRow">
+          <div class="lb-headText">
+            <h2 data-product-title>Epidemic Scorn Schwibbogen</h2>
+            <p class="small muted">Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.</p>
+          </div>
+
+          <div class="lb-previewCard" aria-label="Produktvorschau">
+            <img
+              class="lb-previewImg"
+              data-product-image
+              src="/assets/schwibbogen/schwibbogen-thumb-03.webp"
+              alt="Epidemic Scorn Schwibbogen – Vorschau"
+              loading="lazy"
+            />
+            <div class="lb-previewMeta">
+              <div class="lb-previewTitle">Epidemic Scorn</div>
+              <div class="lb-previewSub">Schwibbogen – Vorschau</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="section-head leistung-section-head" style="margin-top:18px;">
-    <h3>Größe</h3>
-    <div class="fields" style="margin-top:8px;">
-      <div>
-        <label for="sbSize">Variante</label>
-        <div class="lb-select">
-          <select id="sbSize" data-size>
-            <option value="Standard">Standard</option>
-            <option value="Größer">Größer (ab 89,95 €)</option>
-          </select>
+      <div class="section-head leistung-section-head" style="margin-top:18px;">
+        <h3>Größe</h3>
+        <div class="fields" style="margin-top:8px;">
+          <div>
+            <label for="sbSize">Variante</label>
+            <div class="lb-select">
+              <select id="sbSize" data-size>
+                <option value="standard">Standard</option>
+                <option value="groesser">Größer (+30 €)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="section-head leistung-section-head" style="margin-top:18px;">
-    <h3>Upgrades</h3>
-    <div class="fields" data-upgrades style="margin-top:8px;"></div>
-  </div>
+      <div class="section-head leistung-section-head" style="margin-top:18px;">
+        <h3>Upgrades</h3>
+        <div class="fields" data-upgrades style="margin-top:8px;"></div>
 
-  <div class="section-head leistung-section-head" style="margin-top:18px;">
-    <h3>Zusammenfassung</h3>
-    <div class="notice" style="margin-top:8px;">
-      <p><strong>Produkt:</strong> <span data-summary-product></span></p>
-      <p><strong>Variante:</strong> <span data-summary-size></span></p>
-      <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
-      <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
-      <p><strong>Preis:</strong><br><span data-summary-price></span></p>
-      <p data-summary-size-note hidden><strong>Hinweis:</strong> Größer – Details/Endmaß klären wir persönlich auf Anfrage.</p>
-      <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> Bitte gewünschtes Datum bestätigen lassen.</p>
-    </div>
-    <div class="cta" style="margin-top:12px;">
-      <a class="btn primary" data-config-wa href="javascript:void(0)" rel="noopener">Per WhatsApp anfragen</a>
-      <a class="btn" data-config-mail href="javascript:void(0)">Per E-Mail anfragen</a>
-    </div>
-  </div>
-</section>
-```
+        <div id="deadlinePickerWrap" class="lb-inlineField" hidden>
+          <label for="deadlineDate">Wunsch-Deadline (Datum)</label>
+          <input id="deadlineDate" type="date" />
+          <div class="lb-hint">Wir melden uns zur Bestätigung – mind. 5 Werktage einplanen.</div>
+        </div>
+      </div>
 
+      <div class="section-head leistung-section-head" style="margin-top:18px;">
+        <h3>Zusammenfassung</h3>
+        <div class="notice" style="margin-top:8px;">
+          <p><strong>Produkt:</strong> <span data-summary-product></span></p>
+          <p><strong>Variante:</strong> <span data-summary-size></span></p>
+          <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
+          <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
+          <p><strong>Preis:</strong><br><span data-summary-price></span></p>
+
+          <p data-summary-size-note hidden><strong>Hinweis:</strong> Größer – Details/Endmaß klären wir persönlich auf Anfrage.</p>
+          <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> <span data-summary-deadline-value></span></p>
+        </div>
+
+        <div class="cta" style="margin-top:12px;">
+          <a class="btn primary" data-config-wa href="javascript:void(0)" rel="noopener">Per WhatsApp anfragen</a>
+          <a class="btn" data-config-mail href="javascript:void(0)">Per E-Mail anfragen</a>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
-
   <script src="/assets/site.js"></script>
-
   <script src="/assets/luderbot-enhancements.js" defer></script>
-
   <script src="/assets/nav-dropdown.js"></script>
 
   <script>
@@ -241,10 +273,11 @@
     const productData = hasProduct ? PRODUCTS[productKey] : null;
     const PRODUCT_NAME = hasProduct ? productData.title : "Epidemic Scorn Schwibbogen";
 
-    const BASE_PRICES = {
-      standard: 59.95,
-      groesser: 89.95
+    const SIZE_CONFIG = {
+      standard: { label: "Standard", basePrice: 59.95 },
+      groesser: { label: "Größer (+30 €)", basePrice: 80.95 }
     };
+
     const upgrades = [
       { id: "dimmer", label: "Dimmer", price: 10 },
       { id: "deadline", label: "Wunsch-Deadline", price: 10 },
@@ -256,6 +289,7 @@
         displayPriceText: "ab 7,95 €"
       }
     ];
+
     const MIN_DELIVERY_DISPLAY = "Mind. 5 Werktage";
     const MIN_DELIVERY_MESSAGE = "mind. 5 Werktage";
 
@@ -273,10 +307,13 @@
     const summaryUpgrades = document.querySelector("[data-summary-upgrades]");
     const summaryPrice = document.querySelector("[data-summary-price]");
     const summaryDelivery = document.querySelector("[data-summary-delivery]");
-    const summaryDeadline = document.querySelector("[data-summary-deadline]");
     const summarySizeNote = document.querySelector("[data-summary-size-note]");
+    const summaryDeadline = document.querySelector("[data-summary-deadline]");
+    const summaryDeadlineValue = document.querySelector("[data-summary-deadline-value]");
     const whatsappLink = document.querySelector("[data-config-wa]");
     const mailLink = document.querySelector("[data-config-mail]");
+    const deadlinePickerWrap = document.getElementById("deadlinePickerWrap");
+    const deadlineDate = document.getElementById("deadlineDate");
 
     const formatPrice = (value) =>
       new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value);
@@ -332,19 +369,18 @@
       return Boolean(deadlineInput && deadlineInput.checked);
     };
 
-    const getBasePrice = (sizeLabel) => {
-      if (sizeLabel === "Größer") {
-        return BASE_PRICES.groesser;
-      }
-      return BASE_PRICES.standard;
-    };
-
     const updateSummary = () => {
-      const sizeValue = sizeSelect.value || "Standard";
+      const sizeKey = sizeSelect.value || "standard";
+      const sizeConfig = SIZE_CONFIG[sizeKey] || SIZE_CONFIG.standard;
+
+      const sizeValue = sizeConfig.label;
       const selectedUpgrades = getSelectedUpgrades();
       const upgradesTotal = getSelectedUpgradeTotal();
-      const basePrice = getBasePrice(sizeValue);
-      const totalPrice = basePrice + upgradesTotal;
+
+      const deadlineSelected = isDeadlineSelected();
+      const deadlineValue = (deadlineDate && deadlineDate.value) ? deadlineDate.value : "Datum folgt";
+
+      const totalPrice = sizeConfig.basePrice + upgradesTotal;
 
       summaryProduct.textContent = PRODUCT_NAME;
       summarySize.textContent = sizeValue;
@@ -352,28 +388,49 @@
       summaryDelivery.textContent = MIN_DELIVERY_DISPLAY;
 
       summaryPrice.innerHTML = [
-        `Basis: ab ${formatPrice(basePrice)}`,
+        `ab ${formatPrice(sizeConfig.basePrice)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ].join("<br>");
 
-      summaryDeadline.hidden = !isDeadlineSelected();
-      summarySizeNote.hidden = sizeValue !== "Größer";
+      // Größe-Hinweis nur bei Größer
+      if (summarySizeNote) {
+        summarySizeNote.hidden = sizeKey !== "groesser";
+      }
+
+      // Deadline UI (Datepicker nur wenn Upgrade aktiv)
+      if (deadlinePickerWrap) {
+        if (deadlineSelected) {
+          deadlinePickerWrap.hidden = false;
+        } else {
+          deadlinePickerWrap.hidden = true;
+          if (deadlineDate) deadlineDate.value = "";
+        }
+      }
+
+      if (summaryDeadline) {
+        summaryDeadline.hidden = !deadlineSelected;
+      }
+      if (deadlineSelected && summaryDeadlineValue) {
+        summaryDeadlineValue.textContent = deadlineValue;
+      }
 
       const messageLines = [
         `Produkt: ${PRODUCT_NAME}`,
         `Variante: ${sizeValue}`,
         `Upgrades: ${selectedUpgrades.length ? selectedUpgrades.join(", ") : "keine"}`,
         `Mindest-Lieferzeit: ${MIN_DELIVERY_MESSAGE}`,
-        `Preis Basis: ab ${formatPrice(basePrice)}`,
+        `Preis Basis: ab ${formatPrice(sizeConfig.basePrice)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ];
-      if (sizeValue === "Größer") {
+
+      if (sizeKey === "groesser") {
         messageLines.push("Variante Größer: Details/Endmaß bitte auf Anfrage klären.");
       }
-      if (isDeadlineSelected()) {
-        messageLines.push("Wunsch-Deadline: Bitte gewünschtes Datum bestätigen lassen.");
+
+      if (deadlineSelected) {
+        messageLines.push(`Wunsch-Deadline: ${deadlineValue}`);
       }
 
       const message = messageLines.join("\n");
@@ -402,10 +459,10 @@
 
       sizeSelect.addEventListener("change", updateSummary);
       upgradesContainer.addEventListener("change", updateSummary);
+      if (deadlineDate) deadlineDate.addEventListener("change", updateSummary);
     }
   </script>
 
-  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
-
+  <script>document.getElementById('y') && (document.getElementById('y').textContent = new Date().getFullYear())</script>
 </body>
 </html>
