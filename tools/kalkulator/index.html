@@ -32,8 +32,14 @@
       margin-bottom: 12px;
     }
 
-    .cfg .cfg-head__text {
-      flex: 1 1 240px;
+    .cfg .lb-calcHeadRow {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .cfg .lb-calcHeadMain {
+      flex: 1;
       min-width: 0;
     }
 
@@ -54,13 +60,37 @@
     .cfg .lb-previewTitle { font-weight: 800; }
     .cfg .lb-previewSub { opacity: .8; font-size: .95em; margin-top: 2px; }
 
+    .cfg .lb-previewSlot {
+      flex: 0 0 170px;
+      transition: opacity .15s ease;
+    }
+
+    .cfg .lb-previewSlot.is-hidden {
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cfg .lb-previewSlot.is-shown {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     @media (max-width: 700px) {
       .cfg .cfg-head {
         flex-direction: column;
         align-items: stretch;
       }
+      .cfg .lb-calcHeadRow {
+        flex-direction: column;
+        align-items: stretch;
+      }
       .cfg .lb-previewCard {
         width: min(320px, 100%);
+      }
+      .cfg .lb-previewSlot {
+        flex: none;
       }
     }
 
@@ -404,13 +434,13 @@
     </p>
 
     <div class="cfg" data-kalk>
-      <div class="cfg-head">
-        <div class="cfg-head__text">
+      <div class="cfg-head lb-calcHeadRow">
+        <div class="cfg-head__text lb-calcHeadMain">
           <h2>Konfigurator</h2>
           <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
           <p class="small muted">Hinweis: Metall ist bereits teilweise im Kalkulator enthalten – weitere Varianten folgen.</p>
         </div>
-        <div id="lbCalcPreview" class="lb-previewCard" hidden aria-label="Vorschau">
+        <div id="lbCalcPreview" class="lb-previewCard lb-previewSlot is-hidden" aria-label="Vorschau">
           <img id="lbCalcPreviewImg" class="lb-previewImg" src="" alt="" loading="lazy">
           <div class="lb-previewMeta">
             <div id="lbCalcPreviewTitle" class="lb-previewTitle">Vorschau</div>
@@ -916,7 +946,8 @@
       const key = getPreviewKey();
       const data = key ? PREVIEW_MAP[key] : null;
       if (!data) {
-        $preview.hidden = true;
+        $preview.classList.add("is-hidden");
+        $preview.classList.remove("is-shown");
         $previewImg.src = "";
         $previewImg.alt = "";
         $previewTitle.textContent = "Vorschau";
@@ -928,7 +959,8 @@
       $previewImg.alt = `${data.title} – ${data.sub} Vorschau`;
       $previewTitle.textContent = data.title;
       $previewSub.textContent = data.sub;
-      $preview.hidden = false;
+      $preview.classList.add("is-shown");
+      $preview.classList.remove("is-hidden");
     }
 
     function buildBatchHref() {
