@@ -7,6 +7,24 @@
   <meta name="description" content="Schwibbögen von Luderbein: ausgewählte Projekte und individuelle Anfertigungen nach Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <style>
+    .lb-infoCards { display: grid; gap: 12px; margin-top: 14px; }
+    .lb-card { border: 1px solid rgba(255,255,255,.10); border-radius: 14px; overflow: hidden; background: rgba(0,0,0,.25); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+    .lb-cardBtn { width: 100%; text-align: left; padding: 14px 42px 12px 14px; background: transparent; border: 0; cursor: pointer; position: relative; color: inherit; font: inherit; }
+    .lb-cardBtn:hover { background: rgba(255,255,255,.04); }
+    .lb-cardTitle { font-weight: 700; }
+    .lb-cardTeaser { opacity: .85; margin-top: 4px; }
+    .lb-cardBtn::after { content: "›"; position: absolute; right: 14px; top: 16px; transform: rotate(90deg); opacity: .7; transition: transform .18s ease; }
+    .lb-cardBtn[aria-expanded="true"]::after { transform: rotate(-90deg); }
+    .lb-expand { padding: 0 14px 14px; max-height: 260px; opacity: 1; transition: max-height .25s ease, opacity .25s ease; }
+    .lb-expand[hidden] { display: block; max-height: 0; opacity: 0; overflow: hidden; }
+    .lb-expand p, .lb-expand ul { margin: 10px 0 0; opacity: .92; }
+    .lb-expand ul { padding-left: 18px; }
+    .lb-card.is-open { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,.24); transition: transform .18s ease, box-shadow .18s ease; }
+    @media (max-width: 720px) {
+      .lb-cardBtn { padding-right: 38px; }
+    }
+  </style>
 </head>
 
 <body class="leistung-page" data-enablebot="0">
@@ -80,32 +98,48 @@
 
     <section class="section leistung-section leistung-card" aria-label="Schwibbögen Überblick">
       <div class="section-head leistung-section-head">
-        <details>
-          <summary><strong>Was ist ein Schwibbogen?</strong></summary>
-          <p class="small muted">Ein beleuchteter Bogen aus dem Erzgebirge – bei mir als feste Designs mit Tiefe, Licht und sauberer Linie.</p>
-        </details>
-      </div>
-      <div class="section-head leistung-section-head" style="margin-top:24px;">
-        <details>
-          <summary><strong>Was bekommst du?</strong></summary>
-          <ul class="small muted">
-            <li>Fester Aufbau + saubere Optik</li>
-            <li>Variante: Standard oder Größer</li>
-            <li>Optionale Upgrades (z.B. Dimmer, Wunsch-Deadline, Geschenkset)</li>
-          </ul>
-        </details>
-      </div>
-      <div class="section-head leistung-section-head" style="margin-top:24px;">
-        <details>
-          <summary><strong>So läuft’s ab</strong></summary>
-          <p class="small muted">1) Produkt/Variante wählen<br>2) Upgrades auswählen<br>3) Anfrage senden → ich bestätige Preis &amp; Timeline</p>
-        </details>
-      </div>
-      <div class="section-head leistung-section-head" style="margin-top:24px;">
-        <details>
-          <summary><strong>Was macht der Schwibbogenkönig gerade?</strong></summary>
-          <p class="small muted">Baut Licht rein, schleift Kanten glatt und sorgt dafür, dass dein Ding nicht nach Bastelstunde aussieht.</p>
-        </details>
+        <section class="lb-infoCards">
+          <div class="lb-card">
+            <button class="lb-cardBtn" type="button" aria-expanded="false">
+              <div class="lb-cardTitle">Was ist ein Schwibbogen?</div>
+              <div class="lb-cardTeaser">Erzgebirgsklassiker – hier als feste Designs mit Licht &amp; Tiefe.</div>
+            </button>
+            <div class="lb-expand" hidden>
+              <p>Mehrlagiger Look, saubere Kanten, stabile Bauweise. Kein Baukasten-Chaos – sondern Produkte mit klarer Linie.</p>
+            </div>
+          </div>
+          <div class="lb-card">
+            <button class="lb-cardBtn" type="button" aria-expanded="false">
+              <div class="lb-cardTitle">Was bekommst du?</div>
+              <div class="lb-cardTeaser">Fester Aufbau, Variante, optionale Upgrades.</div>
+            </button>
+            <div class="lb-expand" hidden>
+              <ul>
+                <li>Variante: Standard oder Größer</li>
+                <li>Upgrades: Dimmer, Wunsch-Deadline, Geschenkset, Porto &amp; Versand</li>
+                <li>Design bleibt – nur kleine Upgrades &amp; Größenanpassung</li>
+              </ul>
+            </div>
+          </div>
+          <div class="lb-card">
+            <button class="lb-cardBtn" type="button" aria-expanded="false">
+              <div class="lb-cardTitle">So läuft’s ab</div>
+              <div class="lb-cardTeaser">Wählen → Upgrades → Anfrage, fertig.</div>
+            </button>
+            <div class="lb-expand" hidden>
+              <p>1) Variante wählen<br>2) Upgrades anklicken<br>3) Anfrage-Kalkulator → WhatsApp/E-Mail → ich bestätige Preis &amp; Timeline</p>
+            </div>
+          </div>
+          <div class="lb-card">
+            <button class="lb-cardBtn" type="button" aria-expanded="false">
+              <div class="lb-cardTitle">Was macht der Schwibbogenkönig gerade?</div>
+              <div class="lb-cardTeaser">Kanten glätten. Licht bändigen. Dinge schön machen.</div>
+            </button>
+            <div class="lb-expand" hidden>
+              <p>Wenn du’s eilig hast: Wunsch-Deadline auswählen – ich sag dir, was realistisch ist.</p>
+            </div>
+          </div>
+        </section>
       </div>
       <div class="section-head leistung-section-head" style="margin-top:24px;">
         <h2>Schwibbogen-Konfigurator (in Arbeit)</h2>
@@ -153,6 +187,29 @@
   <script src="/assets/site.js"></script>
   <script src="/assets/luderbot-enhancements.js" defer></script>
   <script src="/assets/nav-dropdown.js"></script>
+  <script>
+    document.querySelectorAll('.lb-cardBtn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.lb-card');
+        const panel = card.querySelector('.lb-expand');
+        const open = btn.getAttribute('aria-expanded') === 'true';
+
+        document.querySelectorAll('.lb-cardBtn[aria-expanded="true"]').forEach((activeBtn) => {
+          if (activeBtn !== btn) {
+            activeBtn.setAttribute('aria-expanded', 'false');
+            const activeCard = activeBtn.closest('.lb-card');
+            const activePanel = activeCard.querySelector('.lb-expand');
+            activePanel.hidden = true;
+            activeCard.classList.remove('is-open');
+          }
+        });
+
+        btn.setAttribute('aria-expanded', String(!open));
+        panel.hidden = open;
+        card.classList.toggle('is-open', !open);
+      });
+    });
+  </script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
