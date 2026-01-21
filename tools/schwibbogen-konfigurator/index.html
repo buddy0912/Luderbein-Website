@@ -8,6 +8,28 @@
   <meta name="description" content="Der Schwibbogen-Konfigurator ist in Arbeit. Hier findest du den aktuellen Stand und schnelle Wege zur Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <style>
+    .preview-inline {
+      overflow: hidden;
+    }
+
+    .preview-inline img {
+      float: right;
+      width: 120px;
+      max-width: 35%;
+      margin: 0 0 10px 14px;
+      border-radius: 10px;
+      opacity: 0.95;
+    }
+
+    @media (max-width: 720px) {
+      .preview-inline img {
+        width: 90px;
+        max-width: 45%;
+        margin: 0 0 8px 10px;
+      }
+    }
+  </style>
 </head>
 <body data-enablebot="0">
   <header>
@@ -98,14 +120,15 @@
   </div>
 
   <div class="section-head leistung-section-head" style="margin-top:18px;">
-    <h3>Vorschau</h3>
-    <img
-      data-product-image
-      src=""
-      alt="Epidemic Scorn Schwibbogen – Vorschau"
-      loading="lazy"
-      style="margin-top:8px; max-width:100%; height:auto; border-radius:12px;"
-    />
+    <div class="preview-inline">
+      <h3>Vorschau</h3>
+      <img
+        data-product-image
+        src=""
+        alt="Epidemic Scorn Schwibbogen – Vorschau"
+        loading="lazy"
+      />
+    </div>
   </div>
 
   <div class="section-head leistung-section-head" style="margin-top:18px;">
