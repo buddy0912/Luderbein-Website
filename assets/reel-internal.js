@@ -15,7 +15,7 @@
     holz: "/leistungen/holz/",
     acryl: "/leistungen/acryl/",
     glas: "/leistungen/glas/",
-    schwibbogen: "/leistungen/holz/", // später eigene Kategorie -> dann hier ändern
+    schwibbogen: "/leistungen/schwibboegen/", // Kategorie Schwibbögen
     custom: "/leistungen/custom/"      // "Spezialbau" ist Copy/Label, Route bleibt
   };
 
