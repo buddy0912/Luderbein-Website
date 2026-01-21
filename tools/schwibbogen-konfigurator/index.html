@@ -120,7 +120,9 @@
           <p><strong>Produkt:</strong> <span data-summary-product></span></p>
           <p><strong>Größe:</strong> <span data-summary-size></span></p>
           <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
-          <p><strong>Preis:</strong> <span data-summary-price></span></p>
+          <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
+          <p><strong>Preis:</strong><br><span data-summary-price></span></p>
+          <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> Bitte gewünschtes Datum bestätigen lassen.</p>
         </div>
         <div class="cta" style="margin-top:12px;">
           <a class="btn primary" data-config-wa href="javascript:void(0)" rel="noopener">Per WhatsApp anfragen</a>
@@ -143,10 +145,12 @@
     const PRODUCT_NAME = "Epidemics-Gurnschwipbogen";
     const BASE_PRICE = 59.95;
     const upgrades = [
-      { id: "upgrade-a", label: "Upgrade A (Preis folgt)", price: 0 },
-      { id: "upgrade-b", label: "Upgrade B (Preis folgt)", price: 0 },
-      { id: "upgrade-c", label: "Upgrade C (Preis folgt)", price: 0 }
+      { id: "dimmer", label: "Dimmer", price: 10 },
+      { id: "deadline", label: "Wunsch-Deadline", price: 10 },
+      { id: "giftset", label: "Geschenkset (Hundemarke Halskette + 4x Schiefer Untersetzer)", price: 20 }
     ];
+    const MIN_DELIVERY_DISPLAY = "Mind. 5 Werktage";
+    const MIN_DELIVERY_MESSAGE = "mind. 5 Werktage";
 
     const configSection = document.querySelector("[data-config-section]");
     const generalCopy = document.querySelector("[data-general-copy]");
@@ -159,6 +163,8 @@
     const summarySize = document.querySelector("[data-summary-size]");
     const summaryUpgrades = document.querySelector("[data-summary-upgrades]");
     const summaryPrice = document.querySelector("[data-summary-price]");
+    const summaryDelivery = document.querySelector("[data-summary-delivery]");
+    const summaryDeadline = document.querySelector("[data-summary-deadline]");
     const whatsappLink = document.querySelector("[data-config-wa]");
     const mailLink = document.querySelector("[data-config-mail]");
 
@@ -180,7 +186,7 @@
         input.dataset.upgrade = upgrade.id;
 
         const text = document.createElement("span");
-        text.textContent = upgrade.label;
+        text.textContent = `${upgrade.label} (+${formatPrice(upgrade.price)})`;
 
         label.appendChild(input);
         label.appendChild(text);
@@ -193,26 +199,54 @@
       upgrades.forEach((upgrade) => {
         const input = upgradesContainer.querySelector(`input[data-upgrade="${upgrade.id}"]`);
         if (input && input.checked) {
-          selected.push(upgrade.label.replace(" (Preis folgt)", ""));
+          selected.push(upgrade.label);
         }
       });
       return selected;
     };
 
+    const getSelectedUpgradeTotal = () =>
+      upgrades.reduce((sum, upgrade) => {
+        const input = upgradesContainer.querySelector(`input[data-upgrade="${upgrade.id}"]`);
+        if (input && input.checked) {
+          return sum + upgrade.price;
+        }
+        return sum;
+      }, 0);
+
+    const isDeadlineSelected = () => {
+      const deadlineInput = upgradesContainer.querySelector('input[data-upgrade="deadline"]');
+      return Boolean(deadlineInput && deadlineInput.checked);
+    };
+
     const updateSummary = () => {
       const sizeValue = sizeSelect.value || "Standard";
       const selectedUpgrades = getSelectedUpgrades();
+      const upgradesTotal = getSelectedUpgradeTotal();
+      const totalPrice = BASE_PRICE + upgradesTotal;
       summaryProduct.textContent = PRODUCT_NAME;
       summarySize.textContent = sizeValue;
-      summaryUpgrades.textContent = selectedUpgrades.length ? selectedUpgrades.join(", ") : "Keine";
-      summaryPrice.textContent = `ab ${formatPrice(BASE_PRICE)} + Upgrades`;
+      summaryUpgrades.textContent = selectedUpgrades.length ? selectedUpgrades.join(", ") : "keine";
+      summaryDelivery.textContent = MIN_DELIVERY_DISPLAY;
+      summaryPrice.innerHTML = [
+        `ab ${formatPrice(BASE_PRICE)}`,
+        `Upgrades: +${formatPrice(upgradesTotal)}`,
+        `Gesamt: ${formatPrice(totalPrice)}`
+      ].join("<br>");
+      summaryDeadline.hidden = !isDeadlineSelected();
 
       const messageLines = [
-        `Anfrage Schwibbogen: ${PRODUCT_NAME}`,
+        `Produkt: ${PRODUCT_NAME}`,
         `Größe: ${sizeValue}`,
-        `Upgrades: ${selectedUpgrades.length ? selectedUpgrades.join(", ") : "Keine"}`,
-        "Bitte bestätigen + Gesamtpreis nennen."
+        `Upgrades: ${selectedUpgrades.length ? selectedUpgrades.join(", ") : "keine"}`,
+        `Mindest-Lieferzeit: ${MIN_DELIVERY_MESSAGE}`,
+        `Preis Basis: ab ${formatPrice(BASE_PRICE)}`,
+        `Upgrades: +${formatPrice(upgradesTotal)}`,
+        `Gesamt: ${formatPrice(totalPrice)}`
       ];
+      if (isDeadlineSelected()) {
+        messageLines.push("Wunsch-Deadline: Bitte gewünschtes Datum bestätigen lassen.");
+      }
       const message = messageLines.join("\n");
       const encodedMessage = encodeURIComponent(message);
 
