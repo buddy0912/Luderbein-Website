@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Acryl – Luderbein</title>
-  <meta name="description" content="Acryl ist umgezogen: neue Seite unter /leistungen/acryl/." />
-  <meta http-equiv="refresh" content="1; url=/leistungen/acryl/" />
+  <title>Schwibbögen – Luderbein</title>
+  <meta name="description" content="Schwibbögen von Luderbein: ausgewählte Projekte und individuelle Anfertigungen nach Anfrage." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 
-<body data-enablebot="0">
+<body class="leistung-page" data-enablebot="0">
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -57,11 +56,9 @@
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-
-            <a href="/leistungen/schwibbboegen/" role="menuitem">Schwibbögen</a>
-
+            <a href="/leistungen/schwibbboegen/" role="menuitem" aria-current="page">Schwibbögen</a>
             <a href="/leistungen/schwibbboegen/epidemic-scorn-schwibbogen/" role="menuitem">Epidemic Scorn Schwibbogen</a>
-            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
             <a href="/service/" role="menuitem">Downloads</a>
@@ -76,35 +73,51 @@
   </header>
 
   <main class="wrap" id="content">
-    <section class="hero">
-      <span class="badge"><i></i> Info</span>
-      <h1>Acryl ist umgezogen</h1>
-      <p class="lead">
-        Diese Seite heißt jetzt <strong>/leistungen/acryl/</strong>.
-        Du wirst automatisch weitergeleitet.
-      </p>
-
+    <section class="hero leistung-hero leistung-card">
+      <span class="badge"><i></i> Leistung – Schwibbögen</span>
+      <h1>Schwibbögen</h1>
+      <p class="lead">Individuelle Bögen, klarer Stil, keine Shop-Umwege – du sagst die Richtung, ich setze es sauber um.</p>
       <div class="cta">
-        <a class="btn primary" href="/leistungen/acryl/">Zur neuen Acryl-Seite</a>
+        <a class="btn primary" href="/kontakt/?p=Schwibbogen">Anfragen</a>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Schwibbögen Auswahl">
+      <div class="section-head">
+        <h2>Auswahl</h2>
+        <p class="small muted">Aktuelle Projekte aus der Schwibbögen-Reihe.</p>
       </div>
 
-      <p class="small muted" style="margin-top:.75rem;">
-        Wenn nichts passiert: <a href="/leistungen/acryl/">hier klicken</a>.
-      </p>
+      <div class="products">
+        <article class="productcard">
+          <div class="thumb" style="aspect-ratio:1/1; position:relative; overflow:hidden;">
+            <img
+              src="/assets/img/bands/epidemic-scorn/band-square.webp"
+              alt="Epidemic Scorn – Bandmotiv"
+              loading="lazy"
+              style="width:100%;height:100%;object-fit:cover;display:block;"
+            >
+            <span class="thumblabel">Epidemic Scorn</span>
+          </div>
+          <div class="meta">
+            <span class="price">Custom Projekt</span><span>•</span><span>Band-Schwibbogen</span>
+          </div>
+          <h3>Epidemic Scorn Schwibbogen</h3>
+          <p class="kicker">Ein Schwibbogen, der den Band-Look trifft – klar, düster, mit eigenem Charakter.</p>
+          <div class="actions">
+            <a class="btn" href="/leistungen/schwibbboegen/epidemic-scorn-schwibbogen/">Details ansehen</a>
+          </div>
+        </article>
+      </div>
     </section>
   </main>
 
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
-
-  <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
   <script src="/assets/luderbot-enhancements.js" defer></script>
-  <script>
-    const y = document.getElementById("y");
-
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>

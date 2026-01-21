@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Acryl – Luderbein</title>
-  <meta name="description" content="Acryl ist umgezogen: neue Seite unter /leistungen/acryl/." />
-  <meta http-equiv="refresh" content="1; url=/leistungen/acryl/" />
+  <title>Epidemic Scorn Schwibbogen – Luderbein</title>
+  <meta name="description" content="Epidemic Scorn Schwibbogen von Luderbein – Bandprojekt als individueller Schwibbogen mit passendem Look." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
 </head>
 
-<body data-enablebot="0">
+<body class="leistung-page" data-enablebot="0">
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -57,11 +56,9 @@
             <a href="/leistungen/metall/" role="menuitem">Metall</a>
             <a href="/leistungen/holz/" role="menuitem">Holz</a>
             <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-
             <a href="/leistungen/schwibbboegen/" role="menuitem">Schwibbögen</a>
-
-            <a href="/leistungen/schwibbboegen/epidemic-scorn-schwibbogen/" role="menuitem">Epidemic Scorn Schwibbogen</a>
-            <a href="/kontakt/?p=Custom" role="menuitem">Custom</a>
+            <a href="/leistungen/schwibbboegen/epidemic-scorn-schwibbogen/" role="menuitem" aria-current="page">Epidemic Scorn Schwibbogen</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
             <a href="/service/" role="menuitem">Downloads</a>
@@ -76,35 +73,56 @@
   </header>
 
   <main class="wrap" id="content">
-    <section class="hero">
-      <span class="badge"><i></i> Info</span>
-      <h1>Acryl ist umgezogen</h1>
-      <p class="lead">
-        Diese Seite heißt jetzt <strong>/leistungen/acryl/</strong>.
-        Du wirst automatisch weitergeleitet.
-      </p>
-
-      <div class="cta">
-        <a class="btn primary" href="/leistungen/acryl/">Zur neuen Acryl-Seite</a>
+    <section class="hero leistung-hero leistung-card">
+      <span class="badge"><i></i> Schwibbögen – Detail</span>
+      <h1>Epidemic Scorn Schwibbogen</h1>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px;">
+        <img
+          src="/assets/img/bands/epidemic-scorn/logo-word.webp"
+          alt="Epidemic Scorn Logo"
+          loading="lazy"
+          style="max-width:320px;width:100%;height:auto;"
+        >
+        <img
+          src="/assets/img/bands/epidemic-scorn/logo-circle.webp"
+          alt="Epidemic Scorn Emblem"
+          loading="lazy"
+          style="width:72px;height:72px;object-fit:contain;"
+        >
       </div>
+    </section>
 
-      <p class="small muted" style="margin-top:.75rem;">
-        Wenn nichts passiert: <a href="/leistungen/acryl/">hier klicken</a>.
-      </p>
+    <section class="section">
+      <div class="grid">
+        <div class="card" style="padding:0;overflow:hidden;">
+          <img
+            src="/assets/img/bands/epidemic-scorn/Band.webp"
+            alt="Epidemic Scorn Bandbild"
+            loading="lazy"
+            style="width:100%;height:auto;display:block;"
+          >
+        </div>
+        <div class="card">
+          <h2>Links</h2>
+          <p class="small muted">Offizielle Quellen der Band.</p>
+          <div class="cta">
+            <a class="btn" href="https://epidemic-scorn.de" target="_blank" rel="noopener noreferrer">Webseite</a>
+            <a class="btn" href="https://open.spotify.com/intl-de/artist/4aYkMR1QMPI0rS4CMrzbi4?si=y13Gcck9RlKp1aU7-uazNw" target="_blank" rel="noopener noreferrer">Spotify</a>
+          </div>
+          <div class="cta" style="margin-top:12px;">
+            <a class="btn primary" href="/kontakt/?p=Epidemic%20Scorn%20Schwibbogen">Anfrage stellen</a>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
-
-  <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
   <script src="/assets/luderbot-enhancements.js" defer></script>
-  <script>
-    const y = document.getElementById("y");
-
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>
 </html>
