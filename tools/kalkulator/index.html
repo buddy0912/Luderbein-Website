@@ -153,28 +153,6 @@
     }
     .cfg .summary strong { color: var(--text); }
 
-    .cfg .preview {
-      margin: 12px 0;
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(42,45,51,.16);
-      display: grid;
-      gap: 10px;
-    }
-
-    .cfg .preview__title {
-      font-weight: 800;
-      letter-spacing: .02em;
-    }
-
-    .cfg .preview__media img {
-      width: 100%;
-      max-width: 280px;
-      border-radius: 12px;
-      display: block;
-    }
-
     .cfg .cta {
       display: flex;
       gap: 10px;
@@ -388,14 +366,6 @@
       <h2>Konfigurator</h2>
       <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
       <p class="small muted">Hinweis: Metall ist bereits teilweise im Kalkulator enthalten – weitere Varianten folgen.</p>
-
-      <div class="preview" aria-label="Vorschau">
-        <div class="preview__title">Vorschau</div>
-        <div class="preview__media">
-          <img id="calcPreview" src="" alt="Produktvorschau" loading="lazy" hidden>
-        </div>
-        <p class="small muted" data-k-preview-hint>Wähle ein Material, um eine Vorschau zu sehen.</p>
-      </div>
 
       <div class="step" aria-label="Schritt 1 – Material">
         <p class="steptitle">Schritt 1 – Material</p>
@@ -646,19 +616,8 @@
     const $batchAdd = el("[data-k-batch-add]", $root);
     const $batchSend = el("[data-k-batch-send]", $root);
 
-    const $previewImg = el("#calcPreview", $root);
-    const $previewHint = el("[data-k-preview-hint]", $root);
-
     const phoneWA = "491725925858";
     const mailTo  = "luderbein_gravur@icloud.com";
-
-    const PRODUCT_PREVIEWS = {
-      schiefer: {
-        title: "Epidemic Scorn Schwibbogen",
-        image: "/assets/img/bands/epidemic-scorn/band-square.webp",
-        alt: "Epidemic Scorn Schwibbogen – Vorschau"
-      }
-    };
 
     // ---- Money: immer cent-genau stabilisieren (kein Float-Gedöns) ----
     const isPriceNull = (v) => v === null;
@@ -1108,26 +1067,6 @@
 
     let lastItem = null;
 
-    function updatePreview() {
-      if (!$previewImg) return;
-      const preview = PRODUCT_PREVIEWS[state.matKey];
-
-      if (preview) {
-        $previewImg.src = preview.image;
-        $previewImg.alt = preview.alt || "Produktvorschau";
-        $previewImg.hidden = false;
-        if ($previewHint) {
-          $previewHint.textContent = preview.title ? `Vorschau: ${preview.title}` : "Vorschau";
-        }
-      } else {
-        $previewImg.removeAttribute("src");
-        $previewImg.hidden = true;
-        if ($previewHint) {
-          $previewHint.textContent = "Wähle ein Material, um eine Vorschau zu sehen.";
-        }
-      }
-    }
-
     function onMaterial(matKey) {
       state.matKey = matKey;
       state.variantKey = "";
@@ -1146,8 +1085,6 @@
       if (!$qty.value || Number($qty.value || 0) < 1) $qty.value = 1;
 
       $steps.hidden = false;
-
-      updatePreview();
 
       const variants = (prod && prod.variants) ? prod.variants : {};
       Object.keys(variants).forEach((vKey) => {
