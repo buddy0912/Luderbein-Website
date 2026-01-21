@@ -23,6 +23,47 @@
     .cfg h2 { margin: 0 0 6px; font-size: 1.05rem; }
     .cfg .hint { color: var(--muted); font-size: .92rem; margin: 0 0 12px; }
 
+    .cfg .cfg-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .cfg .cfg-head__text {
+      flex: 1 1 240px;
+      min-width: 0;
+    }
+
+    .cfg .lb-previewCard {
+      width: 170px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+    }
+    .cfg .lb-previewImg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .cfg .lb-previewMeta { padding: 10px 12px 12px; }
+    .cfg .lb-previewTitle { font-weight: 800; }
+    .cfg .lb-previewSub { opacity: .8; font-size: .95em; margin-top: 2px; }
+
+    @media (max-width: 700px) {
+      .cfg .cfg-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .cfg .lb-previewCard {
+        width: min(320px, 100%);
+      }
+    }
+
     .cfg .step { margin-top: 12px; }
     .cfg .steptitle {
       font-weight: 800;
@@ -363,9 +404,20 @@
     </p>
 
     <div class="cfg" data-kalk>
-      <h2>Konfigurator</h2>
-      <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
-      <p class="small muted">Hinweis: Metall ist bereits teilweise im Kalkulator enthalten – weitere Varianten folgen.</p>
+      <div class="cfg-head">
+        <div class="cfg-head__text">
+          <h2>Konfigurator</h2>
+          <p class="hint">1) Material → 2) Ausführung → 3) Details/Upgrades → 4) Stückzahl/Versand → zur Sammelanfrage.</p>
+          <p class="small muted">Hinweis: Metall ist bereits teilweise im Kalkulator enthalten – weitere Varianten folgen.</p>
+        </div>
+        <div id="lbCalcPreview" class="lb-previewCard" hidden aria-label="Vorschau">
+          <img id="lbCalcPreviewImg" class="lb-previewImg" src="" alt="" loading="lazy">
+          <div class="lb-previewMeta">
+            <div id="lbCalcPreviewTitle" class="lb-previewTitle">Vorschau</div>
+            <div id="lbCalcPreviewSub" class="lb-previewSub"></div>
+          </div>
+        </div>
+      </div>
 
       <div class="step" aria-label="Schritt 1 – Material">
         <p class="steptitle">Schritt 1 – Material</p>
@@ -616,6 +668,11 @@
     const $batchAdd = el("[data-k-batch-add]", $root);
     const $batchSend = el("[data-k-batch-send]", $root);
 
+    const $preview = el("#lbCalcPreview", $root);
+    const $previewImg = el("#lbCalcPreviewImg", $root);
+    const $previewTitle = el("#lbCalcPreviewTitle", $root);
+    const $previewSub = el("#lbCalcPreviewSub", $root);
+
     const phoneWA = "491725925858";
     const mailTo  = "luderbein_gravur@icloud.com";
 
@@ -663,6 +720,39 @@
       '"': "&quot;",
       "'": "&#39;"
     }[c]));
+
+    const PREVIEW_MAP = {
+      "schiefer:fotogravur": {
+        src: "/assets/schiefer/schiefer-thumb-01.webp",
+        title: "Schiefer",
+        sub: "Fotogravur"
+      },
+      "schiefer:textsymbol": {
+        src: "/assets/schiefer/schiefer-thumb-02.webp",
+        title: "Schiefer",
+        sub: "Text / Symbol"
+      },
+      "schiefer:gedenktafel": {
+        src: "/assets/schiefer/gedenktafeln/schiefer-gedenk-01.jpg",
+        title: "Schiefer",
+        sub: "Gedenktafel"
+      },
+      "metall:flaschenoeffner": {
+        src: "/assets/metall/metall-thumb-01.webp",
+        title: "Metall",
+        sub: "Flaschenöffner"
+      },
+      "metall:alu_visitenkarten_eloxiert": {
+        src: "/assets/metall/metall-thumb-02.webp",
+        title: "Metall",
+        sub: "Alu-Visitenkarten"
+      },
+      "metall:dogtags_alu_elox_schwarz_29x50": {
+        src: "/assets/metall/metall-thumb-03.webp",
+        title: "Metall",
+        sub: "DogTag"
+      }
+    };
 
     let batchItems = [];
     let currentPosition = null;
@@ -811,6 +901,34 @@
       });
 
       return lines.join("\n").trim();
+    }
+
+    function getPreviewKey() {
+      const matKey = clean(state.matKey).toLowerCase();
+      const variantKey = clean(state.variantKey).toLowerCase();
+      if (!matKey || !variantKey) return "";
+      if (matKey !== "schiefer" && matKey !== "metall") return "";
+      return `${matKey}:${variantKey}`;
+    }
+
+    function updatePreview() {
+      if (!$preview || !$previewImg || !$previewTitle || !$previewSub) return;
+      const key = getPreviewKey();
+      const data = key ? PREVIEW_MAP[key] : null;
+      if (!data) {
+        $preview.hidden = true;
+        $previewImg.src = "";
+        $previewImg.alt = "";
+        $previewTitle.textContent = "Vorschau";
+        $previewSub.textContent = "";
+        return;
+      }
+
+      $previewImg.src = data.src;
+      $previewImg.alt = `${data.title} – ${data.sub} Vorschau`;
+      $previewTitle.textContent = data.title;
+      $previewSub.textContent = data.sub;
+      $preview.hidden = false;
     }
 
     function buildBatchHref() {
@@ -1661,6 +1779,7 @@
         noteText
       };
 
+      updatePreview();
       updateBatchUI();
     }
 
