@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="de">
 <head>
   <meta charset="utf-8" />
@@ -19,55 +20,58 @@
         </div>
       </a>
 
+```
+  <button
+    class="navbtn"
+    type="button"
+    data-nav-toggle
+    aria-expanded="false"
+    aria-controls="nav-main"
+    aria-label="Menü öffnen"
+  >
+    <span class="navicon"><span></span></span>
+  </button>
+
+  <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+    <a href="/">Start</a>
+
+    <div class="navdrop" data-navdrop>
       <button
-        class="navbtn"
+        class="navdrop__sum"
+        id="navdrop-leistungen-btn"
         type="button"
-        data-nav-toggle
+        aria-haspopup="true"
         aria-expanded="false"
-        aria-controls="nav-main"
-        aria-label="Menü öffnen"
+        aria-controls="navdrop-leistungen-panel"
       >
-        <span class="navicon"><span></span></span>
+        Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
       </button>
 
-      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-        <a href="/">Start</a>
-
-        <div class="navdrop" data-navdrop>
-          <button
-            class="navdrop__sum"
-            id="navdrop-leistungen-btn"
-            type="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-            aria-controls="navdrop-leistungen-panel"
-          >
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </button>
-
-          <div
-            class="navdrop__panel"
-            id="navdrop-leistungen-panel"
-            role="menu"
-            aria-labelledby="navdrop-leistungen-btn"
-          >
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-            <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-            <a href="/leistungen/schwibbboegen/" role="menuitem">Schwibbögen</a>
-            <a href="/leistungen/custom/" role="menuitem">Custom</a>
-            <div class="navdrop__sep" aria-hidden="true"></div>
-            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
-          </div>
-        </div>
-
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
+      <div
+        class="navdrop__panel"
+        id="navdrop-leistungen-panel"
+        role="menu"
+        aria-labelledby="navdrop-leistungen-btn"
+      >
+        <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+        <a href="/leistungen/metall/" role="menuitem">Metall</a>
+        <a href="/leistungen/holz/" role="menuitem">Holz</a>
+        <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+        <a href="/leistungen/schwibbboegen/" role="menuitem">Schwibbögen</a>
+        <a href="/leistungen/custom/" role="menuitem">Custom</a>
+        <div class="navdrop__sep" aria-hidden="true"></div>
+        <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+        <a href="/service/" role="menuitem">Downloads</a>
+      </div>
     </div>
+
+    <a href="/ueber/">Über</a>
+    <a href="/kontakt/">Kontakt</a>
+    <a href="/rechtliches/impressum.html">Impressum</a>
+  </nav>
+</div>
+```
+
   </header>
 
   <main class="wrap" id="content">
@@ -76,85 +80,106 @@
       <h1>Schwibbogen-Konfigurator</h1>
       <p class="lead" data-general-copy>
         Der Konfigurator ist gerade im Aufbau: feste Designs, definierte Größen, kleine Upgrades.
-        Noch nicht live – aber du kannst schon jetzt den Epidemic Scorn konfigurieren lassen oder eine Anfrage starten.
+        Noch nicht live – aber du kannst schon jetzt den Epidemic Scorn konfigurieren lassen.
       </p>
       <p class="lead" data-product-copy hidden>
         Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.
       </p>
       <div class="cta" data-general-cta>
         <a class="btn primary" href="/leistungen/schwibbboegen/">Epidemic Scorn ansehen</a>
-        <a class="btn" href="/tools/anfrage/">Anfrage starten</a>
       </div>
     </section>
 
-    <section class="section leistung-section leistung-card" data-config-section hidden>
-      <div class="section-head leistung-section-head">
-        <div class="card" style="max-width:320px;">
-          <img data-product-image src="" alt="" style="width:100%; border-radius:12px; display:block;" loading="lazy">
+```
+<section class="section leistung-section leistung-card" data-config-section hidden>
+  <div class="section-head leistung-section-head">
+    <h2 data-product-title>Epidemic Scorn Schwibbogen</h2>
+    <p class="small muted">Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.</p>
+  </div>
+
+  <div class="section-head leistung-section-head" style="margin-top:18px;">
+    <h3>Vorschau</h3>
+    <img
+      data-product-image
+      src=""
+      alt="Epidemic Scorn Schwibbogen – Vorschau"
+      loading="lazy"
+      style="margin-top:8px; max-width:100%; height:auto; border-radius:12px;"
+    />
+  </div>
+
+  <div class="section-head leistung-section-head" style="margin-top:18px;">
+    <h3>Größe</h3>
+    <div class="fields" style="margin-top:8px;">
+      <div>
+        <label for="sbSize">Variante</label>
+        <div class="lb-select">
+          <select id="sbSize" data-size>
+            <option value="Standard">Standard</option>
+            <option value="Größer">Größer</option>
+          </select>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="section-head leistung-section-head">
-        <h2 data-product-title>Epidemic Scorn Schwibbogen</h2>
-        <p class="small muted">Fertiges Produkt – nur geringe Upgrades und Größenanpassungen. Design bleibt.</p>
-      </div>
+  <div class="section-head leistung-section-head" style="margin-top:18px;">
+    <h3>Upgrades</h3>
+    <div class="fields" data-upgrades style="margin-top:8px;"></div>
+  </div>
 
-      <div class="section-head leistung-section-head" style="margin-top:18px;">
-        <h3>Größe</h3>
-        <div class="fields" style="margin-top:8px;">
-          <div>
-            <label for="sbSize">Variante</label>
-            <div class="lb-select">
-              <select id="sbSize" data-size>
-                <option value="Standard">Standard</option>
-                <option value="Größer">Größer</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="section-head leistung-section-head" style="margin-top:18px;">
+    <h3>Zusammenfassung</h3>
+    <div class="notice" style="margin-top:8px;">
+      <p><strong>Produkt:</strong> <span data-summary-product></span></p>
+      <p><strong>Größe:</strong> <span data-summary-size></span></p>
+      <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
+      <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
+      <p><strong>Preis:</strong><br><span data-summary-price></span></p>
+      <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> Bitte gewünschtes Datum bestätigen lassen.</p>
+    </div>
+    <div class="cta" style="margin-top:12px;">
+      <a class="btn primary" data-config-wa href="javascript:void(0)" rel="noopener">Per WhatsApp anfragen</a>
+      <a class="btn" data-config-mail href="javascript:void(0)">Per E-Mail anfragen</a>
+    </div>
+  </div>
+</section>
+```
 
-      <div class="section-head leistung-section-head" style="margin-top:18px;">
-        <h3>Upgrades</h3>
-        <div class="fields" data-upgrades style="margin-top:8px;"></div>
-      </div>
-
-      <div class="section-head leistung-section-head" style="margin-top:18px;">
-        <h3>Zusammenfassung</h3>
-        <div class="notice" style="margin-top:8px;">
-          <p><strong>Produkt:</strong> <span data-summary-product></span></p>
-          <p><strong>Größe:</strong> <span data-summary-size></span></p>
-          <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
-          <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
-          <p><strong>Preis:</strong><br><span data-summary-price></span></p>
-          <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> Bitte gewünschtes Datum bestätigen lassen.</p>
-        </div>
-        <div class="cta" style="margin-top:12px;">
-          <a class="btn primary" data-config-wa href="javascript:void(0)" rel="noopener">Per WhatsApp anfragen</a>
-          <a class="btn" data-config-mail href="javascript:void(0)">Per E-Mail anfragen</a>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
+
   <script src="/assets/site.js"></script>
+
   <script src="/assets/luderbot-enhancements.js" defer></script>
+
   <script src="/assets/nav-dropdown.js"></script>
+
   <script>
     const params = new URLSearchParams(window.location.search);
     const productKey = params.get("product");
+
+    // Produkt-Mapping (wir lassen alte Slugs als Alias zu, damit Links nicht kaputtgehen)
     const PRODUCTS = {
+      "epidemic-scorn": {
+        title: "Epidemic Scorn Schwibbogen",
+        image: "/assets/schwibbogen/schwibbogen-thumb-03.webp",
+        alt: "Epidemic Scorn Schwibbogen – Vorschau"
+      },
       "epidemics-gurnschwipbogen": {
         title: "Epidemic Scorn Schwibbogen",
-        image: "/assets/img/bands/epidemic-scorn/band-square.webp",
+        image: "/assets/schwibbogen/schwibbogen-thumb-03.webp",
         alt: "Epidemic Scorn Schwibbogen – Vorschau"
       }
     };
-    const productData = PRODUCTS[productKey];
-    const PRODUCT_NAME = productData ? productData.title : "Epidemic Scorn Schwibbogen";
+
+    const hasProduct = Boolean(productKey && PRODUCTS[productKey]);
+    const productData = hasProduct ? PRODUCTS[productKey] : null;
+    const PRODUCT_NAME = hasProduct ? productData.title : "Epidemic Scorn Schwibbogen";
+
     const BASE_PRICE = 59.95;
     const upgrades = [
       { id: "dimmer", label: "Dimmer", price: 10 },
@@ -247,15 +272,18 @@
       const selectedUpgrades = getSelectedUpgrades();
       const upgradesTotal = getSelectedUpgradeTotal();
       const totalPrice = BASE_PRICE + upgradesTotal;
+
       summaryProduct.textContent = PRODUCT_NAME;
       summarySize.textContent = sizeValue;
       summaryUpgrades.textContent = selectedUpgrades.length ? selectedUpgrades.join(", ") : "keine";
       summaryDelivery.textContent = MIN_DELIVERY_DISPLAY;
+
       summaryPrice.innerHTML = [
         `ab ${formatPrice(BASE_PRICE)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ].join("<br>");
+
       summaryDeadline.hidden = !isDeadlineSelected();
 
       const messageLines = [
@@ -270,6 +298,7 @@
       if (isDeadlineSelected()) {
         messageLines.push("Wunsch-Deadline: Bitte gewünschtes Datum bestätigen lassen.");
       }
+
       const message = messageLines.join("\n");
       const encodedMessage = encodeURIComponent(message);
 
@@ -279,16 +308,18 @@
       )}&body=${encodedMessage}`;
     };
 
-    if (productData) {
+    if (hasProduct) {
       configSection.hidden = false;
       productCopy.hidden = false;
       generalCopy.hidden = true;
       generalCta.hidden = true;
+
       if (productTitle) productTitle.textContent = productData.title;
       if (productImage) {
         productImage.src = productData.image;
         productImage.alt = productData.alt || `${productData.title} – Vorschau`;
       }
+
       renderUpgrades();
       updateSummary();
 
@@ -296,6 +327,8 @@
       upgradesContainer.addEventListener("change", updateSummary);
     }
   </script>
+
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
+
 </body>
 </html>
