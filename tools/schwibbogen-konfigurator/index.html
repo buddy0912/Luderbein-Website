@@ -176,7 +176,7 @@
         <div class="lb-select">
           <select id="sbSize" data-size>
             <option value="Standard">Standard</option>
-            <option value="Größer">Größer</option>
+            <option value="Größer">Größer (ab 89,95 €)</option>
           </select>
         </div>
       </div>
@@ -192,10 +192,11 @@
     <h3>Zusammenfassung</h3>
     <div class="notice" style="margin-top:8px;">
       <p><strong>Produkt:</strong> <span data-summary-product></span></p>
-      <p><strong>Größe:</strong> <span data-summary-size></span></p>
+      <p><strong>Variante:</strong> <span data-summary-size></span></p>
       <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
       <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
       <p><strong>Preis:</strong><br><span data-summary-price></span></p>
+      <p data-summary-size-note hidden><strong>Hinweis:</strong> Größer – Details/Endmaß klären wir persönlich auf Anfrage.</p>
       <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> Bitte gewünschtes Datum bestätigen lassen.</p>
     </div>
     <div class="cta" style="margin-top:12px;">
@@ -240,7 +241,10 @@
     const productData = hasProduct ? PRODUCTS[productKey] : null;
     const PRODUCT_NAME = hasProduct ? productData.title : "Epidemic Scorn Schwibbogen";
 
-    const BASE_PRICE = 59.95;
+    const BASE_PRICES = {
+      standard: 59.95,
+      groesser: 89.95
+    };
     const upgrades = [
       { id: "dimmer", label: "Dimmer", price: 10 },
       { id: "deadline", label: "Wunsch-Deadline", price: 10 },
@@ -270,6 +274,7 @@
     const summaryPrice = document.querySelector("[data-summary-price]");
     const summaryDelivery = document.querySelector("[data-summary-delivery]");
     const summaryDeadline = document.querySelector("[data-summary-deadline]");
+    const summarySizeNote = document.querySelector("[data-summary-size-note]");
     const whatsappLink = document.querySelector("[data-config-wa]");
     const mailLink = document.querySelector("[data-config-mail]");
 
@@ -327,11 +332,19 @@
       return Boolean(deadlineInput && deadlineInput.checked);
     };
 
+    const getBasePrice = (sizeLabel) => {
+      if (sizeLabel === "Größer") {
+        return BASE_PRICES.groesser;
+      }
+      return BASE_PRICES.standard;
+    };
+
     const updateSummary = () => {
       const sizeValue = sizeSelect.value || "Standard";
       const selectedUpgrades = getSelectedUpgrades();
       const upgradesTotal = getSelectedUpgradeTotal();
-      const totalPrice = BASE_PRICE + upgradesTotal;
+      const basePrice = getBasePrice(sizeValue);
+      const totalPrice = basePrice + upgradesTotal;
 
       summaryProduct.textContent = PRODUCT_NAME;
       summarySize.textContent = sizeValue;
@@ -339,22 +352,26 @@
       summaryDelivery.textContent = MIN_DELIVERY_DISPLAY;
 
       summaryPrice.innerHTML = [
-        `ab ${formatPrice(BASE_PRICE)}`,
+        `Basis: ab ${formatPrice(basePrice)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ].join("<br>");
 
       summaryDeadline.hidden = !isDeadlineSelected();
+      summarySizeNote.hidden = sizeValue !== "Größer";
 
       const messageLines = [
         `Produkt: ${PRODUCT_NAME}`,
-        `Größe: ${sizeValue}`,
+        `Variante: ${sizeValue}`,
         `Upgrades: ${selectedUpgrades.length ? selectedUpgrades.join(", ") : "keine"}`,
         `Mindest-Lieferzeit: ${MIN_DELIVERY_MESSAGE}`,
-        `Preis Basis: ab ${formatPrice(BASE_PRICE)}`,
+        `Preis Basis: ab ${formatPrice(basePrice)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ];
+      if (sizeValue === "Größer") {
+        messageLines.push("Variante Größer: Details/Endmaß bitte auf Anfrage klären.");
+      }
       if (isDeadlineSelected()) {
         messageLines.push("Wunsch-Deadline: Bitte gewünschtes Datum bestätigen lassen.");
       }
