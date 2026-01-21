@@ -7,6 +7,43 @@
   <meta name="description" content="Über Luderbein: urban, frech, ehrlich – Handwerk mit Haltung. Gravur, Design und Fertigung mit Liebe zum Detail." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <!-- Seite-spezifisch: Luderbein-Definition hübsch integrieren (minimal & scoped) -->
+  <style>
+    body.page-about .ueber-def {
+      margin-top: 14px;
+      padding: 14px 14px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    body.page-about .ueber-def__kicker {
+      display: block;
+      font-size: .9em;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    body.page-about .ueber-def__lines {
+      display: grid;
+      gap: 6px;
+      text-align: center;
+      line-height: 1.35;
+    }
+    body.page-about .ueber-def__lines p {
+      margin: 0;
+    }
+    body.page-about .ueber-def__lines p:last-child {
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+  </style>
 </head>
 
 <body class="page-about" data-page="ueber" data-enablebot="0">
@@ -82,13 +119,14 @@
         <p>Frech im Stil. Sauber in der Ausführung.</p>
       </div>
 
-      <!-- Luderbein-Definition (T-Shirt) -->
-      <div class="ueber-card ueber-section" style="margin-top:14px;">
-        <div class="ueber-stack ueber-text" style="text-align:center;">
+      <!-- Luderbein-Definition (integriert, nicht reingeklatscht) -->
+      <div class="ueber-def" aria-label="Definition Luderbein">
+        <span class="ueber-def__kicker">Definition</span>
+        <div class="ueber-def__lines">
           <p>rebellisch, unangepasst, zielstrebig</p>
           <p>fokussiert, meinungsstabil, eigenartig</p>
           <p>bei sachgemäßer Handhabung</p>
-          <p><strong>absolut liebenswert und unberechenbar</strong></p>
+          <p>absolut liebenswert und unverzichtbar</p>
         </div>
       </div>
 
@@ -181,7 +219,6 @@
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
-
   <script src="/assets/nav-dropdown.js"></script>
   <script src="/assets/site.js"></script>
   <script src="/assets/luderbot-enhancements.js" defer></script>
@@ -191,4 +228,3 @@
   </script>
 </body>
 </html>
-
