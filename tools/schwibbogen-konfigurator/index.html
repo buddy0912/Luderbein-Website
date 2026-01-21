@@ -52,6 +52,36 @@
       margin-top: 2px;
     }
 
+    .lb-inlineField {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .lb-inlineField label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .lb-inlineField input[type="date"] {
+      width: 100%;
+      max-width: 220px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.35);
+      color: inherit;
+    }
+
+    .lb-inlineField .lb-hint {
+      margin-top: 6px;
+      font-size: 0.9em;
+      opacity: 0.75;
+    }
+
     @media (max-width: 700px) {
       .lb-headRow {
         flex-direction: column;
@@ -175,8 +205,8 @@
         <label for="sbSize">Variante</label>
         <div class="lb-select">
           <select id="sbSize" data-size>
-            <option value="Standard">Standard</option>
-            <option value="Größer">Größer</option>
+            <option value="standard">Standard</option>
+            <option value="groesser">Größer (+30 €)</option>
           </select>
         </div>
       </div>
@@ -186,6 +216,11 @@
   <div class="section-head leistung-section-head" style="margin-top:18px;">
     <h3>Upgrades</h3>
     <div class="fields" data-upgrades style="margin-top:8px;"></div>
+    <div id="deadlinePickerWrap" class="lb-inlineField" hidden>
+      <label for="deadlineDate">Wunsch-Deadline (Datum)</label>
+      <input id="deadlineDate" type="date" />
+      <div class="lb-hint">Wir melden uns zur Bestätigung – mind. 5 Werktage einplanen.</div>
+    </div>
   </div>
 
   <div class="section-head leistung-section-head" style="margin-top:18px;">
@@ -196,7 +231,7 @@
       <p><strong>Upgrades:</strong> <span data-summary-upgrades></span></p>
       <p><strong>Mindest-Lieferzeit:</strong> <span data-summary-delivery></span></p>
       <p><strong>Preis:</strong><br><span data-summary-price></span></p>
-      <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> Bitte gewünschtes Datum bestätigen lassen.</p>
+      <p data-summary-deadline hidden><strong>Wunsch-Deadline:</strong> <span data-summary-deadline-value></span></p>
     </div>
     <div class="cta" style="margin-top:12px;">
       <a class="btn primary" data-config-wa href="javascript:void(0)" rel="noopener">Per WhatsApp anfragen</a>
@@ -240,7 +275,10 @@
     const productData = hasProduct ? PRODUCTS[productKey] : null;
     const PRODUCT_NAME = hasProduct ? productData.title : "Epidemic Scorn Schwibbogen";
 
-    const BASE_PRICE = 59.95;
+    const SIZE_CONFIG = {
+      standard: { label: "Standard", basePrice: 59.95 },
+      groesser: { label: "Größer (+30 €)", basePrice: 80.95 }
+    };
     const upgrades = [
       { id: "dimmer", label: "Dimmer", price: 10 },
       { id: "deadline", label: "Wunsch-Deadline", price: 10 },
@@ -270,8 +308,11 @@
     const summaryPrice = document.querySelector("[data-summary-price]");
     const summaryDelivery = document.querySelector("[data-summary-delivery]");
     const summaryDeadline = document.querySelector("[data-summary-deadline]");
+    const summaryDeadlineValue = document.querySelector("[data-summary-deadline-value]");
     const whatsappLink = document.querySelector("[data-config-wa]");
     const mailLink = document.querySelector("[data-config-mail]");
+    const deadlinePickerWrap = document.getElementById("deadlinePickerWrap");
+    const deadlineDate = document.getElementById("deadlineDate");
 
     const formatPrice = (value) =>
       new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value);
@@ -328,10 +369,14 @@
     };
 
     const updateSummary = () => {
-      const sizeValue = sizeSelect.value || "Standard";
+      const sizeKey = sizeSelect.value || "standard";
+      const sizeConfig = SIZE_CONFIG[sizeKey] || SIZE_CONFIG.standard;
+      const sizeValue = sizeConfig.label;
       const selectedUpgrades = getSelectedUpgrades();
       const upgradesTotal = getSelectedUpgradeTotal();
-      const totalPrice = BASE_PRICE + upgradesTotal;
+      const totalPrice = sizeConfig.basePrice + upgradesTotal;
+      const deadlineSelected = isDeadlineSelected();
+      const deadlineValue = deadlineDate && deadlineDate.value ? deadlineDate.value : "Datum folgt";
 
       summaryProduct.textContent = PRODUCT_NAME;
       summarySize.textContent = sizeValue;
@@ -339,24 +384,36 @@
       summaryDelivery.textContent = MIN_DELIVERY_DISPLAY;
 
       summaryPrice.innerHTML = [
-        `ab ${formatPrice(BASE_PRICE)}`,
+        `ab ${formatPrice(sizeConfig.basePrice)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ].join("<br>");
 
-      summaryDeadline.hidden = !isDeadlineSelected();
+      if (deadlinePickerWrap) {
+        if (deadlineSelected) {
+          deadlinePickerWrap.hidden = false;
+        } else {
+          deadlinePickerWrap.hidden = true;
+          if (deadlineDate) deadlineDate.value = "";
+        }
+      }
+
+      summaryDeadline.hidden = !deadlineSelected;
+      if (deadlineSelected && summaryDeadlineValue) {
+        summaryDeadlineValue.textContent = deadlineValue;
+      }
 
       const messageLines = [
         `Produkt: ${PRODUCT_NAME}`,
         `Größe: ${sizeValue}`,
         `Upgrades: ${selectedUpgrades.length ? selectedUpgrades.join(", ") : "keine"}`,
         `Mindest-Lieferzeit: ${MIN_DELIVERY_MESSAGE}`,
-        `Preis Basis: ab ${formatPrice(BASE_PRICE)}`,
+        `Preis Basis: ab ${formatPrice(sizeConfig.basePrice)}`,
         `Upgrades: +${formatPrice(upgradesTotal)}`,
         `Gesamt: ${formatPrice(totalPrice)}`
       ];
-      if (isDeadlineSelected()) {
-        messageLines.push("Wunsch-Deadline: Bitte gewünschtes Datum bestätigen lassen.");
+      if (deadlineSelected) {
+        messageLines.push(`Wunsch-Deadline: ${deadlineValue}`);
       }
 
       const message = messageLines.join("\n");
@@ -385,6 +442,9 @@
 
       sizeSelect.addEventListener("change", updateSummary);
       upgradesContainer.addEventListener("change", updateSummary);
+      if (deadlineDate) {
+        deadlineDate.addEventListener("change", updateSummary);
+      }
     }
   </script>
 
