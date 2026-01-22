@@ -101,7 +101,7 @@ main a:not(.btn):not(.button):focus-visible {
 header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 1000;
   backdrop-filter: blur(10px);
   background: rgba(14,6,11,.78);
   border-bottom: 1px solid rgba(64,62,65,.45);
