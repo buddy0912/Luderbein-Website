@@ -1312,3 +1312,29 @@ html {
 .lb-chat__actions a {
   touch-action: manipulation;
 }
+
+:root {
+  --header-h: 72px;
+}
+
+body {
+  padding-top: var(--header-h);
+}
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3000;
+  background: var(--bg, #0b0b0b);
+}
+
+.is-clickable-card {
+  cursor: pointer;
+}
+
+.is-clickable-card:focus-within {
+  outline: 2px solid rgba(255, 255, 255, 0.12);
+  outline-offset: 2px;
+}

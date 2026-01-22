@@ -30,6 +30,26 @@
   // ---------------------------------
   const CF_WEB_ANALYTICS_TOKEN = "0dfffdc44a97468d9f46712e66c46119";
 
+  function setHeaderHeight() {
+    const h = document.querySelector("header");
+    if (!h) return;
+    const px = Math.ceil(h.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--header-h", px + "px");
+  }
+
+  window.addEventListener("DOMContentLoaded", setHeaderHeight, { once: true });
+  window.addEventListener("resize", setHeaderHeight);
+  setHeaderHeight();
+
+  document.addEventListener("click", function (e) {
+    const card = e.target.closest("[data-href]");
+    if (!card) return;
+    if (e.target.closest("a,button")) return;
+    const href = card.getAttribute("data-href");
+    if (!href) return;
+    window.location.href = href;
+  });
+
   function loadCloudflareWebAnalytics(token) {
     try {
       if (!token || typeof token !== "string" || token.trim().length < 10) return;
