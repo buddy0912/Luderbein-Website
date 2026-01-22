@@ -123,17 +123,26 @@ header {
   min-width: 0;
 }
 
-/* großer roter Punkt links (Logo) – MUSS rund bleiben */
-.logo {
+.logo{
   width: 20px;
   height: 20px;
-  aspect-ratio: 1 / 1;
-  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.brand-mark {
+  width: 20px;
+  height: 20px;
   display: block;
-  border-radius: 999px;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--accent), rgba(255,8,13,.55));
-  box-shadow: 0 8px 20px rgba(219,16,33,.16);
+  opacity: .92;
+}
+
+.brand:hover .brand-mark {
+  opacity: 1;
 }
 
 /* kleiner Punkt vor "Luderbein" (Text) – sauber, kein Doppelpunkt-Müll */
