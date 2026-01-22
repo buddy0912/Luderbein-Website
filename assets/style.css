@@ -135,14 +135,20 @@ header {
 }
 
 .brand-mark {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   display: block;
-  opacity: .92;
+  opacity: .95;
+  filter:
+    drop-shadow(0 0 0.8px rgba(255,255,255,.55))
+    drop-shadow(0 0 6px rgba(255,255,255,.10));
 }
 
 .brand:hover .brand-mark {
   opacity: 1;
+  filter:
+    drop-shadow(0 0 1px rgba(255,255,255,.7))
+    drop-shadow(0 0 8px rgba(255,255,255,.14));
 }
 
 /* kleiner Punkt vor "Luderbein" (Text) – sauber, kein Doppelpunkt-Müll */
