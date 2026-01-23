@@ -1,0 +1,10 @@
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# watermark originals (nicht online nötig)
+*_original_watermark.*
+
+# Node dependencies
+node_modules/

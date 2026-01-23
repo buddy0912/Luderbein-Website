@@ -19,6 +19,7 @@
   --shadow: 0 16px 46px rgba(0, 0, 0, 0.45);
   --radius: 18px;
   --max: 980px;
+
 }
 
 * { box-sizing: border-box; }
@@ -124,8 +125,8 @@ header {
 }
 
 .logo{
-  width: 20px;
-  height: 20px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,8 +136,8 @@ header {
 }
 
 .brand-mark {
-  width: 18px;
-  height: 18px;
+  width: 46px;
+  height: 46px;
   display: block;
   opacity: .95;
   filter:
@@ -869,6 +870,10 @@ footer a:hover { color: var(--text); }
   border-radius: 14px;
   border: 1px solid rgba(64,62,65,.55);
   background: rgba(0,0,0,.35);
+  display: block;
+}
+
+.lb-modal__media {
   margin-bottom: 14px;
 }
 
@@ -1356,8 +1361,8 @@ header {
 
 /* Brand mark (SVG) as stencil mask — always visible on dark header */
 .logo{
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1374,8 +1379,8 @@ header {
 
 .logo::before{
   content: "";
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: block;
   background: rgba(255,255,255,.92);
   -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
@@ -1390,4 +1395,51 @@ header {
 /* Optional: subtle red hint on hover (keeps it classy) */
 .brand:hover .logo::before{
   background: rgba(255,40,40,.95);
+}
+
+/* LB Watermark (stencil SVG, no box) */
+.lb-wm{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  width:72px;
+  height:72px;
+  pointer-events:none;
+  opacity:.70;
+  z-index:5;
+  /* default: white stencil */
+  background: rgba(255,255,255,.92);
+  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+          mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+  filter:
+    drop-shadow(0 2px 6px rgba(0,0,0,.55))
+    drop-shadow(0 0 1px rgba(0,0,0,.55));
+}
+
+/* slightly smaller on tight cards */
+.lb-wm--sm{
+  width:60px;
+  height:60px;
+  right:12px;
+  bottom:12px;
+  opacity:.66;
+}
+
+/* in lightbox / big image we can go a touch larger */
+.lb-wm--lg{
+  width:84px;
+  height:84px;
+  right:16px;
+  bottom:16px;
+  opacity:.72;
+}
+
+/* ensure parent can position absolute children */
+.has-wm{
+  position:relative;
+}
+
+@media (max-width: 520px){
+  .lb-wm{ width:58px; height:58px; right:10px; bottom:10px; }
+  .lb-wm--lg{ width:64px; height:64px; right:12px; bottom:12px; }
 }

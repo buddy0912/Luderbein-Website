@@ -149,6 +149,15 @@
     container.appendChild($("div", { class: "muted", text: msg }));
   }
 
+  function buildMedia(img) {
+    const wrapper = $("div", { class: "lb-media has-wm" });
+    wrapper.appendChild(img);
+    if (!wrapper.querySelector(".lb-wm")) {
+      wrapper.appendChild($("span", { class: "lb-wm lb-wm--sm", "aria-hidden": "true" }));
+    }
+    return wrapper;
+  }
+
   function buildCard(item, options = {}) {
     const isModalCard = Boolean(options.modal);
     const cardTag = isModalCard ? "div" : item.href ? "a" : "div";
@@ -182,7 +191,7 @@
       loading: "lazy"
     });
 
-    card.appendChild(img);
+    card.appendChild(buildMedia(img));
 
     if (item.cap) {
       card.appendChild($("div", { class: "reel__cap", text: item.cap }));

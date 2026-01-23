@@ -295,7 +295,10 @@
       modal.innerHTML = `
         <div class="lb-modal__panel" role="dialog" aria-modal="true" aria-label="Detailansicht">
           <button class="lb-modal__close" type="button" data-lb-modal-close aria-label="Schließen">✕</button>
-          <img class="lb-modal__img" alt="" />
+          <div class="lb-modal__media lb-media has-wm">
+            <img class="lb-modal__img" alt="" />
+            <span class="lb-wm lb-wm--lg" aria-hidden="true"></span>
+          </div>
           <h3 class="lb-modal__title"></h3>
           <p class="lb-modal__text"></p>
           <div class="cta">
@@ -306,6 +309,7 @@
       document.body.appendChild(modal);
     }
 
+    const modalMedia = modal.querySelector(".lb-modal__media");
     const modalImg = modal.querySelector(".lb-modal__img");
     const modalTitle = modal.querySelector(".lb-modal__title");
     const modalText = modal.querySelector(".lb-modal__text");
@@ -335,10 +339,12 @@
         modalImg.src = img;
         modalImg.alt = alt;
         modalImg.style.display = "block";
+        modalMedia.style.display = "block";
       } else {
         modalImg.src = "";
         modalImg.alt = "";
         modalImg.style.display = "none";
+        modalMedia.style.display = "none";
       }
 
       modalTitle.textContent = title;
