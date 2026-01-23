@@ -19,6 +19,10 @@
   --shadow: 0 16px 46px rgba(0, 0, 0, 0.45);
   --radius: 18px;
   --max: 980px;
+
+  --lb-wm-size: 64px;
+  --lb-wm-pad: 14px;
+  --lb-wm-opacity: .9;
 }
 
 * { box-sizing: border-box; }
@@ -70,6 +74,55 @@ html {
   /* mehr Luft + skaliert sauber je nach Viewport */
   padding-left: clamp(18px, 3vw, 28px);
   padding-right: clamp(18px, 3vw, 28px);
+}
+
+/* ================================
+   LUDERBEIN BRAND-MARK WASSERZEICHEN
+================================ */
+.lb-media{
+  position: relative;
+}
+
+.lb-watermark{
+  position: absolute;
+  right: var(--lb-wm-pad);
+  bottom: var(--lb-wm-pad);
+  width: var(--lb-wm-size);
+  height: var(--lb-wm-size);
+  pointer-events: none;
+  opacity: var(--lb-wm-opacity);
+  z-index: 5;
+
+  background: currentColor;
+  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+          mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+
+  color: #fff;
+  mix-blend-mode: difference;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.45));
+}
+
+@media (max-width: 520px){
+  :root{ --lb-wm-size: 52px; --lb-wm-pad: 10px; }
+}
+
+@supports not ((mask: url("")) or (-webkit-mask: url(""))){
+  .lb-watermark{
+    background: none;
+    -webkit-mask: none;
+    mask: none;
+    width: var(--lb-wm-size);
+    height: var(--lb-wm-size);
+  }
+  .lb-watermark::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: url("/assets/brand/mark.svg") center/contain no-repeat;
+    filter: invert(1) drop-shadow(0 2px 6px rgba(0,0,0,.45));
+    opacity: var(--lb-wm-opacity);
+    mix-blend-mode: difference;
+  }
 }
 
 /* ================================
@@ -869,6 +922,10 @@ footer a:hover { color: var(--text); }
   border-radius: 14px;
   border: 1px solid rgba(64,62,65,.55);
   background: rgba(0,0,0,.35);
+  display: block;
+}
+
+.lb-modal__media {
   margin-bottom: 14px;
 }
 
