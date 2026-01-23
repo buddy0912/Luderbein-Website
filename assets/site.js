@@ -285,6 +285,65 @@
   }
 
   // ---------------------------------
+  // Stencil Watermarks
+  // ---------------------------------
+  function ensureWatermark(container, sizeClass) {
+    if (!container || container.querySelector(".lb-wm")) return null;
+    container.classList.add("has-wm");
+    const wm = document.createElement("span");
+    wm.className = `lb-wm ${sizeClass || "lb-wm--sm"}`.trim();
+    wm.setAttribute("aria-hidden", "true");
+    return wm;
+  }
+
+  function attachWatermark(wrapper, anchorImg, sizeClass) {
+    const wm = ensureWatermark(wrapper, sizeClass);
+    if (!wm) return;
+    if (anchorImg && anchorImg.parentElement === wrapper) {
+      anchorImg.insertAdjacentElement("afterend", wm);
+    } else {
+      wrapper.appendChild(wm);
+    }
+  }
+
+  function wrapImageForOverlay(img, panel) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "has-wm";
+    panel.insertBefore(wrapper, img);
+    wrapper.appendChild(img);
+    return wrapper;
+  }
+
+  function initImageWatermarks() {
+    const seen = new Set();
+    const imgNodes = document.querySelectorAll("main img, .lb-modal__img, .lightbox__img");
+
+    imgNodes.forEach((img) => {
+      if (!img || img.classList.contains("brand-mark")) return;
+      if (img.closest("header")) return;
+      const modalPanel = img.closest(".lb-modal__panel");
+      const lightboxPanel = img.closest(".lightbox__panel");
+      if (modalPanel || lightboxPanel) {
+        const panel = modalPanel || lightboxPanel;
+        let wrapper = img.parentElement?.classList.contains("has-wm") ? img.parentElement : null;
+        if (!wrapper || wrapper === panel) {
+          wrapper = wrapImageForOverlay(img, panel);
+        }
+        if (seen.has(wrapper)) return;
+        seen.add(wrapper);
+        attachWatermark(wrapper, img, "lb-wm--lg");
+        return;
+      }
+
+      const container = img.closest(".thumb, .cardthumb, .thumbbtn, .thumbslider, .reel__item, .card");
+      if (!container || seen.has(container)) return;
+      seen.add(container);
+      const anchor = container.querySelector("img:last-of-type") || container.querySelector("img");
+      attachWatermark(container, anchor, "lb-wm--sm");
+    });
+  }
+
+  // ---------------------------------
   // Modal Cards
   // ---------------------------------
   function initModalCards() {
@@ -1071,6 +1130,7 @@
     initBanner();
     initScrollIndicator();
     initModalCards();
+    initImageWatermarks();
     // initChatWidget wird absichtlich NICHT aufgerufen, um den Bot auszublenden.
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
