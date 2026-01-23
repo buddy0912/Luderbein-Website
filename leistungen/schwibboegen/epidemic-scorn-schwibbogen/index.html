@@ -7,6 +7,101 @@
   <meta name="description" content="Epidemic Scorn Schwibbogen von Luderbein – Bandprojekt als individueller Schwibbogen mit passendem Look." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <style>
+    /* =========================================================
+       FEED – Reel (wie bei Metall / Schiefer)
+       ========================================================= */
+    .reelwrap { position: relative; margin-top: 10px; }
+    .reelwrap::before, .reelwrap::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 34px;
+      pointer-events: none;
+      z-index: 2;
+      opacity: .85;
+    }
+    .reelwrap::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reelwrap::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(11,11,14,1), rgba(11,11,14,0));
+    }
+    .reel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 10px 6px 18px;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 10px;
+      scroll-padding-right: 10px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .reel__item {
+      flex: 0 0 clamp(260px, 72vw, 440px);
+      scroll-snap-align: start;
+      border-radius: 18px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.72);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      color: inherit;
+      margin: 0;
+      position: relative;
+      text-decoration: none;
+      transform: translateZ(0);
+    }
+    .reel__tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      z-index: 3;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.92);
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+      user-select: none;
+    }
+    .reel__img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      height: auto;
+      object-fit: cover;
+      filter: saturate(1.03) contrast(1.02);
+    }
+    .reel__cap {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 12px 12px 12px;
+      color: rgba(255,255,255,.92);
+      font-size: .95rem;
+      line-height: 1.3;
+      background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,0));
+      text-shadow: 0 1px 10px rgba(0,0,0,.45);
+    }
+
+    /* =========================================================
+       KACHEL-ROTATOR – SMOOTH FADE
+       ========================================================= */
+    img.tile-rot {
+      opacity: 1;
+      transition: opacity 480ms ease;
+      will-change: opacity;
+    }
+    img.tile-rot.is-fading {
+      opacity: 0;
+    }
+  </style>
 </head>
 
 <body class="leistung-page" data-enablebot="0">
