@@ -287,14 +287,8 @@
   // ---------------------------------
   // Stencil Watermarks
   // ---------------------------------
-  function shouldSkipWatermark(node) {
-    if (!node || !node.closest) return false;
-    return Boolean(node.closest("[data-no-wm], .no-wm"));
-  }
-
   function ensureWatermark(container, sizeClass) {
     if (!container || container.querySelector(".lb-wm")) return null;
-    if (shouldSkipWatermark(container)) return null;
     container.classList.add("has-wm");
     const wm = document.createElement("span");
     wm.className = `lb-wm ${sizeClass || "lb-wm--sm"}`.trim();
@@ -303,7 +297,6 @@
   }
 
   function attachWatermark(wrapper, anchorImg, sizeClass) {
-    if (shouldSkipWatermark(anchorImg)) return;
     const wm = ensureWatermark(wrapper, sizeClass);
     if (!wm) return;
     if (anchorImg && anchorImg.parentElement === wrapper) {
@@ -328,7 +321,6 @@
     imgNodes.forEach((img) => {
       if (!img || img.classList.contains("brand-mark")) return;
       if (img.closest("header")) return;
-      if (shouldSkipWatermark(img)) return;
       const modalPanel = img.closest(".lb-modal__panel");
       const lightboxPanel = img.closest(".lightbox__panel");
       if (modalPanel || lightboxPanel) {
