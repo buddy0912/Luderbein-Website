@@ -150,10 +150,10 @@
   }
 
   function buildMedia(img) {
-    const wrapper = $("div", { class: "lb-media" });
+    const wrapper = $("div", { class: "lb-media has-wm" });
     wrapper.appendChild(img);
-    if (!wrapper.querySelector(".lb-watermark")) {
-      wrapper.appendChild($("span", { class: "lb-watermark", "aria-hidden": "true" }));
+    if (!wrapper.querySelector(".lb-wm")) {
+      wrapper.appendChild($("span", { class: "lb-wm lb-wm--sm", "aria-hidden": "true" }));
     }
     return wrapper;
   }

@@ -295,9 +295,9 @@
       modal.innerHTML = `
         <div class="lb-modal__panel" role="dialog" aria-modal="true" aria-label="Detailansicht">
           <button class="lb-modal__close" type="button" data-lb-modal-close aria-label="Schließen">✕</button>
-          <div class="lb-modal__media lb-media">
+          <div class="lb-modal__media lb-media has-wm">
             <img class="lb-modal__img" alt="" />
-            <span class="lb-watermark" aria-hidden="true"></span>
+            <span class="lb-wm lb-wm--lg" aria-hidden="true"></span>
           </div>
           <h3 class="lb-modal__title"></h3>
           <p class="lb-modal__text"></p>

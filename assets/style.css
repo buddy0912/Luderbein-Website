@@ -20,9 +20,6 @@
   --radius: 18px;
   --max: 980px;
 
-  --lb-wm-size: 64px;
-  --lb-wm-pad: 14px;
-  --lb-wm-opacity: .9;
 }
 
 * { box-sizing: border-box; }
@@ -74,55 +71,6 @@ html {
   /* mehr Luft + skaliert sauber je nach Viewport */
   padding-left: clamp(18px, 3vw, 28px);
   padding-right: clamp(18px, 3vw, 28px);
-}
-
-/* ================================
-   LUDERBEIN BRAND-MARK WASSERZEICHEN
-================================ */
-.lb-media{
-  position: relative;
-}
-
-.lb-watermark{
-  position: absolute;
-  right: var(--lb-wm-pad);
-  bottom: var(--lb-wm-pad);
-  width: var(--lb-wm-size);
-  height: var(--lb-wm-size);
-  pointer-events: none;
-  opacity: var(--lb-wm-opacity);
-  z-index: 5;
-
-  background: currentColor;
-  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
-          mask: url("/assets/brand/mark.svg") center / contain no-repeat;
-
-  color: #fff;
-  mix-blend-mode: difference;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.45));
-}
-
-@media (max-width: 520px){
-  :root{ --lb-wm-size: 52px; --lb-wm-pad: 10px; }
-}
-
-@supports not ((mask: url("")) or (-webkit-mask: url(""))){
-  .lb-watermark{
-    background: none;
-    -webkit-mask: none;
-    mask: none;
-    width: var(--lb-wm-size);
-    height: var(--lb-wm-size);
-  }
-  .lb-watermark::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background: url("/assets/brand/mark.svg") center/contain no-repeat;
-    filter: invert(1) drop-shadow(0 2px 6px rgba(0,0,0,.45));
-    opacity: var(--lb-wm-opacity);
-    mix-blend-mode: difference;
-  }
 }
 
 /* ================================
@@ -1447,4 +1395,51 @@ header {
 /* Optional: subtle red hint on hover (keeps it classy) */
 .brand:hover .logo::before{
   background: rgba(255,40,40,.95);
+}
+
+/* LB Watermark (stencil SVG, no box) */
+.lb-wm{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  width:72px;
+  height:72px;
+  pointer-events:none;
+  opacity:.70;
+  z-index:5;
+  /* default: white stencil */
+  background: rgba(255,255,255,.92);
+  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+          mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+  filter:
+    drop-shadow(0 2px 6px rgba(0,0,0,.55))
+    drop-shadow(0 0 1px rgba(0,0,0,.55));
+}
+
+/* slightly smaller on tight cards */
+.lb-wm--sm{
+  width:60px;
+  height:60px;
+  right:12px;
+  bottom:12px;
+  opacity:.66;
+}
+
+/* in lightbox / big image we can go a touch larger */
+.lb-wm--lg{
+  width:84px;
+  height:84px;
+  right:16px;
+  bottom:16px;
+  opacity:.72;
+}
+
+/* ensure parent can position absolute children */
+.has-wm{
+  position:relative;
+}
+
+@media (max-width: 520px){
+  .lb-wm{ width:58px; height:58px; right:10px; bottom:10px; }
+  .lb-wm--lg{ width:64px; height:64px; right:12px; bottom:12px; }
 }
