@@ -124,8 +124,8 @@ header {
 }
 
 .logo{
-  width: 20px;
-  height: 20px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,8 +135,8 @@ header {
 }
 
 .brand-mark {
-  width: 18px;
-  height: 18px;
+  width: 46px;
+  height: 46px;
   display: block;
   opacity: .95;
   filter:
@@ -1356,8 +1356,8 @@ header {
 
 /* Brand mark (SVG) as stencil mask — always visible on dark header */
 .logo{
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1374,8 +1374,8 @@ header {
 
 .logo::before{
   content: "";
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: block;
   background: rgba(255,255,255,.92);
   -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;

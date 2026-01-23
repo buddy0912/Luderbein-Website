@@ -1,6 +1,7 @@
 [
   {
     "src": "/assets/schwibbogen/schwibbogen-reel-01.webp",
+    "thumb": "/assets/schwibbogen/schwibbogen-thumb-01.webp",
     "alt": "schwibbogen – einblick",
     "cap": "schwibbogen – beispiel",
     "cats": [
@@ -9,6 +10,7 @@
   },
   {
     "src": "/assets/schwibbogen/schwibbogen-reel-02.webp",
+    "thumb": "/assets/schwibbogen/schwibbogen-thumb-02.webp",
     "alt": "schwibbogen – einblick",
     "cap": "schwibbogen – beispiel",
     "cats": [
@@ -17,6 +19,7 @@
   },
   {
     "src": "/assets/schwibbogen/schwibbogen-reel-03.webp",
+    "thumb": "/assets/schwibbogen/schwibbogen-thumb-03.webp",
     "alt": "schwibbogen – einblick",
     "cap": "schwibbogen – beispiel",
     "cats": [
@@ -25,6 +28,7 @@
   },
   {
     "src": "/assets/schwibbogen/schwibbogen-reel-04.webp",
+    "thumb": "/assets/schwibbogen/schwibbogen-thumb-04.webp",
     "alt": "schwibbogen – einblick",
     "cap": "schwibbogen – beispiel",
     "cats": [
