@@ -335,11 +335,6 @@
         return;
       }
 
-      const container = img.closest(".thumb, .cardthumb, .thumbbtn, .thumbslider, .reel__item, .card");
-      if (!container || seen.has(container)) return;
-      seen.add(container);
-      const anchor = container.querySelector("img:last-of-type") || container.querySelector("img");
-      attachWatermark(container, anchor, "lb-wm--sm");
     });
   }
 
