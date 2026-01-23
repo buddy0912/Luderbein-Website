@@ -152,9 +152,10 @@
   function buildCard(item, options = {}) {
     const isModalCard = Boolean(options.modal);
     const cardTag = isModalCard ? "div" : item.href ? "a" : "div";
+    const wantsWatermark = Boolean(options.watermark);
 
     const card = $(cardTag, {
-      class: "reel__item",
+      class: wantsWatermark ? "reel__item has-wm" : "reel__item",
       href: isModalCard ? null : item.href || null,
       "data-lb-modal-card": isModalCard ? "" : null,
       "data-modal-img": isModalCard ? item.src : null,
@@ -183,6 +184,10 @@
     });
 
     card.appendChild(img);
+
+    if (wantsWatermark) {
+      card.appendChild($("span", { class: "lb-wm lb-wm--sm", "aria-hidden": "true" }));
+    }
 
     if (item.cap) {
       card.appendChild($("div", { class: "reel__cap", text: item.cap }));
@@ -233,6 +238,9 @@
     const src = container.getAttribute("data-reel-src");
     const interval = Number(container.getAttribute("data-interval") || "4500");
     const defaultTag = container.getAttribute("data-reel-default-tag") || "";
+    const enableWatermark =
+      container.getAttribute("data-reel-watermark") === "1" &&
+      !container.closest("[data-no-wm], .no-wm");
     const path = window.location.pathname;
     const isHome = path === "/" || path.endsWith("/index.html");
     const isLeistungen = path.startsWith("/leistungen/");
@@ -273,7 +281,7 @@
 
         if (isLeistungen) {
           it.href = null;
-          container.appendChild(buildCard(it, { modal: true }));
+          container.appendChild(buildCard(it, { modal: true, watermark: enableWatermark }));
         } else {
           container.appendChild(buildCard(it));
         }

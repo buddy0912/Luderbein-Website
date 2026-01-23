@@ -78,7 +78,6 @@
   <main class="wrap" id="content">
     <section class="hero leistung-hero leistung-card">
       <span class="badge"><i></i> Schwibbögen – Detail</span>
-      <h1>Epidemic Scorn Schwibbogen</h1>
       <div class="cta" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;">
         <div class="actions" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
           <a class="btn" href="/leistungen/schwibboegen/">Zurück (Schwibbögen)</a>
@@ -87,24 +86,38 @@
           <a class="btn primary" href="/tools/schwibbogen-konfigurator/?product=epidemic-scorn">Anfrage-Kalkulator</a>
         </div>
       </div>
-      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-top:12px;">
+      <div style="display:flex;flex-direction:column;gap:16px;align-items:center;margin-top:16px;text-align:center;">
         <img
           src="/assets/img/bands/epidemic-scorn/logo-word.webp"
           alt="Epidemic Scorn Logo"
           loading="lazy"
-          style="max-width:320px;width:100%;height:auto;"
+          style="max-width:420px;width:min(90%,420px);height:auto;"
         >
         <img
           src="/assets/img/bands/epidemic-scorn/logo-circle.webp"
           alt="Epidemic Scorn Emblem"
           loading="lazy"
-          style="width:72px;height:72px;object-fit:contain;"
+          style="width:clamp(90px,18vw,130px);height:clamp(90px,18vw,130px);object-fit:contain;"
         >
       </div>
     </section>
 
-    <section class="section">
-      <div data-reel data-reel-src="/assets/reel-schwibbogen.json" data-reel-default-tag="Schwibbögen"></div>
+    <section class="section leistung-section leistung-card" aria-label="Schwibbogen-Feed">
+      <div class="section-head leistung-section-head">
+        <h2>Feed</h2>
+        <p class="small muted">Ein kurzer Blick in den Feed.</p>
+      </div>
+
+      <div class="reelwrap">
+        <div
+          class="reel"
+          aria-label="Schwibbogen Reel"
+          data-reel
+          data-reel-src="/assets/reel-schwibbogen.json"
+          data-reel-default-tag="Schwibbögen"
+          data-reel-watermark="1"
+        ></div>
+      </div>
     </section>
 
     <section class="section">
@@ -114,6 +127,7 @@
             src="/assets/img/bands/epidemic-scorn/Band.webp"
             alt="Epidemic Scorn Bandbild"
             loading="lazy"
+            data-no-wm="1"
             style="width:100%;height:auto;display:block;"
           >
         </div>
