@@ -1,0 +1,8 @@
+{
+  "name": "luderbein-website",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "sharp": "^0.33.2"
+  }
+}
