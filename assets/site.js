@@ -285,6 +285,35 @@
   }
 
   // ---------------------------------
+  // Stencil Watermarks
+  // ---------------------------------
+  function ensureWatermark(container, sizeClass) {
+    if (!container || container.querySelector(".lb-wm")) return;
+    container.classList.add("has-wm");
+    const wm = document.createElement("span");
+    wm.className = `lb-wm ${sizeClass || "lb-wm--sm"}`.trim();
+    wm.setAttribute("aria-hidden", "true");
+    container.appendChild(wm);
+  }
+
+  function initImageWatermarks() {
+    const seen = new Set();
+    const imgNodes = document.querySelectorAll("main img, .lb-modal__img, .lightbox__img");
+
+    imgNodes.forEach((img) => {
+      if (!img || img.classList.contains("brand-mark")) return;
+      if (img.closest("header")) return;
+      const container = img.closest(
+        ".thumb, .cardthumb, .thumbbtn, .thumbslider, .reel__item, .card, .lb-modal__panel, .lightbox__panel"
+      );
+      if (!container || seen.has(container)) return;
+      seen.add(container);
+      const sizeClass = container.matches(".lb-modal__panel, .lightbox__panel") ? "lb-wm--lg" : "lb-wm--sm";
+      ensureWatermark(container, sizeClass);
+    });
+  }
+
+  // ---------------------------------
   // Modal Cards
   // ---------------------------------
   function initModalCards() {
@@ -1071,6 +1100,7 @@
     initBanner();
     initScrollIndicator();
     initModalCards();
+    initImageWatermarks();
     // initChatWidget wird absichtlich NICHT aufgerufen, um den Bot auszublenden.
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)

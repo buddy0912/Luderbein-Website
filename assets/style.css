@@ -124,8 +124,8 @@ header {
 }
 
 .logo{
-  width: 20px;
-  height: 20px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -135,8 +135,8 @@ header {
 }
 
 .brand-mark {
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: block;
   opacity: .95;
   filter:
@@ -1356,8 +1356,8 @@ header {
 
 /* Brand mark (SVG) as stencil mask — always visible on dark header */
 .logo{
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1374,13 +1374,25 @@ header {
 
 .logo::before{
   content: "";
-  width: 18px;
-  height: 18px;
+  width: 48px;
+  height: 48px;
   display: block;
   background: rgba(255,255,255,.92);
   -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
   mask: url("/assets/brand/mark.svg") center / contain no-repeat;
   opacity: .95;
+}
+
+@media (max-width: 520px) {
+  .logo{
+    width: 44px;
+    height: 44px;
+  }
+
+  .logo::before{
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .brand:hover .logo::before{
@@ -1390,4 +1402,39 @@ header {
 /* Optional: subtle red hint on hover (keeps it classy) */
 .brand:hover .logo::before{
   background: rgba(255,40,40,.95);
+}
+
+/* LB Stencil watermark (auto invert on light/dark via mix-blend-mode) */
+.lb-wm {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 72px;
+  height: 72px;
+  pointer-events: none;
+  opacity: .55;               /* NICHT 100% */
+  z-index: 5;
+
+  /* stencil source */
+  background: #fff;           /* base white */
+  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+          mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+
+  /* auto black/white depending on background */
+  mix-blend-mode: difference;
+
+  /* readability */
+  filter:
+    drop-shadow(0 1px 3px rgba(0,0,0,.45))
+    drop-shadow(0 0 1px rgba(0,0,0,.35));
+}
+
+.lb-wm--sm { width: 60px; height: 60px; right: 12px; bottom: 12px; opacity: .50; }
+.lb-wm--lg { width: 86px; height: 86px; right: 16px; bottom: 16px; opacity: .58; }
+
+.has-wm { position: relative; }
+
+@media (max-width: 520px){
+  .lb-wm { width: 56px; height: 56px; right: 10px; bottom: 10px; }
+  .lb-wm--lg { width: 64px; height: 64px; right: 12px; bottom: 12px; }
 }
