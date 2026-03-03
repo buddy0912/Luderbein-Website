@@ -20,6 +20,7 @@
     placeholderCount: document.getElementById("placeholderCount"),
     fileExt: document.getElementById("fileExt"),
     btnCreatePlaceholders: document.getElementById("btnCreatePlaceholders"),
+    btnDetectLastNumber: document.getElementById("btnDetectLastNumber"),
     status: document.getElementById("status"),
     newRange: document.getElementById("newRange"),
     newProgress: document.getElementById("newProgress"),
@@ -45,6 +46,7 @@
   let entries = [];
   let index = 0;
   let newRange = null;
+  let placeholderStartNumber = null;
 
   function text(v) { return String(v ?? "").trim(); }
   function current() { return entries[index] || null; }
@@ -54,11 +56,36 @@
     el.status.style.color = bad ? "#ffb4b4" : "";
   }
 
-  function resolvePreviewSrc(rawSrc) {
+  function normalizeSrc(rawSrc) {
     const src = text(rawSrc);
     if (!src) return "";
+    if (src.startsWith("/assets/")) return src;
+    if (src.startsWith("assets/")) return `/${src}`;
     if (src.startsWith("/")) return src;
     return `/assets/reel/${src.replace(/^\.\//, "")}`;
+  }
+
+  function resolvePreviewSrc(rawSrc) {
+    return normalizeSrc(rawSrc);
+  }
+
+  function detectHighestReelNumber(list) {
+    let highest = 0;
+    list.forEach((item) => {
+      const src = normalizeSrc(item?.src);
+      const match = src.match(/reel-(\d+)/i);
+      if (match) {
+        highest = Math.max(highest, Number(match[1]));
+      }
+    });
+    return highest;
+  }
+
+  function getPlaceholderStartNumber() {
+    if (Number.isInteger(placeholderStartNumber) && placeholderStartNumber > 0) {
+      return placeholderStartNumber;
+    }
+    return entries.length;
   }
 
   function buildButtons(list, root, key) {
@@ -117,7 +144,7 @@
 
   function onMissingImage(src) {
     el.imgError.hidden = false;
-    el.imgError.innerHTML = `Bild nicht gefunden – bitte prüfen: <code>${src || "/assets/reel/reel-XX.webp"}</code>`;
+    el.imgError.innerHTML = `Bild konnte nicht geladen werden. Verwendeter src: <code>${src || "/assets/reel/reel-XX.webp"}</code>`;
   }
 
   function isNewEntryDone(item) {
@@ -177,13 +204,19 @@
       const json = await res.json();
       if (!Array.isArray(json)) throw new Error("JSON ist kein Array");
       entries = json;
+      entries.forEach((item) => {
+        if (!item || typeof item !== "object") return;
+        item.src = normalizeSrc(item.src);
+      });
       index = Math.min(Number(localStorage.getItem(LS.index) || 0), Math.max(0, entries.length - 1));
       newRange = null;
+      placeholderStartNumber = null;
       setStatus(`Geladen: ${target} (${entries.length} Einträge)`);
       render();
     } catch (err) {
       entries = [];
       newRange = null;
+      placeholderStartNumber = null;
       render();
       setStatus(`Fehler beim Laden von ${target}: ${err.message}`, true);
     }
@@ -212,10 +245,11 @@
     }
 
     const ext = [".webp", ".jpg", ".png"].includes(el.fileExt.value) ? el.fileExt.value : ".webp";
-    const start = entries.length;
+    const startIndex = entries.length;
+    const baseNumber = getPlaceholderStartNumber();
 
     for (let i = 0; i < count; i += 1) {
-      const reelNumber = start + i + 1;
+      const reelNumber = baseNumber + i + 1;
       entries.push({
         src: `/assets/reel/reel-${reelNumber}${ext}`,
         cap: "",
@@ -225,10 +259,26 @@
       });
     }
 
-    newRange = { start, end: entries.length - 1 };
+    newRange = { start: startIndex, end: entries.length - 1 };
     index = newRange.start;
-    setStatus(`Leere Einträge angelegt: ${count} (reel-${start + 1} bis reel-${entries.length})`);
+    placeholderStartNumber = baseNumber + count;
+    setStatus(`Platzhalter angelegt: ${count} (reel-${baseNumber + 1} bis reel-${baseNumber + count}) – Gesamt: ${entries.length} Einträge`);
     render();
+  }
+
+  function detectLastNumber() {
+    if (!entries.length) {
+      setStatus("Bitte zuerst eine JSON laden.", true);
+      return;
+    }
+    const highest = detectHighestReelNumber(entries);
+    if (!highest) {
+      placeholderStartNumber = entries.length;
+      setStatus(`Kein reel-<NUM>-Muster gefunden. Nutze Länge als Start: ${entries.length}.`, true);
+      return;
+    }
+    placeholderStartNumber = highest;
+    setStatus(`Letzte Nummer erkannt: reel-${highest}. Neue Platzhalter starten bei reel-${highest + 1}.`);
   }
 
   async function copyAll() {
@@ -259,7 +309,7 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    setStatus(`JSON heruntergeladen: ${name}`);
+    setStatus(`JSON heruntergeladen: ${name} (${entries.length} Einträge)`);
   }
 
   function goToNextNew() {
@@ -304,8 +354,9 @@
   });
 
   el.btnCreatePlaceholders.addEventListener("click", createPlaceholders);
+  el.btnDetectLastNumber.addEventListener("click", detectLastNumber);
 
-  el.preview.addEventListener("error", () => onMissingImage(resolvePreviewSrc(text(current()?.src))));
+  el.preview.addEventListener("error", () => onMissingImage(text(current()?.src)));
   el.btnPrev.addEventListener("click", () => { updateCurrentFromInputs(); if (index > 0) index -= 1; render(); });
   el.btnNext.addEventListener("click", () => { updateCurrentFromInputs(); if (index < entries.length - 1) index += 1; render(); });
   el.btnNextNew.addEventListener("click", goToNextNew);
