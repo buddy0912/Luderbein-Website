@@ -15,7 +15,14 @@
 
   const el = {
     jsonTarget: document.getElementById("jsonTarget"),
+    btnLoad: document.getElementById("btnLoad"),
+    placeholderSetup: document.getElementById("placeholderSetup"),
+    placeholderCount: document.getElementById("placeholderCount"),
+    fileExt: document.getElementById("fileExt"),
+    btnCreatePlaceholders: document.getElementById("btnCreatePlaceholders"),
     status: document.getElementById("status"),
+    newRange: document.getElementById("newRange"),
+    newProgress: document.getElementById("newProgress"),
     preview: document.getElementById("preview"),
     imgError: document.getElementById("imgError"),
     counter: document.getElementById("counter"),
@@ -23,17 +30,21 @@
     alt: document.getElementById("alt"),
     autoText: document.getElementById("autoText"),
     syncAltCap: document.getElementById("syncAltCap"),
+    autoAdvance: document.getElementById("autoAdvance"),
     freeTag: document.getElementById("freeTag"),
     catButtons: document.getElementById("catButtons"),
     tagButtons: document.getElementById("tagButtons"),
     btnPrev: document.getElementById("btnPrev"),
     btnNext: document.getElementById("btnNext"),
+    btnNextNew: document.getElementById("btnNextNew"),
     btnCopy: document.getElementById("btnCopy"),
+    btnCopyNew: document.getElementById("btnCopyNew"),
     btnDownload: document.getElementById("btnDownload")
   };
 
   let entries = [];
   let index = 0;
+  let newRange = null;
 
   function text(v) { return String(v ?? "").trim(); }
   function current() { return entries[index] || null; }
@@ -41,6 +52,13 @@
   function setStatus(msg, bad = false) {
     el.status.textContent = msg;
     el.status.style.color = bad ? "#ffb4b4" : "";
+  }
+
+  function resolvePreviewSrc(rawSrc) {
+    const src = text(rawSrc);
+    if (!src) return "";
+    if (src.startsWith("/")) return src;
+    return `/assets/reel/${src.replace(/^\.\//, "")}`;
   }
 
   function buildButtons(list, root, key) {
@@ -56,6 +74,19 @@
         cur[key] = item;
         if (el.autoText.checked) autoCapAlt();
         render();
+        if (el.autoAdvance.checked) {
+          if (key === "cat") {
+            el.freeTag.focus();
+          } else if (key === "tag") {
+            if (!text(cur.cap)) {
+              el.cap.focus();
+            } else if (!text(cur.alt)) {
+              el.alt.focus();
+            } else {
+              goToNextNew();
+            }
+          }
+        }
       });
       root.appendChild(b);
     });
@@ -86,7 +117,31 @@
 
   function onMissingImage(src) {
     el.imgError.hidden = false;
-    el.imgError.innerHTML = `Bild fehlt oder lädt nicht: <code>${src || "(leer)"}</code>`;
+    el.imgError.innerHTML = `Bild nicht gefunden – bitte prüfen: <code>${src || "/assets/reel/reel-XX.webp"}</code>`;
+  }
+
+  function isNewEntryDone(item) {
+    return Boolean(text(item?.cat) && (text(item?.cap) || text(item?.alt)));
+  }
+
+  function renderNewStats() {
+    if (!newRange) {
+      el.newRange.hidden = true;
+      el.newProgress.hidden = true;
+      return;
+    }
+    const startHuman = newRange.start + 1;
+    const endHuman = newRange.end + 1;
+    el.newRange.hidden = false;
+    el.newRange.textContent = `Neu: ${startHuman}–${endHuman}`;
+
+    const total = newRange.end - newRange.start + 1;
+    let done = 0;
+    for (let i = newRange.start; i <= newRange.end; i += 1) {
+      if (isNewEntryDone(entries[i])) done += 1;
+    }
+    el.newProgress.hidden = false;
+    el.newProgress.textContent = `Neu-Einträge: ${done} / ${total} fertig`;
   }
 
   function render() {
@@ -95,13 +150,15 @@
       el.preview.removeAttribute("src");
       el.cap.value = "";
       el.alt.value = "";
+      renderNewStats();
       return;
     }
 
     const cur = current();
     el.counter.textContent = `${index + 1} / ${entries.length}`;
     el.preview.alt = text(cur.alt);
-    el.preview.src = text(cur.src);
+    const resolvedSrc = resolvePreviewSrc(cur.src);
+    el.preview.src = resolvedSrc;
     el.imgError.hidden = true;
 
     el.cap.value = text(cur.cap);
@@ -109,6 +166,7 @@
     el.freeTag.value = TAGS.includes(text(cur.tag)) ? "" : text(cur.tag);
 
     updateActiveButtons();
+    renderNewStats();
     localStorage.setItem(LS.index, String(index));
   }
 
@@ -120,10 +178,12 @@
       if (!Array.isArray(json)) throw new Error("JSON ist kein Array");
       entries = json;
       index = Math.min(Number(localStorage.getItem(LS.index) || 0), Math.max(0, entries.length - 1));
+      newRange = null;
       setStatus(`Geladen: ${target} (${entries.length} Einträge)`);
       render();
     } catch (err) {
       entries = [];
+      newRange = null;
       render();
       setStatus(`Fehler beim Laden von ${target}: ${err.message}`, true);
     }
@@ -137,12 +197,54 @@
     const freeTag = text(el.freeTag.value);
     if (freeTag) cur.tag = freeTag;
     updateActiveButtons();
+    renderNewStats();
+  }
+
+  function createPlaceholders() {
+    if (!entries.length) {
+      setStatus("Bitte zuerst eine JSON laden.", true);
+      return;
+    }
+    const count = Number(el.placeholderCount.value);
+    if (!Number.isInteger(count) || count <= 0) {
+      setStatus("Bitte eine gültige Anzahl > 0 eingeben.", true);
+      return;
+    }
+
+    const ext = [".webp", ".jpg", ".png"].includes(el.fileExt.value) ? el.fileExt.value : ".webp";
+    const start = entries.length;
+
+    for (let i = 0; i < count; i += 1) {
+      const reelNumber = start + i + 1;
+      entries.push({
+        src: `/assets/reel/reel-${reelNumber}${ext}`,
+        cap: "",
+        alt: "",
+        tag: "",
+        cat: ""
+      });
+    }
+
+    newRange = { start, end: entries.length - 1 };
+    index = newRange.start;
+    setStatus(`Leere Einträge angelegt: ${count} (reel-${start + 1} bis reel-${entries.length})`);
+    render();
   }
 
   async function copyAll() {
     const payload = JSON.stringify(entries, null, 2);
     await navigator.clipboard.writeText(payload);
     setStatus("Komplette JSON in Zwischenablage kopiert.");
+  }
+
+  async function copyNewOnly() {
+    if (!newRange) {
+      setStatus("Noch keine neuen Einträge angelegt.", true);
+      return;
+    }
+    const slice = entries.slice(newRange.start, newRange.end + 1);
+    await navigator.clipboard.writeText(JSON.stringify(slice, null, 2));
+    setStatus(`Nur neue Einträge (${newRange.start + 1}–${newRange.end + 1}) kopiert.`);
   }
 
   function downloadAll() {
@@ -160,6 +262,21 @@
     setStatus(`JSON heruntergeladen: ${name}`);
   }
 
+  function goToNextNew() {
+    updateCurrentFromInputs();
+    if (newRange && index < newRange.end) {
+      index += 1;
+      render();
+      return;
+    }
+    if (!newRange && index < entries.length - 1) {
+      index += 1;
+      render();
+      return;
+    }
+    setStatus("Letzter relevanter Eintrag erreicht.");
+  }
+
   function initTargets() {
     JSON_TARGETS.forEach((target) => {
       const o = document.createElement("option");
@@ -170,19 +287,28 @@
 
     const saved = localStorage.getItem(LS.target);
     el.jsonTarget.value = JSON_TARGETS.includes(saved) ? saved : JSON_TARGETS[0];
-    loadTarget(el.jsonTarget.value);
+    el.placeholderSetup.hidden = true;
   }
 
-  el.jsonTarget.addEventListener("change", () => {
+  el.btnLoad.addEventListener("click", async () => {
     localStorage.setItem(LS.target, el.jsonTarget.value);
     index = 0;
     localStorage.setItem(LS.index, "0");
-    loadTarget(el.jsonTarget.value);
+    await loadTarget(el.jsonTarget.value);
+    el.placeholderSetup.hidden = false;
+    el.placeholderCount.focus();
   });
 
-  el.preview.addEventListener("error", () => onMissingImage(text(current()?.src)));
+  el.jsonTarget.addEventListener("change", () => {
+    localStorage.setItem(LS.target, el.jsonTarget.value);
+  });
+
+  el.btnCreatePlaceholders.addEventListener("click", createPlaceholders);
+
+  el.preview.addEventListener("error", () => onMissingImage(resolvePreviewSrc(text(current()?.src))));
   el.btnPrev.addEventListener("click", () => { updateCurrentFromInputs(); if (index > 0) index -= 1; render(); });
   el.btnNext.addEventListener("click", () => { updateCurrentFromInputs(); if (index < entries.length - 1) index += 1; render(); });
+  el.btnNextNew.addEventListener("click", goToNextNew);
 
   document.addEventListener("keydown", (ev) => {
     if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) return;
@@ -199,6 +325,13 @@
   el.btnCopy.addEventListener("click", async () => {
     try {
       await copyAll();
+    } catch {
+      setStatus("Kopieren fehlgeschlagen (Zwischenablage blockiert).", true);
+    }
+  });
+  el.btnCopyNew.addEventListener("click", async () => {
+    try {
+      await copyNewOnly();
     } catch {
       setStatus("Kopieren fehlgeschlagen (Zwischenablage blockiert).", true);
     }
