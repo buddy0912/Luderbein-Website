@@ -71,7 +71,8 @@
       </div>
 
       <div id="placeholderSetup" class="rl-row rl-setup">
-        <p class="small">Wie viele Dateien hast du hochgeladen?</p>
+        <h2 class="rl-setupTitle">Neue Uploads anlegen</h2>
+        <label for="placeholderCount" class="small">Wie viele neue Dateien hast du hochgeladen?</label>
         <div class="rl-setupRow">
           <input id="placeholderCount" type="number" min="1" step="1" placeholder="z. B. 21" />
           <select id="fileExt" aria-label="Dateiendung">
@@ -79,8 +80,9 @@
             <option value=".jpg">.jpg</option>
             <option value=".png">.png</option>
           </select>
-          <button type="button" class="btn" id="btnCreatePlaceholders">Leere Einträge anlegen</button>
+          <button type="button" class="btn" id="btnCreatePlaceholders">Platzhalter anlegen</button>
         </div>
+        <button type="button" class="btn rl-detectBtn" id="btnDetectLastNumber">Letzte Nummer aus src erkennen</button>
       </div>
 
       <p id="status" class="small muted" role="status" aria-live="polite">Bereit.</p>
@@ -138,7 +140,7 @@
         <button type="button" class="btn" id="btnCopyNew">Nur neue Einträge kopieren</button>
         <button type="button" class="btn" id="btnDownload">JSON herunterladen</button>
       </div>
-      <p class="small muted">Hinweis: Dieses Tool ändert keine Repo-Dateien direkt. Es liefert nur Copy/Download.</p>
+      <p class="small muted">Workflow: 1) X eingeben 2) Platzhalter anlegen 3) labeln 4) JSON herunterladen 5) in GitHub Datei komplett ersetzen</p>
     </section>
   </main>
 

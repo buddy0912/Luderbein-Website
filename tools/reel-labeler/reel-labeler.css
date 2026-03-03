@@ -24,7 +24,9 @@
   background: rgba(10,10,14,.35);
   padding: 12px;
 }
+.rl-setupTitle { margin: 0 0 8px; font-size: 1.05rem; }
 .rl-setupRow { display:grid; gap:10px; grid-template-columns: 1fr 120px auto; }
+.rl-detectBtn { margin-top: 10px; }
 .rl-newRange { color:#ffd28f; font-weight:700; }
 .rl-preview { margin-top: 12px; border: 1px solid rgba(64,62,65,.55); border-radius: 14px; overflow: hidden; background: rgba(10,10,14,.4); }
 .rl-preview img { width: 100%; height: min(62vh, 560px); object-fit: contain; display: block; background: rgba(0,0,0,.22); }
