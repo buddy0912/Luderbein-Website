@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reel Labeler (simpel) | Luderbein</title>
+  <meta name="description" content="Einfaches internes Tool zum schnellen Labeln von Reel-JSONs." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <link rel="stylesheet" href="/tools/reel-labeler/reel-labeler.css" />
+</head>
+<body data-enablebot="0">
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/brand/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/glas/" role="menuitem">Glas</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/tools/reel-builder/" role="menuitem">Reel Builder</a>
+            <a href="/tools/reel-labeler/" role="menuitem">Reel Labeler (simpel)</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <span class="badge"><i></i> Tool</span>
+      <h1>Reel Labeler (simpel)</h1>
+      <p class="lead">JSON wählen, Bild labeln, weiter – ohne "Eintrag generieren".</p>
+    </section>
+
+    <section class="rl-card" aria-label="Reel Labeler">
+      <div class="rl-row rl-top">
+        <label for="jsonTarget">Ziel-JSON</label>
+        <select id="jsonTarget"></select>
+      </div>
+
+      <p id="status" class="small muted" role="status" aria-live="polite">Bereit.</p>
+
+      <div class="rl-preview">
+        <img id="preview" src="" alt="" />
+        <p id="imgError" class="rl-error" hidden>Bild konnte nicht geladen werden. Bitte <code>src</code> im Eintrag prüfen.</p>
+      </div>
+
+      <div class="rl-row rl-navBtns">
+        <button type="button" class="btn" id="btnPrev">← Zurück</button>
+        <span id="counter" class="small muted">0 / 0</span>
+        <button type="button" class="btn primary" id="btnNext">Weiter →</button>
+      </div>
+
+      <div class="rl-row">
+        <p class="small muted">Kategorie (cat)</p>
+        <div id="catButtons" class="rl-chipGrid"></div>
+      </div>
+
+      <div class="rl-row">
+        <p class="small muted">Tag</p>
+        <div id="tagButtons" class="rl-chipGrid"></div>
+        <input id="freeTag" type="text" placeholder="Optional freies Tag (z. B. Unikat)" />
+      </div>
+
+      <div class="rl-row rl-two">
+        <label><input id="autoText" type="checkbox" checked /> Auto aus Auswahl für cap/alt</label>
+        <label><input id="syncAltCap" type="checkbox" checked /> Alt = Cap synchron halten</label>
+      </div>
+
+      <div class="rl-row rl-two">
+        <div>
+          <label for="cap">Caption (cap)</label>
+          <input id="cap" type="text" />
+        </div>
+        <div>
+          <label for="alt">Alt-Text (alt)</label>
+          <input id="alt" type="text" />
+        </div>
+      </div>
+
+      <div class="rl-row rl-navBtns">
+        <button type="button" class="btn" id="btnCopy">Komplette JSON kopieren</button>
+        <button type="button" class="btn" id="btnDownload">JSON herunterladen</button>
+      </div>
+      <p class="small muted">Hinweis: Dieses Tool ändert keine Repo-Dateien direkt. Es liefert nur Copy/Download.</p>
+    </section>
+  </main>
+
+  <script src="/assets/include-footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/tools/reel-labeler/reel-labeler.js"></script>
+</body>
+</html>
