@@ -58,26 +58,44 @@
     <section class="hero">
       <span class="badge"><i></i> Tool</span>
       <h1>Reel Labeler (simpel)</h1>
-      <p class="lead">JSON wählen, Bild labeln, weiter – ohne "Eintrag generieren".</p>
+      <p class="lead">JSON wählen, leere Einträge anlegen, Bild labeln, weiter.</p>
     </section>
 
     <section class="rl-card" aria-label="Reel Labeler">
-      <div class="rl-row rl-top">
-        <label for="jsonTarget">Ziel-JSON</label>
-        <select id="jsonTarget"></select>
+      <div class="rl-row rl-top rl-loadRow">
+        <div class="rl-grow">
+          <label for="jsonTarget">Ziel-JSON</label>
+          <select id="jsonTarget"></select>
+        </div>
+        <button type="button" class="btn primary" id="btnLoad">JSON laden</button>
+      </div>
+
+      <div id="placeholderSetup" class="rl-row rl-setup">
+        <p class="small">Wie viele Dateien hast du hochgeladen?</p>
+        <div class="rl-setupRow">
+          <input id="placeholderCount" type="number" min="1" step="1" placeholder="z. B. 21" />
+          <select id="fileExt" aria-label="Dateiendung">
+            <option value=".webp" selected>.webp</option>
+            <option value=".jpg">.jpg</option>
+            <option value=".png">.png</option>
+          </select>
+          <button type="button" class="btn" id="btnCreatePlaceholders">Leere Einträge anlegen</button>
+        </div>
       </div>
 
       <p id="status" class="small muted" role="status" aria-live="polite">Bereit.</p>
+      <p id="newRange" class="small rl-newRange" hidden></p>
+      <p id="newProgress" class="small muted" hidden>Neu-Einträge: 0 / 0 fertig</p>
 
       <div class="rl-preview">
         <img id="preview" src="" alt="" />
-        <p id="imgError" class="rl-error" hidden>Bild konnte nicht geladen werden. Bitte <code>src</code> im Eintrag prüfen.</p>
+        <p id="imgError" class="rl-error" hidden>Bild nicht gefunden – bitte prüfen: <code>/assets/reel/reel-XX.webp</code></p>
       </div>
 
       <div class="rl-row rl-navBtns">
         <button type="button" class="btn" id="btnPrev">← Zurück</button>
         <span id="counter" class="small muted">0 / 0</span>
-        <button type="button" class="btn primary" id="btnNext">Weiter →</button>
+        <button type="button" class="btn" id="btnNext">Weiter →</button>
       </div>
 
       <div class="rl-row">
@@ -97,6 +115,10 @@
       </div>
 
       <div class="rl-row rl-two">
+        <label><input id="autoAdvance" type="checkbox" checked /> Auto-Weiter nach cat/tag</label>
+      </div>
+
+      <div class="rl-row rl-two">
         <div>
           <label for="cap">Caption (cap)</label>
           <input id="cap" type="text" />
@@ -108,7 +130,12 @@
       </div>
 
       <div class="rl-row rl-navBtns">
+        <button type="button" class="btn primary" id="btnNextNew">Weiter (speichern)</button>
+      </div>
+
+      <div class="rl-row rl-navBtns">
         <button type="button" class="btn" id="btnCopy">Komplette JSON kopieren</button>
+        <button type="button" class="btn" id="btnCopyNew">Nur neue Einträge kopieren</button>
         <button type="button" class="btn" id="btnDownload">JSON herunterladen</button>
       </div>
       <p class="small muted">Hinweis: Dieses Tool ändert keine Repo-Dateien direkt. Es liefert nur Copy/Download.</p>
