@@ -69,7 +69,7 @@
 <header>
   <div class="top">
     <a class="brand" href="/">
-      <img src="/assets/img/mark.svg" alt="" />
+      <img src="/mark.svg" alt="" />
       <div>
         <div style="font-weight:700">Luderbein</div>
         <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
@@ -511,18 +511,20 @@
 
   function applyAutoText() {
     if (!chkAutoCapAlt.checked) return;
-    // build label like "Tag • cat" plus optional freitext
-    const parts = [];
-    if (selectedTag) parts.push(selectedTag);
-    if (selectedCat) parts.push(selectedCat);
-    let base = parts.join(' • ').trim();
-    const extra = (freeText.value || '').trim();
-    if (extra) base = base ? `${base} • ${extra}` : extra;
 
-    if (base) {
-      capInput.value = base;
-      if (chkSyncAlt.checked) altInput.value = base;
-    }
+    const free = (freeText.value || '').trim();
+    const fallback =
+      selectedTag ||
+      (capInput.value || '').trim() ||
+      `Eintrag ${curIndex + 1}`;
+
+    // cap bleibt bewusst ohne Kategorie-Präfix
+    const capText = free || fallback;
+    const altText = [selectedCat, capText].filter(Boolean).join(' • ') || capText;
+
+    capInput.value = capText;
+    // alt mitsetzen, damit Auto-Weiter ohne Fehlermeldung klappt
+    if (chkSyncAlt.checked || !altInput.value.trim()) altInput.value = altText;
   }
 
   function setCat(cat) {
