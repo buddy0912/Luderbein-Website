@@ -70,7 +70,7 @@
 <header>
   <div class="top">
     <a class="brand" href="/">
-      <img src="/assets/img/mark.svg" alt="" />
+      <img src="/assets/mark.svg" alt="Luderbein" />
       <div>
         <div style="font-weight:700">Luderbein</div>
         <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
@@ -234,7 +234,8 @@
       </div>
 
       <div class="row" style="margin-top:14px;">
-        <button id="btnSaveNext" class="primary" type="button">Weiter (speichern)</button>
+        <button id="btnSaveNextClear" class="primary" type="button">Weiter (speichern + leeren)</button>
+        <button id="btnSaveNextKeep" type="button">Weiter (speichern + behalten)</button>
         <button id="btnCopyAll" type="button">Komplette JSON kopieren</button>
         <button id="btnCopyNew" type="button">Nur neue Einträge kopieren</button>
         <button id="btnDownload" type="button">JSON herunterladen</button>
@@ -300,7 +301,8 @@
   const capInput = document.getElementById('capInput');
   const altInput = document.getElementById('altInput');
 
-  const btnSaveNext = document.getElementById('btnSaveNext');
+  const btnSaveNextClear = document.getElementById('btnSaveNextClear');
+  const btnSaveNextKeep = document.getElementById('btnSaveNextKeep');
   const btnCopyAll = document.getElementById('btnCopyAll');
   const btnCopyNew = document.getElementById('btnCopyNew');
   const btnDownload = document.getElementById('btnDownload');
@@ -596,7 +598,7 @@
       setStatus(saveStatus, `Fehlt: ${missing.map((field) => field.label).join(', ')}.`, 'err');
       return;
     }
-    saveAndMaybeNext(true);
+    saveAndNext({ auto: true, keepInputs: false });
   }
 
   function setCat(cat) {
@@ -638,20 +640,51 @@
     return {ok:true,msg:'Gespeichert.'};
   }
 
-  function saveAndMaybeNext(auto=false, forceError=false) {
+  function captureInputState() {
+    return {
+      selectedCat,
+      selectedTag,
+      freeTag: freeTag.value || '',
+      freeText: freeText.value || '',
+      cap: capInput.value || '',
+      alt: altInput.value || ''
+    };
+  }
+
+  function applyInputState(state) {
+    selectedCat = state.selectedCat || '';
+    selectedTag = state.selectedTag || '';
+    freeTag.value = state.freeTag || '';
+    freeText.value = state.freeText || '';
+    capInput.value = state.cap || '';
+    altInput.value = state.alt || '';
+    updateSelectionStyles();
+    updateCustomerPreview();
+    updateRequiredStatus(false);
+  }
+
+  async function saveAndNext({ keepInputs = false, auto = false, forceError = false } = {}) {
     const r = saveCurrent(forceError);
-    setStatus(saveStatus, r.ok ? r.msg : r.msg, r.ok ? 'ok' : 'err');
+    setStatus(saveStatus, r.ok ? 'Gespeichert ✓' : r.msg, r.ok ? 'ok' : 'err');
     updateCounters();
     if (r.ok) {
-      if (auto) {
-        // tiny quiet feedback
-        setTimeout(() => setStatus(saveStatus, '', 'muted'), 600);
-      }
+      const carryState = keepInputs ? captureInputState() : null;
       // next
       if (curIndex < data.length - 1) {
         curIndex++;
         hasManualSaveAttempt = false;
-        showCurrent();
+        await showCurrent();
+        if (keepInputs) {
+          applyInputState(carryState);
+        } else {
+          applyInputState({});
+        }
+      }
+
+      if (auto) {
+        setTimeout(() => setStatus(saveStatus, '', 'muted'), 600);
+      } else {
+        setTimeout(() => setStatus(saveStatus, '', 'muted'), 1200);
       }
     }
   }
@@ -744,9 +777,14 @@
   });
   altInput.addEventListener('input', () => updateRequiredStatus(false));
 
-  btnSaveNext.addEventListener('click', () => {
+  btnSaveNextClear.addEventListener('click', () => {
     hasManualSaveAttempt = true;
-    saveAndMaybeNext(false, true);
+    saveAndNext({ keepInputs: false, forceError: true });
+  });
+
+  btnSaveNextKeep.addEventListener('click', () => {
+    hasManualSaveAttempt = true;
+    saveAndNext({ keepInputs: true, forceError: true });
   });
 
   btnCopyAll.addEventListener('click', () => {
