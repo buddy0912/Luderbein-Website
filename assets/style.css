@@ -1386,8 +1386,8 @@ header {
   height: 48px;
   display: block;
   background: rgba(255,255,255,.92);
-  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
-  mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+  -webkit-mask: url("/assets/img/mark.svg") center / contain no-repeat;
+  mask: url("/assets/img/mark.svg") center / contain no-repeat;
   opacity: .95;
 }
 
@@ -1425,8 +1425,8 @@ header {
 
   /* stencil source */
   background: #fff;           /* base white */
-  -webkit-mask: url("/assets/brand/mark.svg") center / contain no-repeat;
-          mask: url("/assets/brand/mark.svg") center / contain no-repeat;
+  -webkit-mask: url("/assets/img/mark.svg") center / contain no-repeat;
+          mask: url("/assets/img/mark.svg") center / contain no-repeat;
 
   /* auto black/white depending on background */
   mix-blend-mode: difference;
