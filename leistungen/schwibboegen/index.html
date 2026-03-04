@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
   <style>
+
+    .reelwrap { position: relative; margin-top: 10px; }
+    .reel { display:grid; grid-auto-flow:column; grid-auto-columns: minmax(240px, 1fr); gap:14px; overflow-x:auto; padding: 6px 2px 12px; scroll-snap-type:x mandatory; }
+    .reel__item { position:relative; display:block; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.10); background:#0f1317; min-height:170px; text-decoration:none; color:inherit; scroll-snap-align:start; }
+    .reel__tag { position:absolute; top:10px; left:10px; z-index:2; padding:5px 9px; border-radius:999px; font-size:.72rem; font-weight:700; letter-spacing:.2px; background:rgba(0,0,0,.58); border:1px solid rgba(255,255,255,.18); }
+    .reel__img { width:100%; height:100%; aspect-ratio:16/10; object-fit:cover; display:block; }
+    .reel__cap { position:absolute; left:0; right:0; bottom:0; padding:10px 12px; font-size:.86rem; line-height:1.3; background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.66) 65%, rgba(0,0,0,.84) 100%); }
     .lb-infoCards { display: grid; gap: 12px; margin-top: 14px; }
     .lb-card { border: 1px solid rgba(255,255,255,.10); border-radius: 14px; overflow: hidden; background: rgba(0,0,0,.25); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
     .lb-cardBtn { width: 100%; text-align: left; padding: 14px 42px 12px 14px; background: transparent; border: 0; cursor: pointer; position: relative; color: inherit; font: inherit; }
@@ -147,6 +154,25 @@
       </div>
     </section>
 
+    <section class="section leistung-section leistung-card" id="schwibboegen-feed" aria-label="Schwibbögen-Feed">
+      <div class="section-head leistung-section-head">
+        <h2>Feed</h2>
+        <p class="small muted">Ein kurzer Blick in den Feed.</p>
+      </div>
+
+      <div class="reelwrap">
+        <div
+          class="reel"
+          aria-label="Schwibbögen Reel"
+          data-reel
+          data-reel-src="/assets/reel-werkstatt.json"
+          data-interval="4500"
+          data-reel-default-tag="Schwibbögen"
+          data-feed-cat="schwibboegen"
+        ></div>
+      </div>
+    </section>
+
     <section class="section leistung-section leistung-card" aria-label="Schwibbögen Auswahl">
       <div class="section-head leistung-section-head">
         <h2>Schwibbögen auswählen</h2>
@@ -187,6 +213,7 @@
   <footer id="site-footer"></footer>
 
   <script src="/assets/footer.js"></script>
+  <script src="/assets/reel-internal.js"></script>
   <script src="/assets/site.js"></script>
   <script src="/assets/luderbot-enhancements.js" defer></script>
   <script src="/assets/nav-dropdown.js"></script>
