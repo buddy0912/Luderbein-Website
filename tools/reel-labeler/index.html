@@ -4,148 +4,614 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Reel Labeler (simpel) | Luderbein</title>
-  <meta name="description" content="Einfaches internes Tool zum schnellen Labeln von Reel-JSONs." />
-  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Nutzt dein bestehendes Site-Theme, falls vorhanden -->
   <link rel="stylesheet" href="/assets/style.css" />
-  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
-  <link rel="stylesheet" href="/tools/reel-labeler/reel-labeler.css" />
+  <style>
+    /* Fallback-Styles (falls style.css mal fehlt) */
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0b0b0c; color:#eaeaea; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 20px; }
+    .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; padding: 18px; margin: 14px 0; backdrop-filter: blur(10px); }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .row > * { flex: 0 0 auto; }
+    .grow { flex: 1 1 auto; min-width: 240px; }
+    select, input[type="text"], input[type="number"]{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color:#fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      outline:none;
+    }
+    button{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color:#fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+    }
+    button.primary{
+      background: rgba(255,0,50,0.18);
+      border-color: rgba(255,0,50,0.35);
+    }
+    button.pill{ border-radius: 999px; padding: 8px 12px; }
+    .muted { opacity: .75; }
+    .tiny { font-size: 12px; opacity: .75; }
+    .status { font-size: 13px; opacity: .9; }
+    .imgbox { width: 100%; aspect-ratio: 16/9; border-radius: 16px; overflow:hidden; border: 1px solid rgba(255,255,255,0.10); background: rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; }
+    .imgbox img { width: 100%; height: 100%; object-fit: contain; display:block; }
+    .err { color: #ff5a7a; }
+    .ok { color: #7CFF9B; }
+    .split { display:flex; gap: 18px; flex-wrap:wrap; align-items:flex-start; }
+    .split > .card { flex: 1 1 420px; }
+    .kv { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .kv label { font-size: 13px; opacity:.85; display:flex; gap:8px; align-items:center; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); padding: 2px 6px; border-radius: 8px; }
+    header { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.35); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 50; }
+    .top { max-width: 980px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap: 12px; }
+    .brand { display:flex; align-items:center; gap: 12px; }
+    .brand img { width: 38px; height: 38px; }
+    nav { display:flex; gap: 14px; align-items:center; }
+    nav a, nav button { background: transparent; border: 0; padding: 8px 10px; border-radius: 10px; }
+    nav a:hover, nav button:hover { background: rgba(255,255,255,0.06); }
+    .dropdown { position: relative; }
+    .menu { position:absolute; right:0; top: 42px; min-width: 260px; background: rgba(10,10,12,0.92); border: 1px solid rgba(255,255,255,0.10); border-radius: 14px; padding: 10px; display:none; }
+    .menu a { display:block; padding: 10px 10px; border-radius: 10px; }
+    .menu a:hover { background: rgba(255,255,255,0.06); }
+    .menu .sep { height:1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
+  </style>
 </head>
-<body data-enablebot="0">
-  <header>
-    <div class="wrap nav">
-      <a class="brand" href="/">
-        <div class="logo" aria-hidden="true">
-          <img src="/assets/brand/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
-        </div>
-        <div>
-          <strong>Luderbein</strong><br>
-          <span>Schwibbögen • Gravur • Sonderwünsche</span>
-        </div>
-      </a>
+<body>
 
-      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
-        <span class="navicon"><span></span></span>
-      </button>
+<header>
+  <div class="top">
+    <a class="brand" href="/">
+      <img src="/mark.svg" alt="" />
+      <div>
+        <div style="font-weight:700">Luderbein</div>
+        <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
+      </div>
+    </a>
 
-      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
-        <a href="/">Start</a>
-        <div class="navdrop" data-navdrop>
-          <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">
-            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
-          </button>
-          <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
-            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
-            <a href="/leistungen/metall/" role="menuitem">Metall</a>
-            <a href="/leistungen/holz/" role="menuitem">Holz</a>
-            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
-            <a href="/leistungen/glas/" role="menuitem">Glas</a>
-            <a href="/leistungen/custom/" role="menuitem">Custom</a>
-            <div class="navdrop__sep" aria-hidden="true"></div>
-            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
-            <div class="navdrop__sep" aria-hidden="true"></div>
-            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
-            <a href="/service/" role="menuitem">Downloads</a>
-          </div>
+    <nav>
+      <a href="/">Start</a>
+      <div class="dropdown">
+        <button id="btnLeistungen" type="button">Leistungen ▾</button>
+        <div class="menu" id="menuLeistungen" aria-label="Leistungen Menü">
+          <a href="/leistungen/schiefer/">Schiefer</a>
+          <a href="/leistungen/metall/">Metall</a>
+          <a href="/leistungen/holz/">Holz</a>
+          <a href="/leistungen/acryl/">Acryl</a>
+          <a href="/leistungen/glas/">Glas</a>
+          <a href="/leistungen/custom/">Custom</a>
+          <a href="/leistungen/schwibboegen/">Schwibbögen</a>
+          <div class="sep"></div>
+          <a href="/tools/kalkulator/">Kalkulator</a>
+          <a href="/service/">Downloads</a>
         </div>
-        <a href="/ueber/">Über</a>
-        <a href="/kontakt/">Kontakt</a>
-        <a href="/rechtliches/impressum.html">Impressum</a>
-      </nav>
+      </div>
+      <a href="/ueber/">Über</a>
+      <a href="/kontakt/">Kontakt</a>
+      <a href="/rechtliches/impressum.html">Impressum</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <div class="tiny">Tool</div>
+    <h1 style="margin:6px 0 8px 0;">Reel Labeler (simpel)</h1>
+    <div class="muted">JSON wählen, leere Einträge anlegen, Bild labeln, weiter.</div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div class="grow">
+        <div class="tiny" style="margin-bottom:6px;">Ziel-JSON</div>
+        <select id="jsonSelect" class="grow" aria-label="Ziel-JSON">
+          <option value="/assets/reel-werkstatt.json" selected>/assets/reel-werkstatt.json</option>
+          <option value="/assets/reel-holz.json">/assets/reel-holz.json</option>
+          <option value="/assets/reel-metall.json">/assets/reel-metall.json</option>
+          <option value="/assets/reel-glas.json">/assets/reel-glas.json</option>
+          <option value="/assets/reel-acryl.json">/assets/reel-acryl.json</option>
+        </select>
+      </div>
+
+      <button id="btnLoadJson" class="primary" type="button">JSON laden</button>
+      <span id="loadStatus" class="status muted"></span>
     </div>
-  </header>
+  </div>
 
-  <main class="wrap">
-    <section class="hero">
-      <span class="badge"><i></i> Tool</span>
-      <h1>Reel Labeler (simpel)</h1>
-      <p class="lead">JSON wählen, leere Einträge anlegen, Bild labeln, weiter.</p>
-    </section>
+  <div class="card">
+    <h2 style="margin:0 0 10px 0;">Neue Uploads anlegen</h2>
 
-    <section class="rl-card" aria-label="Reel Labeler">
-      <div class="rl-row rl-top rl-loadRow">
-        <div class="rl-grow">
-          <label for="jsonTarget">Ziel-JSON</label>
-          <select id="jsonTarget"></select>
-        </div>
-        <button type="button" class="btn primary" id="btnLoad">JSON laden</button>
+    <div class="row">
+      <div class="grow">
+        <div class="tiny" style="margin-bottom:6px;">Wie viele neue Dateien hast du hochgeladen?</div>
+        <input id="countInput" type="number" min="1" step="1" placeholder="" class="grow" />
       </div>
 
-      <div id="placeholderSetup" class="rl-row rl-setup">
-        <h2 class="rl-setupTitle">Neue Uploads anlegen</h2>
-        <label for="placeholderCount" class="small">Wie viele neue Dateien hast du hochgeladen?</label>
-        <div class="rl-setupRow">
-          <input id="placeholderCount" type="number" min="1" step="1" placeholder="z. B. 21" />
-          <select id="fileExt" aria-label="Dateiendung">
-            <option value=".webp" selected>.webp</option>
-            <option value=".jpg">.jpg</option>
-            <option value=".png">.png</option>
-          </select>
-          <button type="button" class="btn" id="btnCreatePlaceholders">Platzhalter anlegen</button>
-        </div>
-        <button type="button" class="btn rl-detectBtn" id="btnDetectLastNumber">Letzte Nummer aus src erkennen</button>
+      <div>
+        <div class="tiny" style="margin-bottom:6px;">Dateiendung</div>
+        <select id="extSelect" aria-label="Dateiendung">
+          <option value=".webp">.webp</option>
+          <option value=".jpg" selected>.jpg</option>
+          <option value=".jpeg">.jpeg</option>
+          <option value=".png">.png</option>
+        </select>
       </div>
 
-      <p id="status" class="small muted" role="status" aria-live="polite">Bereit.</p>
-      <p id="newRange" class="small rl-newRange" hidden></p>
-      <p id="newProgress" class="small muted" hidden>Neu-Einträge: 0 / 0 fertig</p>
+      <button id="btnCreatePlaceholders" class="primary" type="button">Platzhalter anlegen</button>
+      <button id="btnDetectLast" type="button">Letzte Nummer aus src erkennen</button>
+    </div>
 
-      <div class="rl-preview">
-        <img id="preview" src="" alt="" />
-        <p id="imgError" class="rl-error" hidden>Bild nicht gefunden – bitte prüfen: <code>/assets/reel/reel-XX.webp</code></p>
-      </div>
+    <div id="phStatus" class="status" style="margin-top:10px;"></div>
+  </div>
 
-      <div class="rl-row rl-navBtns">
-        <button type="button" class="btn" id="btnPrev">← Zurück</button>
-        <span id="counter" class="small muted">0 / 0</span>
-        <button type="button" class="btn" id="btnNext">Weiter →</button>
-      </div>
+  <div class="split">
 
-      <div class="rl-row">
-        <p class="small muted">Kategorie (cat)</p>
-        <div id="catButtons" class="rl-chipGrid"></div>
-      </div>
-
-      <div class="rl-row">
-        <p class="small muted">Tag</p>
-        <div id="tagButtons" class="rl-chipGrid"></div>
-        <input id="freeTag" type="text" placeholder="Optional freies Tag (z. B. Unikat)" />
-      </div>
-
-      <div class="rl-row rl-two">
-        <label><input id="autoText" type="checkbox" checked /> Auto aus Auswahl für cap/alt</label>
-        <label><input id="syncAltCap" type="checkbox" checked /> Alt = Cap synchron halten</label>
-      </div>
-
-      <div class="rl-row rl-two">
-        <label><input id="autoAdvance" type="checkbox" checked /> Auto-Weiter nach cat/tag</label>
-      </div>
-
-      <div class="rl-row rl-two">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
         <div>
-          <label for="cap">Caption (cap)</label>
-          <input id="cap" type="text" />
+          <div id="rangeStatus" class="status muted">Neu: –</div>
+          <div id="doneStatus" class="status muted">Neu-Einträge: 0 / 0 fertig</div>
         </div>
-        <div>
-          <label for="alt">Alt-Text (alt)</label>
-          <input id="alt" type="text" />
+        <div class="row">
+          <button id="btnPrev" type="button">← Zurück</button>
+          <div class="kbd"><span id="posNow">0</span> / <span id="posMax">0</span></div>
+          <button id="btnNext" type="button">Weiter →</button>
         </div>
       </div>
 
-      <div class="rl-row rl-navBtns">
-        <button type="button" class="btn primary" id="btnNextNew">Weiter (speichern)</button>
+      <div class="imgbox" style="margin-top:12px;">
+        <img id="previewImg" alt="" />
+      </div>
+      <div id="imgErr" class="tiny err" style="margin-top:8px; display:none;"></div>
+      <div class="tiny" style="margin-top:8px;">
+        Basis: <span class="kbd" id="imgSrcKbd">/assets/reel/reel-?.jpg</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px 0;">Label</h3>
+
+      <div class="tiny" style="margin-bottom:6px;">Kategorie (cat)</div>
+      <div class="row" style="margin-bottom:10px;">
+        <button class="pill" data-cat="holz" type="button">holz</button>
+        <button class="pill" data-cat="glas" type="button">glas</button>
+        <button class="pill" data-cat="schiefer" type="button">schiefer</button>
+        <button class="pill" data-cat="metall" type="button">metall</button>
+        <button class="pill" data-cat="acryl" type="button">acryl</button>
+        <button class="pill" data-cat="schwibboegen" type="button">schwibboegen</button>
+        <button class="pill" data-cat="custom" type="button">custom</button>
       </div>
 
-      <div class="rl-row rl-navBtns">
-        <button type="button" class="btn" id="btnCopy">Komplette JSON kopieren</button>
-        <button type="button" class="btn" id="btnCopyNew">Nur neue Einträge kopieren</button>
-        <button type="button" class="btn" id="btnDownload">JSON herunterladen</button>
+      <div class="tiny" style="margin-bottom:6px;">Tag</div>
+      <div class="row" style="margin-bottom:10px;">
+        <button class="pill" data-tag="Material" type="button">Material</button>
+        <button class="pill" data-tag="Person" type="button">Person</button>
+        <button class="pill" data-tag="Projekt" type="button">Projekt</button>
+        <button class="pill" data-tag="QA" type="button">QA</button>
       </div>
-      <p class="small muted">Workflow: 1) X eingeben 2) Platzhalter anlegen 3) labeln 4) JSON herunterladen 5) in GitHub Datei komplett ersetzen</p>
-    </section>
-  </main>
 
-  <script src="/assets/include-footer.js"></script>
-  <script src="/assets/nav-dropdown.js"></script>
-  <script src="/tools/reel-labeler/reel-labeler.js"></script>
+      <div class="tiny" style="margin-bottom:6px;">Freitext (optional)</div>
+      <input id="freeText" type="text" class="grow" placeholder="" />
+
+      <div class="kv" style="margin-top:12px;">
+        <label><input id="chkAutoCapAlt" type="checkbox" checked /> Auto aus Auswahl für cap/alt</label>
+        <label><input id="chkSyncAlt" type="checkbox" checked /> Alt = Cap synchron halten</label>
+        <label><input id="chkAutoNext" type="checkbox" checked /> Auto-Weiter nach cat/tag</label>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="tiny" style="margin-bottom:6px;">Caption (cap)</div>
+        <input id="capInput" type="text" class="grow" />
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="tiny" style="margin-bottom:6px;">Alt-Text (alt)</div>
+        <input id="altInput" type="text" class="grow" />
+      </div>
+
+      <div class="row" style="margin-top:14px;">
+        <button id="btnSaveNext" class="primary" type="button">Weiter (speichern)</button>
+        <button id="btnCopyAll" type="button">Komplette JSON kopieren</button>
+        <button id="btnCopyNew" type="button">Nur neue Einträge kopieren</button>
+        <button id="btnDownload" type="button">JSON herunterladen</button>
+      </div>
+
+      <div id="saveStatus" class="status" style="margin-top:10px;"></div>
+
+      <div class="tiny muted" style="margin-top:12px;">
+        Workflow: 1) X eingeben 2) Platzhalter anlegen 3) labeln 4) JSON herunterladen 5) in GitHub Datei komplett ersetzen
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(() => {
+  // --- Nav dropdown ---
+  const btnLeistungen = document.getElementById('btnLeistungen');
+  const menuLeistungen = document.getElementById('menuLeistungen');
+  btnLeistungen?.addEventListener('click', () => {
+    menuLeistungen.style.display = (menuLeistungen.style.display === 'block') ? 'none' : 'block';
+  });
+  document.addEventListener('click', (e) => {
+    if (!menuLeistungen.contains(e.target) && e.target !== btnLeistungen) {
+      menuLeistungen.style.display = 'none';
+    }
+  });
+
+  // --- State ---
+  const jsonSelect = document.getElementById('jsonSelect');
+  const btnLoadJson = document.getElementById('btnLoadJson');
+  const loadStatus = document.getElementById('loadStatus');
+
+  const countInput = document.getElementById('countInput');
+  const extSelect = document.getElementById('extSelect');
+  const btnCreatePlaceholders = document.getElementById('btnCreatePlaceholders');
+  const btnDetectLast = document.getElementById('btnDetectLast');
+  const phStatus = document.getElementById('phStatus');
+
+  const rangeStatus = document.getElementById('rangeStatus');
+  const doneStatus = document.getElementById('doneStatus');
+  const posNow = document.getElementById('posNow');
+  const posMax = document.getElementById('posMax');
+
+  const previewImg = document.getElementById('previewImg');
+  const imgErr = document.getElementById('imgErr');
+  const imgSrcKbd = document.getElementById('imgSrcKbd');
+
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+
+  const freeText = document.getElementById('freeText');
+  const chkAutoCapAlt = document.getElementById('chkAutoCapAlt');
+  const chkSyncAlt = document.getElementById('chkSyncAlt');
+  const chkAutoNext = document.getElementById('chkAutoNext');
+
+  const capInput = document.getElementById('capInput');
+  const altInput = document.getElementById('altInput');
+
+  const btnSaveNext = document.getElementById('btnSaveNext');
+  const btnCopyAll = document.getElementById('btnCopyAll');
+  const btnCopyNew = document.getElementById('btnCopyNew');
+  const btnDownload = document.getElementById('btnDownload');
+  const saveStatus = document.getElementById('saveStatus');
+
+  // JSON in memory
+  let data = [];            // full JSON array
+  let newStart = null;      // first new index (0-based)
+  let newEnd = null;        // last new index (0-based)
+  let curIndex = 0;         // current absolute index in data
+  let selectedCat = '';
+  let selectedTag = '';
+
+  // Image source base
+  const IMG_DIR = '/assets/reel/';
+  const TRY_EXTS = ['.jpg', '.jpeg', '.png', '.webp']; // robust: try all
+  function pad(n){ return String(n); }
+
+  function setStatus(el, text, cls) {
+    el.textContent = text || '';
+    el.className = 'status ' + (cls || '');
+  }
+
+  function countDoneInNewRange() {
+    if (newStart === null || newEnd === null) return {done:0,total:0};
+    let done = 0;
+    const total = (newEnd - newStart + 1);
+    for (let i = newStart; i <= newEnd; i++) {
+      const it = data[i] || {};
+      // "fertig" wenn cat + tag + cap + alt vorhanden
+      if (it.cat && it.tag && it.cap && it.alt) done++;
+    }
+    return {done, total};
+  }
+
+  function updateCounters() {
+    if (newStart === null || newEnd === null) {
+      rangeStatus.textContent = 'Neu: –';
+      doneStatus.textContent = 'Neu-Einträge: 0 / 0 fertig';
+      posNow.textContent = '0';
+      posMax.textContent = '0';
+      return;
+    }
+    rangeStatus.textContent = `Neu: ${newStart+1}–${newEnd+1}`;
+    const {done,total} = countDoneInNewRange();
+    doneStatus.textContent = `Neu-Einträge: ${done} / ${total} fertig`;
+    posNow.textContent = String(curIndex+1);
+    posMax.textContent = String(data.length);
+  }
+
+  async function loadJson() {
+    const url = jsonSelect.value;
+    setStatus(loadStatus, 'Lade JSON…', 'muted');
+    try {
+      const res = await fetch(url, {cache:'no-store'});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      if (!Array.isArray(json)) throw new Error('JSON ist kein Array');
+      data = json;
+      // Reset new range markers
+      newStart = null; newEnd = null;
+      curIndex = Math.max(0, data.length - 1);
+      setStatus(loadStatus, `OK (${data.length} Einträge geladen)`, 'ok');
+      setStatus(phStatus, '', 'muted');
+      setStatus(saveStatus, '', 'muted');
+      updateCounters();
+      // best effort show last
+      showCurrent();
+    } catch (e) {
+      setStatus(loadStatus, `Fehler beim Laden (${e.message})`, 'err');
+    }
+  }
+
+  function detectLastNumber() {
+    // find max reel-XX in src
+    let max = 0;
+    const re = /reel-(\d+)\.(jpg|jpeg|png|webp)$/i;
+    for (const it of data) {
+      const m = (it?.src || '').match(re);
+      if (m) max = Math.max(max, parseInt(m[1],10));
+    }
+    return max;
+  }
+
+  function createPlaceholders() {
+    const n = parseInt(countInput.value,10);
+    if (!Number.isFinite(n) || n <= 0) {
+      setStatus(phStatus, 'Bitte eine Zahl > 0 eingeben.', 'err');
+      return;
+    }
+    if (!Array.isArray(data) || data.length === 0) {
+      setStatus(phStatus, 'Erst JSON laden.', 'err');
+      return;
+    }
+
+    const last = detectLastNumber();
+    const ext = extSelect.value; // includes .jpg/.jpeg/...
+    const startNum = last + 1;
+    const endNum = last + n;
+
+    // append placeholders
+    newStart = data.length; // index before push
+    for (let num = startNum; num <= endNum; num++) {
+      data.push({
+        src: `${IMG_DIR}reel-${pad(num)}${ext}`,
+        alt: '',
+        cap: '',
+        tag: '',
+        cat: ''
+      });
+    }
+    newEnd = data.length - 1;
+    curIndex = newStart;
+
+    setStatus(phStatus, `Platzhalter angelegt: ${n} (reel-${startNum} bis reel-${endNum}) – Gesamt: ${data.length} Einträge`, 'ok');
+    setStatus(saveStatus, '', 'muted');
+
+    updateCounters();
+    showCurrent();
+  }
+
+  async function tryLoadImageWithFallback(num) {
+    // num is 1-based reel number
+    const chosen = extSelect.value;
+    const base = `${IMG_DIR}reel-${pad(num)}`;
+    imgErr.style.display = 'none';
+    imgErr.textContent = '';
+
+    // try chosen first, then the rest
+    const order = [chosen, ...TRY_EXTS.filter(x => x !== chosen)];
+    for (const ext of order) {
+      const url = `${base}${ext}`;
+      const ok = await new Promise((resolve) => {
+        const test = new Image();
+        test.onload = () => resolve(true);
+        test.onerror = () => resolve(false);
+        test.src = url + `?v=${Date.now()}`; // cache-bust
+      });
+      if (ok) return `${base}${ext}`;
+    }
+    return null;
+  }
+
+  async function showCurrent() {
+    if (!data || !data.length) return;
+
+    const it = data[curIndex] || {};
+    const src = it.src || '';
+    imgSrcKbd.textContent = src || `${IMG_DIR}reel-?.jpg`;
+
+    // Extract reel number from src, so we can fallback across extensions reliably
+    const m = src.match(/reel-(\d+)\.(jpg|jpeg|png|webp)$/i);
+    let finalSrc = null;
+
+    if (m) {
+      const num = parseInt(m[1],10);
+      finalSrc = await tryLoadImageWithFallback(num);
+    } else if (src) {
+      finalSrc = src;
+    }
+
+    if (finalSrc) {
+      previewImg.src = finalSrc + `?v=${Date.now()}`;
+      previewImg.alt = (it.alt || it.cap || 'Reel');
+    } else {
+      previewImg.removeAttribute('src');
+      imgErr.style.display = 'block';
+      imgErr.textContent = `Bild konnte nicht geladen werden. Verwendeter src: ${src || '(leer)'}`;
+    }
+
+    // load fields
+    capInput.value = it.cap || '';
+    altInput.value = it.alt || '';
+    freeText.value = '';
+
+    selectedCat = it.cat || '';
+    selectedTag = it.tag || '';
+
+    updateCounters();
+  }
+
+  function applyAutoText() {
+    if (!chkAutoCapAlt.checked) return;
+    // build label like "Tag • cat" plus optional freitext
+    const parts = [];
+    if (selectedTag) parts.push(selectedTag);
+    if (selectedCat) parts.push(selectedCat);
+    let base = parts.join(' • ').trim();
+    const extra = (freeText.value || '').trim();
+    if (extra) base = base ? `${base} • ${extra}` : extra;
+
+    if (base) {
+      capInput.value = base;
+      if (chkSyncAlt.checked) altInput.value = base;
+    }
+  }
+
+  function setCat(cat) {
+    selectedCat = cat;
+    applyAutoText();
+    if (chkAutoNext.checked && selectedTag) {
+      saveAndMaybeNext(true);
+    }
+  }
+
+  function setTag(tag) {
+    selectedTag = tag;
+    applyAutoText();
+    if (chkAutoNext.checked && selectedCat) {
+      saveAndMaybeNext(true);
+    }
+  }
+
+  function saveCurrent() {
+    if (!data || !data.length) return {ok:false,msg:'Keine JSON geladen.'};
+
+    const it = data[curIndex] || {};
+    it.cat = selectedCat || it.cat || '';
+    it.tag = selectedTag || it.tag || '';
+    it.cap = (capInput.value || '').trim();
+    it.alt = (altInput.value || '').trim();
+    data[curIndex] = it;
+
+    // minimal validation for new items
+    if (newStart !== null && curIndex >= newStart && curIndex <= newEnd) {
+      if (!it.cat || !it.tag || !it.cap || !it.alt) {
+        return {ok:false,msg:'Bitte cat + tag + cap + alt setzen.'};
+      }
+    }
+    return {ok:true,msg:'Gespeichert.'};
+  }
+
+  function saveAndMaybeNext(auto=false) {
+    const r = saveCurrent();
+    setStatus(saveStatus, r.ok ? r.msg : r.msg, r.ok ? 'ok' : 'err');
+    updateCounters();
+    if (r.ok) {
+      if (auto) {
+        // tiny quiet feedback
+        setTimeout(() => setStatus(saveStatus, '', 'muted'), 600);
+      }
+      // next
+      if (curIndex < data.length - 1) {
+        curIndex++;
+        showCurrent();
+      }
+    }
+  }
+
+  function copyText(txt) {
+    navigator.clipboard.writeText(txt).then(() => {
+      setStatus(saveStatus, 'In Zwischenablage kopiert.', 'ok');
+      setTimeout(() => setStatus(saveStatus, '', 'muted'), 1200);
+    }).catch(() => {
+      setStatus(saveStatus, 'Kopieren blockiert. (Browser Rechte)', 'err');
+    });
+  }
+
+  function downloadJson(txt, filename) {
+    const blob = new Blob([txt], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+      a.remove();
+    }, 0);
+  }
+
+  // --- Events ---
+  btnLoadJson.addEventListener('click', loadJson);
+
+  btnDetectLast.addEventListener('click', () => {
+    if (!data || !data.length) {
+      setStatus(phStatus, 'Erst JSON laden.', 'err');
+      return;
+    }
+    const last = detectLastNumber();
+    setStatus(phStatus, `Letzte Nummer erkannt: ${last}`, 'muted');
+  });
+
+  btnCreatePlaceholders.addEventListener('click', createPlaceholders);
+
+  btnPrev.addEventListener('click', () => {
+    if (!data || !data.length) return;
+    if (curIndex > 0) { curIndex--; showCurrent(); }
+  });
+  btnNext.addEventListener('click', () => {
+    if (!data || !data.length) return;
+    if (curIndex < data.length - 1) { curIndex++; showCurrent(); }
+  });
+
+  document.querySelectorAll('[data-cat]').forEach(btn => {
+    btn.addEventListener('click', () => setCat(btn.getAttribute('data-cat')));
+  });
+  document.querySelectorAll('[data-tag]').forEach(btn => {
+    btn.addEventListener('click', () => setTag(btn.getAttribute('data-tag')));
+  });
+
+  freeText.addEventListener('input', () => applyAutoText());
+  chkSyncAlt.addEventListener('change', () => applyAutoText());
+
+  btnSaveNext.addEventListener('click', () => saveAndMaybeNext(false));
+
+  btnCopyAll.addEventListener('click', () => {
+    if (!data || !data.length) return;
+    copyText(JSON.stringify(data, null, 2));
+  });
+
+  btnCopyNew.addEventListener('click', () => {
+    if (newStart === null || newEnd === null) {
+      setStatus(saveStatus, 'Keine Neu-Range vorhanden. Erst Platzhalter anlegen.', 'err');
+      return;
+    }
+    const slice = data.slice(newStart, newEnd+1);
+    copyText(JSON.stringify(slice, null, 2));
+  });
+
+  btnDownload.addEventListener('click', () => {
+    if (!data || !data.length) return;
+    const url = jsonSelect.value;
+    const fname = (url.split('/').pop() || 'reel.json').replace('.json','') + '.json';
+    downloadJson(JSON.stringify(data, null, 2), fname);
+    setStatus(saveStatus, `Download gestartet: ${fname}`, 'ok');
+    setTimeout(() => setStatus(saveStatus, '', 'muted'), 1400);
+  });
+
+  // Auto-load? (optional) -> NEIN, bewusst nicht, damit du Kontrolle hast.
+})();
+</script>
+
 </body>
 </html>
