@@ -69,7 +69,7 @@
 <header>
   <div class="top">
     <a class="brand" href="/">
-      <img src="/assets/brand/mark.svg" alt="" />
+      <img src="/assets/img/mark.svg" alt="" />
       <div>
         <div style="font-weight:700">Luderbein</div>
         <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
@@ -225,6 +225,7 @@
       </div>
 
       <div id="saveStatus" class="status" style="margin-top:10px;"></div>
+      <div id="requiredStatus" class="status muted" style="margin-top:6px;"></div>
 
       <div class="tiny muted" style="margin-top:12px;">
         Workflow: 1) X eingeben 2) Platzhalter anlegen 3) labeln 4) JSON herunterladen 5) in GitHub Datei komplett ersetzen
@@ -284,6 +285,7 @@
   const btnCopyNew = document.getElementById('btnCopyNew');
   const btnDownload = document.getElementById('btnDownload');
   const saveStatus = document.getElementById('saveStatus');
+  const requiredStatus = document.getElementById('requiredStatus');
 
   // JSON in memory
   let data = [];            // full JSON array
@@ -292,6 +294,14 @@
   let curIndex = 0;         // current absolute index in data
   let selectedCat = '';
   let selectedTag = '';
+  let hasManualSaveAttempt = false;
+
+  const requiredFields = [
+    { key: 'cat', label: 'Kategorie' },
+    { key: 'tag', label: 'Tag' },
+    { key: 'cap', label: 'Caption' },
+    { key: 'alt', label: 'Alt-Text' }
+  ];
 
   // Image source base
   const IMG_DIR = '/assets/reel/';
@@ -313,6 +323,41 @@
       if (it.cat && it.tag && it.cap && it.alt) done++;
     }
     return {done, total};
+  }
+
+  function getCurrentDraft() {
+    const it = data[curIndex] || {};
+    return {
+      cat: selectedCat || it.cat || '',
+      tag: selectedTag || it.tag || '',
+      cap: (capInput.value || '').trim(),
+      alt: (altInput.value || '').trim()
+    };
+  }
+
+  function getMissingFields(draft = getCurrentDraft()) {
+    return requiredFields.filter((field) => !draft[field.key]);
+  }
+
+  function updateRequiredStatus(forceError = false) {
+    if (newStart === null || newEnd === null || curIndex < newStart || curIndex > newEnd) {
+      requiredStatus.textContent = 'Pflichtfelder für neue Einträge: Kategorie, Tag, Caption, Alt-Text.';
+      requiredStatus.className = 'status muted';
+      return;
+    }
+
+    const missing = getMissingFields();
+    if (!missing.length) {
+      requiredStatus.textContent = 'Pflichtfelder vollständig.';
+      requiredStatus.className = 'status ok';
+      return;
+    }
+
+    const fieldsText = missing.map((field) => field.label).join(', ');
+    requiredStatus.textContent = forceError
+      ? `Fehlt noch: ${fieldsText}.`
+      : `Checkliste: Noch offen – ${fieldsText}.`;
+    requiredStatus.className = `status ${forceError ? 'err' : 'muted'}`;
   }
 
   function updateCounters() {
@@ -345,6 +390,7 @@
       setStatus(loadStatus, `OK (${data.length} Einträge geladen)`, 'ok');
       setStatus(phStatus, '', 'muted');
       setStatus(saveStatus, '', 'muted');
+      hasManualSaveAttempt = false;
       updateCounters();
       // best effort show last
       showCurrent();
@@ -396,6 +442,7 @@
 
     setStatus(phStatus, `Platzhalter angelegt: ${n} (reel-${startNum} bis reel-${endNum}) – Gesamt: ${data.length} Einträge`, 'ok');
     setStatus(saveStatus, '', 'muted');
+    hasManualSaveAttempt = false;
 
     updateCounters();
     showCurrent();
@@ -457,6 +504,7 @@
 
     selectedCat = it.cat || '';
     selectedTag = it.tag || '';
+    updateRequiredStatus(hasManualSaveAttempt);
 
     updateCounters();
   }
@@ -493,7 +541,7 @@
     }
   }
 
-  function saveCurrent() {
+  function saveCurrent(forceError = false) {
     if (!data || !data.length) return {ok:false,msg:'Keine JSON geladen.'};
 
     const it = data[curIndex] || {};
@@ -505,15 +553,19 @@
 
     // minimal validation for new items
     if (newStart !== null && curIndex >= newStart && curIndex <= newEnd) {
-      if (!it.cat || !it.tag || !it.cap || !it.alt) {
-        return {ok:false,msg:'Bitte cat + tag + cap + alt setzen.'};
+      const missing = getMissingFields(it);
+      if (missing.length) {
+        updateRequiredStatus(forceError);
+        const fieldsText = missing.map((field) => field.label).join(', ');
+        return {ok:false,msg:`Fehlt noch: ${fieldsText}.`};
       }
     }
+    updateRequiredStatus(false);
     return {ok:true,msg:'Gespeichert.'};
   }
 
-  function saveAndMaybeNext(auto=false) {
-    const r = saveCurrent();
+  function saveAndMaybeNext(auto=false, forceError=false) {
+    const r = saveCurrent(forceError);
     setStatus(saveStatus, r.ok ? r.msg : r.msg, r.ok ? 'ok' : 'err');
     updateCounters();
     if (r.ok) {
@@ -524,6 +576,7 @@
       // next
       if (curIndex < data.length - 1) {
         curIndex++;
+        hasManualSaveAttempt = false;
         showCurrent();
       }
     }
@@ -575,16 +628,33 @@
   });
 
   document.querySelectorAll('[data-cat]').forEach(btn => {
-    btn.addEventListener('click', () => setCat(btn.getAttribute('data-cat')));
+    btn.addEventListener('click', () => {
+      setCat(btn.getAttribute('data-cat'));
+      updateRequiredStatus(false);
+    });
   });
   document.querySelectorAll('[data-tag]').forEach(btn => {
-    btn.addEventListener('click', () => setTag(btn.getAttribute('data-tag')));
+    btn.addEventListener('click', () => {
+      setTag(btn.getAttribute('data-tag'));
+      updateRequiredStatus(false);
+    });
   });
 
-  freeText.addEventListener('input', () => applyAutoText());
-  chkSyncAlt.addEventListener('change', () => applyAutoText());
+  freeText.addEventListener('input', () => {
+    applyAutoText();
+    updateRequiredStatus(false);
+  });
+  chkSyncAlt.addEventListener('change', () => {
+    applyAutoText();
+    updateRequiredStatus(false);
+  });
+  capInput.addEventListener('input', () => updateRequiredStatus(false));
+  altInput.addEventListener('input', () => updateRequiredStatus(false));
 
-  btnSaveNext.addEventListener('click', () => saveAndMaybeNext(false));
+  btnSaveNext.addEventListener('click', () => {
+    hasManualSaveAttempt = true;
+    saveAndMaybeNext(false, true);
+  });
 
   btnCopyAll.addEventListener('click', () => {
     if (!data || !data.length) return;
