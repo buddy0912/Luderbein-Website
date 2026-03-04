@@ -4,739 +4,694 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Reel Labeler (simpel) | Luderbein</title>
+  <meta name="robots" content="noindex,nofollow" />
 
-  <!-- Nutzt dein bestehendes Site-Theme, falls vorhanden -->
-  <link rel="stylesheet" href="/assets/style.css" />
+  <!-- Minimal-Style: bewusst simpel, klar, "bam bam bam" -->
   <style>
-    /* Fallback-Styles (falls style.css mal fehlt) */
-    :root { color-scheme: dark; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0b0b0c; color:#eaeaea; }
-    a { color: inherit; text-decoration: none; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 20px; }
-    .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 18px; padding: 18px; margin: 14px 0; backdrop-filter: blur(10px); }
-    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .row > * { flex: 0 0 auto; }
-    .grow { flex: 1 1 auto; min-width: 240px; }
-    select, input[type="text"], input[type="number"]{
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      color:#fff;
-      padding: 10px 12px;
-      border-radius: 12px;
-      outline:none;
+    :root{
+      --bg:#07070a; --panel:#0e0f14; --panel2:#0b0c11;
+      --text:#e8e8ea; --muted:#a7a7b2; --line:#1d1f2a;
+      --red:#ff2b2b; --red2:#b60f1a; --ok:#38d46a;
+      --btn:#141622; --btn2:#10121b; --shadow:0 14px 40px rgba(0,0,0,.45);
+      --r:16px;
     }
-    button{
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      color:#fff;
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(1000px 600px at 20% 10%, rgba(160,0,30,.18), transparent 60%) , var(--bg);color:var(--text)}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 16px;border:1px solid var(--line);border-radius:22px;background:rgba(10,10,14,.65);
+      backdrop-filter: blur(8px); box-shadow: var(--shadow);
     }
-    button.primary{
-      background: rgba(255,0,50,0.18);
-      border-color: rgba(255,0,50,0.35);
+    .brand{display:flex;gap:12px;align-items:center}
+    .mark{
+      width:38px;height:38px;border-radius:12px;background:linear-gradient(180deg,#0f1017,#090a0f);
+      border:1px solid var(--line); display:grid;place-items:center;
     }
-    button.pill{ border-radius: 999px; padding: 8px 12px; }
-    .muted { opacity: .75; }
-    .tiny { font-size: 12px; opacity: .75; }
-    .status { font-size: 13px; opacity: .9; }
-    .imgbox { width: 100%; aspect-ratio: 16/9; border-radius: 16px; overflow:hidden; border: 1px solid rgba(255,255,255,0.10); background: rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; }
-    .imgbox img { width: 100%; height: 100%; object-fit: contain; display:block; }
-    .err { color: #ff5a7a; }
-    .ok { color: #7CFF9B; }
-    .split { display:flex; gap: 18px; flex-wrap:wrap; align-items:flex-start; }
-    .split > .card { flex: 1 1 420px; }
-    .kv { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .kv label { font-size: 13px; opacity:.85; display:flex; gap:8px; align-items:center; }
-    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); padding: 2px 6px; border-radius: 8px; }
-    header { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.35); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 50; }
-    .top { max-width: 980px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap: 12px; }
-    .brand { display:flex; align-items:center; gap: 12px; }
-    .brand img { width: 38px; height: 38px; }
-    nav { display:flex; gap: 14px; align-items:center; }
-    nav a, nav button { background: transparent; border: 0; padding: 8px 10px; border-radius: 10px; }
-    nav a:hover, nav button:hover { background: rgba(255,255,255,0.06); }
-    .dropdown { position: relative; }
-    .menu { position:absolute; right:0; top: 42px; min-width: 260px; background: rgba(10,10,12,0.92); border: 1px solid rgba(255,255,255,0.10); border-radius: 14px; padding: 10px; display:none; }
-    .menu a { display:block; padding: 10px 10px; border-radius: 10px; }
-    .menu a:hover { background: rgba(255,255,255,0.06); }
-    .menu .sep { height:1px; background: rgba(255,255,255,0.08); margin: 8px 0; }
+    .brandTxt{display:flex;flex-direction:column;line-height:1.05}
+    .brandTxt b{font-size:16px}
+    .brandTxt span{font-size:12px;color:var(--muted)}
+    nav{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:14px}
+    nav a{padding:8px 10px;border-radius:12px}
+    nav a:hover{background:rgba(255,255,255,.04);color:var(--text)}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-top:14px}
+    .card{
+      border:1px solid var(--line);border-radius:var(--r);background:rgba(12,13,18,.78);
+      box-shadow: var(--shadow);
+    }
+    .card h2{margin:0;padding:14px 14px 6px;font-size:18px}
+    .card .sub{padding:0 14px 14px;color:var(--muted);font-size:13px}
+    .card .body{padding:14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}
+    input[type="text"], input[type="number"], select{
+      width:100%; background:var(--panel2); color:var(--text);
+      border:1px solid var(--line); border-radius:12px; padding:10px 12px; outline:none;
+    }
+    input[type="text"]:focus,input[type="number"]:focus,select:focus{border-color:rgba(255,43,43,.55)}
+    .btn{
+      border:1px solid var(--line); background:var(--btn); color:var(--text);
+      padding:10px 12px;border-radius:12px;cursor:pointer;user-select:none;
+    }
+    .btn:hover{background:rgba(255,255,255,.05)}
+    .btn.primary{border-color:rgba(255,43,43,.55); background:linear-gradient(180deg,rgba(255,43,43,.18),rgba(182,15,26,.08))}
+    .btn.danger{border-color:rgba(255,43,43,.55)}
+    .pill{
+      padding:8px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.03);
+      cursor:pointer;font-size:13px
+    }
+    .pill.on{border-color:rgba(255,43,43,.55); background:rgba(255,43,43,.12)}
+    .status{margin-top:10px;font-size:13px;color:var(--muted)}
+    .status .ok{color:var(--ok)}
+    .status .bad{color:var(--red)}
+    .err{margin-top:10px;color:var(--red);font-weight:650}
+    .help{
+      margin-top:10px;padding:12px;border:1px dashed rgba(255,255,255,.12);border-radius:14px;color:var(--muted);font-size:13px
+    }
+    .help b{color:var(--text)}
+    .imgBox{
+      border:1px solid var(--line);border-radius:14px;background:#06070b;overflow:hidden;
+      display:grid;place-items:center;min-height:360px;
+    }
+    .imgBox img{max-width:100%;max-height:520px;display:block}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .counter{color:var(--muted);font-size:13px}
+    .small{font-size:12px;color:var(--muted)}
+    .checks{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+    .checks label{display:flex;gap:8px;align-items:center;margin:0;font-size:13px;color:var(--muted)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px}
+    .jsonbox{white-space:pre;overflow:auto;max-height:240px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#07080d}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .imgBox{min-height:260px} }
   </style>
 </head>
+
 <body>
-
-<header>
-  <div class="top">
-    <a class="brand" href="/">
-      <img src="/assets/mark.svg" alt="" />
-      <div>
-        <div style="font-weight:700">Luderbein</div>
-        <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
-      </div>
-    </a>
-
-    <nav>
-      <a href="/">Start</a>
-      <div class="dropdown">
-        <button id="btnLeistungen" type="button">Leistungen ▾</button>
-        <div class="menu" id="menuLeistungen" aria-label="Leistungen Menü">
-          <a href="/leistungen/schiefer/">Schiefer</a>
-          <a href="/leistungen/metall/">Metall</a>
-          <a href="/leistungen/holz/">Holz</a>
-          <a href="/leistungen/acryl/">Acryl</a>
-          <a href="/leistungen/glas/">Glas</a>
-          <a href="/leistungen/custom/">Custom</a>
-          <a href="/leistungen/schwibboegen/">Schwibbögen</a>
-          <div class="sep"></div>
-          <a href="/tools/kalkulator/">Kalkulator</a>
-          <a href="/service/">Downloads</a>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="/">
+        <div class="mark" aria-label="Luderbein Mark">
+          <!-- Inline SVG = kein mark.svg-File mehr nötig -->
+          <svg width="22" height="22" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <circle cx="32" cy="32" r="28" stroke="rgba(255,255,255,.85)" stroke-width="3"/>
+            <path d="M22 18h10c7 0 12 4 12 11 0 8-6 12-15 12h-7V18Z" fill="rgba(255,255,255,.85)"/>
+            <path d="M22 46h20" stroke="rgba(255,43,43,.9)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
         </div>
-      </div>
-      <a href="/ueber/">Über</a>
-      <a href="/kontakt/">Kontakt</a>
-      <a href="/rechtliches/impressum.html">Impressum</a>
-    </nav>
-  </div>
-</header>
-
-<div class="wrap">
-
-  <div class="card">
-    <div class="tiny">Tool</div>
-    <h1 style="margin:6px 0 8px 0;">Reel Labeler (simpel)</h1>
-    <div class="muted">JSON wählen, leere Einträge anlegen, Bild labeln, weiter.</div>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <div class="grow">
-        <div class="tiny" style="margin-bottom:6px;">Ziel-JSON</div>
-        <select id="jsonSelect" class="grow" aria-label="Ziel-JSON">
-          <option value="/assets/reel-werkstatt.json" selected>/assets/reel-werkstatt.json</option>
-          <option value="/assets/reel-holz.json">/assets/reel-holz.json</option>
-          <option value="/assets/reel-metall.json">/assets/reel-metall.json</option>
-          <option value="/assets/reel-glas.json">/assets/reel-glas.json</option>
-          <option value="/assets/reel-acryl.json">/assets/reel-acryl.json</option>
-        </select>
-      </div>
-
-      <button id="btnLoadJson" class="primary" type="button">JSON laden</button>
-      <span id="loadStatus" class="status muted"></span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2 style="margin:0 0 10px 0;">Neue Uploads anlegen</h2>
-
-    <div class="row">
-      <div class="grow">
-        <div class="tiny" style="margin-bottom:6px;">Wie viele neue Dateien hast du hochgeladen?</div>
-        <input id="countInput" type="number" min="1" step="1" placeholder="" class="grow" />
-      </div>
-
-      <div>
-        <div class="tiny" style="margin-bottom:6px;">Dateiendung</div>
-        <select id="extSelect" aria-label="Dateiendung">
-          <option value=".webp">.webp</option>
-          <option value=".jpg" selected>.jpg</option>
-          <option value=".jpeg">.jpeg</option>
-          <option value=".png">.png</option>
-        </select>
-      </div>
-
-      <button id="btnCreatePlaceholders" class="primary" type="button">Platzhalter anlegen</button>
-      <button id="btnDetectLast" type="button">Letzte Nummer aus src erkennen</button>
-    </div>
-
-    <div id="phStatus" class="status" style="margin-top:10px;"></div>
-  </div>
-
-  <div class="split">
-
-    <div class="card">
-      <div class="row" style="justify-content:space-between;">
-        <div>
-          <div id="rangeStatus" class="status muted">Neu: –</div>
-          <div id="doneStatus" class="status muted">Neu-Einträge: 0 / 0 fertig</div>
+        <div class="brandTxt">
+          <b>Luderbein</b>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
         </div>
-        <div class="row">
-          <button id="btnPrev" type="button">← Zurück</button>
-          <div class="kbd"><span id="posNow">0</span> / <span id="posMax">0</span></div>
-          <button id="btnNext" type="button">Weiter →</button>
+      </a>
+
+      <nav aria-label="Top">
+        <a href="/">Start</a>
+        <a href="/leistungen/">Leistungen</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </header>
+
+    <div class="grid">
+      <!-- LINKS: Bild / Navigation -->
+      <section class="card">
+        <h2>Reel Labeler (simpel)</h2>
+        <div class="sub">JSON wählen → Platzhalter anlegen → Bild labeln → weiter. Ohne Ratespiel.</div>
+
+        <div class="body">
+          <div class="topline">
+            <div class="counter" id="counterText">—</div>
+            <div class="row">
+              <button class="btn" id="btnPrev">← Zurück</button>
+              <button class="btn primary" id="btnNext">Weiter →</button>
+            </div>
+          </div>
+
+          <div class="imgBox">
+            <img id="previewImg" alt="Reel Preview" />
+          </div>
+
+          <div class="status">
+            <div><span class="small">Basis:</span> <span class="mono" id="basePath">—</span></div>
+            <div id="statusLine" class="small">—</div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="imgbox" style="margin-top:12px;">
-        <img id="previewImg" alt="" />
-      </div>
-      <div id="imgErr" class="tiny err" style="margin-top:8px; display:none;"></div>
-      <div class="tiny" style="margin-top:8px;">
-        Basis: <span class="kbd" id="imgSrcKbd">/assets/reel/reel-?.jpg</span>
-      </div>
+      <!-- RECHTS: Controls -->
+      <aside class="card">
+        <h2>Setup</h2>
+        <div class="body">
+          <div class="row">
+            <div style="flex:1;min-width:240px">
+              <label>Ziel-JSON</label>
+              <select id="jsonSelect">
+                <option value="/assets/reel-werkstatt.json">/assets/reel-werkstatt.json</option>
+                <option value="/assets/reel-holz.json">/assets/reel-holz.json</option>
+                <option value="/assets/reel-metall.json">/assets/reel-metall.json</option>
+                <option value="/assets/reel-glas.json">/assets/reel-glas.json</option>
+                <option value="/assets/reel-acryl.json">/assets/reel-acryl.json</option>
+              </select>
+            </div>
+            <div style="flex:0">
+              <label>&nbsp;</label>
+              <button class="btn primary" id="btnLoad">JSON laden</button>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div style="flex:1;min-width:220px">
+              <label>Wie viele neue Dateien hast du hochgeladen?</label>
+              <input id="countInput" type="number" min="1" placeholder="z.B. 21" />
+            </div>
+            <div style="flex:1;min-width:170px">
+              <label>Dateiendung</label>
+              <select id="extSelect">
+                <option value=".webp">.webp</option>
+                <option value=".jpg">.jpg</option>
+                <option value=".jpeg" selected>.jpeg</option>
+                <option value=".png">.png</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="btnDetect">Letzte Nummer erkennen</button>
+            <button class="btn primary" id="btnPlaceholders">Platzhalter anlegen</button>
+          </div>
+
+          <div class="status">
+            <div id="loadInfo">Noch keine JSON geladen.</div>
+            <div id="newInfo">Noch keine Platzhalter angelegt.</div>
+            <div id="doneInfo">Neu-Einträge: <span id="doneCount">0</span> / <span id="newCount">0</span> fertig</div>
+          </div>
+
+          <div class="help">
+            <b>Was bedeuten die Felder?</b><br/>
+            • <b>Kategorie (cat)</b>: interne Sortierung (Holz/Glas/…); wird fürs Filtern genutzt.<br/>
+            • <b>Tag</b>: grobes Label (Material/Person/Projekt/QA ODER frei). Ebenfalls fürs Filtern.<br/>
+            • <b>Freitext</b>: dein Textbaukasten (z.B. „Fichte 18mm“, „Schlüsselanhänger“). Optional.<br/>
+            • <b>Caption (cap)</b>: Text, den der Kunde in der Kachel/Preview sieht (kurz & hübsch).<br/>
+            • <b>Alt-Text (alt)</b>: Beschreibung fürs Bild (SEO/Barrierefreiheit). Darf ausführlicher sein.<br/>
+            Tipp: <b>Cap ohne Kategorie</b> ist okay. Kategorie bleibt intern im Feld <b>cat</b>.
+          </div>
+        </div>
+
+        <h2>Label</h2>
+        <div class="body">
+          <label>Kategorie (cat)</label>
+          <div class="row" id="catRow"></div>
+
+          <div style="height:10px"></div>
+
+          <label>Tag (Quick)</label>
+          <div class="row" id="tagQuickRow"></div>
+
+          <div style="height:10px"></div>
+
+          <label>Tag (frei) – optional, wenn Quick nicht passt</label>
+          <input id="tagFree" type="text" placeholder="z.B. Schlüsselanhänger / Fichte 18mm / Holz" />
+
+          <div style="height:10px"></div>
+
+          <label>Freitext (optional)</label>
+          <input id="freeText" type="text" placeholder="z.B. Fichte 18mm" />
+
+          <div class="checks">
+            <label><input id="autoFromSelection" type="checkbox" checked /> Auto aus Auswahl für cap/alt</label>
+            <label><input id="syncAltCap" type="checkbox" checked /> Alt = Cap synchron halten</label>
+            <label><input id="autoAdvance" type="checkbox" checked /> Auto-Weiter nach cat/tag</label>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <label>Caption (cap) – Kunde sieht das</label>
+          <input id="capText" type="text" placeholder="z.B. Fichte 18mm" />
+
+          <div style="height:10px"></div>
+
+          <label>Alt-Text (alt)</label>
+          <input id="altText" type="text" placeholder="z.B. holz • Fichte 18mm • Love Schriftzug" />
+
+          <div class="actions">
+            <button class="btn primary" id="btnSave">Weiter (speichern)</button>
+            <button class="btn" id="btnCopyAll">Komplette JSON kopieren</button>
+            <button class="btn" id="btnCopyNew">Nur neue Einträge kopieren</button>
+            <button class="btn" id="btnDownload">JSON herunterladen</button>
+          </div>
+
+          <div id="errLine" class="err" style="display:none"></div>
+
+          <div class="help">
+            <b>Regel:</b> Für „Weiter (speichern)“ brauchst du <b>cat</b> + <b>Tag</b> (Quick ODER frei) + <b>cap</b> + <b>alt</b>.<br/>
+            Wenn „Alt = Cap“ an ist, reicht dir <b>cap</b> – alt wird automatisch gebaut (<span class="mono">cat • cap</span>).
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="small">Debug (aktueller Eintrag)</div>
+            <div id="debugBox" class="jsonbox mono">—</div>
+          </div>
+        </div>
+      </aside>
     </div>
-
-    <div class="card">
-      <h3 style="margin:0 0 10px 0;">Label</h3>
-
-      <div class="tiny" style="margin-bottom:6px;">Kategorie (cat)</div>
-      <div class="row" style="margin-bottom:10px;">
-        <button class="pill" data-cat="holz" type="button">holz</button>
-        <button class="pill" data-cat="glas" type="button">glas</button>
-        <button class="pill" data-cat="schiefer" type="button">schiefer</button>
-        <button class="pill" data-cat="metall" type="button">metall</button>
-        <button class="pill" data-cat="acryl" type="button">acryl</button>
-        <button class="pill" data-cat="schwibboegen" type="button">schwibboegen</button>
-        <button class="pill" data-cat="custom" type="button">custom</button>
-      </div>
-
-      <div class="tiny" style="margin-bottom:6px;">Tag</div>
-      <div class="row" style="margin-bottom:10px;">
-        <button class="pill" data-tag="Material" type="button">Material</button>
-        <button class="pill" data-tag="Person" type="button">Person</button>
-        <button class="pill" data-tag="Projekt" type="button">Projekt</button>
-        <button class="pill" data-tag="QA" type="button">QA</button>
-      </div>
-
-      <div class="tiny" style="margin-bottom:6px;">Tag (frei)</div>
-      <input id="freeTag" type="text" class="grow" placeholder="Schlüsselanhänger" />
-
-      <div class="tiny" style="margin:10px 0 6px 0;">Freitext für Caption (optional)</div>
-      <input id="freeText" type="text" class="grow" placeholder="" />
-
-      <div class="kv" style="margin-top:12px;">
-        <label><input id="chkAutoCapAlt" type="checkbox" checked /> Auto aus Auswahl für cap/alt</label>
-        <label><input id="chkSyncAlt" type="checkbox" checked /> Alt = Cap synchron halten</label>
-        <label><input id="chkAltPrefix" type="checkbox" checked /> Alt mit Kategorie prefixen (cat • cap)</label>
-        <label><input id="chkAutoNext" type="checkbox" checked /> Auto-Weiter nach cat/tag</label>
-      </div>
-
-      <div style="margin-top:14px;">
-        <div class="tiny" style="margin-bottom:6px;">Caption (cap)</div>
-        <input id="capInput" type="text" class="grow" />
-      </div>
-
-      <div style="margin-top:12px;">
-        <div class="tiny" style="margin-bottom:6px;">Alt-Text (alt)</div>
-        <input id="altInput" type="text" class="grow" />
-      </div>
-
-      <div class="row" style="margin-top:14px;">
-        <button id="btnSaveNext" class="primary" type="button">Weiter (speichern)</button>
-        <button id="btnCopyAll" type="button">Komplette JSON kopieren</button>
-        <button id="btnCopyNew" type="button">Nur neue Einträge kopieren</button>
-        <button id="btnDownload" type="button">JSON herunterladen</button>
-      </div>
-
-      <div id="saveStatus" class="status" style="margin-top:10px;"></div>
-      <div id="requiredStatus" class="status muted" style="margin-top:6px;"></div>
-
-      <div class="tiny muted" style="margin-top:12px;">
-        Workflow: 1) X eingeben 2) Platzhalter anlegen 3) labeln 4) JSON herunterladen 5) in GitHub Datei komplett ersetzen
-      </div>
-    </div>
-
   </div>
-</div>
 
-<script>
-(() => {
-  // --- Nav dropdown ---
-  const btnLeistungen = document.getElementById('btnLeistungen');
-  const menuLeistungen = document.getElementById('menuLeistungen');
-  btnLeistungen?.addEventListener('click', () => {
-    menuLeistungen.style.display = (menuLeistungen.style.display === 'block') ? 'none' : 'block';
-  });
-  document.addEventListener('click', (e) => {
-    if (!menuLeistungen.contains(e.target) && e.target !== btnLeistungen) {
-      menuLeistungen.style.display = 'none';
-    }
-  });
-
-  // --- State ---
-  const jsonSelect = document.getElementById('jsonSelect');
-  const btnLoadJson = document.getElementById('btnLoadJson');
-  const loadStatus = document.getElementById('loadStatus');
-
-  const countInput = document.getElementById('countInput');
-  const extSelect = document.getElementById('extSelect');
-  const btnCreatePlaceholders = document.getElementById('btnCreatePlaceholders');
-  const btnDetectLast = document.getElementById('btnDetectLast');
-  const phStatus = document.getElementById('phStatus');
-
-  const rangeStatus = document.getElementById('rangeStatus');
-  const doneStatus = document.getElementById('doneStatus');
-  const posNow = document.getElementById('posNow');
-  const posMax = document.getElementById('posMax');
-
-  const previewImg = document.getElementById('previewImg');
-  const imgErr = document.getElementById('imgErr');
-  const imgSrcKbd = document.getElementById('imgSrcKbd');
-
-  const btnPrev = document.getElementById('btnPrev');
-  const btnNext = document.getElementById('btnNext');
-
-  const freeTag = document.getElementById('freeTag');
-  const freeText = document.getElementById('freeText');
-  const chkAutoCapAlt = document.getElementById('chkAutoCapAlt');
-  const chkSyncAlt = document.getElementById('chkSyncAlt');
-  const chkAltPrefix = document.getElementById('chkAltPrefix');
-  const chkAutoNext = document.getElementById('chkAutoNext');
-
-  const capInput = document.getElementById('capInput');
-  const altInput = document.getElementById('altInput');
-
-  const btnSaveNext = document.getElementById('btnSaveNext');
-  const btnCopyAll = document.getElementById('btnCopyAll');
-  const btnCopyNew = document.getElementById('btnCopyNew');
-  const btnDownload = document.getElementById('btnDownload');
-  const saveStatus = document.getElementById('saveStatus');
-  const requiredStatus = document.getElementById('requiredStatus');
-
-  // JSON in memory
-  let data = [];            // full JSON array
-  let newStart = null;      // first new index (0-based)
-  let newEnd = null;        // last new index (0-based)
-  let curIndex = 0;         // current absolute index in data
-  let selectedCat = '';
-  let selectedTag = '';
-  let hasManualSaveAttempt = false;
-
-  const requiredFields = [
-    { key: 'cat', label: 'Kategorie' },
-    { key: 'tag', label: 'Tag' },
-    { key: 'cap', label: 'Caption' },
-    { key: 'alt', label: 'Alt-Text' }
-  ];
-
-  // Image source base
-  const IMG_DIR = '/assets/reel/';
-  const PRESET_TAGS = new Set(['Material', 'Person', 'Projekt', 'QA']);
-  const TRY_EXTS = ['.jpg', '.jpeg', '.png', '.webp']; // robust: try all
-  function pad(n){ return String(n); }
-
-  function setStatus(el, text, cls) {
-    el.textContent = text || '';
-    el.className = 'status ' + (cls || '');
-  }
-
-  function countDoneInNewRange() {
-    if (newStart === null || newEnd === null) return {done:0,total:0};
-    let done = 0;
-    const total = (newEnd - newStart + 1);
-    for (let i = newStart; i <= newEnd; i++) {
-      const it = data[i] || {};
-      // "fertig" wenn cat + tag + cap + alt vorhanden
-      if (it.cat && it.tag && it.cap && it.alt) done++;
-    }
-    return {done, total};
-  }
-
-  function getEffectiveTag() {
-    const free = (freeTag.value || '').trim();
-    return free || selectedTag || '';
-  }
-
-  function getCurrentDraft() {
-    const it = data[curIndex] || {};
-    return {
-      cat: selectedCat || it.cat || '',
-      tag: getEffectiveTag() || it.tag || '',
-      cap: (capInput.value || '').trim(),
-      alt: (altInput.value || '').trim()
+  <script>
+    // --- State ---
+    const state = {
+      all: [],
+      baseLoaded: 0,
+      newStart: null,
+      newEnd: null,
+      i: 0,
+      jsonPath: "/assets/reel-werkstatt.json",
+      ext: ".jpeg",
+      dirtyNew: new Set(),
+      cat: "",
+      tagQuick: "",
+      tagFree: ""
     };
-  }
 
-  function getMissingFields(draft = getCurrentDraft()) {
-    return requiredFields.filter((field) => !draft[field.key]);
-  }
+    // --- DOM ---
+    const el = (id)=>document.getElementById(id);
+    const previewImg = el("previewImg");
+    const basePath = el("basePath");
+    const counterText = el("counterText");
+    const statusLine = el("statusLine");
+    const loadInfo = el("loadInfo");
+    const newInfo = el("newInfo");
+    const doneCount = el("doneCount");
+    const newCount = el("newCount");
+    const errLine = el("errLine");
+    const debugBox = el("debugBox");
 
-  function updateRequiredStatus(forceError = false) {
-    if (newStart === null || newEnd === null || curIndex < newStart || curIndex > newEnd) {
-      requiredStatus.textContent = 'Pflichtfelder für neue Einträge: Kategorie, Tag, Caption, Alt-Text.';
-      requiredStatus.className = 'status muted';
-      return;
-    }
+    // Controls
+    const jsonSelect = el("jsonSelect");
+    const extSelect  = el("extSelect");
+    const countInput = el("countInput");
+    const freeText   = el("freeText");
+    const tagFree    = el("tagFree");
+    const capText    = el("capText");
+    const altText    = el("altText");
+    const autoFromSelection = el("autoFromSelection");
+    const syncAltCap = el("syncAltCap");
+    const autoAdvance = el("autoAdvance");
 
-    const missing = getMissingFields();
-    if (!missing.length) {
-      requiredStatus.textContent = 'Pflichtfelder vollständig.';
-      requiredStatus.className = 'status ok';
-      return;
-    }
+    // Buttons
+    const btnLoad = el("btnLoad");
+    const btnDetect = el("btnDetect");
+    const btnPlaceholders = el("btnPlaceholders");
+    const btnPrev = el("btnPrev");
+    const btnNext = el("btnNext");
+    const btnSave = el("btnSave");
+    const btnCopyAll = el("btnCopyAll");
+    const btnCopyNew = el("btnCopyNew");
+    const btnDownload = el("btnDownload");
 
-    const fieldsText = missing.map((field) => field.label).join(', ');
-    requiredStatus.textContent = forceError
-      ? `Fehlt noch: ${fieldsText}.`
-      : `Checkliste: Noch offen – ${fieldsText}.`;
-    requiredStatus.className = `status ${forceError ? 'err' : 'muted'}`;
-  }
+    // --- UI builders ---
+    const catOptions = ["holz","glas","schiefer","metall","acryl","schwibboegen","custom"];
+    const tagQuickOptions = ["Material","Person","Projekt","QA"];
 
-  function updateCounters() {
-    if (newStart === null || newEnd === null) {
-      rangeStatus.textContent = 'Neu: –';
-      doneStatus.textContent = 'Neu-Einträge: 0 / 0 fertig';
-      posNow.textContent = '0';
-      posMax.textContent = '0';
-      return;
-    }
-    rangeStatus.textContent = `Neu: ${newStart+1}–${newEnd+1}`;
-    const {done,total} = countDoneInNewRange();
-    doneStatus.textContent = `Neu-Einträge: ${done} / ${total} fertig`;
-    posNow.textContent = String(curIndex+1);
-    posMax.textContent = String(data.length);
-  }
-
-  async function loadJson() {
-    const url = jsonSelect.value;
-    setStatus(loadStatus, 'Lade JSON…', 'muted');
-    try {
-      const res = await fetch(url, {cache:'no-store'});
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      if (!Array.isArray(json)) throw new Error('JSON ist kein Array');
-      data = json;
-      // Reset new range markers
-      newStart = null; newEnd = null;
-      curIndex = Math.max(0, data.length - 1);
-      setStatus(loadStatus, `OK (${data.length} Einträge geladen)`, 'ok');
-      setStatus(phStatus, '', 'muted');
-      setStatus(saveStatus, '', 'muted');
-      hasManualSaveAttempt = false;
-      updateCounters();
-      // best effort show last
-      showCurrent();
-    } catch (e) {
-      setStatus(loadStatus, `Fehler beim Laden (${e.message})`, 'err');
-    }
-  }
-
-  function detectLastNumber() {
-    // find max reel-XX in src
-    let max = 0;
-    const re = /reel-(\d+)\.(jpg|jpeg|png|webp)$/i;
-    for (const it of data) {
-      const m = (it?.src || '').match(re);
-      if (m) max = Math.max(max, parseInt(m[1],10));
-    }
-    return max;
-  }
-
-  function createPlaceholders() {
-    const n = parseInt(countInput.value,10);
-    if (!Number.isFinite(n) || n <= 0) {
-      setStatus(phStatus, 'Bitte eine Zahl > 0 eingeben.', 'err');
-      return;
-    }
-    if (!Array.isArray(data) || data.length === 0) {
-      setStatus(phStatus, 'Erst JSON laden.', 'err');
-      return;
-    }
-
-    const last = detectLastNumber();
-    const ext = extSelect.value; // includes .jpg/.jpeg/...
-    const startNum = last + 1;
-    const endNum = last + n;
-
-    // append placeholders
-    newStart = data.length; // index before push
-    for (let num = startNum; num <= endNum; num++) {
-      data.push({
-        src: `${IMG_DIR}reel-${pad(num)}${ext}`,
-        alt: '',
-        cap: '',
-        tag: '',
-        cat: ''
+    function makePills(containerId, options, onPick){
+      const host = el(containerId);
+      host.innerHTML = "";
+      options.forEach(v=>{
+        const b = document.createElement("button");
+        b.className = "pill";
+        b.textContent = v;
+        b.addEventListener("click", ()=> onPick(v, b));
+        host.appendChild(b);
       });
     }
-    newEnd = data.length - 1;
-    curIndex = newStart;
 
-    setStatus(phStatus, `Platzhalter angelegt: ${n} (reel-${startNum} bis reel-${endNum}) – Gesamt: ${data.length} Einträge`, 'ok');
-    setStatus(saveStatus, '', 'muted');
-    hasManualSaveAttempt = false;
-
-    updateCounters();
-    showCurrent();
-  }
-
-  async function tryLoadImageWithFallback(num) {
-    // num is 1-based reel number
-    const chosen = extSelect.value;
-    const base = `${IMG_DIR}reel-${pad(num)}`;
-    imgErr.style.display = 'none';
-    imgErr.textContent = '';
-
-    // try chosen first, then the rest
-    const order = [chosen, ...TRY_EXTS.filter(x => x !== chosen)];
-    for (const ext of order) {
-      const url = `${base}${ext}`;
-      const ok = await new Promise((resolve) => {
-        const test = new Image();
-        test.onload = () => resolve(true);
-        test.onerror = () => resolve(false);
-        test.src = url + `?v=${Date.now()}`; // cache-bust
-      });
-      if (ok) return `${base}${ext}`;
-    }
-    return null;
-  }
-
-  async function showCurrent() {
-    if (!data || !data.length) return;
-
-    const it = data[curIndex] || {};
-    const src = normalizeSrc(it.src || '');
-    if (src && src !== it.src) it.src = src;
-    imgSrcKbd.textContent = src || `${IMG_DIR}reel-?.jpg`;
-
-    // Extract reel number from src, so we can fallback across extensions reliably
-    const m = src.match(/reel-(\d+)\.(jpg|jpeg|png|webp)$/i);
-    let finalSrc = null;
-
-    if (m) {
-      const num = parseInt(m[1],10);
-      finalSrc = await tryLoadImageWithFallback(num);
-    } else if (src) {
-      finalSrc = src;
-    }
-
-    if (finalSrc) {
-      previewImg.src = finalSrc + `?v=${Date.now()}`;
-      previewImg.alt = (it.alt || it.cap || 'Reel');
-    } else {
-      previewImg.removeAttribute('src');
-      imgErr.style.display = 'block';
-      imgErr.textContent = `Bild konnte nicht geladen werden. Verwendeter src: ${src || '(leer)'}`;
-    }
-
-    // load fields
-    capInput.value = it.cap || '';
-    altInput.value = it.alt || '';
-    freeText.value = '';
-    freeTag.value = '';
-
-    selectedCat = it.cat || '';
-    if (PRESET_TAGS.has(it.tag || '')) {
-      selectedTag = it.tag;
-    } else {
-      selectedTag = '';
-      freeTag.value = it.tag || '';
-    }
-    updateRequiredStatus(hasManualSaveAttempt);
-
-    updateCounters();
-  }
-
-  function normalizeSrc(src) {
-    if (!src) return '';
-    const m = src.match(/(?:^|\/)reel-(\d+)\.(jpg|jpeg|png|webp)$/i);
-    if (!m) return src;
-    return `${IMG_DIR}reel-${m[1]}.${m[2].toLowerCase()}`;
-  }
-
-  function applyAutoText() {
-    if (!chkAutoCapAlt.checked) return;
-
-    const capText = (freeText.value || '').trim();
-    capInput.value = capText;
-
-    if (!capText) {
-      if (chkSyncAlt.checked) altInput.value = '';
-      return;
-    }
-
-    const altText = (chkAltPrefix.checked && selectedCat)
-      ? `${selectedCat} • ${capText}`
-      : capText;
-
-    if (chkSyncAlt.checked || !altInput.value.trim()) {
-      altInput.value = altText;
-    }
-  }
-
-  function maybeAutoNext() {
-    if (!chkAutoNext.checked) return;
-    const draft = getCurrentDraft();
-    const missing = getMissingFields(draft);
-    if (missing.length) {
-      setStatus(saveStatus, `Auto-Weiter pausiert: Fehlt ${missing.map((field) => field.label).join(', ')}.`, 'muted');
-      return;
-    }
-    saveAndMaybeNext(true);
-  }
-
-  function setCat(cat) {
-    selectedCat = cat;
-    applyAutoText();
-    maybeAutoNext();
-  }
-
-  function setTag(tag) {
-    selectedTag = tag;
-    freeTag.value = '';
-    applyAutoText();
-    maybeAutoNext();
-  }
-
-  function saveCurrent(forceError = false) {
-    if (!data || !data.length) return {ok:false,msg:'Keine JSON geladen.'};
-
-    const it = data[curIndex] || {};
-    it.cat = selectedCat || it.cat || '';
-    it.tag = getEffectiveTag() || it.tag || '';
-    it.cap = (capInput.value || '').trim();
-    it.alt = (altInput.value || '').trim();
-    it.src = normalizeSrc(it.src || '');
-    data[curIndex] = it;
-
-    // minimal validation for new items
-    if (newStart !== null && curIndex >= newStart && curIndex <= newEnd) {
-      const missing = getMissingFields(it);
-      if (missing.length) {
-        updateRequiredStatus(forceError);
-        const fieldsText = missing.map((field) => field.label).join(', ');
-        return {ok:false,msg:`Fehlt noch: ${fieldsText}.`};
+    makePills("catRow", catOptions, (v)=>{
+      state.cat = v;
+      setActivePill("catRow", v);
+      if (autoFromSelection.checked) {
+        // NICHT Kategorie in cap erzwingen – nur wenn cap leer ist, füllen wir minimal
+        if (!capText.value.trim() && freeText.value.trim()) capText.value = freeText.value.trim();
+        if (!capText.value.trim() && !freeText.value.trim()) capText.value = ""; // bewusst leer lassen
+        if (syncAltCap.checked) altText.value = state.cat + " • " + (capText.value.trim() || freeText.value.trim() || "");
       }
-    }
-    updateRequiredStatus(false);
-    return {ok:true,msg:'Gespeichert.'};
-  }
-
-  function saveAndMaybeNext(auto=false, forceError=false) {
-    const r = saveCurrent(forceError);
-    setStatus(saveStatus, r.ok ? r.msg : r.msg, r.ok ? 'ok' : 'err');
-    updateCounters();
-    if (r.ok) {
-      if (auto) {
-        // tiny quiet feedback
-        setTimeout(() => setStatus(saveStatus, '', 'muted'), 600);
-      }
-      // next
-      if (curIndex < data.length - 1) {
-        curIndex++;
-        hasManualSaveAttempt = false;
-        showCurrent();
-      }
-    }
-  }
-
-  function copyText(txt) {
-    navigator.clipboard.writeText(txt).then(() => {
-      setStatus(saveStatus, 'In Zwischenablage kopiert.', 'ok');
-      setTimeout(() => setStatus(saveStatus, '', 'muted'), 1200);
-    }).catch(() => {
-      setStatus(saveStatus, 'Kopieren blockiert. (Browser Rechte)', 'err');
+      maybeAutoAdvance();
+      refreshDebug();
     });
-  }
 
-  function downloadJson(txt, filename) {
-    const blob = new Blob([txt], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
+    makePills("tagQuickRow", tagQuickOptions, (v)=>{
+      state.tagQuick = v;
+      setActivePill("tagQuickRow", v);
+      // wenn Quick gewählt wurde, freies Tag nicht überschreiben, aber Quick zählt
+      if (autoFromSelection.checked) {
+        // Wenn cap leer ist, nimm Freitext – sonst in Ruhe lassen
+        if (!capText.value.trim() && freeText.value.trim()) capText.value = freeText.value.trim();
+        if (syncAltCap.checked) altText.value = state.cat + " • " + (capText.value.trim() || freeText.value.trim() || "");
+      }
+      maybeAutoAdvance();
+      refreshDebug();
+    });
+
+    function setActivePill(containerId, value){
+      const host = el(containerId);
+      [...host.querySelectorAll(".pill")].forEach(p=>{
+        const on = (p.textContent === value);
+        p.classList.toggle("on", on);
+      });
+    }
+
+    function infoOk(msg){ statusLine.innerHTML = '<span class="ok">✅ '+escapeHtml(msg)+'</span>'; }
+    function infoBad(msg){ statusLine.innerHTML = '<span class="bad">⛔ '+escapeHtml(msg)+'</span>'; }
+    function showErr(msg){
+      errLine.style.display = "block";
+      errLine.textContent = msg;
+    }
+    function clearErr(){
+      errLine.style.display = "none";
+      errLine.textContent = "";
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    // --- JSON ops ---
+    async function loadJson(){
+      clearErr();
+      state.jsonPath = jsonSelect.value;
+      try{
+        const res = await fetch(state.jsonPath, {cache:"no-store"});
+        if(!res.ok) throw new Error("HTTP "+res.status);
+        const data = await res.json();
+        if(!Array.isArray(data)) throw new Error("JSON ist kein Array.");
+        state.all = data;
+        state.baseLoaded = data.length;
+        state.i = Math.max(0, state.baseLoaded-1);
+        state.dirtyNew = new Set();
+        state.newStart = null;
+        state.newEnd = null;
+        loadInfo.innerHTML = '<span class="ok">OK</span> ('+state.baseLoaded+' Einträge geladen)';
+        newInfo.textContent = "Noch keine Platzhalter angelegt.";
+        doneCount.textContent = "0"; newCount.textContent = "0";
+        infoOk("JSON geladen.");
+        render();
+      }catch(e){
+        showErr("JSON laden fehlgeschlagen: "+(e?.message || e));
+        infoBad("JSON laden fehlgeschlagen.");
+      }
+    }
+
+    function detectLastNumber(){
+      clearErr();
+      if(!state.all.length){ showErr("Erst JSON laden."); return; }
+      // finde höchste reel-Nr aus src
+      let max = 0;
+      for(const it of state.all){
+        const m = String(it?.src||"").match(/reel-(\d+)\.(jpg|jpeg|png|webp)/i);
+        if(m){ max = Math.max(max, parseInt(m[1],10)); }
+      }
+      if(!max){ showErr("Keine reel-Nummer in src gefunden."); return; }
+      infoOk("Letzte Nummer erkannt: "+max);
+      // Vorschlag: in Count-Flow bleibt Count-Eingabe beim User
+      return max;
+    }
+
+    function addPlaceholders(){
+      clearErr();
+      if(!state.all.length){ showErr("Erst JSON laden."); return; }
+      const n = parseInt(countInput.value,10);
+      if(!n || n<1){ showErr("Bitte Anzahl neuer Dateien eingeben (z.B. 21)."); return; }
+      state.ext = extSelect.value;
+
+      const last = detectLastNumber() || state.baseLoaded; // fallback
+      const start = last + 1;
+      const end = last + n;
+
+      // Duplikate vermeiden: nur anlegen wenn diese Nummern noch nicht existieren
+      const existing = new Set(state.all.map(x=>String(x?.src||"")));
+      let created = 0;
+
+      for(let k=start;k<=end;k++){
+        const src = "/assets/reel/reel-" + k + state.ext;
+        if(existing.has(src)) continue;
+        state.all.push({ src, alt:"", cap:"", tag:"", cat:"" });
+        created++;
+      }
+
+      state.newStart = start;
+      state.newEnd = end;
+      state.i = state.all.findIndex(x=>String(x.src||"").includes("reel-"+start));
+      if(state.i < 0) state.i = state.all.length-1;
+
+      newInfo.textContent = "Platzhalter angelegt: "+created+" (reel-"+start+" bis reel-"+end+")";
+      newCount.textContent = String((end-start)+1);
+      doneCount.textContent = "0";
+      infoOk("Platzhalter erstellt. Jetzt labeln & speichern.");
+      render();
+    }
+
+    // --- Label logic ---
+    function effectiveTag(){
+      const free = tagFree.value.trim();
+      const quick = state.tagQuick.trim();
+      return free || quick;
+    }
+
+    function validateForSave(){
+      clearErr();
+      const it = state.all[state.i];
+      if(!it){ showErr("Kein Eintrag aktiv."); return false; }
+
+      const cat = state.cat || it.cat || "";
+      const tag = effectiveTag() || it.tag || "";
+
+      // cap: vom Nutzer frei – darf OHNE cat sein
+      const cap = capText.value.trim();
+      let alt = altText.value.trim();
+
+      if(!cat){ showErr("Fehlt noch: Kategorie (cat)."); return false; }
+      if(!tag){ showErr("Fehlt noch: Tag (Quick ODER frei)."); return false; }
+      if(!cap){
+        showErr("Fehlt noch: Caption (cap). (z.B. „Fichte 18mm“)");
+        return false;
+      }
+
+      if(syncAltCap.checked){
+        alt = cat + " • " + cap; // alt darf Kategorie enthalten
+        altText.value = alt;
+      }else{
+        if(!alt){
+          showErr("Fehlt noch: Alt-Text (alt) oder aktiviere „Alt = Cap“.");
+          return false;
+        }
+      }
+
+      // ok
+      return true;
+    }
+
+    function saveCurrent(){
+      if(!validateForSave()) return;
+
+      const it = state.all[state.i];
+      const cat = state.cat || it.cat;
+      const tag = effectiveTag();
+
+      it.cat = cat;
+      it.tag = tag;
+      it.cap = capText.value.trim();
+      it.alt = altText.value.trim();
+
+      // mark new progress
+      if(state.newStart && state.newEnd){
+        const m = String(it.src||"").match(/reel-(\d+)/);
+        if(m){
+          const num = parseInt(m[1],10);
+          if(num>=state.newStart && num<=state.newEnd){
+            state.dirtyNew.add(num);
+            doneCount.textContent = String(state.dirtyNew.size);
+          }
+        }
+      }
+
+      infoOk("Gespeichert: "+(it.src||""));
+      refreshDebug();
+      if(state.i < state.all.length-1){
+        state.i++;
+        render();
+      }
+    }
+
+    function maybeAutoAdvance(){
+      if(!autoAdvance.checked) return;
+      // Auto-Weiter NUR wenn cat + irgendein Tag gesetzt sind
+      const cat = state.cat;
+      const tag = effectiveTag();
+      if(cat && tag){
+        // cap NICHT erzwingen. Nur wenn cap leer, aus Freitext füllen.
+        if(autoFromSelection.checked && !capText.value.trim() && freeText.value.trim()){
+          capText.value = freeText.value.trim();
+        }
+        // wenn alt sync, update alt live
+        if(syncAltCap.checked && capText.value.trim()){
+          altText.value = cat + " • " + capText.value.trim();
+        }
+        // nicht automatisch speichern – nur springen? Nein: wir bleiben sauber und speichern über Button
+      }
+    }
+
+    // --- Render ---
+    function render(){
+      clearErr();
+      const it = state.all[state.i];
+      if(!it){
+        counterText.textContent = "—";
+        previewImg.removeAttribute("src");
+        basePath.textContent = "—";
+        refreshDebug();
+        return;
+      }
+
+      // Counter
+      const total = state.all.length;
+      counterText.textContent = (state.i+1)+" / "+total + (state.newStart ? ("  (Neu: "+state.newStart+"–"+state.newEnd+")") : "");
+
+      // Image
+      const src = it.src || "";
+      basePath.textContent = src || "—";
+
+      // Preview: absolute path works on CF Pages
+      previewImg.src = src;
+
+      // Fill fields from entry
+      // Cat
+      state.cat = it.cat || state.cat || "";
+      setActivePill("catRow", state.cat);
+
+      // Tag (quick only visual)
+      // we don't know if tag equals quick or free; keep quick highlight only if matches
+      if(tagQuickOptions.includes(it.tag)){
+        state.tagQuick = it.tag;
+        setActivePill("tagQuickRow", it.tag);
+      }else{
+        setActivePill("tagQuickRow", state.tagQuick);
+      }
+
+      // free tag field: if entry tag is not one of quick -> show it, else keep user input
+      if(it.tag && !tagQuickOptions.includes(it.tag)){
+        tagFree.value = it.tag;
+      }
+
+      // Cap/Alt
+      capText.value = it.cap || capText.value || "";
+      altText.value = it.alt || altText.value || "";
+
+      // if user typed freetext, keep it; else blank
+      if(!freeText.value) freeText.value = "";
+
+      refreshDebug();
+    }
+
+    function refreshDebug(){
+      const it = state.all[state.i] || {};
+      debugBox.textContent = JSON.stringify(it, null, 2);
+    }
+
+    // --- Copy/Download ---
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        infoOk("In Zwischenablage kopiert.");
+      }catch{
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        infoOk("In Zwischenablage kopiert.");
+      }
+    }
+
+    function jsonAll(){
+      return JSON.stringify(state.all, null, 2);
+    }
+
+    function jsonNewOnly(){
+      if(!state.newStart || !state.newEnd) return "[]";
+      const out = [];
+      for(const it of state.all){
+        const m = String(it?.src||"").match(/reel-(\d+)\./);
+        if(!m) continue;
+        const num = parseInt(m[1],10);
+        if(num>=state.newStart && num<=state.newEnd) out.push(it);
+      }
+      return JSON.stringify(out, null, 2);
+    }
+
+    function downloadJson(text, filename){
+      const blob = new Blob([text], {type:"application/json"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
       a.remove();
-    }, 0);
-  }
-
-  // --- Events ---
-  btnLoadJson.addEventListener('click', loadJson);
-
-  btnDetectLast.addEventListener('click', () => {
-    if (!data || !data.length) {
-      setStatus(phStatus, 'Erst JSON laden.', 'err');
-      return;
+      URL.revokeObjectURL(a.href);
+      infoOk("JSON heruntergeladen.");
     }
-    const last = detectLastNumber();
-    setStatus(phStatus, `Letzte Nummer erkannt: ${last}`, 'muted');
-  });
 
-  btnCreatePlaceholders.addEventListener('click', createPlaceholders);
+    // --- Wire events ---
+    jsonSelect.addEventListener("change", ()=> state.jsonPath = jsonSelect.value);
+    extSelect.addEventListener("change", ()=> state.ext = extSelect.value);
 
-  btnPrev.addEventListener('click', () => {
-    if (!data || !data.length) return;
-    if (curIndex > 0) { curIndex--; showCurrent(); }
-  });
-  btnNext.addEventListener('click', () => {
-    if (!data || !data.length) return;
-    if (curIndex < data.length - 1) { curIndex++; showCurrent(); }
-  });
+    btnLoad.addEventListener("click", loadJson);
+    btnDetect.addEventListener("click", ()=>{ detectLastNumber(); });
+    btnPlaceholders.addEventListener("click", addPlaceholders);
 
-  document.querySelectorAll('[data-cat]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      setCat(btn.getAttribute('data-cat'));
-      updateRequiredStatus(false);
+    btnPrev.addEventListener("click", ()=>{
+      if(state.i>0){ state.i--; render(); infoOk("Zurück."); }
     });
-  });
-  document.querySelectorAll('[data-tag]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      setTag(btn.getAttribute('data-tag'));
-      updateRequiredStatus(false);
+    btnNext.addEventListener("click", ()=>{
+      if(state.i<state.all.length-1){ state.i++; render(); infoOk("Weiter."); }
     });
-  });
 
-  freeText.addEventListener('input', () => {
-    applyAutoText();
-    updateRequiredStatus(false);
-  });
-  freeTag.addEventListener('input', () => {
-    updateRequiredStatus(false);
-    maybeAutoNext();
-  });
-  chkSyncAlt.addEventListener('change', () => {
-    applyAutoText();
-    updateRequiredStatus(false);
-  });
-  chkAltPrefix.addEventListener('change', () => {
-    applyAutoText();
-    updateRequiredStatus(false);
-  });
-  capInput.addEventListener('input', () => {
-    if (chkSyncAlt.checked) {
-      const capText = (capInput.value || '').trim();
-      altInput.value = (chkAltPrefix.checked && selectedCat && capText)
-        ? `${selectedCat} • ${capText}`
-        : capText;
-    }
-    updateRequiredStatus(false);
-  });
-  altInput.addEventListener('input', () => updateRequiredStatus(false));
+    btnSave.addEventListener("click", saveCurrent);
 
-  btnSaveNext.addEventListener('click', () => {
-    hasManualSaveAttempt = true;
-    saveAndMaybeNext(false, true);
-  });
+    btnCopyAll.addEventListener("click", ()=> copyToClipboard(jsonAll()));
+    btnCopyNew.addEventListener("click", ()=> copyToClipboard(jsonNewOnly()));
+    btnDownload.addEventListener("click", ()=>{
+      const base = (state.jsonPath.split("/").pop() || "reel.json").replace(".json","");
+      downloadJson(jsonAll(), base + ".json");
+    });
 
-  btnCopyAll.addEventListener('click', () => {
-    if (!data || !data.length) return;
-    copyText(JSON.stringify(data, null, 2));
-  });
+    // Live helpers
+    freeText.addEventListener("input", ()=>{
+      if(autoFromSelection.checked && !capText.value.trim()){
+        capText.value = freeText.value.trim();
+      }
+      if(syncAltCap.checked && state.cat && capText.value.trim()){
+        altText.value = state.cat + " • " + capText.value.trim();
+      }
+      refreshDebug();
+    });
 
-  btnCopyNew.addEventListener('click', () => {
-    if (newStart === null || newEnd === null) {
-      setStatus(saveStatus, 'Keine Neu-Range vorhanden. Erst Platzhalter anlegen.', 'err');
-      return;
-    }
-    const slice = data.slice(newStart, newEnd+1);
-    copyText(JSON.stringify(slice, null, 2));
-  });
+    capText.addEventListener("input", ()=>{
+      if(syncAltCap.checked && state.cat && capText.value.trim()){
+        altText.value = state.cat + " • " + capText.value.trim();
+      }
+      refreshDebug();
+    });
 
-  btnDownload.addEventListener('click', () => {
-    if (!data || !data.length) return;
-    const url = jsonSelect.value;
-    const fname = (url.split('/').pop() || 'reel.json').replace('.json','') + '.json';
-    downloadJson(JSON.stringify(data, null, 2), fname);
-    setStatus(saveStatus, `Download gestartet: ${fname}`, 'ok');
-    setTimeout(() => setStatus(saveStatus, '', 'muted'), 1400);
-  });
+    tagFree.addEventListener("input", ()=>{
+      maybeAutoAdvance();
+      refreshDebug();
+    });
 
-  // Auto-load? (optional) -> NEIN, bewusst nicht, damit du Kontrolle hast.
-})();
-</script>
-
+    // Default load hint
+    infoOk("1) JSON laden  2) Anzahl + Endung  3) Platzhalter  4) Labeln + Speichern");
+    refreshDebug();
+  </script>
 </body>
 </html>
