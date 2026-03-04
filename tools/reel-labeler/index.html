@@ -69,7 +69,7 @@
 <header>
   <div class="top">
     <a class="brand" href="/">
-      <img src="/mark.svg" alt="" />
+      <img src="/assets/mark.svg" alt="" />
       <div>
         <div style="font-weight:700">Luderbein</div>
         <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
@@ -198,12 +198,16 @@
         <button class="pill" data-tag="QA" type="button">QA</button>
       </div>
 
-      <div class="tiny" style="margin-bottom:6px;">Freitext (optional)</div>
+      <div class="tiny" style="margin-bottom:6px;">Tag (frei)</div>
+      <input id="freeTag" type="text" class="grow" placeholder="Schlüsselanhänger" />
+
+      <div class="tiny" style="margin:10px 0 6px 0;">Freitext für Caption (optional)</div>
       <input id="freeText" type="text" class="grow" placeholder="" />
 
       <div class="kv" style="margin-top:12px;">
         <label><input id="chkAutoCapAlt" type="checkbox" checked /> Auto aus Auswahl für cap/alt</label>
         <label><input id="chkSyncAlt" type="checkbox" checked /> Alt = Cap synchron halten</label>
+        <label><input id="chkAltPrefix" type="checkbox" checked /> Alt mit Kategorie prefixen (cat • cap)</label>
         <label><input id="chkAutoNext" type="checkbox" checked /> Auto-Weiter nach cat/tag</label>
       </div>
 
@@ -272,9 +276,11 @@
   const btnPrev = document.getElementById('btnPrev');
   const btnNext = document.getElementById('btnNext');
 
+  const freeTag = document.getElementById('freeTag');
   const freeText = document.getElementById('freeText');
   const chkAutoCapAlt = document.getElementById('chkAutoCapAlt');
   const chkSyncAlt = document.getElementById('chkSyncAlt');
+  const chkAltPrefix = document.getElementById('chkAltPrefix');
   const chkAutoNext = document.getElementById('chkAutoNext');
 
   const capInput = document.getElementById('capInput');
@@ -305,6 +311,7 @@
 
   // Image source base
   const IMG_DIR = '/assets/reel/';
+  const PRESET_TAGS = new Set(['Material', 'Person', 'Projekt', 'QA']);
   const TRY_EXTS = ['.jpg', '.jpeg', '.png', '.webp']; // robust: try all
   function pad(n){ return String(n); }
 
@@ -325,11 +332,16 @@
     return {done, total};
   }
 
+  function getEffectiveTag() {
+    const free = (freeTag.value || '').trim();
+    return free || selectedTag || '';
+  }
+
   function getCurrentDraft() {
     const it = data[curIndex] || {};
     return {
       cat: selectedCat || it.cat || '',
-      tag: selectedTag || it.tag || '',
+      tag: getEffectiveTag() || it.tag || '',
       cap: (capInput.value || '').trim(),
       alt: (altInput.value || '').trim()
     };
@@ -474,7 +486,8 @@
     if (!data || !data.length) return;
 
     const it = data[curIndex] || {};
-    const src = it.src || '';
+    const src = normalizeSrc(it.src || '');
+    if (src && src !== it.src) it.src = src;
     imgSrcKbd.textContent = src || `${IMG_DIR}reel-?.jpg`;
 
     // Extract reel number from src, so we can fallback across extensions reliably
@@ -501,46 +514,69 @@
     capInput.value = it.cap || '';
     altInput.value = it.alt || '';
     freeText.value = '';
+    freeTag.value = '';
 
     selectedCat = it.cat || '';
-    selectedTag = it.tag || '';
+    if (PRESET_TAGS.has(it.tag || '')) {
+      selectedTag = it.tag;
+    } else {
+      selectedTag = '';
+      freeTag.value = it.tag || '';
+    }
     updateRequiredStatus(hasManualSaveAttempt);
 
     updateCounters();
   }
 
+  function normalizeSrc(src) {
+    if (!src) return '';
+    const m = src.match(/(?:^|\/)reel-(\d+)\.(jpg|jpeg|png|webp)$/i);
+    if (!m) return src;
+    return `${IMG_DIR}reel-${m[1]}.${m[2].toLowerCase()}`;
+  }
+
   function applyAutoText() {
     if (!chkAutoCapAlt.checked) return;
 
-    const free = (freeText.value || '').trim();
-    const fallback =
-      selectedTag ||
-      (capInput.value || '').trim() ||
-      `Eintrag ${curIndex + 1}`;
-
-    // cap bleibt bewusst ohne Kategorie-Präfix
-    const capText = free || fallback;
-    const altText = [selectedCat, capText].filter(Boolean).join(' • ') || capText;
-
+    const capText = (freeText.value || '').trim();
     capInput.value = capText;
-    // alt mitsetzen, damit Auto-Weiter ohne Fehlermeldung klappt
-    if (chkSyncAlt.checked || !altInput.value.trim()) altInput.value = altText;
+
+    if (!capText) {
+      if (chkSyncAlt.checked) altInput.value = '';
+      return;
+    }
+
+    const altText = (chkAltPrefix.checked && selectedCat)
+      ? `${selectedCat} • ${capText}`
+      : capText;
+
+    if (chkSyncAlt.checked || !altInput.value.trim()) {
+      altInput.value = altText;
+    }
+  }
+
+  function maybeAutoNext() {
+    if (!chkAutoNext.checked) return;
+    const draft = getCurrentDraft();
+    const missing = getMissingFields(draft);
+    if (missing.length) {
+      setStatus(saveStatus, `Auto-Weiter pausiert: Fehlt ${missing.map((field) => field.label).join(', ')}.`, 'muted');
+      return;
+    }
+    saveAndMaybeNext(true);
   }
 
   function setCat(cat) {
     selectedCat = cat;
     applyAutoText();
-    if (chkAutoNext.checked && selectedTag) {
-      saveAndMaybeNext(true);
-    }
+    maybeAutoNext();
   }
 
   function setTag(tag) {
     selectedTag = tag;
+    freeTag.value = '';
     applyAutoText();
-    if (chkAutoNext.checked && selectedCat) {
-      saveAndMaybeNext(true);
-    }
+    maybeAutoNext();
   }
 
   function saveCurrent(forceError = false) {
@@ -548,9 +584,10 @@
 
     const it = data[curIndex] || {};
     it.cat = selectedCat || it.cat || '';
-    it.tag = selectedTag || it.tag || '';
+    it.tag = getEffectiveTag() || it.tag || '';
     it.cap = (capInput.value || '').trim();
     it.alt = (altInput.value || '').trim();
+    it.src = normalizeSrc(it.src || '');
     data[curIndex] = it;
 
     // minimal validation for new items
@@ -646,11 +683,27 @@
     applyAutoText();
     updateRequiredStatus(false);
   });
+  freeTag.addEventListener('input', () => {
+    updateRequiredStatus(false);
+    maybeAutoNext();
+  });
   chkSyncAlt.addEventListener('change', () => {
     applyAutoText();
     updateRequiredStatus(false);
   });
-  capInput.addEventListener('input', () => updateRequiredStatus(false));
+  chkAltPrefix.addEventListener('change', () => {
+    applyAutoText();
+    updateRequiredStatus(false);
+  });
+  capInput.addEventListener('input', () => {
+    if (chkSyncAlt.checked) {
+      const capText = (capInput.value || '').trim();
+      altInput.value = (chkAltPrefix.checked && selectedCat && capText)
+        ? `${selectedCat} • ${capText}`
+        : capText;
+    }
+    updateRequiredStatus(false);
+  });
   altInput.addEventListener('input', () => updateRequiredStatus(false));
 
   btnSaveNext.addEventListener('click', () => {
