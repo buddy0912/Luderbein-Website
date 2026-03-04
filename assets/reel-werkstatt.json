@@ -28,7 +28,7 @@
     "alt": "Werkstatt – Einblick",
     "cap": "Werkstatt – Einblick",
     "cats": [
-      "schwibbogen"
+      "schwibboegen"
     ]
   },
   {
@@ -364,7 +364,7 @@
     "alt": "Werkstatt – Einblick",
     "cap": "Werkstatt – Einblick",
     "cats": [
-      "schwibbogen"
+      "schwibboegen"
     ]
   },
   {
@@ -388,7 +388,7 @@
     "alt": "Werkstatt – Einblick",
     "cap": "Werkstatt – Einblick",
     "cats": [
-      "schwibbogen"
+      "schwibboegen"
     ]
   },
   {
@@ -436,7 +436,7 @@
     "alt": "Werkstatt – Einblick",
     "cap": "Werkstatt – Einblick",
     "cats": [
-      "schwibbogen"
+      "schwibboegen"
     ]
   },
   {
@@ -484,146 +484,188 @@
     "alt": "holz • Fichte 18mm",
     "cap": "Fichte 18mm",
     "tag": "Material",
-    "cat": "holz"
+    "cats": [
+      "holz"
+    ]
   },
   {
     "src": "/assets/reel/reel-62.jpeg",
     "alt": "holz • Fichte 18mm",
     "cap": "Fichte 18mm",
     "tag": "Material",
-    "cat": "holz"
+    "cats": [
+      "holz"
+    ]
   },
   {
     "src": "/assets/reel/reel-63.jpeg",
     "alt": "schiefer • Foto-Schiefer-45x30cm",
     "cap": "Foto-Schiefer-45x30cm",
     "tag": "Material",
-    "cat": "schiefer"
+    "cats": [
+      "schiefer"
+    ]
   },
   {
     "src": "/assets/reel/reel-64.jpeg",
     "alt": "holz • Transportbox",
     "cap": "Transportbox",
     "tag": "Transportbox",
-    "cat": "holz"
+    "cats": [
+      "holz"
+    ]
   },
   {
     "src": "/assets/reel/reel-65.jpeg",
     "alt": "holz • Transportbox",
     "cap": "Transportbox",
     "tag": "Transportbox",
-    "cat": "holz"
+    "cats": [
+      "holz"
+    ]
   },
   {
     "src": "/assets/reel/reel-66.jpeg",
     "alt": "schwibboegen • Transportbox ES Schwibbogen",
     "cap": "Transportbox ES Schwibbogen",
     "tag": "Transportbox",
-    "cat": "schwibboegen"
+    "cats": [
+      "schwibboegen"
+    ]
   },
   {
     "src": "/assets/reel/reel-67.jpeg",
     "alt": "schwibboegen • Transportbox ES Schwibbogen",
     "cap": "Transportbox ES Schwibbogen",
     "tag": "Transportbox",
-    "cat": "schwibboegen"
+    "cats": [
+      "schwibboegen"
+    ]
   },
   {
     "src": "/assets/reel/reel-68.jpeg",
     "alt": "schwibboegen • Transportbox ES Schwibbogen",
     "cap": "Transportbox ES Schwibbogen",
     "tag": "Transportbox",
-    "cat": "schwibboegen"
+    "cats": [
+      "schwibboegen"
+    ]
   },
   {
     "src": "/assets/reel/reel-69.jpeg",
     "alt": "glas • Erinnerungsglas",
     "cap": "Erinnerungsglas",
     "tag": "Material",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
     "src": "/assets/reel/reel-70.jpeg",
     "alt": "glas • Erinnerungsglas",
     "cap": "Erinnerungsglas",
     "tag": "Material",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
     "src": "/assets/reel/reel-71.jpeg",
     "alt": "glas • Erinnerungsglas",
     "cap": "Erinnerungsglas",
     "tag": "Material",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
     "src": "/assets/reel/reel-72.jpeg",
     "alt": "glas • Erinnerungsglas",
     "cap": "Erinnerungsglas",
     "tag": "Material",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
     "src": "/assets/reel/reel-73.jpeg",
     "alt": "glas • Rotarychuck",
     "cap": "Rotarychuck",
     "tag": "Projekt",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
     "src": "/assets/reel/reel-74.jpeg",
     "alt": "glas • Rotarychuck",
     "cap": "Rotarychuck",
     "tag": "Projekt",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
     "src": "/assets/reel/reel-75.jpeg",
     "alt": "custom • Trauerset - indiv. Erinnerungen",
     "cap": "Trauerset - indiv. Erinnerungen",
     "tag": "Trauerset",
-    "cat": "custom"
+    "cats": [
+      "custom"
+    ]
   },
- {
-    "src": "/assets/reel/reel-76.jpg",
+  {
+    "src": "/assets/reel/reel-76.jpeg",
     "alt": "custom • Schlüsselanhänger",
     "cap": "Schlüsselanhänger",
     "tag": "Schlusselanhaenger",
-    "cat": "custom"
+    "cats": [
+      "custom"
+    ]
   },
   {
-    "src": "/assets/reel/reel-77.jpg",
+    "src": "/assets/reel/reel-77.jpeg",
     "alt": "custom • Schlüsselanhänger",
     "cap": "Schlüsselanhänger",
     "tag": "Schluesselanhaenger",
-    "cat": "custom"
+    "cats": [
+      "custom"
+    ]
   },
   {
-    "src": "/assets/reel/reel-78.jpg",
+    "src": "/assets/reel/reel-78.jpeg",
     "alt": "glas • Weingläser",
     "cap": "Weingläser",
     "tag": "Projekt",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
-    "src": "/assets/reel/reel-79.jpg",
+    "src": "/assets/reel/reel-79.jpeg",
     "alt": "glas • Weingläser",
     "cap": "Weingläser",
     "tag": "Projekt",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
-    "src": "/assets/reel/reel-80.jpg",
+    "src": "/assets/reel/reel-80.jpeg",
     "alt": "glas • Grabkerzen",
     "cap": "Grabkerzen",
     "tag": "Erinnerungsglas",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   },
   {
-    "src": "/assets/reel/reel-81.jpg",
+    "src": "/assets/reel/reel-81.jpeg",
     "alt": "glas • Grabkerzen",
     "cap": "Grabkerzen",
     "tag": "Erinnerungsglas",
-    "cat": "glas"
+    "cats": [
+      "glas"
+    ]
   }
 ]
