@@ -1,58 +1,93 @@
 [
   {
     "src": "/assets/schiefer/schiefer-reel-01.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
   },
   {
     "src": "/assets/schiefer/schiefer-reel-02.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
   },
   {
     "src": "/assets/schiefer/schiefer-reel-03.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
   },
   {
     "src": "/assets/schiefer/schiefer-reel-04.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
   },
   {
     "src": "/assets/schiefer/schiefer-reel-05.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
   },
   {
     "src": "/assets/schiefer/schiefer-reel-06.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
   },
   {
     "src": "/assets/schiefer/schiefer-reel-07.webp",
-    "alt": "schiefer – Einblick",
     "cap": "schiefer – Beispiel",
-    "cats": [
-      "schiefer"
-    ]
+    "alt": "schiefer – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-08.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-14.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-21.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-29.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-33.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-52.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-60.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "schiefer"
+  },
+  {
+    "src": "/assets/reel/reel-63.jpeg",
+    "cap": "Foto-Schiefer-45x30cm",
+    "alt": "schiefer • Foto-Schiefer-45x30cm",
+    "tag": "Material",
+    "cat": "schiefer"
   }
 ]
