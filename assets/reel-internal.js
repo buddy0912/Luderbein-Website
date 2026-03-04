@@ -15,12 +15,12 @@
     holz: "/leistungen/holz/",
     acryl: "/leistungen/acryl/",
     glas: "/leistungen/glas/",
-    schwibbogen: "/leistungen/schwibboegen/", // Kategorie Schwibbögen
-    custom: "/leistungen/custom/"      // "Spezialbau" ist Copy/Label, Route bleibt
+    schwibboegen: "/leistungen/schwibboegen/",
+    schwibbogen: "/leistungen/schwibboegen/",
+    custom: "/leistungen/custom/"
   };
 
-  // ✅ GLOBAL: Metall vor Acryl (und generell klare Priorität)
-  const CAT_PRIORITY = ["metall", "acryl", "schiefer", "holz", "schwibbogen", "custom"];
+  const CAT_PRIORITY = ["metall", "acryl", "schiefer", "holz", "schwibboegen", "schwibbogen", "custom", "glas"];
 
   function $(tag, attrs = {}, children = []) {
     const node = document.createElement(tag);
@@ -44,12 +44,17 @@
 
   function normalizeCats(raw) {
     if (!raw) return [];
-    if (Array.isArray(raw)) return raw.map(x => safeTrim(x).toLowerCase()).filter(Boolean);
-    // erlaubt auch "metall, acryl"
-    return safeTrim(raw)
-      .split(",")
-      .map(x => safeTrim(x).toLowerCase())
+    const list = Array.isArray(raw) ? raw : safeTrim(raw).split(",");
+    return list
+      .map((x) => safeTrim(x).toLowerCase())
+      .map((x) => (x === "schwibbögen" ? "schwibboegen" : x))
       .filter(Boolean);
+  }
+
+  function normalizeCatKey(raw) {
+    const key = safeTrim(raw).toLowerCase();
+    if (!key) return "";
+    return key === "schwibbögen" || key === "schwibbogen" ? "schwibboegen" : key;
   }
 
   function pickBestCat(cats) {
@@ -101,6 +106,18 @@
     }
   }
 
+
+  function entryBelongsToCategory(entry, categoryKey) {
+    const wanted = normalizeCatKey(categoryKey);
+    if (!wanted) return true;
+
+    const single = normalizeCatKey(entry.cat);
+    if (single && single === wanted) return true;
+
+    const list = normalizeCats(entry.cats);
+    return list.includes(wanted);
+  }
+
   function shuffleInPlace(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -150,6 +167,7 @@
   }
 
   function buildCard(item, options = {}) {
+    const container = options.container || null;
     const isModalCard = Boolean(options.modal);
     const cardTag = isModalCard ? "div" : item.href ? "a" : "div";
 
@@ -181,6 +199,14 @@
       alt: item.alt,
       loading: "lazy"
     });
+
+    img.addEventListener("error", () => {
+      card.remove();
+      if (container && !container.querySelector(".reel__item")) {
+        const fallback = container.getAttribute("data-reel-empty-message") || "Aktuell keine Bilder im Feed.";
+        showError(container, fallback);
+      }
+    }, { once: true });
 
     card.appendChild(img);
 
@@ -239,6 +265,8 @@
 
     // default: random an (bei Reload), aus per data-random="0"
     const doRandom = container.getAttribute("data-random") !== "0";
+    const feedCat = normalizeCatKey(container.getAttribute("data-feed-cat") || container.getAttribute("data-reel-cat") || "");
+    const fallbackHtml = container.innerHTML;
 
     if (!src) {
       showError(container, "Reel konnte nicht geladen werden (data-reel-src fehlt).");
@@ -254,7 +282,15 @@
 
       let items = raw.map((it) => normalizeItem(it, defaultTag)).filter(Boolean);
 
+      if (feedCat) {
+        items = items.filter((it) => entryBelongsToCategory(it, feedCat));
+      }
+
       if (!items.length) {
+        if (fallbackHtml.trim()) {
+          container.innerHTML = fallbackHtml;
+          return;
+        }
         showError(container, "Reel ist leer (JSON hat keine gültigen Einträge).");
         return;
       }
@@ -273,14 +309,18 @@
 
         if (isLeistungen) {
           it.href = null;
-          container.appendChild(buildCard(it, { modal: true }));
+          container.appendChild(buildCard(it, { modal: true, container }));
         } else {
-          container.appendChild(buildCard(it));
+          container.appendChild(buildCard(it, { container }));
         }
       }
 
       setupAutoScroll(container, Number.isFinite(interval) ? interval : 4500);
     } catch (e) {
+      if (fallbackHtml.trim()) {
+        container.innerHTML = fallbackHtml;
+        return;
+      }
       showError(container, "Reel konnte nicht geladen werden (JSON/Case prüfen).");
     }
   }
