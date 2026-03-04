@@ -217,6 +217,27 @@
     return card;
   }
 
+
+  function setupSlideTransform(container, intervalMs) {
+    const slides = Array.from(container.querySelectorAll(".reel__item"));
+    if (!slides.length) return;
+
+    let index = 0;
+    const apply = () => {
+      container.style.transform = `translateX(-${index * 100}%)`;
+    };
+
+    apply();
+
+    if (prefersReduced) return;
+    if (!Number.isFinite(intervalMs) || intervalMs <= 0) return;
+
+    setInterval(() => {
+      index = (index + 1) % slides.length;
+      apply();
+    }, intervalMs);
+  }
+
   function setupAutoScroll(container, intervalMs) {
     const canScroll = () => container.scrollWidth > container.clientWidth + 2;
     if (prefersReduced) return;
@@ -259,6 +280,7 @@
     const src = container.getAttribute("data-reel-src");
     const interval = Number(container.getAttribute("data-interval") || "4500");
     const defaultTag = container.getAttribute("data-reel-default-tag") || "";
+    const reelMode = container.getAttribute("data-reel-mode") || "scroll";
     const path = window.location.pathname;
     const isHome = path === "/" || path.endsWith("/index.html");
     const isLeistungen = path.startsWith("/leistungen/");
@@ -315,7 +337,12 @@
         }
       }
 
-      setupAutoScroll(container, Number.isFinite(interval) ? interval : 4500);
+      const intervalMs = Number.isFinite(interval) ? interval : 4500;
+      if (reelMode === "slide") {
+        setupSlideTransform(container, intervalMs);
+      } else {
+        setupAutoScroll(container, intervalMs);
+      }
     } catch (e) {
       if (fallbackHtml.trim()) {
         container.innerHTML = fallbackHtml;

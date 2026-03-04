@@ -196,30 +196,42 @@
     }
 
     /* Mini-Reel inside cardthumb (Freie Idee) */
+    .cardthumb .minireel-viewport {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      overflow: hidden;
+      border-radius: inherit;
+    }
     .cardthumb .minireel {
       position: absolute;
       inset: 0;
       display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 10px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      gap: 0;
+      transition: transform .45s ease;
+      will-change: transform;
     }
-    .cardthumb .minireel::-webkit-scrollbar { display: none; }
 
     .cardthumb .minireel .reel__item {
-      flex: 0 0 84%;
-      scroll-snap-align: start;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       box-shadow: none;
+      overflow: hidden;
     }
     .cardthumb .minireel .reel__tag { top: 10px; left: 10px; }
     .cardthumb .minireel .reel__cap { padding: 10px; font-size: .9rem; }
-    .cardthumb .minireel .reel__img { width: 100%; height: 100%; aspect-ratio: 16/9; object-fit: cover; }
+    .cardthumb .minireel .reel__img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      aspect-ratio: auto;
+      object-fit: cover;
+    }
   </style>
 </head>
 
@@ -425,14 +437,17 @@
         >
           <div class="cardthumb" aria-label="Freie Idee – Mini Reel">
             <span class="cardtag">Freie Idee</span>
-            <div
-              class="minireel"
-              aria-label="Freie Idee – Mini Reel"
-              data-reel
-              data-reel-src="/assets/reel-custom.json"
-              data-interval="0"
-              data-reel-default-tag="Custom"
-            ></div>
+            <div class="minireel-viewport" aria-hidden="true">
+              <div
+                class="minireel"
+                aria-label="Freie Idee – Mini Reel"
+                data-reel
+                data-reel-mode="slide"
+                data-reel-src="/assets/reel-custom.json"
+                data-interval="0"
+                data-reel-default-tag="Custom"
+              ></div>
+            </div>
           </div>
 
           <h3>Freie Idee</h3>
