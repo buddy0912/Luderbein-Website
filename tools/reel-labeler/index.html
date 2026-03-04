@@ -38,6 +38,7 @@
       border-color: rgba(255,0,50,0.35);
     }
     button.pill{ border-radius: 999px; padding: 8px 12px; }
+    button.pill.is-selected { background: rgba(255,0,50,0.24); border-color: rgba(255,0,50,0.55); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18); }
     .muted { opacity: .75; }
     .tiny { font-size: 12px; opacity: .75; }
     .status { font-size: 13px; opacity: .9; }
@@ -69,7 +70,7 @@
 <header>
   <div class="top">
     <a class="brand" href="/">
-      <img src="mark.svg" alt="" />
+      <img src="/assets/img/mark.svg" alt="" />
       <div>
         <div style="font-weight:700">Luderbein</div>
         <div class="tiny">Schwibbögen • Gravur • Sonderwünsche</div>
@@ -172,7 +173,12 @@
       </div>
       <div id="imgErr" class="tiny err" style="margin-top:8px; display:none;"></div>
       <div class="tiny" style="margin-top:8px;">
-        Basis: <span class="kbd" id="imgSrcKbd">/assets/reel/reel-?.jpg</span>
+        Basis: <span class="kbd" id="imgSrcKbd">/assets/reel/reel-01.jpg</span>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="tiny" style="margin-bottom:6px;">Preview (Kunde sieht)</div>
+        <div id="customerPreview" style="font-size:18px; font-weight:600; min-height:24px;">—</div>
+        <div id="previewFileHint" class="tiny muted" style="margin-top:6px;">Datei: —</div>
       </div>
     </div>
 
@@ -180,7 +186,7 @@
       <h3 style="margin:0 0 10px 0;">Label</h3>
 
       <div class="tiny" style="margin-bottom:6px;">Kategorie (cat)</div>
-      <div class="tiny muted" style="margin:-2px 0 8px 0;">Steuert Filter/Category-Link (<span class="kbd">cat</span>) im Reel-JSON.</div>
+      <div class="tiny muted" style="margin:-2px 0 8px 0;">Interne Kategorie für Filter/Category-Link (<span class="kbd">cat</span>). Kunden sehen <strong>nicht</strong> direkt die Kategorie.</div>
       <div class="row" style="margin-bottom:10px;">
         <button class="pill" data-cat="holz" type="button">holz</button>
         <button class="pill" data-cat="glas" type="button">glas</button>
@@ -192,7 +198,7 @@
       </div>
 
       <div class="tiny" style="margin-bottom:6px;">Tag</div>
-      <div class="tiny muted" style="margin:-2px 0 8px 0;">Kurzer Typ/Gruppe (z. B. Material, Person, Projekt, QA oder frei).</div>
+      <div class="tiny muted" style="margin:-2px 0 8px 0;">Interner Gruppen-Tag (z. B. Material, Person, Projekt, QA). Kunden sehen den Tag nicht direkt.</div>
       <div class="row" style="margin-bottom:10px;">
         <button class="pill" data-tag="Material" type="button">Material</button>
         <button class="pill" data-tag="Person" type="button">Person</button>
@@ -201,6 +207,7 @@
       </div>
 
       <div class="tiny" style="margin-bottom:6px;">Tag (frei)</div>
+      <div class="tiny muted" style="margin:-2px 0 8px 0;">Eigener Tag überschreibt die Tag-Buttons.</div>
       <input id="freeTag" type="text" class="grow" placeholder="Schlüsselanhänger" />
 
       <div class="tiny" style="margin:10px 0 6px 0;">Freitext für Caption (optional)</div>
@@ -222,7 +229,7 @@
 
       <div style="margin-top:12px;">
         <div class="tiny" style="margin-bottom:6px;">Alt-Text (alt)</div>
-        <div class="tiny muted" style="margin:-2px 0 8px 0;">Bildbeschreibung/Tooltip/Accessibility; optional mit <span class="kbd">cat • cap</span>.</div>
+        <div class="tiny muted" style="margin:-2px 0 8px 0;">Accessibility/Tooltip. Meist nur bei Bildfehlern/Screenreadern sichtbar; optional mit <span class="kbd">cat • cap</span>.</div>
         <input id="altInput" type="text" class="grow" />
       </div>
 
@@ -277,6 +284,8 @@
   const previewImg = document.getElementById('previewImg');
   const imgErr = document.getElementById('imgErr');
   const imgSrcKbd = document.getElementById('imgSrcKbd');
+  const customerPreview = document.getElementById('customerPreview');
+  const previewFileHint = document.getElementById('previewFileHint');
 
   const btnPrev = document.getElementById('btnPrev');
   const btnNext = document.getElementById('btnNext');
@@ -373,6 +382,25 @@
     const fieldsText = missing.map((field) => field.label).join(', ');
     requiredStatus.textContent = `Checkliste: Noch offen – ${fieldsText}.`;
     requiredStatus.className = 'status muted';
+  }
+
+  function updateSelectionStyles() {
+    document.querySelectorAll('[data-cat]').forEach((btn) => {
+      btn.classList.toggle('is-selected', btn.getAttribute('data-cat') === selectedCat);
+    });
+    const effectiveTag = getEffectiveTag();
+    document.querySelectorAll('[data-tag]').forEach((btn) => {
+      const tag = btn.getAttribute('data-tag');
+      btn.classList.toggle('is-selected', !freeTag.value.trim() && tag === effectiveTag);
+    });
+  }
+
+  function updateCustomerPreview() {
+    const cap = (capInput.value || '').trim();
+    const it = data[curIndex] || {};
+    const src = (it.src || '').trim();
+    customerPreview.textContent = cap || '—';
+    previewFileHint.textContent = `Datei: ${src || '—'}`;
   }
 
   function updateCounters() {
@@ -491,7 +519,7 @@
     const it = data[curIndex] || {};
     const src = normalizeSrc(it.src || '');
     if (src && src !== it.src) it.src = src;
-    imgSrcKbd.textContent = src || `${IMG_DIR}reel-?.jpg`;
+    imgSrcKbd.textContent = src || `${IMG_DIR}reel-01.jpg`;
 
     // Extract reel number from src, so we can fallback across extensions reliably
     const m = src.match(/reel-(\d+)\.(jpg|jpeg|png|webp)$/i);
@@ -526,6 +554,8 @@
       selectedTag = '';
       freeTag.value = it.tag || '';
     }
+    updateSelectionStyles();
+    updateCustomerPreview();
     updateRequiredStatus(hasManualSaveAttempt);
 
     updateCounters();
@@ -555,6 +585,7 @@
     if (chkSyncAlt.checked || !altInput.value.trim()) {
       altInput.value = altText;
     }
+    updateCustomerPreview();
   }
 
   function maybeAutoNext() {
@@ -570,6 +601,7 @@
 
   function setCat(cat) {
     selectedCat = cat;
+    updateSelectionStyles();
     applyAutoText();
     maybeAutoNext();
   }
@@ -577,6 +609,7 @@
   function setTag(tag) {
     selectedTag = tag;
     freeTag.value = '';
+    updateSelectionStyles();
     applyAutoText();
     maybeAutoNext();
   }
@@ -683,9 +716,11 @@
 
   freeText.addEventListener('input', () => {
     applyAutoText();
+    updateCustomerPreview();
     updateRequiredStatus(false);
   });
   freeTag.addEventListener('input', () => {
+    updateSelectionStyles();
     updateRequiredStatus(false);
     maybeAutoNext();
   });
@@ -704,6 +739,7 @@
         ? `${selectedCat} • ${capText}`
         : capText;
     }
+    updateCustomerPreview();
     updateRequiredStatus(false);
   });
   altInput.addEventListener('input', () => updateRequiredStatus(false));
