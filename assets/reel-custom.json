@@ -1,122 +1,203 @@
 [
   {
     "src": "/assets/custom/custom-reel-01.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-02.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-03.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-04.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-05.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-06.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-07.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-08.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-09.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-10.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-11.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-12.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-13.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-14.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
   },
   {
     "src": "/assets/custom/custom-reel-15.webp",
-    "alt": "custom – Einblick",
     "cap": "custom – Beispiel",
-    "cats": [
-      "custom"
-    ]
+    "alt": "custom – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-02.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-03.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-05.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-10.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-22.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-26.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-28.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-35.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-36.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-39.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-43.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-48.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-56.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-57.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-59.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-75.jpeg",
+    "cap": "Trauerset - indiv. Erinnerungen",
+    "alt": "custom • Trauerset - indiv. Erinnerungen",
+    "tag": "Trauerset",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-76.jpeg",
+    "cap": "Schlüsselanhänger",
+    "alt": "custom • Schlüsselanhänger",
+    "tag": "Schlusselanhaenger",
+    "cat": "custom"
+  },
+  {
+    "src": "/assets/reel/reel-77.jpeg",
+    "cap": "Schlüsselanhänger",
+    "alt": "custom • Schlüsselanhänger",
+    "tag": "Schluesselanhaenger",
+    "cat": "custom"
   }
 ]

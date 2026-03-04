@@ -1,50 +1,144 @@
 [
   {
     "src": "/assets/glas/glas-reel-01.webp",
-    "alt": "glas – Einblick",
     "cap": "glas – Beispiel",
-    "cats": [
-      "glas"
-    ]
+    "alt": "glas – Einblick",
+    "cat": "glas"
   },
   {
     "src": "/assets/glas/glas-reel-02.webp",
-    "alt": "glas – Einblick",
     "cap": "glas – Beispiel",
-    "cats": [
-      "glas"
-    ]
+    "alt": "glas – Einblick",
+    "cat": "glas"
   },
   {
     "src": "/assets/glas/glas-reel-03.webp",
-    "alt": "glas – Einblick",
     "cap": "glas – Beispiel",
-    "cats": [
-      "glas"
-    ]
+    "alt": "glas – Einblick",
+    "cat": "glas"
   },
   {
     "src": "/assets/glas/glas-reel-04.webp",
-    "alt": "glas – Einblick",
     "cap": "glas – Beispiel",
-    "cats": [
-      "glas"
-    ]
+    "alt": "glas – Einblick",
+    "cat": "glas"
   },
   {
     "src": "/assets/glas/glas-reel-05.webp",
-    "alt": "glas – Einblick",
     "cap": "glas – Beispiel",
-    "cats": [
-      "glas"
-    ]
+    "alt": "glas – Einblick",
+    "cat": "glas"
   },
   {
     "src": "/assets/glas/glas-reel-06.webp",
-    "alt": "glas – Einblick",
     "cap": "glas – Beispiel",
-    "cats": [
-      "glas"
-    ]
+    "alt": "glas – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-09.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-23.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-30.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-31.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-50.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-51.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-69.jpeg",
+    "cap": "Erinnerungsglas",
+    "alt": "glas • Erinnerungsglas",
+    "tag": "Material",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-70.jpeg",
+    "cap": "Erinnerungsglas",
+    "alt": "glas • Erinnerungsglas",
+    "tag": "Material",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-71.jpeg",
+    "cap": "Erinnerungsglas",
+    "alt": "glas • Erinnerungsglas",
+    "tag": "Material",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-72.jpeg",
+    "cap": "Erinnerungsglas",
+    "alt": "glas • Erinnerungsglas",
+    "tag": "Material",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-73.jpeg",
+    "cap": "Rotarychuck",
+    "alt": "glas • Rotarychuck",
+    "tag": "Projekt",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-74.jpeg",
+    "cap": "Rotarychuck",
+    "alt": "glas • Rotarychuck",
+    "tag": "Projekt",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-78.jpeg",
+    "cap": "Weingläser",
+    "alt": "glas • Weingläser",
+    "tag": "Projekt",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-79.jpeg",
+    "cap": "Weingläser",
+    "alt": "glas • Weingläser",
+    "tag": "Projekt",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-80.jpeg",
+    "cap": "Grabkerzen",
+    "alt": "glas • Grabkerzen",
+    "tag": "Erinnerungsglas",
+    "cat": "glas"
+  },
+  {
+    "src": "/assets/reel/reel-81.jpeg",
+    "cap": "Grabkerzen",
+    "alt": "glas • Grabkerzen",
+    "tag": "Erinnerungsglas",
+    "cat": "glas"
   }
 ]

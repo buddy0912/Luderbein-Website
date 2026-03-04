@@ -1,74 +1,138 @@
 [
   {
     "src": "/assets/holz/holz-reel-01.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-02.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-03.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-04.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-05.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-06.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-07.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-08.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
   },
   {
     "src": "/assets/holz/holz-reel-09.webp",
-    "alt": "holz – Einblick",
     "cap": "holz – Beispiel",
-    "cats": [
-      "holz"
-    ]
+    "alt": "holz – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-06.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-16.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-19.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-34.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-37.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-38.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-41.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-45.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-58.webp",
+    "cap": "Werkstatt – Einblick",
+    "alt": "Werkstatt – Einblick",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-61.jpeg",
+    "cap": "Fichte 18mm",
+    "alt": "holz • Fichte 18mm",
+    "tag": "Material",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-62.jpeg",
+    "cap": "Fichte 18mm",
+    "alt": "holz • Fichte 18mm",
+    "tag": "Material",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-64.jpeg",
+    "cap": "Transportbox",
+    "alt": "holz • Transportbox",
+    "tag": "Transportbox",
+    "cat": "holz"
+  },
+  {
+    "src": "/assets/reel/reel-65.jpeg",
+    "cap": "Transportbox",
+    "alt": "holz • Transportbox",
+    "tag": "Transportbox",
+    "cat": "holz"
   }
 ]
