@@ -24,6 +24,7 @@
       <div class="foot__group">
         <a class="btn primary" href="/kontakt/?p=Wunschmotiv">Wunschmotiv anfragen</a>
         <a class="btn" href="/leistungen/">Beispiele ansehen</a>
+        <a class="btn" href="/b2b/">B2B-Anfragen</a>
       </div>
 
       <div class="foot__group">
