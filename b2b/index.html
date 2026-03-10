@@ -7,142 +7,11 @@
   <meta name="description" content="B2B-Bereich von Luderbein Gravur: industrielle Markierung, Gastronomiebedarf, Werbemittel und flexible Kleinserien mit persönlicher Abstimmung." />
   <link rel="canonical" href="https://luderbein-gravur.pages.dev/b2b/" />
   <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/b2b.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
-
-  <style>
-    .b2b-main {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      padding-bottom: 22px;
-    }
-
-    .b2b-hero,
-    .b2b-card {
-      border: 1px solid rgba(64,62,65,.55);
-      border-radius: var(--radius);
-      background: rgba(26,26,31,.66);
-      box-shadow: var(--shadow);
-      padding: 22px;
-    }
-
-    .b2b-hero {
-      background: linear-gradient(160deg, rgba(34,40,48,.84), rgba(26,26,31,.74));
-      border-color: rgba(96,118,144,.62);
-    }
-
-    .b2b-kicker {
-      display: inline-flex;
-      border: 1px solid rgba(132,166,198,.45);
-      border-radius: 999px;
-      padding: 5px 10px;
-      font-size: .78rem;
-      letter-spacing: .07em;
-      text-transform: uppercase;
-      color: rgba(222,232,242,.92);
-      margin-bottom: 10px;
-    }
-
-    .b2b-hero p {
-      color: var(--muted);
-      max-width: 72ch;
-      margin-bottom: 0;
-    }
-
-    .b2b-grid {
-      display: grid;
-      gap: 14px;
-      grid-template-columns: 1fr;
-    }
-
-    .b2b-card h3 { margin-top: 0; }
-    .b2b-card p { margin-bottom: 0; color: var(--muted); }
-
-    .usp-list {
-      margin: 0;
-      padding-left: 20px;
-      color: var(--muted);
-      display: grid;
-      gap: 8px;
-    }
-
-    .usp-list strong { color: var(--text); }
-
-    .notice-box {
-      margin-top: 12px;
-      border: 1px solid rgba(132,166,198,.35);
-      background: rgba(42,45,51,.26);
-      border-radius: 14px;
-      padding: 14px;
-      color: var(--muted);
-      font-size: .95rem;
-      line-height: 1.5;
-    }
-
-    .notice-box strong { color: var(--text); }
-
-    .b2b-form {
-      display: grid;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .b2b-form label {
-      display: block;
-      font-size: .9rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .b2b-form input,
-    .b2b-form textarea,
-    .b2b-form select {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(64,62,65,.65);
-      background: rgba(14,6,11,.35);
-      color: var(--text);
-      padding: 12px;
-      outline: none;
-    }
-
-    .b2b-form textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    .b2b-form .btn {
-      width: 100%;
-    }
-
-    .b2b-note {
-      margin: 8px 0 0;
-      font-size: .9rem;
-      color: var(--muted);
-    }
-
-    @media (min-width: 780px) {
-      .b2b-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .b2b-form {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .b2b-form .full {
-        grid-column: 1 / -1;
-      }
-
-      .b2b-form .btn {
-        width: auto;
-        justify-self: start;
-      }
-    }
-  </style>
 </head>
 
-<body>
+<body class="page-b2b" data-page="b2b">
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -209,64 +78,139 @@
     </div>
   </header>
 
-  <main class="wrap b2b-main" id="content">
-    <section class="b2b-hero">
-      <span class="b2b-kicker">B2B · Geschäftskunden</span>
-      <h1>B2B-Anfragen für Gravur, Markierung und Kleinserien</h1>
-      <p>
-        Luderbein unterstützt Unternehmen bei präzisen Gravurprojekten mit pragmischer Abstimmung.
-        Geeignet für industrielle Kennzeichnung, gastronomischen Bedarf, Werbemittel sowie ähnliche
-        gewerbliche Anwendungen. Von Einzelstücken bis zu Kleinserien mit klaren Deadlines.
-      </p>
+  <main class="wrap b2b-shell" id="content">
+    <section class="b2b-hero b2b-panel" aria-label="B2B-Einstieg">
+      <div class="b2b-hero__grid">
+        <div class="b2b-hero__main">
+          <span class="b2b-kicker">B2B · Geschäftskunden</span>
+          <h1>B2B-Lösungen für Industrie & Handwerk: Präzision in Serie – oder direkt bei Ihnen vor Ort.</h1>
+          <p class="lead b2b-lead">
+            Wir markieren, schneiden und fertigen mit industrieller Geschwindigkeit und höchster Mobilität.
+          </p>
+          <div class="b2b-hero__actions">
+            <a class="btn primary" href="#b2b-form">Angebot anfragen</a>
+            <a class="btn" href="/kontakt/">Direkten Kontakt</a>
+          </div>
+        </div>
+
+        <aside class="b2b-hero__rail" aria-label="Rahmendaten für Geschäftskunden">
+          <div class="b2b-stat">
+            <span>Fokus</span>
+            <strong>Mobile IR-Markierung, industrielle Kennzeichnung und schnelle Sonderlösungen</strong>
+          </div>
+          <div class="b2b-stat">
+            <span>Zusammenarbeit</span>
+            <strong>Direkte Abstimmung, schnelle Umsetzung und präzise Fertigung ohne Umwege</strong>
+          </div>
+          <div class="b2b-stat">
+            <span>Geeignet für</span>
+            <strong>Industrie, Handwerk, Gastronomie und Werkstätten mit anspruchsvollen Bauteilen</strong>
+          </div>
+        </aside>
+      </div>
     </section>
 
-    <section class="b2b-grid" aria-label="B2B-Leistungsfelder">
-      <article class="b2b-card">
-        <h3>Industrielle Markierung</h3>
-        <p>
-          Kennzeichnungen, Typenschilder, Prüfplaketten und gravierte Bauteile für interne Prozesse,
-          Anlagen und Dokumentation.
-        </p>
-      </article>
-      <article class="b2b-card">
-        <h3>Gastronomiebedarf</h3>
-        <p>
-          Robuste Beschriftungen, gravierte Schilder, Tischaufsteller, Servicelabels und personalisierte
-          Elemente für Küche, Bar und Service.
-        </p>
-      </article>
-      <article class="b2b-card">
-        <h3>Werbemittel & Firmengeschenke</h3>
-        <p>
-          Personalisierte Give-aways, Auszeichnungen, Pokale und gravierte Präsente für Mitarbeiter,
-          Kunden oder Events.
-        </p>
-      </article>
-      <article class="b2b-card">
-        <h3>Weitere gewerbliche Anwendungen</h3>
-        <p>
-          Einzelanfertigungen, Sonderwünsche und Prototypen für Agenturen, Vereine, Handwerk,
-          Start-ups und kleinere Produktionsumfelder.
-        </p>
-      </article>
+    <section class="b2b-band b2b-panel" aria-label="B2B-Leistungsfelder">
+      <div class="b2b-section-head">
+        <h2>Leistungsfelder für den Business-Bereich</h2>
+        <p>Klare Leistungsfelder für Projekte mit hohem Anspruch an Präzision, Geschwindigkeit und direkte Umsetzbarkeit.</p>
+      </div>
+
+      <div class="b2b-grid">
+        <article class="b2b-card b2b-card--highlight">
+          <span class="b2b-card__eyebrow">Kernangebot</span>
+          <h3>Industrielle Markierung & Mobiler Service</h3>
+          <p>
+            Dauerhafte Kennzeichnung von Werkzeugen, Bauteilen und Typenschildern. Besonderheit: Dank unseres mobilen IR-Lasers markieren wir Metalle direkt bei Ihnen vor Ort – ideal für ortsfeste Anlagen oder schwer transportable Bauteile.
+          </p>
+        </article>
+        <article class="b2b-card">
+          <h3>Gastronomiebedarf & Branding</h3>
+          <p>
+            Hochwertige Gravuren auf Schiefer, Holz, Glas und Metall. Individuelle QR-Code-Aufsteller, gebrandete Menükarten und exklusives Equipment für Ihren professionellen Auftritt.
+          </p>
+        </article>
+        <article class="b2b-card">
+          <h3>Werbemittel & Firmengeschenke</h3>
+          <p>
+            Keine Massenware von der Stange. Wir veredeln hochwertige Give-aways, Pokale und Mitarbeiterpräsente mit bleibendem Eindruck – auch in kleinen Stückzahlen.
+          </p>
+        </article>
+        <article class="b2b-card">
+          <h3>Prototyping & 3D-Druck</h3>
+          <p>
+            Schnelle Lösungen für technische Probleme. Wir fertigen Funktionsbauteile, Gehäuse und Ersatzteile im FDM-Verfahren oder schneiden präzise Schablonen mit 77W Laserpower.
+          </p>
+        </article>
+      </div>
     </section>
 
-    <section class="b2b-card" aria-label="Warum Luderbein im B2B-Bereich">
-      <h2>Warum Luderbein für B2B-Projekte</h2>
-      <ul class="usp-list">
-        <li><strong>Hohe Flexibilität:</strong> direkte Abstimmung und kurze Entscheidungswege.</li>
-        <li><strong>Auch Einzelstücke möglich:</strong> sinnvoll für Tests, Muster und Sonderfälle.</li>
-        <li><strong>Kleinserien möglich:</strong> ohne unnötig hohe Mindestmengen.</li>
-        <li><strong>Schnelle Prototypen:</strong> frühes Muster zur Freigabe vor Serienlauf.</li>
-        <li><strong>Geeignet für personalisierte Firmengeschenke, Pokale und Einzelanfertigungen.</strong></li>
-        <li><strong>Vorteil gegenüber großen Anbietern:</strong> Luderbein übernimmt auch kleine Stückzahlen und Sonderwünsche,
-          während industrielle Anbieter oft erst bei deutlich höheren Mengen starten.</li>
+    <section class="b2b-trust b2b-panel" aria-label="Vorteile der Vor-Ort-Markierung">
+      <div class="b2b-section-head">
+        <h2>Vor-Ort-Markierung mit direktem Mehrwert</h2>
+        <p>Die mobile IR-Markierung spart Wege, reduziert Risiko und hält sensible Prozesse dort, wo sie hingehören: im laufenden Betrieb.</p>
+      </div>
+
+      <div class="b2b-trust-grid">
+        <article class="b2b-trust-card">
+          <h3>Kein Produktionsstopp</h3>
+          <p>Die Teile müssen nicht ausgebaut und weggeschickt werden.</p>
+        </article>
+        <article class="b2b-trust-card">
+          <h3>Inventarisierung vor Ort</h3>
+          <p>Werkzeugwagen oder Maschinen können direkt in der Werkstatt markiert werden.</p>
+        </article>
+        <article class="b2b-trust-card">
+          <h3>Sicherheit</h3>
+          <p>Keine Gefahr von Transportschäden bei empfindlichen oder teuren Bauteilen.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="b2b-tech b2b-panel" aria-label="Technik und Kapazitäten">
+      <div class="b2b-section-head">
+        <h2>Technik & Kapazitäten</h2>
+        <p>Kompakte technische Übersicht für Projekte mit Anspruch an Leistung, Geschwindigkeit und flexible Umsetzung.</p>
+      </div>
+
+      <div class="b2b-tech-grid">
+        <article class="b2b-tech-card">
+          <span class="b2b-tech-card__label">Cutting & Serie</span>
+          <h3>High-Speed mit stationärer Leistung</h3>
+          <p>Mehrere (teil-)stationäre Diodenlaser mit bis zu 77W Power für High-Speed Cutting.</p>
+        </article>
+        <article class="b2b-tech-card b2b-tech-card--usp">
+          <span class="b2b-tech-card__label">Mobiler USP</span>
+          <h3>Vor-Ort-Metallmarkierung</h3>
+          <p>Mobiler Infrarot-Laser für Vor-Ort-Metallmarkierung.</p>
+        </article>
+        <article class="b2b-tech-card">
+          <span class="b2b-tech-card__label">Funktionsteile</span>
+          <h3>Technischer 3D-Druck</h3>
+          <p>Stationärer 3D-Druck für technische Funktionsteile.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="b2b-proof b2b-panel" aria-label="Warum Luderbein im B2B-Bereich">
+      <div class="b2b-section-head">
+        <h2>Warum Luderbein für B2B-Projekte</h2>
+        <p>Stationäre Leistung für schnelle Fertigung. Mobile Technik für Sonderfälle und Anwendungen direkt vor Ort.</p>
+      </div>
+
+      <ul class="b2b-usp-list">
+        <li><strong>Leistung für Seriennähe:</strong> Bis zu 77W Dioden-Power für schnelle Fertigung, Cutting und kurze Durchlaufzeiten.</li>
+        <li><strong>Mobile Lösung für Sonderfälle:</strong> IR-Markierung direkt vor Ort bei Maschinen, Anlagen und schwer transportablen Bauteilen.</li>
+        <li><strong>Kombinierter Kernvorteil:</strong> Stationäre Power für Masse, mobile Flexibilität für Metallmarkierung und Spezialanwendungen.</li>
+        <li><strong>Direkter Draht:</strong> Kurze Kommunikationswege per WhatsApp, Anruf, SMS oder auf dem für Ihr Projekt passenden Weg – ohne unnötig lange E-Mail-Prozesse.</li>
       </ul>
     </section>
 
-    <section class="b2b-card" aria-label="B2B-Anfrageformular">
-      <h2>B2B-Anfrageformular</h2>
-      <p class="muted">Senden Sie Ihre Eckdaten, damit wir zeitnah ein belastbares Angebot abstimmen können.</p>
+    <section class="b2b-contact b2b-panel" id="b2b-form" aria-label="B2B-Anfrageformular">
+      <div class="b2b-section-head">
+        <h2>B2B-Anfrageformular</h2>
+        <p>Senden Sie Ihre Eckdaten, damit ich Ihnen zeitnah ein Angebot unterbreiten kann.</p>
+      </div>
 
       <form class="b2b-form" action="mailto:luderbein_gravur@icloud.com" method="post" enctype="text/plain">
         <div>
@@ -287,11 +231,17 @@
         </div>
         <div>
           <label for="b2b-material">Wunschmaterial</label>
-          <input id="b2b-material" name="Wunschmaterial" type="text" required />
+          <select id="b2b-material" name="Wunschmaterial" required>
+            <option value="" selected disabled>Bitte auswählen (Metall, Holz, Kunststoff, 3D-Druck)</option>
+            <option value="Metall">Metall</option>
+            <option value="Holz">Holz</option>
+            <option value="Kunststoff">Kunststoff</option>
+            <option value="3D-Druck">3D-Druck</option>
+          </select>
         </div>
         <div>
-          <label for="b2b-deadline">Deadline</label>
-          <input id="b2b-deadline" name="Deadline" type="date" required />
+          <label for="b2b-deadline">Wunschtermin / Deadline</label>
+          <input id="b2b-deadline" name="Deadline" type="date" />
         </div>
         <div class="full">
           <label for="b2b-details">Projektbeschreibung (optional)</label>
@@ -304,9 +254,7 @@
       </form>
 
       <div class="notice-box">
-        <strong>Hinweis zur Rechnungsstellung:</strong> Luderbein wird als Kleingewerbe geführt.
-        Rechnungsstellung ist möglich. Es erfolgt kein Ausweis der Umsatzsteuer nach Kleinunternehmerregelung;
-        eine Vorsteuerabzugsberechtigung besteht entsprechend nicht.
+        <strong>Hinweis zur Rechnungsstellung:</strong> Rechnungsstellung erfolgt gemäß § 19 UStG ohne Ausweis der Umsatzsteuer (Kleinunternehmerregelung).
       </div>
     </section>
   </main>
