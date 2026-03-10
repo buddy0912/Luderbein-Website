@@ -365,6 +365,7 @@
     const modalText = modal.querySelector(".lb-modal__text");
     const modalCta = modal.querySelector("[data-lb-modal-cta]");
     let lastActive = null;
+    let autoOpenedCard = null;
 
     function buildContactUrl(product, variant, format) {
       const params = new URLSearchParams();
@@ -375,7 +376,40 @@
       return qs ? `/kontakt/?${qs}` : "/kontakt/";
     }
 
-    function openModal(card) {
+    function normalizeModalValue(value) {
+      return normalizeSearchText(value || "");
+    }
+
+    function updateModalQuery(card) {
+      if (!card || !window.history || typeof window.history.replaceState !== "function") return;
+
+      const nextUrl = new URL(window.location.href);
+      const product = card.getAttribute("data-modal-product") || "";
+      const variant = card.getAttribute("data-modal-variant") || card.getAttribute("data-modal-title") || "";
+
+      if (product) nextUrl.searchParams.set("lb-modal-product", product);
+      if (variant) nextUrl.searchParams.set("lb-modal-variant", variant);
+
+      window.history.replaceState({}, "", nextUrl.pathname + nextUrl.search + nextUrl.hash);
+    }
+
+    function clearModalQuery() {
+      if (!window.history || typeof window.history.replaceState !== "function") return;
+
+      const nextUrl = new URL(window.location.href);
+      const hadParams =
+        nextUrl.searchParams.has("lb-modal-product") ||
+        nextUrl.searchParams.has("lb-modal-variant");
+
+      if (!hadParams) return;
+
+      nextUrl.searchParams.delete("lb-modal-product");
+      nextUrl.searchParams.delete("lb-modal-variant");
+      window.history.replaceState({}, "", nextUrl.pathname + nextUrl.search + nextUrl.hash);
+    }
+
+    function openModal(card, options) {
+      const opts = options || {};
       lastActive = card || document.activeElement;
       const img = card.getAttribute("data-modal-img");
       const alt = card.getAttribute("data-modal-alt") || "Detailbild";
@@ -401,16 +435,35 @@
 
       modal.classList.add("is-open");
       document.body.style.overflow = "hidden";
+      if (!opts.skipUrlSync) updateModalQuery(card);
       modal.querySelector("[data-lb-modal-close]")?.focus();
     }
 
     function closeModal() {
       modal.classList.remove("is-open");
       document.body.style.overflow = "";
+      clearModalQuery();
       if (lastActive && typeof lastActive.focus === "function") {
         lastActive.focus();
       }
       lastActive = null;
+    }
+
+    function findModalCardFromQuery() {
+      const params = new URLSearchParams(window.location.search || "");
+      const targetProduct = normalizeModalValue(params.get("lb-modal-product"));
+      const targetVariant = normalizeModalValue(params.get("lb-modal-variant"));
+      if (!targetProduct && !targetVariant) return null;
+
+      const cards = Array.from(document.querySelectorAll("[data-lb-modal-card]"));
+      return cards.find((card) => {
+        const product = normalizeModalValue(card.getAttribute("data-modal-product"));
+        const variant = normalizeModalValue(card.getAttribute("data-modal-variant"));
+        const title = normalizeModalValue(card.getAttribute("data-modal-title"));
+        const productMatches = !targetProduct || product === targetProduct;
+        const variantMatches = !targetVariant || variant === targetVariant || title === targetVariant;
+        return productMatches && variantMatches;
+      }) || null;
     }
 
     document.addEventListener("click", (e) => {
@@ -435,6 +488,14 @@
         openModal(document.activeElement);
       }
     });
+
+    autoOpenedCard = findModalCardFromQuery();
+    if (autoOpenedCard) {
+      window.requestAnimationFrame(() => {
+        autoOpenedCard.scrollIntoView({ block: "center", behavior: "auto" });
+        openModal(autoOpenedCard, { skipUrlSync: true });
+      });
+    }
   }
 
   // =========================================================
@@ -1107,6 +1168,447 @@
     });
   }
 
+  // =========================================================
+  // Site Search
+  // =========================================================
+  function loadSearchIndex() {
+    if (Array.isArray(window.__lbSearchIndex)) {
+      return Promise.resolve(window.__lbSearchIndex);
+    }
+
+    if (window.__lbSearchIndexPromise) {
+      return window.__lbSearchIndexPromise;
+    }
+
+    window.__lbSearchIndexPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "/assets/search-index.js";
+      script.async = true;
+      script.onload = () => resolve(Array.isArray(window.__lbSearchIndex) ? window.__lbSearchIndex : []);
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+
+    return window.__lbSearchIndexPromise;
+  }
+
+  function normalizeSearchText(value) {
+    return norm(value)
+      .toLowerCase()
+      .replace(/ß/g, "ss")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/&/g, " und ")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function splitSearchTokens(value) {
+    return normalizeSearchText(value)
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+  function uniqueSearchTerms(values) {
+    const seen = new Set();
+    const result = [];
+
+    values.forEach((value) => {
+      const normalized = normalizeSearchText(value);
+      if (!normalized || seen.has(normalized)) return;
+      seen.add(normalized);
+      result.push(normalized);
+    });
+
+    return result;
+  }
+
+  function preprocessSearchEntry(entry) {
+    const keywords = Array.isArray(entry.keywords) ? entry.keywords : [];
+    const imageTags = Array.isArray(entry.imageTags) ? entry.imageTags : [];
+    const imageProjects = Array.isArray(entry.imageProjects) ? entry.imageProjects : [];
+    const imageProjectTags = imageProjects.flatMap((project) => {
+      const projectName = project && project.project ? [project.project] : [];
+      const tags = Array.isArray(project?.tags) ? project.tags : [];
+      return [...projectName, ...tags];
+    });
+
+    return {
+      ...entry,
+      _haystack: {
+        title: normalizeSearchText(entry.title || ""),
+        type: normalizeSearchText(entry.type || ""),
+        section: normalizeSearchText(entry.section || ""),
+        summary: normalizeSearchText(entry.summary || ""),
+        content: normalizeSearchText(entry.content || ""),
+        keywords: keywords.map(normalizeSearchText).join(" "),
+        imageTags: imageTags.map(normalizeSearchText).join(" "),
+        imageProjects: imageProjectTags.map(normalizeSearchText).join(" "),
+      },
+      _terms: uniqueSearchTerms([
+        entry.title || "",
+        entry.type || "",
+        entry.section || "",
+        entry.summary || "",
+        entry.content || "",
+        ...keywords,
+        ...imageTags,
+        ...imageProjectTags,
+      ]),
+    };
+  }
+
+  function scoreSearchEntry(entry, query, tokens) {
+    if (!query) return null;
+
+    const fields = [
+      { value: entry._haystack.title, weight: 52 },
+      { value: entry._haystack.keywords, weight: 40 },
+      { value: entry._haystack.imageTags, weight: 34 },
+      { value: entry._haystack.imageProjects, weight: 30 },
+      { value: entry._haystack.section, weight: 28 },
+      { value: entry._haystack.summary, weight: 18 },
+      { value: entry._haystack.content, weight: 12 },
+      { value: entry._haystack.type, weight: 10 },
+    ];
+
+    let score = 0;
+    let matchedTokenCount = 0;
+
+    fields.forEach((field) => {
+      if (field.value && field.value.includes(query)) {
+        score += field.weight * 2;
+      }
+    });
+
+    tokens.forEach((token) => {
+      let tokenMatched = false;
+
+      fields.forEach((field) => {
+        if (!field.value || !field.value.includes(token)) return;
+        score += field.weight;
+        tokenMatched = true;
+      });
+
+      if (tokenMatched) matchedTokenCount += 1;
+    });
+
+    const phraseMatched = fields.some((field) => field.value && field.value.includes(query));
+    const minimumMatches = tokens.length >= 3 ? 2 : 1;
+
+    if (!phraseMatched && matchedTokenCount < minimumMatches) {
+      return null;
+    }
+
+    if (tokens.length > 1 && matchedTokenCount === tokens.length) {
+      score += 36;
+    }
+
+    const matchedTags = [];
+    [
+      ...(entry.keywords || []),
+      ...(entry.imageTags || []),
+      ...((entry.imageProjects || []).flatMap((project) => Array.isArray(project?.tags) ? project.tags : [])),
+    ].forEach((tag) => {
+      const normalizedTag = normalizeSearchText(tag);
+      if (!normalizedTag) return;
+      if (tokens.some((token) => normalizedTag.includes(token) || token.includes(normalizedTag))) {
+        if (!matchedTags.includes(tag)) matchedTags.push(tag);
+      }
+    });
+
+    const matchedProjects = (entry.imageProjects || [])
+      .filter((project) => {
+        const projectTerms = [project?.project || "", ...((Array.isArray(project?.tags) ? project.tags : []))];
+        return projectTerms.some((value) => {
+          const normalized = normalizeSearchText(value);
+          return normalized && tokens.some((token) => normalized.includes(token) || token.includes(normalized));
+        });
+      })
+      .map((project) => project.project)
+      .filter(Boolean)
+      .slice(0, 2);
+
+    return {
+      ...entry,
+      _score: score,
+      _matchedTags: matchedTags.slice(0, 3),
+      _matchedProjects: matchedProjects,
+      _matchedTokenCount: matchedTokenCount,
+    };
+  }
+
+  function buildSearchResultHref(entry) {
+    const base = entry && entry.url ? entry.url : "/";
+    if (!entry || !entry.modalTarget) return base;
+
+    const url = new URL(base, window.location.origin);
+    if (entry.modalTarget.product) {
+      url.searchParams.set("lb-modal-product", entry.modalTarget.product);
+    }
+    if (entry.modalTarget.variant) {
+      url.searchParams.set("lb-modal-variant", entry.modalTarget.variant);
+    }
+
+    return url.pathname + url.search + url.hash;
+  }
+
+  function initSiteSearch() {
+    const nav = document.querySelector("header .nav");
+    if (!nav || document.getElementById("lb-search-trigger")) return;
+
+    loadSearchIndex()
+      .then((rawIndex) => {
+        const entries = Array.isArray(rawIndex) ? rawIndex.map(preprocessSearchEntry) : [];
+        if (!entries.length) return;
+
+        const quick = document.createElement("div");
+        quick.className = "nav-quick";
+        quick.innerHTML = `
+          <button
+            class="lb-search-trigger"
+            id="lb-search-trigger"
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-controls="lb-search"
+          >
+            <span class="lb-search-trigger__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"></circle>
+                <path d="M16 16L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+            </span>
+            <span class="lb-search-trigger__label">Suche</span>
+          </button>
+        `;
+
+        const navToggle = nav.querySelector("[data-nav-toggle]");
+        if (navToggle) {
+          nav.insertBefore(quick, navToggle);
+        } else {
+          nav.appendChild(quick);
+        }
+
+        const overlay = document.createElement("section");
+        overlay.className = "lb-search";
+        overlay.id = "lb-search";
+        overlay.setAttribute("aria-hidden", "true");
+        overlay.innerHTML = `
+          <div class="lb-search__backdrop" data-search-close></div>
+          <div class="lb-search__panel" role="dialog" aria-modal="true" aria-labelledby="lb-search-title">
+            <div class="lb-search__header">
+              <div>
+                <p class="lb-search__eyebrow">Site Search</p>
+                <h2 id="lb-search-title">Was suchst du?</h2>
+              </div>
+              <button class="lb-search__close" type="button" data-search-close aria-label="Suche schließen">×</button>
+            </div>
+
+            <form class="lb-search__form" novalidate>
+              <label class="lb-search__field">
+                <span class="lb-search__field-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"></circle>
+                    <path d="M16 16L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                  </svg>
+                </span>
+                <input type="search" name="q" autocomplete="off" placeholder="z. B. Schiefer, Hundemarke, Gastronomie, Geschenk" />
+              </label>
+            </form>
+
+            <p class="lb-search__meta">Sucht in Leistungen, Materialien, Produktarten, FAQ, B2B-Inhalten und Bild-Tags.</p>
+
+            <div class="lb-search__chips" aria-label="Beliebte Suchbegriffe">
+              <button type="button" class="lb-search-chip" data-search-chip="Schiefer">Schiefer</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Metall">Metall</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Hundemarke">Hundemarke</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Glas">Glas</button>
+              <button type="button" class="lb-search-chip" data-search-chip="B2B">B2B</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Gastronomie">Gastronomie</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Gravur">Gravur</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Geschenk">Geschenk</button>
+              <button type="button" class="lb-search-chip" data-search-chip="Schwibbogen">Schwibbogen</button>
+            </div>
+
+            <div class="lb-search__active" data-search-active hidden></div>
+            <div class="lb-search__results" data-search-results></div>
+          </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const trigger = quick.querySelector(".lb-search-trigger");
+        const input = overlay.querySelector("input[type='search']");
+        const results = overlay.querySelector("[data-search-results]");
+        const active = overlay.querySelector("[data-search-active]");
+        const closeNodes = overlay.querySelectorAll("[data-search-close]");
+        const chips = Array.from(overlay.querySelectorAll("[data-search-chip]"));
+
+        function updateActiveChipState(rawValue) {
+          const activeValue = normalizeSearchText(rawValue);
+          chips.forEach((chip) => {
+            const chipValue = normalizeSearchText(chip.getAttribute("data-search-chip") || "");
+            const isActive = !!activeValue && chipValue === activeValue;
+            chip.classList.toggle("is-active", isActive);
+            chip.setAttribute("aria-pressed", isActive ? "true" : "false");
+          });
+        }
+
+        function buildPrimaryLabel(item) {
+          return item.section || item.type || "Luderbein";
+        }
+
+        function buildSecondaryLabel(item) {
+          return item.title || item.summary || "Treffer";
+        }
+
+        function renderResults(items, queryValue) {
+          updateActiveChipState(queryValue);
+
+          if (!queryValue) {
+            active.hidden = true;
+            active.innerHTML = "";
+            results.innerHTML = `
+              <div class="lb-search__state">
+                <strong>Schnell starten</strong>
+                <p>Suche nach Material, Produktart, FAQ oder B2B-Thema. Beispiele: Schiefer, Hundemarke, Gastronomie, Geschenk, Schwibbogen.</p>
+              </div>
+            `;
+            return;
+          }
+
+          active.hidden = false;
+          active.innerHTML = `
+            <div class="lb-search__active-title">Suchergebnisse für <span>„${queryValue}“</span></div>
+            <p class="lb-search__active-text">${items.length} anklickbare Treffer zur aktuellen Suche.</p>
+          `;
+
+          if (!items.length) {
+            results.innerHTML = `
+              <div class="lb-search__state">
+                <strong>Keine passenden Treffer</strong>
+                <p>Versuche einen Materialbegriff, eine Produktart oder einen einfacheren Suchbegriff wie Metall, Glas, B2B oder Gravur.</p>
+              </div>
+            `;
+            return;
+          }
+
+          results.innerHTML = items
+            .slice(0, 8)
+            .map((item) => {
+              const primary = buildPrimaryLabel(item);
+              const secondary = buildSecondaryLabel(item);
+
+              return `
+                <a class="lb-search__result" href="${buildSearchResultHref(item)}">
+                  <div class="lb-search__result-top">${primary}</div>
+                  <strong>${secondary}</strong>
+                  <span class="lb-search__result-cta">Jetzt öffnen</span>
+                </a>
+              `;
+            })
+            .join("");
+        }
+
+        function runSearch(rawValue) {
+          const query = normalizeSearchText(rawValue);
+          const tokens = splitSearchTokens(rawValue);
+          if (!query) {
+            renderResults([], "");
+            return;
+          }
+
+          const ranked = entries
+            .map((entry) => scoreSearchEntry(entry, query, tokens))
+            .filter(Boolean)
+            .sort((a, b) => {
+              if (b._score !== a._score) return b._score - a._score;
+              if (b._matchedTokenCount !== a._matchedTokenCount) return b._matchedTokenCount - a._matchedTokenCount;
+              return a.title.localeCompare(b.title, "de");
+            });
+
+          renderResults(ranked, rawValue);
+        }
+
+        function setOpen(isOpen) {
+          overlay.classList.toggle("is-open", isOpen);
+          overlay.setAttribute("aria-hidden", isOpen ? "false" : "true");
+          trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+          document.body.classList.toggle("lb-search-open", isOpen);
+
+          if (isOpen) {
+            runSearch(input.value);
+            window.requestAnimationFrame(() => {
+              try {
+                input.focus({ preventScroll: true });
+              } catch (_) {
+                input.focus();
+              }
+            });
+          }
+        }
+
+        trigger.addEventListener("click", () => {
+          setOpen(!overlay.classList.contains("is-open"));
+        });
+
+        closeNodes.forEach((node) => {
+          node.addEventListener("click", () => setOpen(false));
+        });
+
+        overlay.addEventListener("click", (event) => {
+          if (event.target.closest(".lb-search__result")) {
+            setOpen(false);
+          }
+        });
+
+        overlay.querySelectorAll("[data-search-chip]").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            input.value = chip.getAttribute("data-search-chip") || "";
+            runSearch(input.value);
+            input.focus();
+          });
+        });
+
+        overlay.querySelector(".lb-search__form").addEventListener("submit", (event) => {
+          event.preventDefault();
+          const firstResult = results.querySelector(".lb-search__result");
+          if (firstResult) {
+            firstResult.click();
+          }
+        });
+
+        input.addEventListener("input", () => runSearch(input.value));
+
+        document.addEventListener("keydown", (event) => {
+          const target = event.target;
+          const isTypingTarget =
+            target &&
+            (target.tagName === "INPUT" ||
+              target.tagName === "TEXTAREA" ||
+              target.isContentEditable);
+
+          if (event.key === "Escape" && overlay.classList.contains("is-open")) {
+            setOpen(false);
+            return;
+          }
+
+          if (isTypingTarget) return;
+
+          if (event.key === "/" || ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k")) {
+            event.preventDefault();
+            setOpen(true);
+          }
+        });
+
+        renderResults([], "");
+      })
+      .catch(() => {
+        // Search bleibt optional und darf die Seite nicht brechen.
+      });
+  }
+
   // ---------------------------------
   // DOM Ready
   // ---------------------------------
@@ -1148,6 +1650,7 @@
     initScrollIndicator();
     initModalCards();
     initImageWatermarks();
+    initSiteSearch();
     // initChatWidget wird absichtlich NICHT aufgerufen, um den Bot auszublenden.
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
