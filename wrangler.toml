@@ -7,7 +7,9 @@ ALLOWED_ORIGIN = "https://luderbein-gravur.pages.dev"
 PINBOARD_PUBLIC_REQUIRES_APPROVAL = "true"
 PINBOARD_NOTIFY_TO = "luderbein_gravur@icloud.com"
 PINBOARD_EMAIL_FROM = "Pinnwand <onboarding@resend.dev>"
-PINBOARD_ADMIN_TOKEN = "HIER_EIN_LANGES_ADMIN_TOKEN_SETZEN"
+# database_id nach `wrangler d1 create luderbein-pinnwand` einsetzen.
+# PINBOARD_ADMIN_TOKEN absichtlich NICHT hier hinterlegen, sondern als Secret setzen:
+# wrangler secret put PINBOARD_ADMIN_TOKEN
 
 [[d1_databases]]
 binding = "PINBOARD_DB"

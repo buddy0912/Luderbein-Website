@@ -99,6 +99,14 @@ function mapRow(row) {
   };
 }
 
+function hasNotificationConfig(env) {
+  return Boolean(
+    String(env.RESEND_API_KEY || "").trim() &&
+    String(env.PINBOARD_NOTIFY_TO || "").trim() &&
+    String(env.PINBOARD_EMAIL_FROM || "").trim()
+  );
+}
+
 async function sendResendNotification(env, payload) {
   const apiKey = String(env.RESEND_API_KEY || "").trim();
   const to = String(env.PINBOARD_NOTIFY_TO || "").trim();
@@ -188,11 +196,11 @@ async function handleGet(context, cors) {
 
   if (isAdminRequest(request, env)) {
     const pending = await loadPendingPosts(env.PINBOARD_DB);
-    return json({ pending }, 200, cors);
+    return json({ pending, notificationsConfigured: hasNotificationConfig(env) }, 200, cors);
   }
 
   const posts = await loadPublishedPosts(env.PINBOARD_DB);
-  return json({ posts }, 200, cors);
+  return json({ posts, notificationsConfigured: hasNotificationConfig(env) }, 200, cors);
 }
 
 async function handlePost(context, cors) {
@@ -277,12 +285,17 @@ async function handlePost(context, cors) {
     });
     notificationSent = true;
     await env.PINBOARD_DB.prepare(
-      `UPDATE pinboard_posts SET notified_at = ? WHERE id = ?`
+      `UPDATE pinboard_posts SET notified_at = ?, notification_error = NULL WHERE id = ?`
     )
       .bind(new Date().toISOString(), id)
       .run();
   } catch (error) {
     notificationError = error instanceof Error ? error.message : "MAIL_SEND_FAILED";
+    await env.PINBOARD_DB.prepare(
+      `UPDATE pinboard_posts SET notification_error = ? WHERE id = ?`
+    )
+      .bind(notificationError, id)
+      .run();
   }
 
   return json(

@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS pinboard_posts (
   reply_message TEXT,
   created_at TEXT NOT NULL,
   published_at TEXT,
-  notified_at TEXT
+  notified_at TEXT,
+  notification_error TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_pinboard_posts_status_created_at
