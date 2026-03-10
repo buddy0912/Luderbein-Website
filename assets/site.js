@@ -1362,33 +1362,36 @@
         const entries = Array.isArray(rawIndex) ? rawIndex.map(preprocessSearchEntry) : [];
         if (!entries.length) return;
 
-        const quick = document.createElement("div");
-        quick.className = "nav-quick";
-        quick.innerHTML = `
-          <button
-            class="lb-search-trigger"
-            id="lb-search-trigger"
-            type="button"
-            aria-haspopup="dialog"
-            aria-expanded="false"
-            aria-controls="lb-search"
-          >
-            <span class="lb-search-trigger__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"></circle>
-                <path d="M16 16L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-              </svg>
-            </span>
-            <span class="lb-search-trigger__label">Suche</span>
-          </button>
-        `;
-
-        const navToggle = nav.querySelector("[data-nav-toggle]");
-        if (navToggle) {
-          nav.insertBefore(quick, navToggle);
-        } else {
-          nav.appendChild(quick);
+        let quick = nav.querySelector(".nav-quick");
+        if (!quick) {
+          quick = document.createElement("div");
+          quick.className = "nav-quick";
+          const navToggle = nav.querySelector("[data-nav-toggle]");
+          if (navToggle) {
+            nav.insertBefore(quick, navToggle);
+          } else {
+            nav.appendChild(quick);
+          }
         }
+
+        const searchBtn = document.createElement("button");
+        searchBtn.className = "lb-search-trigger";
+        searchBtn.id = "lb-search-trigger";
+        searchBtn.type = "button";
+        searchBtn.setAttribute("aria-label", "Suche öffnen");
+        searchBtn.setAttribute("title", "Suche");
+        searchBtn.setAttribute("aria-haspopup", "dialog");
+        searchBtn.setAttribute("aria-expanded", "false");
+        searchBtn.setAttribute("aria-controls", "lb-search");
+        searchBtn.innerHTML = `
+          <span class="lb-search-trigger__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"></circle>
+              <path d="M16 16L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </span>
+        `;
+        quick.appendChild(searchBtn);
 
         const overlay = document.createElement("section");
         overlay.className = "lb-search";
@@ -1609,6 +1612,48 @@
       });
   }
 
+  function initIdeaWallNavLink() {
+    const nav = document.querySelector("header .nav");
+    if (!nav || document.getElementById("lb-idea-wall-link")) return;
+
+    let quick = nav.querySelector(".nav-quick");
+    if (!quick) {
+      quick = document.createElement("div");
+      quick.className = "nav-quick";
+      const navToggle = nav.querySelector("[data-nav-toggle]");
+      if (navToggle) {
+        nav.insertBefore(quick, navToggle);
+      } else {
+        nav.appendChild(quick);
+      }
+    }
+
+    const link = document.createElement("a");
+    link.className = "nav-symbol-link";
+    link.id = "lb-idea-wall-link";
+    link.href = "/ideenpinnwand/";
+    link.setAttribute("aria-label", "Ideen- und Diskussionspinnwand");
+    link.setAttribute("title", "Ideen- und Diskussionspinnwand");
+    link.innerHTML = `
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="5.5" y="4.75" width="13" height="13" rx="1.8" stroke="currentColor" stroke-width="1.6"></rect>
+        <path d="M8 8.25H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        <path d="M8 12H14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        <path d="M9 4.75V2.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        <path d="M15 4.75V2.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        <path d="M12 17.75V21.25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        <path d="M9.5 21.25H14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+      </svg>
+    `;
+
+    const path = window.location.pathname.replace(/index\.html$/, "");
+    if (path.startsWith("/ideenpinnwand/")) {
+      link.setAttribute("aria-current", "page");
+    }
+
+    quick.insertBefore(link, quick.firstChild);
+  }
+
   // ---------------------------------
   // DOM Ready
   // ---------------------------------
@@ -1637,6 +1682,8 @@
       if (!href || href === "/") return;
       if (path.startsWith(href)) a.setAttribute("aria-current", "page");
     });
+
+    initIdeaWallNavLink();
 
     // CTA Autofill (a[data-lb-cta])
     const ctx = getQueryContext();

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ideen- und Diskussionspinnwand – Luderbein</title>
+  <meta name="description" content="Ideen, Wünsche und Diskussionsbeiträge für Luderbein. Öffentlich auf der Pinnwand oder nicht öffentlich nur intern." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <style>
+    .page-pinnwand main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .pin-board,
+    .pin-compose {
+      border: 1px solid rgba(64,62,65,.55);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .pin-board {
+      background:
+        radial-gradient(760px 220px at 0% 0%, rgba(219,16,33,.1), transparent 58%),
+        linear-gradient(180deg, rgba(32,24,28,.96), rgba(15,11,15,.98));
+      overflow: hidden;
+    }
+
+    .pin-board__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(64,62,65,.55);
+      background: linear-gradient(180deg, rgba(50,23,28,.46), rgba(22,18,22,.66));
+    }
+
+    .pin-board__title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .pin-board__meta {
+      color: var(--muted);
+      font-size: .84rem;
+      white-space: nowrap;
+    }
+
+    .pin-board__viewport {
+      max-height: min(58vh, 720px);
+      overflow-y: auto;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.015), transparent 18%),
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,.02) 0,
+          rgba(255,255,255,.02) 1px,
+          transparent 1px,
+          transparent 48px
+        );
+    }
+
+    .pin-board__empty {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      padding: 26px;
+      border-radius: 18px;
+      border: 1px dashed rgba(88,81,86,.72);
+      background: rgba(18,14,18,.68);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .pin-board__empty strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .pin-card {
+      position: relative;
+      border: 1px solid rgba(95,84,90,.7);
+      border-radius: 18px;
+      padding: 16px;
+      background:
+        linear-gradient(180deg, rgba(47,35,40,.98), rgba(24,18,22,.98));
+      box-shadow:
+        0 14px 28px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .pin-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      border-radius: 18px 0 0 18px;
+      background: linear-gradient(180deg, rgba(219,16,33,.9), rgba(128,21,29,.6));
+    }
+
+    .pin-card__top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .pin-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(42,45,51,.22);
+      color: var(--muted);
+      font-size: .8rem;
+      letter-spacing: .04em;
+    }
+
+    .pin-chip--author {
+      color: var(--text);
+      background: rgba(68,26,31,.3);
+      border-color: rgba(219,16,33,.3);
+    }
+
+    .pin-card p,
+    .pin-reply p {
+      margin: 0;
+    }
+
+    .pin-card p {
+      color: rgba(222,218,217,.96);
+    }
+
+    .pin-reply {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.5);
+      background: rgba(42,45,51,.16);
+    }
+
+    .pin-reply strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: .92rem;
+    }
+
+    .pin-reply p {
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .pin-compose {
+      background: rgba(26,26,31,.74);
+      padding: 18px;
+    }
+
+    .pin-compose h1,
+    .pin-compose h2 {
+      margin: 0 0 10px;
+    }
+
+    .pin-compose > p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .pin-rule {
+      margin: 0 0 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(219,16,33,.28);
+      background: linear-gradient(180deg, rgba(60,18,24,.42), rgba(24,16,20,.72));
+      color: rgba(210,207,206,.9);
+      font-size: .95rem;
+    }
+
+    .pin-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pin-form__row {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pin-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    .pin-form textarea,
+    .pin-form select,
+    .pin-form input[type="text"],
+    .pin-form input[type="email"] {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(14,6,11,.42);
+      color: var(--text);
+      padding: 12px;
+      font: inherit;
+      outline: none;
+    }
+
+    .pin-form textarea {
+      min-height: 132px;
+      resize: vertical;
+    }
+
+    .pin-form textarea:focus,
+    .pin-form select:focus,
+    .pin-form input[type="text"]:focus,
+    .pin-form input[type="email"]:focus {
+      border-color: rgba(219,16,33,.62);
+      box-shadow: 0 0 0 3px rgba(219,16,33,.12);
+    }
+
+    .pin-form__subhint {
+      display: block;
+      margin-top: 4px;
+      font-size: .84rem;
+      color: var(--muted);
+    }
+
+    .pin-form__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .pin-form__actions .btn {
+      min-width: 200px;
+    }
+
+    .pin-form__meta {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .pin-form__status {
+      margin: 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .pin-form__status.is-live {
+      color: var(--text);
+    }
+
+    @media (min-width: 760px) {
+      .pin-form__row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body class="page-pinnwand" data-page="ideenpinnwand" data-enablebot="0">
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/glas/" role="menuitem">Glas</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/b2b/">B2B</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="content">
+    <section class="pin-board" aria-label="Pinnwand">
+      <div class="pin-board__head">
+        <h1 class="pin-board__title">Pinnwand</h1>
+        <span class="pin-board__meta" id="pin-board-count">0 Beiträge</span>
+      </div>
+      <div class="pin-board__viewport" id="pin-board-list">
+        <div class="pin-board__empty" id="pin-board-empty">
+          <div>
+            <strong>Noch keine öffentlichen Beiträge</strong>
+            <span>Wenn der erste öffentliche Eintrag kommt, erscheint er hier.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pin-compose" aria-labelledby="compose-title">
+      <h1 id="compose-title">Eigenen Beitrag schreiben</h1>
+      <p>Kein Bestellformular, keine verbindliche Anfrage.</p>
+      <p class="pin-rule">Ideen, Wünsche und Beiträge für die Pinnwand. Öffentlich sichtbare Beiträge erscheinen oben. Nicht öffentliche Beiträge gehen nur intern an Luderbein.</p>
+
+      <form class="pin-form" id="pinnwand-form">
+        <div>
+          <label for="pin-message">Beitrag</label>
+          <textarea id="pin-message" name="message" placeholder="Schreib deine Idee, Frage oder Anregung direkt hier rein."></textarea>
+        </div>
+
+        <div class="pin-form__row">
+          <div>
+            <label for="pin-visibility">Sichtbarkeit</label>
+            <select id="pin-visibility" name="visibility">
+              <option value="oeffentlich">öffentlich</option>
+              <option value="intern">nicht öffentlich</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="pin-nickname">Nickname optional</label>
+            <input id="pin-nickname" name="nickname" type="text" autocomplete="nickname" placeholder="z. B. SchieferFan87">
+          </div>
+        </div>
+
+        <div>
+          <label for="pin-email">E-Mail optional</label>
+          <input id="pin-email" name="email" type="email" autocomplete="email" placeholder="nur falls du später erreicht werden möchtest">
+          <span class="pin-form__subhint">wird nur an Luderbein übermittelt</span>
+        </div>
+
+        <div class="pin-form__actions">
+          <button class="btn primary" type="submit">Beitrag absenden</button>
+          <span class="pin-form__meta">Öffentlich oder intern. Klarname nicht nötig.</span>
+        </div>
+        <p class="pin-form__status" id="pin-form-status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="/assets/footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById("pinnwand-form");
+      const board = document.getElementById("pin-board-list");
+      const emptyState = document.getElementById("pin-board-empty");
+      const count = document.getElementById("pin-board-count");
+      const status = document.getElementById("pin-form-status");
+      if (!form || !board || !emptyState || !count || !status) return;
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function createCard(post) {
+        const card = document.createElement("article");
+        card.className = "pin-card";
+        card.innerHTML = `
+          <div class="pin-card__top">
+            <span class="pin-chip pin-chip--author">${escapeHtml(post.nickname || "Anonym")}</span>
+          </div>
+          <p>${escapeHtml(post.message)}</p>
+        `;
+        return card;
+      }
+
+      function syncBoardState() {
+        const items = board.querySelectorAll(".pin-card").length;
+        count.textContent = `${items} ${items === 1 ? "Beitrag" : "Beiträge"}`;
+        if (items > 0) {
+          emptyState.hidden = true;
+        } else {
+          emptyState.hidden = false;
+        }
+      }
+
+      syncBoardState();
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const message = (form.querySelector("#pin-message")?.value || "").trim();
+        if (!message) {
+          form.querySelector("#pin-message")?.focus();
+          return;
+        }
+
+        const visibility = form.querySelector("#pin-visibility")?.value === "intern"
+          ? "nicht öffentlich"
+          : "öffentlich";
+        const nickname = (form.querySelector("#pin-nickname")?.value || "").trim() || "Anonym";
+
+        status.classList.add("is-live");
+
+        if (visibility === "öffentlich") {
+          const post = { nickname, message };
+          board.insertBefore(createCard(post), board.firstChild);
+          syncBoardState();
+          status.textContent = "Öffentlicher Beitrag oben ergänzt.";
+        } else {
+          status.textContent = "Nicht öffentlicher Beitrag erfasst.";
+        }
+
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>
