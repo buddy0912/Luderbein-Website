@@ -1,6 +1,5 @@
 name = "luderbein-website"
 compatibility_date = "2026-03-10"
-pages_build_output_dir = "."
 
 [vars]
 ALLOWED_ORIGIN = "https://luderbein-gravur.pages.dev"
@@ -11,5 +10,5 @@ PINBOARD_ADMIN_TOKEN = "HIER_EIN_LANGES_ADMIN_TOKEN_SETZEN"
 
 [[d1_databases]]
 binding = "PINBOARD_DB"
-database_name = "luderbein-pinnwand"
-database_id = "HIER_DIE_D1_DATABASE_ID_EINTRAGEN"
+database_name = "pinnwand_datenbank"
+database_id = "43584731-7e0c-4e18-8dd8-ed0ac02076f9"
