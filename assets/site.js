@@ -446,6 +446,7 @@
       custom: "/leistungen/custom/",
       acryl: "/leistungen/acryl/",
       glas: "/leistungen/glas/",
+      b2b: "/b2b/",
     };
 
     function normHref(h) {
@@ -511,6 +512,27 @@
         acrylLink.parentNode.insertBefore(glas, acrylLink.nextSibling);
       } else {
         panel.appendChild(glas);
+      }
+    });
+
+    // 5) B2B-Eintrag in allen Header-Menüs sicherstellen
+    const menus = document.querySelectorAll("nav.menu");
+    menus.forEach((menu) => {
+      if (menu.querySelector(`:scope > a[href="${TARGET.b2b}"]`)) return;
+
+      const topLevelLinks = Array.from(menu.children).filter((el) => el.tagName === "A");
+      const ueberLink = topLevelLinks.find(
+        (link) => normHref(link.getAttribute("href")) === "/ueber/"
+      );
+
+      const b2b = document.createElement("a");
+      b2b.setAttribute("href", TARGET.b2b);
+      b2b.textContent = "B2B";
+
+      if (ueberLink) {
+        menu.insertBefore(b2b, ueberLink);
+      } else {
+        menu.appendChild(b2b);
       }
     });
   }
