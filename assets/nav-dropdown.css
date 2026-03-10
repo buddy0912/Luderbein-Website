@@ -1,15 +1,16 @@
 /* =========================================================
-   Luderbein – NAVIGATION / DROPDOWN SYSTEM (v1.1)
+   Luderbein – Navigation / Dropdown System
    ---------------------------------------------------------
-   - Desktop: Overlay mit Blur + Shadow
-   - Mobile: integriert im Burger-Menü (zentriert)
-   - ARIA & Keyboard accessible
+   - Desktop: Inline nav with dropdown overlay
+   - Mobile: Compact topbar + full-width overlay menu
+   - Shared with JS nav toggle / quick action buttons
    ========================================================= */
 
 :root {
-  --navdd-bg: rgba(10,10,12,.92);
-  --navdd-border: rgba(255,255,255,.10);
-  --navdd-shadow: 0 18px 50px rgba(0,0,0,.55);
+  --navdd-bg: rgba(10, 10, 12, 0.94);
+  --navdd-border: rgba(255, 255, 255, 0.1);
+  --navdd-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  --nav-mobile-panel: linear-gradient(180deg, rgba(26, 26, 31, 0.96), rgba(14, 6, 11, 0.98));
 }
 
 /* Container */
@@ -19,7 +20,7 @@
   vertical-align: middle;
 }
 
-/* Trigger-Button */
+/* Trigger button */
 .navdrop__sum {
   display: inline-flex;
   align-items: center;
@@ -34,12 +35,14 @@
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background .15s ease, color .15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
+
 .navdrop__sum:hover,
+.navdrop__sum:focus-visible,
 .navdrop[open] .navdrop__sum,
 .navdrop[data-open="true"] .navdrop__sum {
-  background: rgba(255,255,255,.06);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text, #fff);
 }
 
@@ -47,14 +50,15 @@
 .navdrop__chev {
   display: inline-block;
   transform-origin: 50% 50%;
-  transition: transform .18s ease;
-  opacity: .85;
+  transition: transform 0.18s ease;
+  opacity: 0.85;
 }
+
 .navdrop[data-open="true"] .navdrop__chev {
   transform: rotate(180deg);
 }
 
-/* Panel (Dropdown) – Desktop */
+/* Desktop dropdown panel */
 .navdrop__panel {
   position: absolute;
   top: calc(100% + 8px);
@@ -69,6 +73,7 @@
   z-index: 9999;
   display: none;
 }
+
 .navdrop[data-open="true"] .navdrop__panel {
   display: block;
 }
@@ -81,56 +86,233 @@
   text-decoration: none;
   color: inherit;
   white-space: nowrap;
-  transition: background .12s ease;
+  transition: background 0.12s ease;
 }
+
 .navdrop__panel a:hover,
-.navdrop__panel a:focus {
-  background: rgba(255,255,255,.08);
+.navdrop__panel a:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
   outline: none;
 }
 
 .navdrop__sep {
   height: 1px;
-  background: rgba(255,255,255,.10);
+  background: rgba(255, 255, 255, 0.1);
   margin: 8px 6px;
 }
 
 /* =========================================================
-   MOBILE (Burger-Menü)
+   Mobile Topbar + Overlay Menu
+   - Activated for tablets/phones and explicitly for iPhone landscape
    ========================================================= */
-@media (max-width: 760px) {
+@media (max-width: 860px), (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --header-h: calc(84px + env(safe-area-inset-top, 0px));
+  }
 
-  .menu[data-open="1"] .navdrop {
+  body {
+    padding-top: var(--header-h);
+  }
+
+  header {
+    padding-top: env(safe-area-inset-top, 0px);
+    background: rgba(14, 6, 11, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .nav {
+    position: relative;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 8px;
+    padding: 10px 0 12px;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .brand > div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .brand strong {
+    display: block;
+    font-size: 0.98rem;
+    line-height: 1.05;
+    padding-left: 12px;
+  }
+
+  .brand strong::before {
+    width: 5px;
+    height: 5px;
+  }
+
+  .brand span {
+    display: block;
+    max-width: none;
+    font-size: 0.74rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .logo {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+
+  .logo::before {
+    width: 42px;
+    height: 42px;
+  }
+
+  .nav-quick {
+    order: 2;
+    margin-left: 0;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+
+  .navbtn {
+    display: inline-flex;
+    order: 3;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 13px;
+    margin-left: 0;
+    flex: 0 0 auto;
+  }
+
+  .nav-symbol-link,
+  .lb-search-trigger {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    border-radius: 13px;
+  }
+
+  .menu {
+    order: 4;
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid rgba(64, 62, 65, 0.78);
+    background: var(--nav-mobile-panel);
+    border-radius: 18px;
+    box-shadow: var(--navdd-shadow);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    max-height: calc(100dvh - var(--header-h) - 18px);
+  }
+
+  .menu[data-open="1"] {
+    display: flex;
+  }
+
+  .menu > a,
+  .menu .navdrop__sum {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    text-align: left;
+    justify-content: space-between;
+    white-space: nowrap;
+  }
+
+  .menu > a {
+    display: flex;
+    align-items: center;
+  }
+
+  .menu > a:hover,
+  .menu > a:focus-visible,
+  .menu .navdrop__sum:hover,
+  .menu .navdrop__sum:focus-visible,
+  .menu .navdrop[data-open="true"] .navdrop__sum {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .menu .navdrop {
     display: block;
     width: 100%;
-    text-align: center;
   }
 
-  .menu[data-open="1"] .navdrop__sum {
-    justify-content: center;
-    align-items: center;
-    padding: 12px 18px;
-    border: 1px solid rgba(255,255,255,.14);
-    border-radius: 18px;
-    background: rgba(255,255,255,.04);
-    box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    width: fit-content;
-    margin: 10px auto 0 auto;
-  }
-
-  .menu[data-open="1"] .navdrop__panel {
+  .menu .navdrop__panel {
     position: static;
     display: none;
-    margin: 10px auto 0 auto;
+    margin: 6px 0 0;
     min-width: 0;
-    width: min(92vw, 340px);
-    background: rgba(26,26,31,.92);
-    border: 1px solid rgba(255,255,255,.10);
+    max-width: none;
+    width: 100%;
+    padding: 8px;
+    background: rgba(22, 18, 22, 0.92);
     border-radius: 14px;
-    box-shadow: var(--navdd-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
   }
 
-  .menu[data-open="1"] .navdrop[data-open="true"] .navdrop__panel {
+  .menu .navdrop[data-open="true"] .navdrop__panel {
     display: block;
+  }
+
+  .menu .navdrop__panel a {
+    white-space: normal;
+    line-height: 1.3;
+    padding: 11px 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --header-h: calc(80px + env(safe-area-inset-top, 0px));
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .brand strong {
+    font-size: 0.95rem;
+  }
+
+  .brand span {
+    font-size: 0.7rem;
+  }
+
+  .nav-quick {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand {
+    flex-basis: calc(100% - 108px);
+  }
+
+  .brand span {
+    max-width: 100%;
   }
 }
