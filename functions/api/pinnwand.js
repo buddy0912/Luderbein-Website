@@ -158,7 +158,7 @@ async function loadPublishedPosts(db) {
       `SELECT id, nickname, message, created_at, reply_author, reply_message
        FROM pinboard_posts
        WHERE visibility = 'public' AND status = 'published'
-       ORDER BY COALESCE(published_at, created_at) DESC
+       ORDER BY COALESCE(published_at, created_at) ASC
        LIMIT 100`
     )
     .all();

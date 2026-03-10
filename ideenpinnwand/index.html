@@ -355,7 +355,7 @@
         <span class="pin-board__meta" id="pin-board-count">0 Beiträge</span>
       </div>
       <div class="pin-board__viewport" id="pin-board-list">
-        <div class="pin-board__empty" id="pin-board-empty">
+        <div class="pin-board__empty" id="pin-board-empty" hidden>
           <div>
             <strong>Noch keine öffentlichen Beiträge</strong>
             <span>Wenn der erste öffentliche Eintrag kommt, erscheint er hier.</span>
@@ -449,11 +449,7 @@
       function syncBoardState() {
         const items = board.querySelectorAll(".pin-card").length;
         count.textContent = `${items} ${items === 1 ? "Beitrag" : "Beiträge"}`;
-        if (items > 0) {
-          emptyState.hidden = true;
-        } else {
-          emptyState.hidden = false;
-        }
+        emptyState.hidden = items > 0;
       }
 
       async function loadPosts() {
@@ -521,7 +517,7 @@
           form.reset();
 
           if (data.post) {
-            board.insertBefore(createCard(data.post), board.firstChild);
+            board.appendChild(createCard(data.post));
             syncBoardState();
           }
 
