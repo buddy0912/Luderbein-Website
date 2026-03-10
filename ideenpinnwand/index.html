@@ -138,12 +138,16 @@
       border-color: rgba(219,16,33,.3);
     }
 
-    .pin-card p,
+    .pin-card__body,
     .pin-reply p {
       margin: 0;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
-    .pin-card p {
+    .pin-card__body {
       color: rgba(222,218,217,.96);
     }
 
@@ -431,7 +435,7 @@
           <div class="pin-card__top">
             <span class="pin-chip pin-chip--author">${escapeHtml(post.nickname || "Anonym")}</span>
           </div>
-          <p>${escapeHtml(post.message)}</p>
+          <div class="pin-card__body">${escapeHtml(post.message)}</div>
         `;
         return card;
       }
