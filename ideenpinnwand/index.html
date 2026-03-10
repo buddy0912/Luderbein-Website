@@ -436,6 +436,12 @@
             <span class="pin-chip pin-chip--author">${escapeHtml(post.nickname || "Anonym")}</span>
           </div>
           <div class="pin-card__body">${escapeHtml(post.message)}</div>
+          ${post.reply && post.reply.message ? `
+            <div class="pin-reply">
+              <strong>${escapeHtml(post.reply.author || "Luderbein")}</strong>
+              <p>${escapeHtml(post.reply.message)}</p>
+            </div>
+          ` : ""}
         `;
         return card;
       }
@@ -450,9 +456,33 @@
         }
       }
 
-      syncBoardState();
+      async function loadPosts() {
+        status.classList.remove("is-live");
+        status.textContent = "";
 
-      form.addEventListener("submit", function (event) {
+        try {
+          const response = await fetch("/api/pinnwand", {
+            headers: { Accept: "application/json" }
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Pinnwand konnte nicht geladen werden.");
+          }
+
+          board.querySelectorAll(".pin-card").forEach((node) => node.remove());
+          (Array.isArray(data.posts) ? data.posts : []).forEach((post) => {
+            board.appendChild(createCard(post));
+          });
+          syncBoardState();
+        } catch (error) {
+          status.classList.add("is-live");
+          status.textContent = error instanceof Error ? error.message : "Pinnwand konnte nicht geladen werden.";
+        }
+      }
+
+      loadPosts();
+
+      form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
         const message = (form.querySelector("#pin-message")?.value || "").trim();
@@ -467,17 +497,54 @@
         const nickname = (form.querySelector("#pin-nickname")?.value || "").trim() || "Anonym";
 
         status.classList.add("is-live");
+        status.textContent = "Beitrag wird gesendet …";
 
-        if (visibility === "öffentlich") {
-          const post = { nickname, message };
-          board.insertBefore(createCard(post), board.firstChild);
-          syncBoardState();
-          status.textContent = "Öffentlicher Beitrag oben ergänzt.";
-        } else {
-          status.textContent = "Nicht öffentlicher Beitrag erfasst.";
+        try {
+          const response = await fetch("/api/pinnwand", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify({
+              message,
+              visibility: visibility === "öffentlich" ? "public" : "internal",
+              nickname: form.querySelector("#pin-nickname")?.value || "",
+              email: form.querySelector("#pin-email")?.value || ""
+            })
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Beitrag konnte nicht gespeichert werden.");
+          }
+
+          form.reset();
+
+          if (data.post) {
+            board.insertBefore(createCard(data.post), board.firstChild);
+            syncBoardState();
+          }
+
+          if (data.status === "pending_public") {
+            status.textContent = data.notificationSent
+              ? "Beitrag gespeichert und wartet auf Freigabe."
+              : "Beitrag gespeichert. Mail-Benachrichtigung konnte nicht gesendet werden.";
+            return;
+          }
+
+          if (data.visibility === "internal") {
+            status.textContent = data.notificationSent
+              ? "Nicht öffentlicher Beitrag gespeichert und intern gemeldet."
+              : "Nicht öffentlicher Beitrag gespeichert. Mail-Benachrichtigung konnte nicht gesendet werden.";
+            return;
+          }
+
+          status.textContent = data.notificationSent
+            ? "Öffentlicher Beitrag gespeichert."
+            : "Öffentlicher Beitrag gespeichert. Mail-Benachrichtigung konnte nicht gesendet werden.";
+        } catch (error) {
+          status.textContent = error instanceof Error ? error.message : "Beitrag konnte nicht gesendet werden.";
         }
-
-        form.reset();
       });
     })();
   </script>
