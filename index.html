@@ -127,6 +127,53 @@
        ========================================================= */
     .thumbslider img:first-child { opacity: 0 !important; }
     .thumbslider img.is-on { opacity: 1 !important; }
+
+    .market-split {
+      margin: 18px 0 10px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+
+    .market-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(64,62,65,.55);
+      background: rgba(26,26,31,.62);
+      border-radius: 16px;
+      padding: 14px 16px;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .market-card--b2b {
+      border-color: rgba(96,118,144,.72);
+      background: linear-gradient(180deg, rgba(38,45,56,.55), rgba(26,26,31,.72));
+    }
+
+    .market-card__label {
+      display: inline-block;
+      margin: 0 0 6px;
+      font-size: .76rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .market-card__title { margin: 0; font-size: 1.05rem; }
+    .market-card__text { margin: 6px 0 0; color: var(--muted); font-size: .94rem; }
+
+    @media (min-width: 760px) {
+      .market-split { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (hover:hover) and (pointer:fine) {
+      .market-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(160,120,140,.55);
+      }
+      .market-card--b2b:hover { border-color: rgba(132,166,198,.72); }
+    }
   </style>
 <script type="application/ld+json">
 {
@@ -222,6 +269,7 @@
           </div>
         </div>
 
+        <a href="/b2b/">B2B</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
         <a href="/rechtliches/impressum.html">Impressum</a>
@@ -252,10 +300,23 @@
       </p>
     </div>
 
+    <div class="market-split" aria-label="Auswahl Privat oder Gewerbe">
+      <a class="market-card" href="/leistungen/">
+        <span class="market-card__label">B2C · Privatkunden</span>
+        <h3 class="market-card__title">Einzelstücke, Geschenke, persönliche Gravuren</h3>
+        <p class="market-card__text">Für private Anfragen mit individueller Beratung und passenden Materialien.</p>
+      </a>
+      <a class="market-card market-card--b2b" href="/b2b/">
+        <span class="market-card__label">B2B · Geschäftskunden</span>
+        <h3 class="market-card__title">Industrielle Markierung, Werbemittel, Gastrobedarf</h3>
+        <p class="market-card__text">Sachlicher Prozess für Unternehmen: von Prototyp bis Kleinserie.</p>
+      </a>
+    </div>
+
     <div class="cta">
       <a class="btn primary" href="/kontakt/">Anfrage starten</a>
       <a class="btn" href="/leistungen/">Arbeiten ansehen</a>
-      <a class="btn" href="/tools/kalkulator/">So sieht das aus</a>
+      <a class="btn" href="/b2b/">Zum B2B-Bereich</a>
     </div>
   </section>
 

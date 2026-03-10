@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>B2B-Anfragen – Luderbein Gravur</title>
+  <meta name="description" content="B2B-Bereich von Luderbein Gravur: industrielle Markierung, Gastronomiebedarf, Werbemittel und flexible Kleinserien mit persönlicher Abstimmung." />
+  <link rel="canonical" href="https://luderbein-gravur.pages.dev/b2b/" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+
+  <style>
+    .b2b-main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding-bottom: 22px;
+    }
+
+    .b2b-hero,
+    .b2b-card {
+      border: 1px solid rgba(64,62,65,.55);
+      border-radius: var(--radius);
+      background: rgba(26,26,31,.66);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .b2b-hero {
+      background: linear-gradient(160deg, rgba(34,40,48,.84), rgba(26,26,31,.74));
+      border-color: rgba(96,118,144,.62);
+    }
+
+    .b2b-kicker {
+      display: inline-flex;
+      border: 1px solid rgba(132,166,198,.45);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: .78rem;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: rgba(222,232,242,.92);
+      margin-bottom: 10px;
+    }
+
+    .b2b-hero p {
+      color: var(--muted);
+      max-width: 72ch;
+      margin-bottom: 0;
+    }
+
+    .b2b-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1fr;
+    }
+
+    .b2b-card h3 { margin-top: 0; }
+    .b2b-card p { margin-bottom: 0; color: var(--muted); }
+
+    .usp-list {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      display: grid;
+      gap: 8px;
+    }
+
+    .usp-list strong { color: var(--text); }
+
+    .notice-box {
+      margin-top: 12px;
+      border: 1px solid rgba(132,166,198,.35);
+      background: rgba(42,45,51,.26);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.5;
+    }
+
+    .notice-box strong { color: var(--text); }
+
+    .b2b-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .b2b-form label {
+      display: block;
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .b2b-form input,
+    .b2b-form textarea,
+    .b2b-form select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(64,62,65,.65);
+      background: rgba(14,6,11,.35);
+      color: var(--text);
+      padding: 12px;
+      outline: none;
+    }
+
+    .b2b-form textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .b2b-form .btn {
+      width: 100%;
+    }
+
+    .b2b-note {
+      margin: 8px 0 0;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    @media (min-width: 780px) {
+      .b2b-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .b2b-form {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .b2b-form .full {
+        grid-column: 1 / -1;
+      }
+
+      .b2b-form .btn {
+        width: auto;
+        justify-self: start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/glas/" role="menuitem">Glas</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/b2b/" aria-current="page">B2B</a>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/impressum.html">Impressum</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap b2b-main" id="content">
+    <section class="b2b-hero">
+      <span class="b2b-kicker">B2B · Geschäftskunden</span>
+      <h1>B2B-Anfragen für Gravur, Markierung und Kleinserien</h1>
+      <p>
+        Luderbein unterstützt Unternehmen bei präzisen Gravurprojekten mit pragmischer Abstimmung.
+        Geeignet für industrielle Kennzeichnung, gastronomischen Bedarf, Werbemittel sowie ähnliche
+        gewerbliche Anwendungen. Von Einzelstücken bis zu Kleinserien mit klaren Deadlines.
+      </p>
+    </section>
+
+    <section class="b2b-grid" aria-label="B2B-Leistungsfelder">
+      <article class="b2b-card">
+        <h3>Industrielle Markierung</h3>
+        <p>
+          Kennzeichnungen, Typenschilder, Prüfplaketten und gravierte Bauteile für interne Prozesse,
+          Anlagen und Dokumentation.
+        </p>
+      </article>
+      <article class="b2b-card">
+        <h3>Gastronomiebedarf</h3>
+        <p>
+          Robuste Beschriftungen, gravierte Schilder, Tischaufsteller, Servicelabels und personalisierte
+          Elemente für Küche, Bar und Service.
+        </p>
+      </article>
+      <article class="b2b-card">
+        <h3>Werbemittel & Firmengeschenke</h3>
+        <p>
+          Personalisierte Give-aways, Auszeichnungen, Pokale und gravierte Präsente für Mitarbeiter,
+          Kunden oder Events.
+        </p>
+      </article>
+      <article class="b2b-card">
+        <h3>Weitere gewerbliche Anwendungen</h3>
+        <p>
+          Einzelanfertigungen, Sonderwünsche und Prototypen für Agenturen, Vereine, Handwerk,
+          Start-ups und kleinere Produktionsumfelder.
+        </p>
+      </article>
+    </section>
+
+    <section class="b2b-card" aria-label="Warum Luderbein im B2B-Bereich">
+      <h2>Warum Luderbein für B2B-Projekte</h2>
+      <ul class="usp-list">
+        <li><strong>Hohe Flexibilität:</strong> direkte Abstimmung und kurze Entscheidungswege.</li>
+        <li><strong>Auch Einzelstücke möglich:</strong> sinnvoll für Tests, Muster und Sonderfälle.</li>
+        <li><strong>Kleinserien möglich:</strong> ohne unnötig hohe Mindestmengen.</li>
+        <li><strong>Schnelle Prototypen:</strong> frühes Muster zur Freigabe vor Serienlauf.</li>
+        <li><strong>Geeignet für personalisierte Firmengeschenke, Pokale und Einzelanfertigungen.</strong></li>
+        <li><strong>Vorteil gegenüber großen Anbietern:</strong> Luderbein übernimmt auch kleine Stückzahlen und Sonderwünsche,
+          während industrielle Anbieter oft erst bei deutlich höheren Mengen starten.</li>
+      </ul>
+    </section>
+
+    <section class="b2b-card" aria-label="B2B-Anfrageformular">
+      <h2>B2B-Anfrageformular</h2>
+      <p class="muted">Senden Sie Ihre Eckdaten, damit wir zeitnah ein belastbares Angebot abstimmen können.</p>
+
+      <form class="b2b-form" action="mailto:luderbein_gravur@icloud.com" method="post" enctype="text/plain">
+        <div>
+          <label for="b2b-name">Name</label>
+          <input id="b2b-name" name="Name" type="text" required />
+        </div>
+        <div>
+          <label for="b2b-email">E-Mail</label>
+          <input id="b2b-email" name="E-Mail" type="email" required />
+        </div>
+        <div>
+          <label for="b2b-company">Unternehmen</label>
+          <input id="b2b-company" name="Unternehmen" type="text" required />
+        </div>
+        <div>
+          <label for="b2b-quantity">Voraussichtliche Stückzahl</label>
+          <input id="b2b-quantity" name="Voraussichtliche Stückzahl" type="text" required />
+        </div>
+        <div>
+          <label for="b2b-material">Wunschmaterial</label>
+          <input id="b2b-material" name="Wunschmaterial" type="text" required />
+        </div>
+        <div>
+          <label for="b2b-deadline">Deadline</label>
+          <input id="b2b-deadline" name="Deadline" type="date" required />
+        </div>
+        <div class="full">
+          <label for="b2b-details">Projektbeschreibung (optional)</label>
+          <textarea id="b2b-details" name="Projektbeschreibung"></textarea>
+        </div>
+        <div class="full">
+          <button class="btn primary" type="submit">Jetzt unverbindliches Angebot anfordern</button>
+          <p class="b2b-note">Alternativ per E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
+        </div>
+      </form>
+
+      <div class="notice-box">
+        <strong>Hinweis zur Rechnungsstellung:</strong> Luderbein wird als Kleingewerbe geführt.
+        Rechnungsstellung ist möglich. Es erfolgt kein Ausweis der Umsatzsteuer nach Kleinunternehmerregelung;
+        eine Vorsteuerabzugsberechtigung besteht entsprechend nicht.
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="/assets/footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+</body>
+</html>
