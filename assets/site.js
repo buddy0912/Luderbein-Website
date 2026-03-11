@@ -1346,8 +1346,6 @@
   }
 
   function initSiteSearch() {
-    if (window.matchMedia("(max-width: 480px)").matches) return;
-
     const nav = document.querySelector("header .nav");
     if (!nav || document.getElementById("lb-search-trigger")) return;
 
@@ -1607,8 +1605,6 @@
   }
 
   function initIdeaWallNavLink() {
-    if (window.matchMedia("(max-width: 480px)").matches) return;
-
     const nav = document.querySelector("header .nav");
     if (!nav || document.getElementById("lb-idea-wall-link")) return;
 
