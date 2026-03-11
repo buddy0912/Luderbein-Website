@@ -1663,20 +1663,24 @@
     const nav = document.querySelector("[data-nav]");
 
     if (navBtn && nav) {
+      const header = nav.closest("header");
       const navBreakpoint = window.matchMedia("(max-width: 1024px)");
 
+      function setNavState(isOpen) {
+        nav.setAttribute("data-open", isOpen ? "1" : "0");
+        navBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        navBtn.setAttribute("aria-label", isOpen ? "Menü schließen" : "Menü öffnen");
+        nav.setAttribute("aria-hidden", isOpen ? "false" : "true");
+      }
+
       function closeNav() {
-        nav.setAttribute("data-open", "0");
-        navBtn.setAttribute("aria-expanded", "false");
-        navBtn.setAttribute("aria-label", "Menü öffnen");
+        setNavState(false);
         document.body.classList.remove("lb-nav-open");
         document.dispatchEvent(new CustomEvent("lb:nav-close"));
       }
 
       function openNav() {
-        nav.setAttribute("data-open", "1");
-        navBtn.setAttribute("aria-expanded", "true");
-        navBtn.setAttribute("aria-label", "Menü schließen");
+        setNavState(true);
         if (navBreakpoint.matches) {
           document.body.classList.add("lb-nav-open");
         }
@@ -1688,10 +1692,17 @@
           nav.setAttribute("data-open", "0");
           navBtn.setAttribute("aria-expanded", "false");
           navBtn.setAttribute("aria-label", "Menü öffnen");
+          nav.removeAttribute("aria-hidden");
+          return;
         }
+
+        setNavState(false);
       }
 
-      navBtn.addEventListener("click", () => {
+      navBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
         const isOpen = nav.getAttribute("data-open") === "1";
         if (isOpen) {
           closeNav();
@@ -1708,7 +1719,7 @@
 
       document.addEventListener("click", (event) => {
         if (!navBreakpoint.matches) return;
-        if (event.target.closest("header")) return;
+        if (header && header.contains(event.target)) return;
         closeNav();
       });
 

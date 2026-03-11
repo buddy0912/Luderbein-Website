@@ -125,6 +125,7 @@ header {
   gap: 10px;
   text-decoration: none;
   min-width: 0;
+  order: 1;
 }
 
 .logo{
@@ -249,7 +250,7 @@ header {
   gap: 10px;
   margin-left: auto;
   flex: 0 0 auto;
-  order: 4;
+  order: 2;
 }
 
 .navbtn {
@@ -257,7 +258,7 @@ header {
 }
 
 .menu {
-  order: 2;
+  order: 4;
   margin-left: 0;
 }
 
@@ -2085,16 +2086,29 @@ body.leistung-page .leistung-grid,
 }
 
 @media (max-width: 1024px) {
+  .nav {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 104px);
+  }
+
   .navbtn {
     display: inline-flex;
     flex: 0 0 auto;
     order: 3;
+    margin-left: 0;
   }
 
   .nav-quick {
     order: 2;
     gap: 8px;
-    margin-left: auto;
+    margin-left: 0;
+    flex: 0 0 auto;
   }
 
   .menu {
@@ -2173,6 +2187,7 @@ body.leistung-page .leistung-grid,
 
   .brand {
     gap: 8px;
+    max-width: calc(100% - 96px);
   }
 
   .brand strong {
@@ -2249,6 +2264,10 @@ body.leistung-page .leistung-grid,
 
   .brand strong {
     font-size: 0.92rem;
+  }
+
+  .brand {
+    max-width: calc(100% - 92px);
   }
 
   .nav {
