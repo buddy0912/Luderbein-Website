@@ -1034,6 +1034,7 @@ footer a:hover { color: var(--text); }
     padding-left: clamp(16px, 4vw, 22px);
     padding-right: clamp(16px, 4vw, 22px);
   }
+
   .productcard { grid-column: span 12; }
   .navbtn { display: inline-flex; }
 
@@ -1041,12 +1042,15 @@ footer a:hover { color: var(--text); }
     position: relative;
     gap: 8px;
     padding: 7px 0;
+    align-items: center;
+    flex-wrap: nowrap;
   }
 
   .brand {
     flex: 1 1 auto;
     min-width: 0;
     gap: 8px;
+    max-width: calc(100% - 52px);
   }
 
   .brand > div {
@@ -1101,13 +1105,20 @@ footer a:hover { color: var(--text); }
     border-radius: 18px;
     padding: 10px;
     max-height: calc(100dvh - var(--header-h) - 12px);
+    z-index: 3100;
   }
 
   .menu[data-open="1"] { display: flex; }
 
   .nav-quick {
+    display: none !important;
     margin-left: 0;
     gap: 6px;
+  }
+
+  .navbtn {
+    margin-left: auto;
+    flex: 0 0 40px;
   }
 
   .lb-search-trigger {
@@ -1374,17 +1385,14 @@ footer a:hover { color: var(--text); }
 KONTAKT – SPACING FIX
 ================================ */
 body[data-page="kontakt"] main{
-  /* schützt vor "zu breit" bei Speziallayouts */
   width: 100%;
 }
 
 body[data-page="kontakt"] .wrap{
-  /* Kontakt bekommt exakt das gleiche Padding-Feeling wie global */
   padding-left: clamp(18px, 3vw, 28px);
   padding-right: clamp(18px, 3vw, 28px);
 }
 
-/* vertikale Rhythmen: weniger gequetscht, mehr "Premium" */
 body[data-page="kontakt"] .section,
 body[data-page="kontakt"] .card,
 body[data-page="kontakt"] .hero{
@@ -1396,7 +1404,6 @@ body[data-page="kontakt"] .hero:first-child{
   margin-top: 0;
 }
 
-/* Anfrage-Builder / Formular: saubere Innenabstände + kein Randkanten-Kleben */
 body[data-page="kontakt"] .cfg,
 body[data-page="kontakt"] form,
 body[data-page="kontakt"] .builder,
@@ -1405,7 +1412,6 @@ body[data-page="kontakt"] .contact-builder{
   border-radius: var(--radius);
 }
 
-/* Inputs: volle Breite, gleichmäßige Abstände */
 body[data-page="kontakt"] input,
 body[data-page="kontakt"] select,
 body[data-page="kontakt"] textarea{
@@ -1416,7 +1422,6 @@ body[data-page="kontakt"] .fields{
   gap: 12px;
 }
 
-/* Mobile: etwas mehr Luft unten/oben */
 @media (max-width: 560px){
   body[data-page="kontakt"] .wrap{
     padding-left: clamp(16px, 4vw, 22px);
@@ -1432,7 +1437,6 @@ body[data-page="ueber"] .wrap{
   padding-right: clamp(18px, 3vw, 28px);
 }
 
-/* ruhiger vertikaler Rhythmus */
 body[data-page="ueber"] .hero{
   margin-bottom: 14px;
 }
@@ -1445,7 +1449,6 @@ body[data-page="ueber"] .section + .section{
   margin-top: 18px;
 }
 
-/* Textblöcke: weniger "Wand", mehr Scanbarkeit */
 body[data-page="ueber"] h2{
   margin-top: 0;
   margin-bottom: 8px;
@@ -1459,7 +1462,6 @@ body[data-page="ueber"] p:last-child{
   margin-bottom: 0;
 }
 
-/* Listen / Feature-Blöcke: konsistenter Abstand */
 body[data-page="ueber"] ul,
 body[data-page="ueber"] ol{
   margin: 8px 0 0;
@@ -1470,13 +1472,11 @@ body[data-page="ueber"] li{
   margin: 6px 0;
 }
 
-/* CTA-Reihe: nicht kleben, sauber Luft */
 body[data-page="ueber"] .actions{
   margin-top: 14px;
   gap: 10px;
 }
 
-/* Mobile: bisschen mehr „Handy-Luft“ */
 @media (max-width: 560px){
   body[data-page="ueber"] .wrap{
     padding-left: clamp(16px, 4vw, 22px);
@@ -1535,7 +1535,6 @@ body.leistung-page .variant-grid{
   gap: 16px;
 }
 
-/* Einheitliches Leistungsseiten-Kachellayout (Schiefer-Standard) */
 body.leistung-page .lb-card-grid{
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -1941,18 +1940,12 @@ header {
   width: 72px;
   height: 72px;
   pointer-events: none;
-  opacity: .55;               /* NICHT 100% */
+  opacity: .55;
   z-index: 5;
-
-  /* stencil source */
-  background: #fff;           /* base white */
+  background: #fff;
   -webkit-mask: url("/assets/img/mark.svg") center / contain no-repeat;
-          mask: url("/assets/img/mark.svg") center / contain no-repeat;
-
-  /* auto black/white depending on background */
+  mask: url("/assets/img/mark.svg") center / contain no-repeat;
   mix-blend-mode: difference;
-
-  /* readability */
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
 }
 
@@ -1970,17 +1963,20 @@ header {
   gap: 12px;
   margin-top: 20px;
 }
+
 .hero-actions .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
 }
+
 @media (max-width: 640px){
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
   }
+
   .hero-actions .actions {
     justify-content: center;
   }

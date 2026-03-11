@@ -334,7 +334,6 @@
         attachWatermark(wrapper, img, "lb-wm--lg");
         return;
       }
-
     });
   }
 
@@ -620,9 +619,6 @@
 
     if (!els.mats.length || !els.wa || !els.mail) return;
 
-    // ---------------------------------
-    // Prefill-Aliase (nur fürs URL-Handling)
-    // ---------------------------------
     const MAT_ALIAS = {
       "Acryl-Schilder": "Acryl",
       "Acrylschilder": "Acryl",
@@ -636,7 +632,6 @@
       return MAT_ALIAS[t] || t;
     }
 
-    // --- Daten: nur das, was wir sicher wissen ---
     const DATA = {
       Schiefer: {
         variants: [
@@ -678,9 +673,6 @@
       },
     };
 
-    // ---------------------------------
-    // URL Prefill (?p=...&v=...&f=...&note=...)
-    // ---------------------------------
     const params = new URLSearchParams(window.location.search);
     const preMatRaw = safeText(params.get("p"));
     const preMat = resolveMaterialName(preMatRaw);
@@ -1354,6 +1346,8 @@
   }
 
   function initSiteSearch() {
+    if (window.matchMedia("(max-width: 480px)").matches) return;
+
     const nav = document.querySelector("header .nav");
     if (!nav || document.getElementById("lb-search-trigger")) return;
 
@@ -1613,6 +1607,8 @@
   }
 
   function initIdeaWallNavLink() {
+    if (window.matchMedia("(max-width: 480px)").matches) return;
+
     const nav = document.querySelector("header .nav");
     if (!nav || document.getElementById("lb-idea-wall-link")) return;
 
@@ -1663,10 +1659,53 @@
     const nav = document.querySelector("[data-nav]");
 
     if (navBtn && nav) {
-      navBtn.addEventListener("click", () => {
+      const closeNav = () => {
+        nav.setAttribute("data-open", "0");
+        navBtn.setAttribute("aria-expanded", "false");
+      };
+
+      const openNav = () => {
+        nav.setAttribute("data-open", "1");
+        navBtn.setAttribute("aria-expanded", "true");
+      };
+
+      navBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
         const isOpen = nav.getAttribute("data-open") === "1";
-        nav.setAttribute("data-open", isOpen ? "0" : "1");
-        navBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+        if (isOpen) closeNav();
+        else openNav();
+      });
+
+      document.addEventListener("click", (event) => {
+        const isOpen = nav.getAttribute("data-open") === "1";
+        if (!isOpen) return;
+
+        if (nav.contains(event.target)) return;
+        if (navBtn.contains(event.target)) return;
+
+        closeNav();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeNav();
+        }
+      });
+
+      nav.querySelectorAll("a[href]").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 480px)").matches) {
+            closeNav();
+          }
+        });
+      });
+
+      window.addEventListener("resize", () => {
+        if (!window.matchMedia("(max-width: 480px)").matches) {
+          closeNav();
+        }
       });
     }
 
