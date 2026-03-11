@@ -96,12 +96,13 @@
 
 @media (max-width: 480px) {
   .navdrop {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    margin: 1px 0;
-    padding: 1px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    margin: 0;
+    padding: 0;
+    gap: 1px;
+    border: 0;
   }
 
   .navdrop__sum {
@@ -118,28 +119,29 @@
     position: static;
     min-width: 0;
     max-width: none;
-    margin-top: 2px;
-    padding: 5px;
-    border-radius: 11px;
+    margin-top: 0;
+    margin-left: 8px;
+    padding: 4px;
+    border-radius: 10px;
     box-shadow: none;
-    border: 1px solid rgba(255, 255, 255, 0.035);
-    background: linear-gradient(180deg, rgba(19, 11, 15, 0.58), rgba(14, 9, 12, 0.42));
+    border: 1px solid rgba(255, 255, 255, 0.025);
+    background: linear-gradient(180deg, rgba(22, 14, 18, 0.34), rgba(14, 9, 12, 0.18));
   }
 
   .navdrop__panel a {
     white-space: normal;
-    min-height: 34px;
-    padding: 7px 9px;
+    min-height: 30px;
+    padding: 6px 8px;
     display: flex;
     align-items: center;
-    border-radius: 9px;
+    border-radius: 8px;
     color: rgba(210, 207, 206, 0.9);
-    font-size: .89rem;
-    line-height: 1.18;
+    font-size: .86rem;
+    line-height: 1.14;
   }
 
   .navdrop__sep {
-    margin: 4px 5px;
-    opacity: .65;
+    margin: 3px 5px;
+    opacity: .5;
   }
 }
