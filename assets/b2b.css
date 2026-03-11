@@ -195,7 +195,9 @@ body.page-b2b .btn:hover {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
     rgba(12, 16, 21, 0.76);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.015);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015),
+    0 12px 28px rgba(5, 9, 14, 0.14);
 }
 
 .b2b-meta-card {
@@ -277,6 +279,9 @@ body.page-b2b .btn:hover {
   position: relative;
   min-height: 100%;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .b2b-card::before,
@@ -295,6 +300,10 @@ body.page-b2b .btn:hover {
 .b2b-tech-card h3,
 .b2b-cta-box h3 {
   margin: 0 0 10px;
+  max-width: 18ch;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 .b2b-card p,
@@ -304,29 +313,29 @@ body.page-b2b .btn:hover {
   margin: 0;
   color: var(--muted);
   line-height: 1.62;
+  max-width: 34ch;
 }
 
 .b2b-card--highlight {
-  border-color: rgba(148, 181, 212, 0.46);
+  border-color: rgba(104, 129, 156, 0.34);
   background:
-    linear-gradient(180deg, rgba(148, 181, 212, 0.08), rgba(148, 181, 212, 0)),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0)),
-    rgba(16, 20, 26, 0.9);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
+    rgba(12, 16, 21, 0.76);
   box-shadow:
-    inset 0 0 0 1px rgba(148, 181, 212, 0.08),
-    0 18px 42px rgba(6, 10, 16, 0.24);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015),
+    0 12px 28px rgba(5, 9, 14, 0.14);
 }
 
 .b2b-card__eyebrow {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(148, 181, 212, 0.34);
-  background: rgba(29, 37, 46, 0.54);
-  color: rgba(214, 224, 234, 0.92);
+  border: 1px solid rgba(104, 129, 156, 0.3);
+  background: rgba(29, 37, 46, 0.42);
+  color: rgba(214, 224, 234, 0.84);
   font-size: 0.74rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -335,6 +344,9 @@ body.page-b2b .btn:hover {
 .b2b-trust-card {
   position: relative;
   padding: 22px 22px 22px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .b2b-trust-card::before {
@@ -356,13 +368,16 @@ body.page-b2b .btn:hover {
 .b2b-tech-card {
   position: relative;
   padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .b2b-tech-card--usp {
-  border-color: rgba(148, 181, 212, 0.46);
+  border-color: rgba(104, 129, 156, 0.34);
   box-shadow:
-    inset 0 0 0 1px rgba(148, 181, 212, 0.08),
-    0 16px 36px rgba(6, 10, 16, 0.18);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.015),
+    0 12px 28px rgba(5, 9, 14, 0.14);
 }
 
 .b2b-format-list,
@@ -428,6 +443,7 @@ body.page-b2b .btn:hover {
 .b2b-step-list p {
   margin: 6px 0 0;
   color: var(--muted);
+  max-width: 34ch;
 }
 
 .b2b-usp-list li {
@@ -611,6 +627,16 @@ body.page-b2b .btn:hover {
   .b2b-form .btn {
     width: auto;
     justify-self: start;
+  }
+
+  .b2b-grid--services .b2b-card h3,
+  .b2b-trust-grid .b2b-trust-card h3 {
+    max-width: 17ch;
+  }
+
+  .b2b-grid--services .b2b-card p,
+  .b2b-trust-grid .b2b-trust-card p {
+    max-width: 32ch;
   }
 }
 
