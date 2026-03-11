@@ -1,49 +1,65 @@
 // =========================================================
-// Luderbein Navigation Dropdown v1.2
+// Luderbein Navigation Dropdown v2.0
 // =========================================================
 (function () {
   "use strict";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const drops = document.querySelectorAll("[data-navdrop]");
+  function initNavDropdowns() {
+    const drops = Array.from(document.querySelectorAll("[data-navdrop]"));
     if (!drops.length) return;
+
+    function setOpen(drop, shouldOpen) {
+      const btn = drop.querySelector(".navdrop__sum");
+      drop.setAttribute("data-open", shouldOpen ? "true" : "false");
+      if (btn) btn.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+    }
+
+    function closeAll(except) {
+      drops.forEach((drop) => {
+        if (drop === except) return;
+        setOpen(drop, false);
+      });
+    }
 
     drops.forEach((drop) => {
       const btn = drop.querySelector(".navdrop__sum");
       const panel = drop.querySelector(".navdrop__panel");
-
       if (!btn || !panel) return;
 
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const expanded = btn.getAttribute("aria-expanded") === "true";
+      setOpen(drop, false);
+
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const isOpen = drop.getAttribute("data-open") === "true";
+        closeAll(drop);
+        setOpen(drop, !isOpen);
+      });
+
+      panel.addEventListener("click", (event) => {
+        const link = event.target.closest("a[href]");
+        if (!link) return;
         closeAll();
-        if (!expanded) open(drop, btn);
       });
     });
 
-    function closeAll() {
-      document.querySelectorAll("[data-navdrop]").forEach((el) => {
-        const b = el.querySelector(".navdrop__sum");
-        const p = el.querySelector(".navdrop__panel");
-        if (b) b.setAttribute("aria-expanded", "false");
-        if (p) p.style.display = "none";
-      });
-    }
-
-    function open(drop, btn) {
-      const panel = drop.querySelector(".navdrop__panel");
-      if (panel) {
-        panel.style.display = "block";
-        btn.setAttribute("aria-expanded", "true");
-      }
-    }
-
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest("[data-navdrop]")) closeAll();
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest("[data-navdrop]")) closeAll();
     });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeAll();
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeAll();
     });
-  });
+
+    document.addEventListener("lb:nav-close", () => closeAll());
+
+    window.addEventListener("resize", () => closeAll());
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initNavDropdowns, { once: true });
+  } else {
+    initNavDropdowns();
+  }
 })();
