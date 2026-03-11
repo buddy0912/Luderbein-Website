@@ -1037,33 +1037,98 @@ footer a:hover { color: var(--text); }
   .productcard { grid-column: span 12; }
   .navbtn { display: inline-flex; }
 
+  .nav {
+    position: relative;
+    gap: 8px;
+    padding: 7px 0;
+  }
+
+  .brand {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .brand > div {
+    min-width: 0;
+  }
+
+  .brand strong {
+    display: block;
+    font-size: 0.92rem;
+    line-height: 1.05;
+    padding-left: 11px;
+  }
+
+  .brand strong::before {
+    width: 5px;
+    height: 5px;
+  }
+
+  .brand span {
+    display: block;
+    max-width: none;
+    font-size: 0.66rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+
+  .logo::before {
+    width: 40px;
+    height: 40px;
+  }
+
   .menu {
     display: none;
     position: absolute;
-    top: 64px;
-    left: 14px;
-    right: 14px;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0;
     flex-direction: column;
     gap: 6px;
     border: 1px solid rgba(64,62,65,.70);
     background: rgba(26,26,31,.92);
     border-radius: 18px;
     padding: 10px;
+    max-height: calc(100dvh - var(--header-h) - 12px);
   }
 
   .menu[data-open="1"] { display: flex; }
 
   .nav-quick {
-    margin-left: auto;
+    margin-left: 0;
+    gap: 6px;
   }
 
   .lb-search-trigger {
-    min-width: 44px;
-    padding: 0 12px;
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
   }
 
   .lb-search-trigger__label {
     display: none;
+  }
+
+  .navbtn,
+  .nav-symbol-link {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    border-radius: 12px;
   }
 
   .lb-search__panel {
@@ -1090,6 +1155,28 @@ footer a:hover { color: var(--text); }
   .lb-search__active {
     margin-left: 14px;
     margin-right: 14px;
+  }
+}
+
+@media (max-width: 390px) {
+  .nav {
+    gap: 6px;
+  }
+
+  .brand {
+    gap: 6px;
+  }
+
+  .brand strong {
+    font-size: 0.88rem;
+  }
+
+  .brand span {
+    font-size: 0.61rem;
+  }
+
+  .nav-quick {
+    gap: 5px;
   }
 }
 
