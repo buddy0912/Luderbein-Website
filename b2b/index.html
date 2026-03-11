@@ -256,18 +256,25 @@
           <p class="b2b-note">Alternativ direkt per E-Mail: <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a></p>
         </div>
 
-        <form class="b2b-form" action="mailto:luderbein_gravur@icloud.com" method="post" enctype="text/plain">
+        <form
+          class="b2b-form"
+          action="mailto:luderbein_gravur@icloud.com"
+          method="post"
+          enctype="text/plain"
+          accept-charset="UTF-8"
+          data-b2b-mail-form
+        >
           <div>
             <label for="b2b-name">Ansprechpartner</label>
-            <input id="b2b-name" name="Name" type="text" required />
+            <input id="b2b-name" name="Name" type="text" autocomplete="name" required />
           </div>
           <div>
             <label for="b2b-email">E-Mail</label>
-            <input id="b2b-email" name="E-Mail" type="email" required />
+            <input id="b2b-email" name="E-Mail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" required />
           </div>
           <div>
             <label for="b2b-company">Unternehmen</label>
-            <input id="b2b-company" name="Unternehmen" type="text" required />
+            <input id="b2b-company" name="Unternehmen" type="text" autocomplete="organization" required />
           </div>
           <div>
             <label for="b2b-quantity">Stückzahl</label>
@@ -288,11 +295,11 @@
           </div>
           <div>
             <label for="b2b-file">Motiv / Datei</label>
-            <input id="b2b-file" name="Motiv oder Datei" type="text" placeholder=".svg, .dxf, .ai, .pdf oder hochauflösende Rastergrafik" />
+            <input id="b2b-file" name="Motiv oder Datei" type="text" autocapitalize="none" spellcheck="false" placeholder=".svg, .dxf, .ai, .pdf oder hochauflösende Rastergrafik" />
           </div>
           <div>
             <label for="b2b-deadline">Gewünschter Termin</label>
-            <input id="b2b-deadline" name="Gewünschter Termin" type="text" inputmode="numeric" placeholder="TT.MM.JJJJ" />
+            <input id="b2b-deadline" name="Gewünschter Termin" type="text" inputmode="text" placeholder="z. B. 24.04.2026 oder KW 17" />
           </div>
           <div>
             <label for="b2b-application">Einsatz / Zweck</label>
@@ -300,7 +307,7 @@
           </div>
           <div class="full">
             <label for="b2b-details">Projektbeschreibung</label>
-            <textarea id="b2b-details" name="Projektbeschreibung" placeholder="Relevante Infos zu Material, Gravurfläche, Stückzahl, Datei, Einsatzzweck und Termin."></textarea>
+            <textarea id="b2b-details" name="Projektbeschreibung" placeholder="Relevante Infos zu Material, Gravurfläche, Stückzahl, Datei, Einsatzzweck und Termin." spellcheck="true"></textarea>
           </div>
           <div class="full b2b-form__actions">
             <button class="btn primary" type="submit">Anfrage senden</button>

@@ -947,6 +947,112 @@
     }
   }
 
+  // =========================================================
+  // B2B – Mailto sauber aufbereiten
+  // =========================================================
+  function initB2BMailForm() {
+    const form = document.querySelector("[data-b2b-mail-form]");
+    if (!form) return;
+
+    const fields = {
+      name: form.querySelector("#b2b-name"),
+      email: form.querySelector("#b2b-email"),
+      company: form.querySelector("#b2b-company"),
+      quantity: form.querySelector("#b2b-quantity"),
+      material: form.querySelector("#b2b-material"),
+      file: form.querySelector("#b2b-file"),
+      deadline: form.querySelector("#b2b-deadline"),
+      application: form.querySelector("#b2b-application"),
+      details: form.querySelector("#b2b-details"),
+    };
+
+    function cleanValue(value) {
+      return (value || "")
+        .toString()
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .trim();
+    }
+
+    function singleLineValue(value) {
+      return cleanValue(value).replace(/\s+/g, " ");
+    }
+
+    function getFieldValue(input) {
+      if (!input) return "";
+      if (input.tagName === "SELECT") {
+        return singleLineValue(input.value);
+      }
+      return cleanValue(input.value);
+    }
+
+    function formatFieldLine(label, value) {
+      const cleaned = cleanValue(value);
+      return `${label}: ${cleaned || "nicht angegeben"}`;
+    }
+
+    function buildSubject(company, material) {
+      const parts = ["B2B-Anfrage"];
+      if (company) parts.push(company);
+      if (material) parts.push(material);
+      return parts.join(" – ");
+    }
+
+    function buildBody(data) {
+      const lines = [
+        "Hallo Luderbein,",
+        "",
+        "ich habe eine Anfrage zu einem B2B-Projekt. Hier die ersten Infos:",
+        "",
+        formatFieldLine("Name", data.name),
+        formatFieldLine("E-Mail", data.email),
+        formatFieldLine("Unternehmen", data.company),
+        formatFieldLine("Stückzahl", data.quantity),
+        formatFieldLine("Material", data.material),
+        formatFieldLine("Motiv oder Datei", data.file),
+        formatFieldLine("Gewünschter Termin", data.deadline),
+        formatFieldLine("Einsatz / Zweck", data.application),
+        "Projektbeschreibung:",
+        data.details || "nicht angegeben",
+        "",
+        "Ich freue mich auf Ihre Rückmeldung.",
+        "Mit freundlichen Grüßen",
+        data.name || "",
+      ];
+
+      return lines.join("\n").trim();
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      if (typeof form.reportValidity === "function" && !form.reportValidity()) {
+        return;
+      }
+
+      const data = {
+        name: getFieldValue(fields.name),
+        email: singleLineValue(getFieldValue(fields.email)),
+        company: singleLineValue(getFieldValue(fields.company)),
+        quantity: singleLineValue(getFieldValue(fields.quantity)),
+        material: singleLineValue(getFieldValue(fields.material)),
+        file: singleLineValue(getFieldValue(fields.file)),
+        deadline: singleLineValue(getFieldValue(fields.deadline)),
+        application: singleLineValue(getFieldValue(fields.application)),
+        details: getFieldValue(fields.details),
+      };
+
+      const subject = buildSubject(data.company, data.material);
+      const body = buildBody(data);
+      const href =
+        `mailto:${LB_CONTACT.email}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+
+      window.location.href = href;
+    });
+  }
+
   // ---------------------------------
   // LuderBot Chat Widget
   // ---------------------------------
@@ -1726,6 +1832,7 @@
 
     // Kontakt: Anfrage-Builder
     initContactRequestBuilder();
+    initB2BMailForm();
 
     // Landing Banner / Scroll Indicator / Modal Cards
     initBanner();
