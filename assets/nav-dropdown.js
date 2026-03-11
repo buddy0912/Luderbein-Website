@@ -1,49 +1,79 @@
 // =========================================================
-// Luderbein Navigation Dropdown v1.2
+// Luderbein Navigation Dropdown v1.3
 // =========================================================
 (function () {
   "use strict";
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const drops = document.querySelectorAll("[data-navdrop]");
+  if (window.__lbNavDropdownLoaded) return;
+  window.__lbNavDropdownLoaded = true;
+
+  function initNavDropdown() {
+    const drops = Array.from(document.querySelectorAll("[data-navdrop]"));
     if (!drops.length) return;
+
+    function setOpen(drop, shouldOpen) {
+      const btn = drop.querySelector(".navdrop__sum");
+      if (!btn) return;
+
+      drop.setAttribute("data-open", shouldOpen ? "true" : "false");
+      btn.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+    }
+
+    function closeAll(except) {
+      drops.forEach((drop) => {
+        if (except && drop === except) return;
+        setOpen(drop, false);
+      });
+    }
 
     drops.forEach((drop) => {
       const btn = drop.querySelector(".navdrop__sum");
-      const panel = drop.querySelector(".navdrop__panel");
+      if (!btn) return;
 
-      if (!btn || !panel) return;
+      setOpen(drop, false);
 
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const expanded = btn.getAttribute("aria-expanded") === "true";
-        closeAll();
-        if (!expanded) open(drop, btn);
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const isOpen = drop.getAttribute("data-open") === "true";
+        closeAll(drop);
+        setOpen(drop, !isOpen);
+      });
+
+      drop.querySelectorAll(".navdrop__panel a[href]").forEach((link) => {
+        link.addEventListener("click", () => {
+          closeAll();
+        });
       });
     });
 
-    function closeAll() {
-      document.querySelectorAll("[data-navdrop]").forEach((el) => {
-        const b = el.querySelector(".navdrop__sum");
-        const p = el.querySelector(".navdrop__panel");
-        if (b) b.setAttribute("aria-expanded", "false");
-        if (p) p.style.display = "none";
+    document.addEventListener("click", (event) => {
+      if (event.target.closest("[data-navdrop]")) return;
+      closeAll();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeAll();
+    });
+
+    const mainNav = document.querySelector("[data-nav]");
+    if (mainNav && "MutationObserver" in window) {
+      const observer = new MutationObserver(() => {
+        if (mainNav.getAttribute("data-open") !== "1") {
+          closeAll();
+        }
+      });
+      observer.observe(mainNav, {
+        attributes: true,
+        attributeFilter: ["data-open"],
       });
     }
 
-    function open(drop, btn) {
-      const panel = drop.querySelector(".navdrop__panel");
-      if (panel) {
-        panel.style.display = "block";
-        btn.setAttribute("aria-expanded", "true");
-      }
-    }
+    window.LBNavDropdown = {
+      closeAll,
+    };
+  }
 
-    document.addEventListener("click", (e) => {
-      if (!e.target.closest("[data-navdrop]")) closeAll();
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeAll();
-    });
-  });
+  document.addEventListener("DOMContentLoaded", initNavDropdown, { once: true });
 })();
