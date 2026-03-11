@@ -25,19 +25,17 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  justify-content: center;
   font: inherit;
   color: inherit;
-  line-height: 1.1;
-  min-height: 42px;
+  line-height: 1;
   background: transparent;
   border: 0;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 12px;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .navdrop__sum:hover,
@@ -83,7 +81,7 @@
 /* Links */
 .navdrop__panel a {
   display: block;
-  padding: 11px 12px;
+  padding: 10px 12px;
   border-radius: 12px;
   text-decoration: none;
   color: inherit;
@@ -103,38 +101,117 @@
   margin: 8px 6px;
 }
 
-@media (max-width: 1024px) {
-  .navdrop {
-    display: block;
-    width: 100%;
+/* =========================================================
+   iPhone Portrait Header Fix
+   - Compact one-line topbar
+   - Keeps landscape and desktop close to existing layout
+   ========================================================= */
+@media (max-width: 480px) and (orientation: portrait) {
+  :root {
+    --header-h: calc(66px + env(safe-area-inset-top, 0px));
   }
 
-  .navdrop__sum {
-    width: 100%;
-    justify-content: space-between;
-    min-height: 46px;
-    padding: 12px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
+  body {
+    padding-top: var(--header-h);
   }
 
-  .navdrop__panel {
-    position: static;
-    top: auto;
-    left: auto;
+  header {
+    padding-top: env(safe-area-inset-top, 0px);
+    background: rgba(14, 6, 11, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .nav {
+    position: relative;
+    gap: 8px;
+    padding: 7px 0;
+  }
+
+  .brand {
+    flex: 1 1 auto;
     min-width: 0;
-    max-width: none;
-    margin-top: 8px;
-    border-radius: 16px;
-    padding: 8px;
-    background: rgba(10, 10, 12, 0.55);
-    box-shadow: none;
+    gap: 8px;
   }
 
-  .navdrop__panel a {
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    white-space: normal;
+  .brand > div {
+    min-width: 0;
+  }
+
+  .brand strong {
+    display: block;
+    font-size: 0.92rem;
+    line-height: 1.05;
+    padding-left: 11px;
+  }
+
+  .brand strong::before {
+    width: 5px;
+    height: 5px;
+  }
+
+  .brand span {
+    display: block;
+    max-width: none;
+    font-size: 0.66rem;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+
+  .logo::before {
+    width: 40px;
+    height: 40px;
+  }
+
+  .nav-quick {
+    margin-left: 0;
+    gap: 6px;
+    flex: 0 0 auto;
+  }
+
+  .navbtn,
+  .nav-symbol-link,
+  .lb-search-trigger {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    border-radius: 12px;
+  }
+
+  .menu {
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0;
+    max-height: calc(100dvh - var(--header-h) - 12px);
+    background: var(--nav-mobile-panel);
+  }
+}
+
+@media (max-width: 390px) and (orientation: portrait) {
+  .brand strong {
+    font-size: 0.88rem;
+  }
+
+  .brand span {
+    font-size: 0.62rem;
+  }
+
+  .nav {
+    gap: 6px;
+  }
+
+  .nav-quick {
+    gap: 5px;
   }
 }

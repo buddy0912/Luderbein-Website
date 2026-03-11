@@ -1663,66 +1663,11 @@
     const nav = document.querySelector("[data-nav]");
 
     if (navBtn && nav) {
-      const navBreakpoint = window.matchMedia("(max-width: 1024px)");
-
-      function closeNav() {
-        nav.setAttribute("data-open", "0");
-        navBtn.setAttribute("aria-expanded", "false");
-        navBtn.setAttribute("aria-label", "Menü öffnen");
-        document.body.classList.remove("lb-nav-open");
-        document.dispatchEvent(new CustomEvent("lb:nav-close"));
-      }
-
-      function openNav() {
-        nav.setAttribute("data-open", "1");
-        navBtn.setAttribute("aria-expanded", "true");
-        navBtn.setAttribute("aria-label", "Menü schließen");
-        if (navBreakpoint.matches) {
-          document.body.classList.add("lb-nav-open");
-        }
-      }
-
-      function syncNavMode() {
-        if (!navBreakpoint.matches) {
-          document.body.classList.remove("lb-nav-open");
-          nav.setAttribute("data-open", "0");
-          navBtn.setAttribute("aria-expanded", "false");
-          navBtn.setAttribute("aria-label", "Menü öffnen");
-        }
-      }
-
       navBtn.addEventListener("click", () => {
         const isOpen = nav.getAttribute("data-open") === "1";
-        if (isOpen) {
-          closeNav();
-        } else {
-          openNav();
-        }
+        nav.setAttribute("data-open", isOpen ? "0" : "1");
+        navBtn.setAttribute("aria-expanded", isOpen ? "false" : "true");
       });
-
-      nav.addEventListener("click", (event) => {
-        const link = event.target.closest("a[href]");
-        if (!link || !navBreakpoint.matches) return;
-        closeNav();
-      });
-
-      document.addEventListener("click", (event) => {
-        if (!navBreakpoint.matches) return;
-        if (event.target.closest("header")) return;
-        closeNav();
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeNav();
-      });
-
-      if (typeof navBreakpoint.addEventListener === "function") {
-        navBreakpoint.addEventListener("change", syncNavMode);
-      } else if (typeof navBreakpoint.addListener === "function") {
-        navBreakpoint.addListener(syncNavMode);
-      }
-
-      syncNavMode();
     }
 
     // NAV-SAFETY (Dropdown-Links fix)
