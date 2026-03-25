@@ -355,6 +355,14 @@
         if (type) status.classList.add(type);
       }
 
+      function parseJsonSafe(response) {
+        return response
+          .json()
+          .catch(function () {
+            return null;
+          });
+      }
+
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -384,25 +392,42 @@
             },
             body: JSON.stringify(payload)
           });
-          const data = await response.json();
+          const data = await parseJsonSafe(response);
           if (!response.ok) {
-            throw new Error(data.error || "Bestätigung konnte nicht gespeichert werden.");
+            throw new Error(
+              data && typeof data.error === "string"
+                ? data.error
+                : "Bestätigung konnte derzeit nicht gespeichert werden."
+            );
           }
 
           form.reset();
           if (ref) referenceInput.value = ref.slice(0, 120);
           if (note) noteInput.value = note.slice(0, 500);
 
-          const mailInfo = data.notificationSent
-            ? "Interne E-Mail-Benachrichtigung wurde gesendet."
-            : "Interne E-Mail-Benachrichtigung konnte nicht gesendet werden.";
+          const createdAtText = data && data.createdAt
+            ? new Date(data.createdAt).toLocaleString("de-DE")
+            : "unbekanntem Zeitpunkt";
+          const confirmationId = data && data.id ? data.id : "ohne ID";
+          const mailInfo =
+            data &&
+            data.notification &&
+            typeof data.notification.message === "string" &&
+            data.notification.message.trim()
+              ? data.notification.message.trim()
+              : "Interne E-Mail-Benachrichtigung wurde verarbeitet.";
 
           setStatus(
-            `Bestätigung gespeichert am ${new Date(data.createdAt).toLocaleString("de-DE")} unter der ID ${data.id}. ${mailInfo}`,
+            `Bestätigung gespeichert am ${createdAtText} unter der ID ${confirmationId}. ${mailInfo}`,
             "is-success"
           );
         } catch (error) {
-          setStatus(error instanceof Error ? error.message : "Bestätigung konnte nicht gesendet werden.", "is-error");
+          setStatus(
+            error instanceof Error
+              ? error.message
+              : "Bestätigung konnte derzeit nicht gesendet werden.",
+            "is-error"
+          );
         }
       });
     })();

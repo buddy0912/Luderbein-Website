@@ -13,6 +13,8 @@ const CHECKBOX_TEXTS = [
 ];
 const SUPPLEMENT_TEXT =
   "Luderbein ist nicht verpflichtet, die Rechtslage umfassend zu prüfen, ist jedoch berechtigt, bei rechtlichen Zweifeln Nachweise anzufordern oder Aufträge abzulehnen.";
+const MAIL_CONFIG_ERROR = "RIGHTS_EMAIL_NOT_CONFIGURED";
+const MAIL_DELIVERY_ERROR = "RIGHTS_EMAIL_DELIVERY_FAILED";
 
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
@@ -88,6 +90,70 @@ function buildDeclarationSnapshot() {
   };
 }
 
+function createMailError(code, message, details = {}) {
+  const error = new Error(message);
+  error.code = code;
+  error.details = details;
+  return error;
+}
+
+function isConfiguredEmailFrom(value) {
+  const normalized = String(value || "").trim();
+  if (!normalized) return false;
+
+  const angleAddressMatch = normalized.match(/<([^<>]+)>/);
+  if (angleAddressMatch) {
+    return isValidEmail(angleAddressMatch[1].trim());
+  }
+
+  return isValidEmail(normalized);
+}
+
+function getNotificationConfig(env) {
+  const apiKey = String(env.RESEND_API_KEY || "").trim();
+  const to = String(env.RIGHTS_NOTIFY_TO || env.PINBOARD_NOTIFY_TO || "").trim();
+  const from = String(env.RIGHTS_EMAIL_FROM || env.PINBOARD_EMAIL_FROM || "").trim();
+  const missing = [];
+
+  if (!apiKey) missing.push("RESEND_API_KEY");
+  if (!to) missing.push("RIGHTS_NOTIFY_TO oder PINBOARD_NOTIFY_TO");
+  if (!from) {
+    missing.push("RIGHTS_EMAIL_FROM oder PINBOARD_EMAIL_FROM");
+  } else if (!isConfiguredEmailFrom(from)) {
+    missing.push("RIGHTS_EMAIL_FROM/PINBOARD_EMAIL_FROM mit gueltiger Absenderadresse");
+  }
+
+  if (missing.length) {
+    throw createMailError(
+      MAIL_CONFIG_ERROR,
+      `Mail-Konfiguration unvollstaendig: ${missing.join(", ")}`,
+      { missing }
+    );
+  }
+
+  return { apiKey, to, from };
+}
+
+function buildNotificationResult(error) {
+  const code = error && typeof error === "object" ? error.code : "";
+
+  if (code === MAIL_CONFIG_ERROR) {
+    return {
+      sent: false,
+      status: "config_error",
+      message:
+        "Bestätigung wurde gespeichert. Die interne E-Mail-Benachrichtigung ist derzeit nicht vollständig konfiguriert."
+    };
+  }
+
+  return {
+    sent: false,
+    status: "send_failed",
+    message:
+      "Bestätigung wurde gespeichert. Die interne E-Mail-Benachrichtigung konnte intern nicht abgeschlossen werden."
+  };
+}
+
 async function ensureSchema(db) {
   await db
     .prepare(
@@ -124,13 +190,7 @@ async function ensureSchema(db) {
 }
 
 async function sendResendNotification(env, payload) {
-  const apiKey = String(env.RESEND_API_KEY || "").trim();
-  const to = String(env.PINBOARD_NOTIFY_TO || "").trim();
-  const from = String(env.PINBOARD_EMAIL_FROM || "").trim();
-
-  if (!apiKey || !to || !from) {
-    throw new Error("RIGHTS_EMAIL_NOT_CONFIGURED");
-  }
+  const { apiKey, to, from } = getNotificationConfig(env);
 
   const lines = [
     "Neue online bestätigte Rechteerklärung",
@@ -163,14 +223,22 @@ async function sendResendNotification(env, payload) {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Idempotency-Key": `rights-confirmation-${payload.id}`
     },
     body: JSON.stringify(body)
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`RESEND_${response.status}:${errorText}`);
+    throw createMailError(
+      MAIL_DELIVERY_ERROR,
+      `Resend-Antwort ${response.status}`,
+      {
+        status: response.status,
+        responseText: errorText.slice(0, 1000)
+      }
+    );
   }
 }
 
@@ -269,8 +337,11 @@ async function handlePost(context, cors) {
     )
     .run();
 
-  let notificationSent = false;
-  let notificationError = "";
+  let notification = {
+    sent: false,
+    status: "not_attempted",
+    message: "Interne E-Mail-Benachrichtigung wurde nicht ausgeführt."
+  };
 
   try {
     await sendResendNotification(env, {
@@ -282,14 +353,26 @@ async function handlePost(context, cors) {
       declarationVersion: DECLARATION_VERSION,
       createdAt
     });
-    notificationSent = true;
+    notification = {
+      sent: true,
+      status: "sent",
+      message: "Interne E-Mail-Benachrichtigung wurde gesendet."
+    };
     await env.PINBOARD_DB.prepare(
       `UPDATE rights_confirmations SET notified_at = ? WHERE id = ?`
     )
       .bind(new Date().toISOString(), id)
       .run();
   } catch (error) {
-    notificationError = error instanceof Error ? error.message : "MAIL_SEND_FAILED";
+    notification = buildNotificationResult(error);
+    const message = error instanceof Error ? error.message : "Unbekannter Mailfehler";
+    const code = error && typeof error === "object" && error.code ? error.code : "UNKNOWN_MAIL_ERROR";
+    const details =
+      error && typeof error === "object" && error.details ? JSON.stringify(error.details) : "";
+
+    console.error(
+      `[rechteerklaerung] mail notification failed for ${id}: ${code} ${message}${details ? ` ${details}` : ""}`
+    );
   }
 
   return json(
@@ -299,8 +382,7 @@ async function handlePost(context, cors) {
       createdAt,
       declarationVersion: DECLARATION_VERSION,
       declarationStand: DECLARATION_STAND,
-      notificationSent,
-      notificationError: notificationSent ? null : notificationError
+      notification
     },
     201,
     cors
@@ -333,7 +415,23 @@ export async function onRequest(context) {
 
     return json({ error: "Methode nicht erlaubt." }, 405, cors);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unbekannter Fehler";
-    return json({ error: message }, 500, cors);
+    const code = error && typeof error === "object" ? error.code : "";
+    if (code === MAIL_CONFIG_ERROR) {
+      return json(
+        {
+          error:
+            "Mail-Konfiguration unvollständig. Bitte Cloudflare-Environment-Variablen für Resend und Empfänger prüfen."
+        },
+        500,
+        cors
+      );
+    }
+
+    console.error("[rechteerklaerung] request failed", error);
+    return json(
+      { error: "Interner Fehler. Bitte später erneut versuchen." },
+      500,
+      cors
+    );
   }
 }
