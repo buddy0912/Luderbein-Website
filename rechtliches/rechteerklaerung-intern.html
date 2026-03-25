@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Interne Rechteerklärungen – Luderbein</title>
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <meta name="description" content="Interne Übersicht und Detailansicht der gespeicherten Rechteerklärungen." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <style>
+    .admin-shell {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 48px;
+    }
+
+    .admin-card {
+      border: 1px solid rgba(110, 104, 108, 0.55);
+      border-radius: 22px;
+      padding: clamp(18px, 3vw, 28px);
+      background:
+        radial-gradient(420px 220px at 12% 0%, rgba(219,16,33,.06), transparent 60%),
+        linear-gradient(180deg, rgba(31,30,35,.88), rgba(18,12,16,.92));
+      box-shadow:
+        0 20px 52px rgba(0,0,0,.20),
+        inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .admin-toolbar,
+    .admin-login {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .admin-toolbar input,
+    .admin-login input {
+      min-width: min(100%, 320px);
+      border: 1px solid rgba(110,104,108,.78);
+      border-radius: 14px;
+      background: rgba(16, 10, 14, 0.74);
+      color: var(--text);
+      padding: 12px 14px;
+      font: inherit;
+    }
+
+    .admin-layout {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .9fr);
+    }
+
+    .admin-status {
+      margin: 0;
+      min-height: 1.5em;
+      color: var(--muted);
+    }
+
+    .admin-status.is-error {
+      color: #ffb0b6;
+    }
+
+    .admin-status.is-success {
+      color: #b7e7c2;
+    }
+
+    .admin-table-wrap {
+      overflow-x: auto;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(110,104,108,.32);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .admin-table th {
+      font-size: .92rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .admin-table td {
+      font-size: .96rem;
+    }
+
+    .admin-ref {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: .92rem;
+      white-space: nowrap;
+    }
+
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .admin-actions .btn {
+      padding: 8px 12px;
+      min-height: 0;
+    }
+
+    .admin-detail {
+      display: grid;
+      gap: 14px;
+    }
+
+    .admin-detail h2 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .admin-detail-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .admin-detail-grid p,
+    .admin-detail pre {
+      margin: 0;
+    }
+
+    .admin-detail pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      border: 1px solid rgba(110,104,108,.32);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(14, 9, 13, 0.72);
+      color: var(--muted);
+    }
+
+    .admin-empty {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .admin-section-title {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 980px) {
+      .admin-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body data-enablebot="0">
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+        <a href="/rechtliches/">Rechtliches</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="content">
+    <section class="hero">
+      <span class="badge"><i></i> Intern</span>
+      <h1>Interne Rechteerklärungen</h1>
+      <p class="lead">Geschützte Übersicht für gespeicherte Rechteerklärungen mit Kurz-ID, Detailansicht und PDF-Abruf.</p>
+    </section>
+
+    <section class="admin-shell">
+      <article class="admin-card">
+        <h2 class="admin-section-title">Zugriff</h2>
+        <div class="admin-login">
+          <input id="admin-token" type="password" autocomplete="off" placeholder="Admin-Token eingeben" />
+          <button class="btn primary" id="admin-connect" type="button">Verbinden</button>
+          <button class="btn ghost" id="admin-disconnect" type="button">Token löschen</button>
+        </div>
+        <p class="admin-status" id="admin-status" aria-live="polite"></p>
+      </article>
+
+      <div class="admin-layout">
+        <article class="admin-card">
+          <div class="admin-toolbar">
+            <input id="admin-filter" type="search" placeholder="Suche nach Kurz-ID, Name, E-Mail oder Betreff" />
+            <button class="btn secondary" id="admin-refresh" type="button">Neu laden</button>
+          </div>
+
+          <div class="admin-table-wrap" style="margin-top:16px;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Datum</th>
+                  <th>Kurz-ID</th>
+                  <th>Name</th>
+                  <th>E-Mail</th>
+                  <th>Betreff</th>
+                  <th>Archiv</th>
+                  <th>Aktion</th>
+                </tr>
+              </thead>
+              <tbody id="admin-list"></tbody>
+            </table>
+            <p class="admin-empty" id="admin-empty" hidden>Keine Einträge gefunden.</p>
+          </div>
+        </article>
+
+        <aside class="admin-card admin-detail">
+          <div>
+            <h2>Detailansicht</h2>
+            <p class="admin-empty" id="admin-detail-empty">Wähle einen Eintrag aus der Liste.</p>
+          </div>
+
+          <div id="admin-detail" hidden>
+            <div class="admin-detail-grid">
+              <p><strong>Kurz-ID:</strong> <span id="detail-reference"></span></p>
+              <p><strong>Technische ID:</strong> <span id="detail-id"></span></p>
+              <p><strong>Datum:</strong> <span id="detail-created"></span></p>
+              <p><strong>Name:</strong> <span id="detail-name"></span></p>
+              <p><strong>E-Mail:</strong> <span id="detail-email"></span></p>
+              <p><strong>Betreff:</strong> <span id="detail-subject"></span></p>
+              <p><strong>Notiz:</strong> <span id="detail-note"></span></p>
+              <p><strong>Version / Stand:</strong> <span id="detail-version"></span></p>
+              <p><strong>Archiv:</strong> <span id="detail-archive"></span></p>
+            </div>
+
+            <div class="admin-actions">
+              <button class="btn primary" id="detail-download" type="button">PDF herunterladen</button>
+            </div>
+
+            <div>
+              <h3 class="admin-section-title">Bestätigte Punkte</h3>
+              <div class="admin-detail-grid">
+                <p id="detail-checkbox-1"></p>
+                <p id="detail-checkbox-2"></p>
+                <p id="detail-checkbox-3"></p>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="admin-section-title">Lesbare Archivfassung</h3>
+              <pre id="detail-text"></pre>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="/assets/footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/luderbot-enhancements.js" defer></script>
+  <script>
+    (function () {
+      const TOKEN_KEY = "rights_admin_token";
+      const tokenInput = document.getElementById("admin-token");
+      const connectButton = document.getElementById("admin-connect");
+      const disconnectButton = document.getElementById("admin-disconnect");
+      const refreshButton = document.getElementById("admin-refresh");
+      const filterInput = document.getElementById("admin-filter");
+      const status = document.getElementById("admin-status");
+      const list = document.getElementById("admin-list");
+      const empty = document.getElementById("admin-empty");
+      const detailBox = document.getElementById("admin-detail");
+      const detailEmpty = document.getElementById("admin-detail-empty");
+      const downloadButton = document.getElementById("detail-download");
+
+      const detailReference = document.getElementById("detail-reference");
+      const detailId = document.getElementById("detail-id");
+      const detailCreated = document.getElementById("detail-created");
+      const detailName = document.getElementById("detail-name");
+      const detailEmail = document.getElementById("detail-email");
+      const detailSubject = document.getElementById("detail-subject");
+      const detailNote = document.getElementById("detail-note");
+      const detailVersion = document.getElementById("detail-version");
+      const detailArchive = document.getElementById("detail-archive");
+      const detailCheckbox1 = document.getElementById("detail-checkbox-1");
+      const detailCheckbox2 = document.getElementById("detail-checkbox-2");
+      const detailCheckbox3 = document.getElementById("detail-checkbox-3");
+      const detailText = document.getElementById("detail-text");
+
+      if (
+        !tokenInput || !connectButton || !disconnectButton || !refreshButton || !filterInput ||
+        !status || !list || !empty || !detailBox || !detailEmpty || !downloadButton
+      ) {
+        return;
+      }
+
+      let entries = [];
+      let selectedReference = "";
+
+      function setStatus(message, type) {
+        status.textContent = message;
+        status.classList.remove("is-error", "is-success");
+        if (type) status.classList.add(type);
+      }
+
+      function getToken() {
+        return sessionStorage.getItem(TOKEN_KEY) || "";
+      }
+
+      function setToken(token) {
+        if (token) {
+          sessionStorage.setItem(TOKEN_KEY, token);
+        } else {
+          sessionStorage.removeItem(TOKEN_KEY);
+        }
+      }
+
+      function getAuthHeaders() {
+        const token = getToken();
+        return token ? { Authorization: "Bearer " + token } : {};
+      }
+
+      function hideDetail() {
+        selectedReference = "";
+        detailBox.hidden = true;
+        detailEmpty.hidden = false;
+      }
+
+      function formatDate(value) {
+        return value ? new Date(value).toLocaleString("de-DE") : "unbekannt";
+      }
+
+      function buildArchiveLabel(entry) {
+        if (!entry) return "unbekannt";
+        if (entry.hasStoredArchive) return "R2-PDF";
+        if (entry.archiveStorage === "d1") return "D1-Text, PDF-Rebuild";
+        return entry.archiveStorage || "unbekannt";
+      }
+
+      function renderList() {
+        const query = (filterInput.value || "").trim().toLowerCase();
+        const filtered = entries.filter(function (entry) {
+          if (!query) return true;
+          return [
+            entry.referenceCode,
+            entry.name,
+            entry.email,
+            entry.reference
+          ].join(" ").toLowerCase().indexOf(query) !== -1;
+        });
+
+        list.innerHTML = "";
+        empty.hidden = filtered.length > 0;
+
+        filtered.forEach(function (entry) {
+          const row = document.createElement("tr");
+          row.innerHTML =
+            "<td>" + formatDate(entry.createdAt) + "</td>" +
+            "<td class=\"admin-ref\">" + entry.referenceCode + "</td>" +
+            "<td>" + entry.name + "</td>" +
+            "<td>" + entry.email + "</td>" +
+            "<td>" + (entry.reference || "nicht angegeben") + "</td>" +
+            "<td>" + buildArchiveLabel(entry) + "</td>" +
+            "<td><div class=\"admin-actions\">" +
+              "<button class=\"btn ghost\" type=\"button\" data-detail=\"" + entry.referenceCode + "\">Details</button>" +
+              "<button class=\"btn ghost\" type=\"button\" data-pdf=\"" + entry.referenceCode + "\">PDF</button>" +
+            "</div></td>";
+          list.appendChild(row);
+        });
+      }
+
+      async function apiFetch(url) {
+        const response = await fetch(url, {
+          headers: Object.assign(
+            {
+              Accept: "application/json"
+            },
+            getAuthHeaders()
+          )
+        });
+
+        if (response.status === 401) {
+          throw new Error("Nicht autorisiert. Bitte gültigen Admin-Token setzen.");
+        }
+
+        return response;
+      }
+
+      async function loadEntries() {
+        if (!getToken()) {
+          setStatus("Bitte Admin-Token eingeben.", "is-error");
+          entries = [];
+          renderList();
+          hideDetail();
+          return;
+        }
+
+        setStatus("Einträge werden geladen …");
+
+        try {
+          const response = await apiFetch("/api/rechteerklaerung?mode=list");
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data && data.error ? data.error : "Liste konnte nicht geladen werden.");
+          }
+
+          entries = Array.isArray(data.entries) ? data.entries : [];
+          renderList();
+          setStatus(entries.length + " Einträge geladen.", "is-success");
+
+          if (selectedReference) {
+            await loadDetail(selectedReference);
+          } else {
+            hideDetail();
+          }
+        } catch (error) {
+          entries = [];
+          renderList();
+          hideDetail();
+          setStatus(error instanceof Error ? error.message : "Liste konnte nicht geladen werden.", "is-error");
+        }
+      }
+
+      async function loadDetail(referenceCode) {
+        selectedReference = referenceCode;
+        detailEmpty.hidden = true;
+        detailBox.hidden = true;
+        setStatus("Detail wird geladen …");
+
+        try {
+          const response = await apiFetch("/api/rechteerklaerung?mode=detail&reference=" + encodeURIComponent(referenceCode));
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data && data.error ? data.error : "Detail konnte nicht geladen werden.");
+          }
+
+          const entry = data.entry || {};
+          detailReference.textContent = entry.referenceCode || referenceCode;
+          detailId.textContent = entry.id || "";
+          detailCreated.textContent = formatDate(entry.createdAt);
+          detailName.textContent = entry.name || "";
+          detailEmail.textContent = entry.email || "";
+          detailSubject.textContent = entry.reference || "nicht angegeben";
+          detailNote.textContent = entry.note || "nicht angegeben";
+          detailVersion.textContent = (entry.declarationVersion || "") + " / " + (entry.declarationStand || "");
+          detailArchive.textContent =
+            entry.hasStoredArchive
+              ? "Private PDF in R2 hinterlegt"
+              : (entry.archiveStorage === "d1" ? "Lesbare Textfassung in D1, PDF wird bei Bedarf neu erzeugt" : (entry.archiveStorage || "unbekannt"));
+          detailCheckbox1.textContent = "1. " + (entry.checkboxes && entry.checkboxes[0] ? entry.checkboxes[0] : "");
+          detailCheckbox2.textContent = "2. " + (entry.checkboxes && entry.checkboxes[1] ? entry.checkboxes[1] : "");
+          detailCheckbox3.textContent = "3. " + (entry.checkboxes && entry.checkboxes[2] ? entry.checkboxes[2] : "");
+          detailText.textContent = entry.confirmationText || "";
+          downloadButton.dataset.reference = entry.referenceCode || referenceCode;
+
+          detailBox.hidden = false;
+          setStatus("Detail geladen.", "is-success");
+        } catch (error) {
+          hideDetail();
+          setStatus(error instanceof Error ? error.message : "Detail konnte nicht geladen werden.", "is-error");
+        }
+      }
+
+      async function downloadPdf(referenceCode) {
+        setStatus("PDF wird erzeugt …");
+
+        try {
+          const response = await fetch(
+            "/api/rechteerklaerung?mode=pdf&reference=" + encodeURIComponent(referenceCode),
+            {
+              headers: getAuthHeaders()
+            }
+          );
+
+          if (response.status === 401) {
+            throw new Error("Nicht autorisiert. Bitte gültigen Admin-Token setzen.");
+          }
+
+          if (!response.ok) {
+            const data = await response.json().catch(function () { return null; });
+            throw new Error(data && data.error ? data.error : "PDF konnte nicht geladen werden.");
+          }
+
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          const disposition = response.headers.get("content-disposition") || "";
+          const match = disposition.match(/filename=\"([^\"]+)\"/);
+          link.href = url;
+          link.download = match ? match[1] : "rechteerklaerung.pdf";
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          URL.revokeObjectURL(url);
+          setStatus("PDF bereitgestellt.", "is-success");
+        } catch (error) {
+          setStatus(error instanceof Error ? error.message : "PDF konnte nicht geladen werden.", "is-error");
+        }
+      }
+
+      list.addEventListener("click", function (event) {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+
+        const detailReferenceCode = target.getAttribute("data-detail");
+        if (detailReferenceCode) {
+          loadDetail(detailReferenceCode);
+          return;
+        }
+
+        const pdfReferenceCode = target.getAttribute("data-pdf");
+        if (pdfReferenceCode) {
+          downloadPdf(pdfReferenceCode);
+        }
+      });
+
+      downloadButton.addEventListener("click", function () {
+        const referenceCode = downloadButton.dataset.reference || "";
+        if (referenceCode) {
+          downloadPdf(referenceCode);
+        }
+      });
+
+      connectButton.addEventListener("click", function () {
+        const token = (tokenInput.value || "").trim();
+        if (!token) {
+          setStatus("Bitte einen Admin-Token eingeben.", "is-error");
+          return;
+        }
+
+        setToken(token);
+        loadEntries();
+      });
+
+      disconnectButton.addEventListener("click", function () {
+        setToken("");
+        tokenInput.value = "";
+        entries = [];
+        renderList();
+        hideDetail();
+        setStatus("Token gelöscht.", "is-success");
+      });
+
+      refreshButton.addEventListener("click", function () {
+        loadEntries();
+      });
+
+      filterInput.addEventListener("input", function () {
+        renderList();
+      });
+
+      const savedToken = getToken();
+      if (savedToken) {
+        tokenInput.value = savedToken;
+        loadEntries();
+      } else {
+        renderList();
+      }
+    })();
+  </script>
+</body>
+</html>

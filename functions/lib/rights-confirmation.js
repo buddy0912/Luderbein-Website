@@ -2,10 +2,10 @@ const PDF_PAGE_WIDTH = 595;
 const PDF_PAGE_HEIGHT = 842;
 const PDF_MARGIN_X = 56;
 const PDF_HEADER_Y = 786;
-const PDF_BODY_START_Y = 754;
+const PDF_BODY_START_Y = 742;
 const PDF_BODY_FONT_SIZE = 11;
 const PDF_BODY_LINE_HEIGHT = 14;
-const PDF_MAX_BODY_LINES = 44;
+const PDF_MAX_BODY_LINES = 43;
 const PDF_WRAP_WIDTH = 88;
 
 function normalizePdfText(value) {
@@ -40,6 +40,14 @@ function textToPdfHex(value) {
   }
 
   return `<${hex}>`;
+}
+
+function sanitizeFilenameToken(value) {
+  return String(value || "")
+    .trim()
+    .replace(/[^A-Za-z0-9-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 function sanitizeFilenameDate(createdAt) {
@@ -112,13 +120,19 @@ function chunkLines(lines, size) {
   return chunks.length ? chunks : [[]];
 }
 
-function buildPdfContentStream(title, pageLines, pageNumber, pageCount) {
+function buildPdfContentStream(title, subtitle, pageLines, pageNumber, pageCount) {
   const operations = [];
 
   operations.push("BT");
   operations.push("/F2 16 Tf");
   operations.push(`1 0 0 1 ${PDF_MARGIN_X} ${PDF_HEADER_Y} Tm`);
   operations.push(`${textToPdfHex(title)} Tj`);
+  operations.push("ET");
+
+  operations.push("BT");
+  operations.push("/F1 10 Tf");
+  operations.push(`1 0 0 1 ${PDF_MARGIN_X} ${PDF_HEADER_Y - 20} Tm`);
+  operations.push(`${textToPdfHex(subtitle)} Tj`);
   operations.push("ET");
 
   operations.push("BT");
@@ -145,7 +159,7 @@ function buildPdfContentStream(title, pageLines, pageNumber, pageCount) {
   return operations.join("\n");
 }
 
-function buildPdf(title, lines) {
+function buildPdf(title, subtitle, lines) {
   const wrappedLines = buildWrappedParagraphs(lines);
   const pages = chunkLines(wrappedLines, PDF_MAX_BODY_LINES);
   const objects = [];
@@ -167,7 +181,7 @@ function buildPdf(title, lines) {
   const pageObjectIds = [];
 
   for (let index = 0; index < pages.length; index += 1) {
-    const stream = buildPdfContentStream(title, pages[index], index + 1, pages.length);
+    const stream = buildPdfContentStream(title, subtitle, pages[index], index + 1, pages.length);
     const streamBytes = encodeLatin1(stream);
     const contentObjectId = addObject(
       `<< /Length ${streamBytes.length} >>\nstream\n${stream}\nendstream`
@@ -203,13 +217,23 @@ function buildPdf(title, lines) {
   return encodeLatin1(pdf);
 }
 
+export function buildReferenceCode(id, createdAt) {
+  const compactId = String(id || "").replace(/-/g, "").toUpperCase();
+  const datePart = String(createdAt || "").slice(2, 10).replace(/-/g, "") || "000000";
+  return `RE-${datePart}-${compactId.slice(0, 8)}`;
+}
+
 export function buildConfirmationDocument(payload) {
   const title = "Bestätigung Rechteerklärung für Kundenvorlagen";
   const displayDate = formatDisplayDate(payload.createdAt);
-  const filename = `rechteerklaerung-${sanitizeFilenameDate(payload.createdAt)}-${payload.id}.pdf`;
+  const referenceCode = payload.referenceCode || buildReferenceCode(payload.id, payload.createdAt);
+  const filenameToken = sanitizeFilenameToken(referenceCode) || sanitizeFilenameDate(payload.createdAt);
+  const filename = `rechteerklaerung-${filenameToken}.pdf`;
+  const subtitle = `Referenz-ID ${referenceCode}`;
 
   const lines = [
-    `Bestätigungs-ID: ${payload.id}`,
+    `Referenz-ID: ${referenceCode}`,
+    `Technische ID: ${payload.id}`,
     `Datum/Uhrzeit: ${displayDate} (Europe/Berlin)`,
     `Name: ${payload.name}`,
     `E-Mail: ${payload.email}`,
@@ -227,11 +251,12 @@ export function buildConfirmationDocument(payload) {
     "Hinweis: Diese Bestätigung bezieht sich ausschließlich auf den konkret betroffenen Auftrag."
   ];
 
-  const textContent = [title, "", ...lines].join("\n");
-  const pdfBytes = buildPdf(title, lines);
+  const textContent = [title, subtitle, "", ...lines].join("\n");
+  const pdfBytes = buildPdf(title, subtitle, lines);
 
   return {
     title,
+    referenceCode,
     filename,
     mediaType: "application/pdf",
     textContent,

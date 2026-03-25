@@ -474,13 +474,13 @@
           const createdAtText = data && data.createdAt
             ? new Date(data.createdAt).toLocaleString("de-DE")
             : "unbekanntem Zeitpunkt";
-          const confirmationId = data && data.id ? data.id : "ohne ID";
+          const confirmationId = data && data.referenceCode ? data.referenceCode : "ohne Referenz";
           const downloadInfo = hasDownload
             ? "Die PDF-Bestätigung wurde bereitgestellt."
             : "Die Bestätigung wurde gespeichert.";
 
           setStatus(
-            `Bestätigung gespeichert am ${createdAtText} unter der ID ${confirmationId}. ${downloadInfo}`,
+            `Bestätigung gespeichert am ${createdAtText} unter der Referenz ${confirmationId}. ${downloadInfo}`,
             "is-success"
           );
         } catch (error) {
