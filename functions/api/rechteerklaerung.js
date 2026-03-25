@@ -1,3 +1,5 @@
+import { buildConfirmationDocument } from "../lib/rights-confirmation.js";
+
 const MAX_BODY_CHARS = 12000;
 const MAX_NAME_CHARS = 120;
 const MAX_EMAIL_CHARS = 200;
@@ -13,8 +15,6 @@ const CHECKBOX_TEXTS = [
 ];
 const SUPPLEMENT_TEXT =
   "Luderbein ist nicht verpflichtet, die Rechtslage umfassend zu prüfen, ist jedoch berechtigt, bei rechtlichen Zweifeln Nachweise anzufordern oder Aufträge abzulehnen.";
-const MAIL_CONFIG_ERROR = "RIGHTS_EMAIL_NOT_CONFIGURED";
-const MAIL_DELIVERY_ERROR = "RIGHTS_EMAIL_DELIVERY_FAILED";
 
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
@@ -90,68 +90,10 @@ function buildDeclarationSnapshot() {
   };
 }
 
-function createMailError(code, message, details = {}) {
-  const error = new Error(message);
-  error.code = code;
-  error.details = details;
-  return error;
-}
-
-function isConfiguredEmailFrom(value) {
-  const normalized = String(value || "").trim();
-  if (!normalized) return false;
-
-  const angleAddressMatch = normalized.match(/<([^<>]+)>/);
-  if (angleAddressMatch) {
-    return isValidEmail(angleAddressMatch[1].trim());
-  }
-
-  return isValidEmail(normalized);
-}
-
-function getNotificationConfig(env) {
-  const apiKey = String(env.RESEND_API_KEY || "").trim();
-  const to = String(env.RIGHTS_NOTIFY_TO || env.PINBOARD_NOTIFY_TO || "").trim();
-  const from = String(env.RIGHTS_EMAIL_FROM || env.PINBOARD_EMAIL_FROM || "").trim();
-  const missing = [];
-
-  if (!apiKey) missing.push("RESEND_API_KEY");
-  if (!to) missing.push("RIGHTS_NOTIFY_TO oder PINBOARD_NOTIFY_TO");
-  if (!from) {
-    missing.push("RIGHTS_EMAIL_FROM oder PINBOARD_EMAIL_FROM");
-  } else if (!isConfiguredEmailFrom(from)) {
-    missing.push("RIGHTS_EMAIL_FROM/PINBOARD_EMAIL_FROM mit gueltiger Absenderadresse");
-  }
-
-  if (missing.length) {
-    throw createMailError(
-      MAIL_CONFIG_ERROR,
-      `Mail-Konfiguration unvollstaendig: ${missing.join(", ")}`,
-      { missing }
-    );
-  }
-
-  return { apiKey, to, from };
-}
-
-function buildNotificationResult(error) {
-  const code = error && typeof error === "object" ? error.code : "";
-
-  if (code === MAIL_CONFIG_ERROR) {
-    return {
-      sent: false,
-      status: "config_error",
-      message:
-        "Bestätigung wurde gespeichert. Die interne E-Mail-Benachrichtigung ist derzeit nicht vollständig konfiguriert."
-    };
-  }
-
-  return {
-    sent: false,
-    status: "send_failed",
-    message:
-      "Bestätigung wurde gespeichert. Die interne E-Mail-Benachrichtigung konnte intern nicht abgeschlossen werden."
-  };
+async function addColumnIfMissing(db, existingColumns, name, definition) {
+  if (existingColumns.has(name)) return;
+  await db.prepare(`ALTER TABLE rights_confirmations ADD COLUMN ${name} ${definition}`).run();
+  existingColumns.add(name);
 }
 
 async function ensureSchema(db) {
@@ -169,10 +111,28 @@ async function ensureSchema(db) {
         checkbox_2 INTEGER NOT NULL,
         checkbox_3 INTEGER NOT NULL,
         created_at TEXT NOT NULL,
-        notified_at TEXT
+        notified_at TEXT,
+        confirmation_filename TEXT,
+        confirmation_media_type TEXT,
+        confirmation_text TEXT,
+        archive_storage TEXT,
+        archive_key TEXT,
+        archived_at TEXT
       )`
     )
     .run();
+
+  const tableInfo = await db.prepare("PRAGMA table_info(rights_confirmations)").all();
+  const existingColumns = new Set(
+    Array.isArray(tableInfo.results) ? tableInfo.results.map((column) => column.name) : []
+  );
+
+  await addColumnIfMissing(db, existingColumns, "confirmation_filename", "TEXT");
+  await addColumnIfMissing(db, existingColumns, "confirmation_media_type", "TEXT");
+  await addColumnIfMissing(db, existingColumns, "confirmation_text", "TEXT");
+  await addColumnIfMissing(db, existingColumns, "archive_storage", "TEXT");
+  await addColumnIfMissing(db, existingColumns, "archive_key", "TEXT");
+  await addColumnIfMissing(db, existingColumns, "archived_at", "TEXT");
 
   await db
     .prepare(
@@ -189,56 +149,46 @@ async function ensureSchema(db) {
     .run();
 }
 
-async function sendResendNotification(env, payload) {
-  const { apiKey, to, from } = getNotificationConfig(env);
+async function archiveConfirmation(env, recordId, document, createdAt) {
+  const archivedAt = new Date().toISOString();
+  const bucket = env.RIGHTS_ARCHIVE_BUCKET;
 
-  const lines = [
-    "Neue online bestätigte Rechteerklärung",
-    "",
-    `Bestätigung-ID: ${payload.id}`,
-    `Zeitpunkt: ${payload.createdAt}`,
-    `Name: ${payload.name}`,
-    `E-Mail: ${payload.email}`,
-    `Referenz: ${payload.reference || "nicht angegeben"}`,
-    `Zuordnung: ${payload.note || "nicht angegeben"}`,
-    `Textfassung: ${payload.declarationVersion} (Stand ${DECLARATION_STAND})`,
-    "",
-    "Bestätigte Erklärungen:",
-    `1. ${CHECKBOX_TEXTS[0]}`,
-    `2. ${CHECKBOX_TEXTS[1]}`,
-    `3. ${CHECKBOX_TEXTS[2]}`,
-    "",
-    SUPPLEMENT_TEXT
-  ];
+  if (!bucket || typeof bucket.put !== "function") {
+    return {
+      storage: "d1",
+      key: null,
+      archivedAt
+    };
+  }
 
-  const body = {
-    from,
-    to: [to],
-    subject: `Rechteerklärung bestätigt: ${payload.reference || payload.name}`,
-    text: lines.join("\n"),
-    reply_to: payload.email ? [payload.email] : undefined
-  };
+  const year = String(createdAt || "").slice(0, 4) || "unknown";
+  const month = String(createdAt || "").slice(5, 7) || "00";
+  const key = `rights-confirmations/${year}/${month}/${recordId}.pdf`;
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "Idempotency-Key": `rights-confirmation-${payload.id}`
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw createMailError(
-      MAIL_DELIVERY_ERROR,
-      `Resend-Antwort ${response.status}`,
-      {
-        status: response.status,
-        responseText: errorText.slice(0, 1000)
+  try {
+    await bucket.put(key, document.pdfBytes, {
+      httpMetadata: {
+        contentType: document.mediaType,
+        contentDisposition: `attachment; filename="${document.filename}"`
+      },
+      customMetadata: {
+        confirmation_id: recordId,
+        declaration_version: DECLARATION_VERSION
       }
-    );
+    });
+
+    return {
+      storage: "r2",
+      key,
+      archivedAt
+    };
+  } catch (error) {
+    console.error("[rechteerklaerung] r2 archive failed", error);
+    return {
+      storage: "d1",
+      key: null,
+      archivedAt
+    };
   }
 }
 
@@ -312,14 +262,29 @@ async function handlePost(context, cors) {
   const id = crypto.randomUUID();
   const createdAt = new Date().toISOString();
   const snapshot = JSON.stringify(buildDeclarationSnapshot());
+  const document = buildConfirmationDocument({
+    id,
+    createdAt,
+    name,
+    email,
+    reference,
+    note,
+    declarationVersion: DECLARATION_VERSION,
+    declarationStand: DECLARATION_STAND,
+    checkboxes: CHECKBOX_TEXTS,
+    supplement: SUPPLEMENT_TEXT
+  });
+  const archive = await archiveConfirmation(env, id, document, createdAt);
 
   await env.PINBOARD_DB.prepare(
     `INSERT INTO rights_confirmations (
       id, contact_name, contact_email, reference, note,
       declaration_version, declaration_snapshot,
       checkbox_1, checkbox_2, checkbox_3,
-      created_at, notified_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      created_at, notified_at,
+      confirmation_filename, confirmation_media_type, confirmation_text,
+      archive_storage, archive_key, archived_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
     .bind(
       id,
@@ -333,47 +298,15 @@ async function handlePost(context, cors) {
       1,
       1,
       createdAt,
-      null
+      null,
+      document.filename,
+      document.mediaType,
+      document.textContent,
+      archive.storage,
+      archive.key,
+      archive.archivedAt
     )
     .run();
-
-  let notification = {
-    sent: false,
-    status: "not_attempted",
-    message: "Interne E-Mail-Benachrichtigung wurde nicht ausgeführt."
-  };
-
-  try {
-    await sendResendNotification(env, {
-      id,
-      name,
-      email,
-      reference,
-      note,
-      declarationVersion: DECLARATION_VERSION,
-      createdAt
-    });
-    notification = {
-      sent: true,
-      status: "sent",
-      message: "Interne E-Mail-Benachrichtigung wurde gesendet."
-    };
-    await env.PINBOARD_DB.prepare(
-      `UPDATE rights_confirmations SET notified_at = ? WHERE id = ?`
-    )
-      .bind(new Date().toISOString(), id)
-      .run();
-  } catch (error) {
-    notification = buildNotificationResult(error);
-    const message = error instanceof Error ? error.message : "Unbekannter Mailfehler";
-    const code = error && typeof error === "object" && error.code ? error.code : "UNKNOWN_MAIL_ERROR";
-    const details =
-      error && typeof error === "object" && error.details ? JSON.stringify(error.details) : "";
-
-    console.error(
-      `[rechteerklaerung] mail notification failed for ${id}: ${code} ${message}${details ? ` ${details}` : ""}`
-    );
-  }
 
   return json(
     {
@@ -382,7 +315,16 @@ async function handlePost(context, cors) {
       createdAt,
       declarationVersion: DECLARATION_VERSION,
       declarationStand: DECLARATION_STAND,
-      notification
+      download: {
+        filename: document.filename,
+        mediaType: document.mediaType,
+        contentBase64: document.pdfBase64
+      },
+      archive: {
+        storage: archive.storage,
+        key: archive.key,
+        archivedAt: archive.archivedAt
+      }
     },
     201,
     cors
@@ -415,18 +357,6 @@ export async function onRequest(context) {
 
     return json({ error: "Methode nicht erlaubt." }, 405, cors);
   } catch (error) {
-    const code = error && typeof error === "object" ? error.code : "";
-    if (code === MAIL_CONFIG_ERROR) {
-      return json(
-        {
-          error:
-            "Mail-Konfiguration unvollständig. Bitte Cloudflare-Environment-Variablen für Resend und Empfänger prüfen."
-        },
-        500,
-        cors
-      );
-    }
-
     console.error("[rechteerklaerung] request failed", error);
     return json(
       { error: "Interner Fehler. Bitte später erneut versuchen." },

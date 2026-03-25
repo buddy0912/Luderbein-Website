@@ -137,6 +137,24 @@
       color: #b7e7c2;
     }
 
+    .rights-download {
+      display: none;
+      gap: 10px;
+      padding: 14px 16px;
+      border: 1px solid rgba(110,104,108,.55);
+      border-radius: 16px;
+      background: rgba(20, 13, 18, 0.72);
+    }
+
+    .rights-download.is-visible {
+      display: grid;
+    }
+
+    .rights-download p {
+      margin: 0;
+      color: var(--muted);
+    }
+
     .rights-meta {
       display: grid;
       gap: 10px;
@@ -245,7 +263,7 @@
       <div class="rights-grid">
         <article class="rights-card">
           <h2>Online bestätigen</h2>
-          <p class="small">Bitte lies die Erklärung vollständig und bestätige alle drei Punkte aktiv. Ohne vollständige Bestätigung kann das Formular nicht abgesendet werden.</p>
+          <p class="small">Bitte lies die Erklärung vollständig und bestätige alle drei Punkte aktiv. Ohne vollständige Bestätigung kann das Formular nicht abgesendet werden. Nach erfolgreicher Bestätigung wird dir direkt eine kompakte PDF-Bestätigung zum Download bereitgestellt.</p>
 
           <form class="rights-form" id="rights-form" novalidate>
             <div class="rights-field">
@@ -295,6 +313,11 @@
             </div>
 
             <p class="rights-status" id="rights-status" aria-live="polite"></p>
+
+            <div class="rights-download" id="rights-download">
+              <a class="btn primary" id="rights-download-link" href="#" download>Bestätigung herunterladen</a>
+              <p>Der Download wird nach erfolgreicher Bestätigung direkt ausgelöst. Falls dein Browser ihn blockiert, kannst du die PDF hier erneut herunterladen.</p>
+            </div>
           </form>
         </article>
 
@@ -340,11 +363,14 @@
       const status = document.getElementById("rights-status");
       const referenceInput = document.getElementById("rights-reference");
       const noteInput = document.getElementById("rights-note");
-      if (!form || !status || !referenceInput || !noteInput) return;
+      const downloadBox = document.getElementById("rights-download");
+      const downloadLink = document.getElementById("rights-download-link");
+      if (!form || !status || !referenceInput || !noteInput || !downloadBox || !downloadLink) return;
 
       const params = new URLSearchParams(window.location.search);
       const ref = (params.get("ref") || params.get("projekt") || params.get("betreff") || "").trim();
       const note = (params.get("note") || "").trim();
+      let downloadUrl = "";
 
       if (ref) referenceInput.value = ref.slice(0, 120);
       if (note) noteInput.value = note.slice(0, 500);
@@ -355,6 +381,16 @@
         if (type) status.classList.add(type);
       }
 
+      function clearDownload() {
+        downloadBox.classList.remove("is-visible");
+        downloadLink.removeAttribute("href");
+        downloadLink.removeAttribute("download");
+        if (downloadUrl) {
+          URL.revokeObjectURL(downloadUrl);
+          downloadUrl = "";
+        }
+      }
+
       function parseJsonSafe(response) {
         return response
           .json()
@@ -363,8 +399,37 @@
           });
       }
 
+      function base64ToBlob(base64, mediaType) {
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+
+        for (let index = 0; index < binary.length; index += 1) {
+          bytes[index] = binary.charCodeAt(index);
+        }
+
+        return new Blob([bytes], { type: mediaType || "application/pdf" });
+      }
+
+      function prepareDownload(download) {
+        if (!download || typeof download.contentBase64 !== "string" || !download.contentBase64) {
+          clearDownload();
+          return false;
+        }
+
+        clearDownload();
+
+        const blob = base64ToBlob(download.contentBase64, download.mediaType);
+        downloadUrl = URL.createObjectURL(blob);
+        downloadLink.href = downloadUrl;
+        downloadLink.download = download.filename || "rechteerklaerung-bestaetigung.pdf";
+        downloadBox.classList.add("is-visible");
+        downloadLink.click();
+        return true;
+      }
+
       form.addEventListener("submit", async function (event) {
         event.preventDefault();
+        clearDownload();
 
         if (typeof form.reportValidity === "function" && !form.reportValidity()) {
           setStatus("Bitte fülle alle Pflichtfelder aus und bestätige alle drei Punkte.", "is-error");
@@ -405,27 +470,25 @@
           if (ref) referenceInput.value = ref.slice(0, 120);
           if (note) noteInput.value = note.slice(0, 500);
 
+          const hasDownload = prepareDownload(data && data.download ? data.download : null);
           const createdAtText = data && data.createdAt
             ? new Date(data.createdAt).toLocaleString("de-DE")
             : "unbekanntem Zeitpunkt";
           const confirmationId = data && data.id ? data.id : "ohne ID";
-          const mailInfo =
-            data &&
-            data.notification &&
-            typeof data.notification.message === "string" &&
-            data.notification.message.trim()
-              ? data.notification.message.trim()
-              : "Interne E-Mail-Benachrichtigung wurde verarbeitet.";
+          const downloadInfo = hasDownload
+            ? "Die PDF-Bestätigung wurde bereitgestellt."
+            : "Die Bestätigung wurde gespeichert.";
 
           setStatus(
-            `Bestätigung gespeichert am ${createdAtText} unter der ID ${confirmationId}. ${mailInfo}`,
+            `Bestätigung gespeichert am ${createdAtText} unter der ID ${confirmationId}. ${downloadInfo}`,
             "is-success"
           );
         } catch (error) {
+          clearDownload();
           setStatus(
             error instanceof Error
               ? error.message
-              : "Bestätigung konnte derzeit nicht gesendet werden.",
+              : "Bestätigung konnte derzeit nicht gespeichert werden.",
             "is-error"
           );
         }

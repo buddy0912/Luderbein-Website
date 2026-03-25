@@ -12,3 +12,8 @@ PINBOARD_ADMIN_TOKEN = "HIER_EIN_LANGES_ADMIN_TOKEN_SETZEN"
 binding = "PINBOARD_DB"
 database_name = "pinnwand_datenbank"
 database_id = "43584731-7e0c-4e18-8dd8-ed0ac02076f9"
+
+# Optional private R2 archive for Rechteerklaerung PDFs:
+# [[r2_buckets]]
+# binding = "RIGHTS_ARCHIVE_BUCKET"
+# bucket_name = "luderbein-rights-archive"
