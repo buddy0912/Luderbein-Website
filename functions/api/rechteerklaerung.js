@@ -89,26 +89,38 @@ function buildDeclarationSnapshot() {
 }
 
 async function ensureSchema(db) {
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS rights_confirmations (
-      id TEXT PRIMARY KEY,
-      contact_name TEXT NOT NULL,
-      contact_email TEXT NOT NULL,
-      reference TEXT,
-      note TEXT,
-      declaration_version TEXT NOT NULL,
-      declaration_snapshot TEXT NOT NULL,
-      checkbox_1 INTEGER NOT NULL,
-      checkbox_2 INTEGER NOT NULL,
-      checkbox_3 INTEGER NOT NULL,
-      created_at TEXT NOT NULL,
-      notified_at TEXT
-    );
-    CREATE INDEX IF NOT EXISTS idx_rights_confirmations_created_at
-      ON rights_confirmations(created_at DESC);
-    CREATE INDEX IF NOT EXISTS idx_rights_confirmations_email_created_at
-      ON rights_confirmations(contact_email, created_at DESC);
-  `);
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS rights_confirmations (
+        id TEXT PRIMARY KEY,
+        contact_name TEXT NOT NULL,
+        contact_email TEXT NOT NULL,
+        reference TEXT,
+        note TEXT,
+        declaration_version TEXT NOT NULL,
+        declaration_snapshot TEXT NOT NULL,
+        checkbox_1 INTEGER NOT NULL,
+        checkbox_2 INTEGER NOT NULL,
+        checkbox_3 INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        notified_at TEXT
+      )`
+    )
+    .run();
+
+  await db
+    .prepare(
+      `CREATE INDEX IF NOT EXISTS idx_rights_confirmations_created_at
+       ON rights_confirmations(created_at DESC)`
+    )
+    .run();
+
+  await db
+    .prepare(
+      `CREATE INDEX IF NOT EXISTS idx_rights_confirmations_email_created_at
+       ON rights_confirmations(contact_email, created_at DESC)`
+    )
+    .run();
 }
 
 async function sendResendNotification(env, payload) {
