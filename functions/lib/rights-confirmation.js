@@ -14,13 +14,6 @@ function normalizePdfText(value) {
     .replace(/[^\x09\x0A\x0D\x20-\xFF]/g, "?");
 }
 
-function escapePdfText(value) {
-  return normalizePdfText(value)
-    .replace(/\\/g, "\\\\")
-    .replace(/\(/g, "\\(")
-    .replace(/\)/g, "\\)");
-}
-
 function encodeLatin1(value) {
   const normalized = normalizePdfText(value);
   const bytes = new Uint8Array(normalized.length);
@@ -36,6 +29,17 @@ function bytesToBase64(bytes) {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
+}
+
+function textToPdfHex(value) {
+  const bytes = encodeLatin1(value);
+  let hex = "";
+
+  for (let i = 0; i < bytes.length; i += 1) {
+    hex += bytes[i].toString(16).padStart(2, "0").toUpperCase();
+  }
+
+  return `<${hex}>`;
 }
 
 function sanitizeFilenameDate(createdAt) {
@@ -114,7 +118,7 @@ function buildPdfContentStream(title, pageLines, pageNumber, pageCount) {
   operations.push("BT");
   operations.push("/F2 16 Tf");
   operations.push(`1 0 0 1 ${PDF_MARGIN_X} ${PDF_HEADER_Y} Tm`);
-  operations.push(`(${escapePdfText(title)}) Tj`);
+  operations.push(`${textToPdfHex(title)} Tj`);
   operations.push("ET");
 
   operations.push("BT");
@@ -123,10 +127,10 @@ function buildPdfContentStream(title, pageLines, pageNumber, pageCount) {
   operations.push(`1 0 0 1 ${PDF_MARGIN_X} ${PDF_BODY_START_Y} Tm`);
 
   if (pageLines.length) {
-    operations.push(`(${escapePdfText(pageLines[0])}) Tj`);
+    operations.push(`${textToPdfHex(pageLines[0])} Tj`);
     for (let index = 1; index < pageLines.length; index += 1) {
       operations.push("T*");
-      operations.push(`(${escapePdfText(pageLines[index])}) Tj`);
+      operations.push(`${textToPdfHex(pageLines[index])} Tj`);
     }
   }
 
@@ -135,7 +139,7 @@ function buildPdfContentStream(title, pageLines, pageNumber, pageCount) {
   operations.push("BT");
   operations.push("/F1 9 Tf");
   operations.push(`1 0 0 1 ${PDF_MARGIN_X} 34 Tm`);
-  operations.push(`(Seite ${pageNumber} von ${pageCount}) Tj`);
+  operations.push(`${textToPdfHex(`Seite ${pageNumber} von ${pageCount}`)} Tj`);
   operations.push("ET");
 
   return operations.join("\n");
@@ -153,8 +157,12 @@ function buildPdf(title, lines) {
 
   const catalogObjectId = addObject("");
   const pagesObjectId = addObject("");
-  const fontRegularObjectId = addObject("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
-  const fontBoldObjectId = addObject("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  const fontRegularObjectId = addObject(
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>"
+  );
+  const fontBoldObjectId = addObject(
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>"
+  );
 
   const pageObjectIds = [];
 
