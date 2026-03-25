@@ -55,10 +55,11 @@ if (!indexFooter) {
 const indexNorm = normalize(indexFooter);
 const indexHash = hash(indexNorm);
 
-// “Must-have” Marker: die zwei Rechtliches-Links (damit nix verschwindet)
+// “Must-have” Marker: die Rechtstext-Links (damit nix verschwindet)
 const requiredMarkers = [
   "/rechtliches/impressum.html",
   "/rechtliches/datenschutz.html",
+  "/rechtliches/agb.html",
 ];
 
 const htmlFiles = walk(repoRoot).filter((f) => {

@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rechteerklärung für Kundenvorlagen – Luderbein</title>
+  <meta name="description" content="Online bestätigbare Rechteerklärung für kundenseitig gelieferte Motive, Bilddateien, Logos, Texte und sonstige Vorlagen bei Luderbein." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <style>
+    .rights-shell {
+      display: grid;
+      gap: 22px;
+      margin-bottom: 48px;
+    }
+
+    .rights-card {
+      border: 1px solid rgba(110, 104, 108, 0.55);
+      border-radius: 22px;
+      padding: clamp(18px, 3vw, 28px);
+      background:
+        radial-gradient(420px 220px at 12% 0%, rgba(219,16,33,.06), transparent 60%),
+        linear-gradient(180deg, rgba(31,30,35,.88), rgba(18,12,16,.92));
+      box-shadow:
+        0 20px 52px rgba(0,0,0,.20),
+        inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .rights-card h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+    }
+
+    .rights-card > :last-child {
+      margin-bottom: 0;
+    }
+
+    .rights-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.1fr .9fr;
+      align-items: start;
+    }
+
+    .rights-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .rights-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .rights-field label,
+    .rights-checklist legend {
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .rights-field input,
+    .rights-field textarea {
+      width: 100%;
+      border: 1px solid rgba(110,104,108,.78);
+      border-radius: 14px;
+      background: rgba(16, 10, 14, 0.74);
+      color: var(--text);
+      padding: 12px 14px;
+      font: inherit;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+    }
+
+    .rights-field textarea {
+      min-height: 108px;
+      resize: vertical;
+    }
+
+    .rights-field input:focus,
+    .rights-field textarea:focus {
+      outline: 2px solid rgba(219,16,33,.35);
+      outline-offset: 2px;
+      border-color: rgba(219,16,33,.55);
+    }
+
+    .rights-hint {
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .rights-checklist {
+      border: 1px solid rgba(110,104,108,.55);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(20, 13, 18, 0.72);
+      display: grid;
+      gap: 12px;
+      margin: 0;
+    }
+
+    .rights-checklist legend {
+      padding: 0 8px;
+    }
+
+    .rights-check {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      gap: 12px;
+      align-items: start;
+      color: var(--text);
+    }
+
+    .rights-check input {
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .rights-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .rights-status {
+      margin: 0;
+      min-height: 1.5em;
+      color: var(--muted);
+    }
+
+    .rights-status.is-error {
+      color: #ffb0b6;
+    }
+
+    .rights-status.is-success {
+      color: #b7e7c2;
+    }
+
+    .rights-meta {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rights-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .rights-list li + li {
+      margin-top: 8px;
+    }
+
+    @media (max-width: 780px) {
+      .rights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body data-enablebot="0">
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button
+        class="navbtn"
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="nav-main"
+        aria-label="Menü öffnen"
+      >
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+
+        <div class="navdrop" data-navdrop>
+          <button
+            class="navdrop__sum"
+            id="navdrop-leistungen-btn"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="navdrop-leistungen-panel"
+          >
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+
+          <div
+            class="navdrop__panel"
+            id="navdrop-leistungen-panel"
+            role="menu"
+            aria-labelledby="navdrop-leistungen-btn"
+          >
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/glas/" role="menuitem">Glas</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/service/" role="menuitem">Downloads</a>
+          </div>
+        </div>
+
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/">Rechtliches</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="content">
+    <section class="hero">
+      <span class="badge"><i></i> Rechtliches</span>
+      <h1>Rechteerklärung für Kundenvorlagen</h1>
+      <p class="lead">Diese Seite ist für Fälle gedacht, in denen du Luderbein eigene Motive, Bilddateien, Logos, Grafiken, Texte oder ähnliche Vorlagen zur Durchführung eines konkreten Auftrags zur Verfügung stellst.</p>
+
+      <div class="notice" style="margin-top:14px;">
+        Übersicht und weitere Rechtstexte:
+        <a href="/rechtliches/">Rechtliches</a> ·
+        <a href="/rechtliches/datenschutz.html">Datenschutz</a> ·
+        <a href="/rechtliches/agb.html">AGB</a> ·
+        <a href="/rechtliches/urheberrecht-bildrechte.html">Urheberrecht, Bildrechte &amp; unzulässige Motive</a>
+      </div>
+    </section>
+
+    <section class="rights-shell">
+      <div class="rights-grid">
+        <article class="rights-card">
+          <h2>Online bestätigen</h2>
+          <p class="small">Bitte lies die Erklärung vollständig und bestätige alle drei Punkte aktiv. Ohne vollständige Bestätigung kann das Formular nicht abgesendet werden.</p>
+
+          <form class="rights-form" id="rights-form" novalidate>
+            <div class="rights-field">
+              <label for="rights-name">Name / Ansprechpartner</label>
+              <input id="rights-name" name="name" type="text" autocomplete="name" required maxlength="120" />
+            </div>
+
+            <div class="rights-field">
+              <label for="rights-email">E-Mail-Adresse</label>
+              <input id="rights-email" name="email" type="email" autocomplete="email" required maxlength="200" />
+              <span class="rights-hint">Wird für Zuordnung, Rückfragen und den Nachweis der Bestätigung gespeichert.</span>
+            </div>
+
+            <div class="rights-field">
+              <label for="rights-reference">Auftragsnummer / Referenz / Betreff optional</label>
+              <input id="rights-reference" name="reference" type="text" maxlength="120" placeholder="z. B. Bandlogo März 2026" />
+            </div>
+
+            <div class="rights-field">
+              <label for="rights-note">Kurze Zuordnung optional</label>
+              <textarea id="rights-note" name="note" maxlength="500" placeholder="z. B. welches Motiv oder welche Datei gemeint ist"></textarea>
+            </div>
+
+            <fieldset class="rights-checklist">
+              <legend>Pflichtbestätigungen</legend>
+
+              <label class="rights-check" for="rights-cb-1">
+                <input id="rights-cb-1" name="checkbox1" type="checkbox" required />
+                <span>Ich versichere, dass ich über alle erforderlichen Rechte, Nutzungsrechte, Zustimmungen und Erlaubnisse an den von mir übermittelten Vorlagen verfüge und dass Luderbein diese zur Ausführung meines konkreten Auftrags verwenden darf.</span>
+              </label>
+
+              <label class="rights-check" for="rights-cb-2">
+                <input id="rights-cb-2" name="checkbox2" type="checkbox" required />
+                <span>Ich räume Luderbein ein einfaches, nicht übertragbares und ausschließlich auf die Durchführung dieses konkreten Auftrags beschränktes Nutzungsrecht an den übermittelten Vorlagen ein.</span>
+              </label>
+
+              <label class="rights-check" for="rights-cb-3">
+                <input id="rights-cb-3" name="checkbox3" type="checkbox" required />
+                <span>Ich bestätige, dass durch die beauftragte Nutzung nach meinem Kenntnisstand keine Rechte Dritter verletzt werden und dass ich Luderbein von Ansprüchen Dritter freistelle, soweit diese auf einer von mir zu vertretenden fehlenden Berechtigung beruhen.</span>
+              </label>
+            </fieldset>
+
+            <p class="small">Luderbein ist nicht verpflichtet, die Rechtslage umfassend zu prüfen, ist jedoch berechtigt, bei rechtlichen Zweifeln Nachweise anzufordern oder Aufträge abzulehnen.</p>
+
+            <div class="rights-actions">
+              <button class="btn primary" type="submit">Verbindlich bestätigen</button>
+            </div>
+
+            <p class="rights-status" id="rights-status" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <aside class="rights-meta">
+          <article class="rights-card">
+            <h2>Wofür diese Erklärung gedacht ist</h2>
+            <ul class="rights-list">
+              <li>für kundenseitig gelieferte Motive, Fotos, Logos, Grafiken, Texte oder ähnliche Vorlagen</li>
+              <li>für einen bereits besprochenen oder konkret angebahnten Auftrag</li>
+              <li>als schlanke Online-Bestätigung ohne handschriftliche Unterschrift</li>
+            </ul>
+          </article>
+
+          <article class="rights-card">
+            <h2>Was dokumentiert wird</h2>
+            <ul class="rights-list">
+              <li>Name und E-Mail-Adresse</li>
+              <li>optionale Referenz oder kurze Zuordnungsnotiz</li>
+              <li>Datum und Uhrzeit der Bestätigung</li>
+              <li>Bestätigung aller drei Pflichtpunkte</li>
+              <li>die intern gespeicherte Textfassung der Erklärung mit Versionskennung</li>
+            </ul>
+          </article>
+
+          <article class="rights-card">
+            <h2>Hinweis</h2>
+            <p class="small">Diese Seite ist bewusst schlank gehalten. Hier werden keine Dateien hochgeladen und keine weitergehenden Rechte übertragen. Die Erklärung ist ausschließlich auf den konkret betroffenen Auftrag bezogen.</p>
+          </article>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="/assets/footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/luderbot-enhancements.js" defer></script>
+  <script>
+    (function () {
+      const form = document.getElementById("rights-form");
+      const status = document.getElementById("rights-status");
+      const referenceInput = document.getElementById("rights-reference");
+      const noteInput = document.getElementById("rights-note");
+      if (!form || !status || !referenceInput || !noteInput) return;
+
+      const params = new URLSearchParams(window.location.search);
+      const ref = (params.get("ref") || params.get("projekt") || params.get("betreff") || "").trim();
+      const note = (params.get("note") || "").trim();
+
+      if (ref) referenceInput.value = ref.slice(0, 120);
+      if (note) noteInput.value = note.slice(0, 500);
+
+      function setStatus(message, type) {
+        status.textContent = message;
+        status.classList.remove("is-error", "is-success");
+        if (type) status.classList.add(type);
+      }
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        if (typeof form.reportValidity === "function" && !form.reportValidity()) {
+          setStatus("Bitte fülle alle Pflichtfelder aus und bestätige alle drei Punkte.", "is-error");
+          return;
+        }
+
+        const payload = {
+          name: form.querySelector("#rights-name")?.value || "",
+          email: form.querySelector("#rights-email")?.value || "",
+          reference: form.querySelector("#rights-reference")?.value || "",
+          note: form.querySelector("#rights-note")?.value || "",
+          checkbox1: !!form.querySelector("#rights-cb-1")?.checked,
+          checkbox2: !!form.querySelector("#rights-cb-2")?.checked,
+          checkbox3: !!form.querySelector("#rights-cb-3")?.checked
+        };
+
+        setStatus("Bestätigung wird gespeichert …");
+
+        try {
+          const response = await fetch("/api/rechteerklaerung", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            },
+            body: JSON.stringify(payload)
+          });
+          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.error || "Bestätigung konnte nicht gespeichert werden.");
+          }
+
+          form.reset();
+          if (ref) referenceInput.value = ref.slice(0, 120);
+          if (note) noteInput.value = note.slice(0, 500);
+
+          const mailInfo = data.notificationSent
+            ? "Interne E-Mail-Benachrichtigung wurde gesendet."
+            : "Interne E-Mail-Benachrichtigung konnte nicht gesendet werden.";
+
+          setStatus(
+            `Bestätigung gespeichert am ${new Date(data.createdAt).toLocaleString("de-DE")} unter der ID ${data.id}. ${mailInfo}`,
+            "is-success"
+          );
+        } catch (error) {
+          setStatus(error instanceof Error ? error.message : "Bestätigung konnte nicht gesendet werden.", "is-error");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

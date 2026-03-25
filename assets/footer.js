@@ -74,15 +74,19 @@
     </div>
   `;
 
+  const legalLinks = `
+    <div class="foot__stack small" aria-label="Rechtstexte">
+      <a href="/rechtliches/impressum.html">Impressum</a>
+      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
+      <a href="/rechtliches/agb.html">AGB</a>
+    </div>
+  `;
+
   host.innerHTML = `
     <div class="wrap foot">
       <div class="small">© <span>${year}</span> Luderbein</div>
       ${isContactPage ? contactActions : standardActions}
-
-      <div class="small">
-        <a href="/rechtliches/impressum.html">Impressum</a> ·
-        <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-      </div>
+      ${legalLinks}
     </div>
   `;
 })();
