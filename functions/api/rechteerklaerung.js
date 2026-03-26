@@ -563,16 +563,3 @@ export async function onRequest(context) {
     );
   }
 }
-```
-
-**Kurzfassung**
-
-Der temporäre Diagnosemodus wurde entfernt. `mode=diag` liefert also keine öffentliche Diagnoseantwort mehr.
-
-Die Admin-Funktion bleibt intakt:
-- `RIGHTS_ADMIN_TOKEN` wird weiterhin bevorzugt
-- `PINBOARD_ADMIN_TOKEN` bleibt als sinnvoller Fallback erhalten
-- die interne Listen-, Detail- und PDF-Abruflogik bleibt unverändert funktionsfähig
-
-Ausdrücklich betroffene Dateien:
-- [functions/api/rechteerklaerung.js](/Volumes/DATA/GitHub/Luderbein-Website/functions/api/rechteerklaerung.js) +#+#+#+#+#+assistant to=functions.exec_command კომენტary  天天中彩票是  天天中彩票怎样 to=functions.exec_command 公众号天天中彩票  天天中彩票可以json
