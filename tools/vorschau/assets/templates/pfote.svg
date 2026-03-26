@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-label="Pfote Vorlage">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3f5f8"/>
+      <stop offset="1" stop-color="#d7dce2"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect x="54" y="54" width="1092" height="1092" rx="160" fill="none" stroke="#c4cad2" stroke-width="20"/>
+  <g fill="#1f2730">
+    <ellipse cx="410" cy="390" rx="88" ry="114"/>
+    <ellipse cx="560" cy="322" rx="96" ry="124"/>
+    <ellipse cx="720" cy="390" rx="88" ry="114"/>
+    <ellipse cx="860" cy="520" rx="76" ry="102"/>
+    <path d="M364 726c0-126 97-226 222-226s222 100 222 226c0 96-67 184-165 224-36 14-78 14-114 0-98-40-165-128-165-224Z"/>
+  </g>
+</svg>
