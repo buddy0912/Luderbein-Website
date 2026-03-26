@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-label="Emblem Vorlage">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f6f8"/>
+      <stop offset="1" stop-color="#d8dde3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect x="54" y="54" width="1092" height="1092" rx="160" fill="none" stroke="#c5ccd4" stroke-width="20"/>
+  <g fill="none" stroke="#202a35" stroke-width="52" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M300 686 602 358l302 302-302 184Z"/>
+    <path d="M418 804 602 332l165 108 92 228-257 200Z"/>
+  </g>
+</svg>

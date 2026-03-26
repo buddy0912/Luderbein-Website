@@ -50,25 +50,25 @@
       id: "monogram",
       name: "Monogramm",
       description: "Reduziertes Initial-Beispiel.",
-      svg: createTemplateSvg("Monogramm")
+      imageSrc: "/tools/vorschau/assets/templates/monogramm.svg"
     },
     {
       id: "paw",
       name: "Pfote",
       description: "Klares Symbolmotiv.",
-      svg: createTemplateSvg("Pfote")
+      imageSrc: "/tools/vorschau/assets/templates/pfote.svg"
     },
     {
       id: "portrait",
-      name: "Portrait",
+      name: "Porträt",
       description: "Silhouettenartige Fotowirkung.",
-      svg: createTemplateSvg("Portrait")
+      imageSrc: "/tools/vorschau/assets/templates/portraet.svg"
     },
     {
       id: "emblem",
       name: "Emblem",
       description: "Technische Logo-Anmutung.",
-      svg: createTemplateSvg("Emblem")
+      imageSrc: "/tools/vorschau/assets/templates/emblem.svg"
     }
   ];
 
@@ -90,7 +90,7 @@
 
   Promise.all(
     TEMPLATE_LIBRARY.map((template) =>
-      loadImage(template.svg).then((image) => {
+      loadImage(template.imageSrc).then((image) => {
         template.image = image;
       })
     )
@@ -211,7 +211,7 @@
       button.className = "preview-option";
       button.setAttribute("data-template-id", template.id);
       button.innerHTML =
-        '<span class="preview-option__thumb"><img src="' + template.svg + '" alt=""></span>' +
+        '<span class="preview-option__thumb"><img src="' + template.imageSrc + '" alt=""></span>' +
         '<span class="preview-option__title">' + escapeHtml(template.name) + "</span>" +
         '<span class="preview-option__meta">' + escapeHtml(template.description) + "</span>";
 
@@ -747,60 +747,6 @@
       image.onerror = reject;
       image.src = src;
     });
-  }
-
-  function createTemplateSvg(kind) {
-    const baseStart =
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">' +
-      '<rect width="600" height="600" fill="#eef0f2"/>' +
-      '<rect x="18" y="18" width="564" height="564" rx="90" fill="none" stroke="#c8ccd1" stroke-width="10"/>';
-
-    const baseEnd = "</svg>";
-
-    if (kind === "Monogramm") {
-      return svgToDataUrl(
-        baseStart +
-          '<circle cx="300" cy="300" r="174" fill="#d7dbe0"/>' +
-          '<text x="300" y="352" text-anchor="middle" font-family="Arial, sans-serif" font-size="228" font-weight="700" fill="#1c232b">LB</text>' +
-        baseEnd
-      );
-    }
-
-    if (kind === "Pfote") {
-      return svgToDataUrl(
-        baseStart +
-          '<g fill="#202831">' +
-            '<ellipse cx="220" cy="208" rx="48" ry="62"/>' +
-            '<ellipse cx="300" cy="174" rx="52" ry="68"/>' +
-            '<ellipse cx="382" cy="208" rx="48" ry="62"/>' +
-            '<ellipse cx="452" cy="282" rx="42" ry="56"/>' +
-            '<path d="M200 390c0-70 54-126 124-126s124 56 124 126c0 54-38 104-92 126-20 8-44 8-64 0-54-22-92-72-92-126Z"/>' +
-          "</g>" +
-        baseEnd
-      );
-    }
-
-    if (kind === "Portrait") {
-      return svgToDataUrl(
-        baseStart +
-          '<path d="M218 440c20-54 58-76 96-90-38-22-64-64-64-114 0-82 52-138 128-138 58 0 108 36 108 98 0 40-18 68-48 86 10 18 16 38 16 62 0 40-16 72-48 96H218Z" fill="#1f2730"/>' +
-          '<path d="M198 468h246c24 0 44 18 48 42H150c10-24 24-42 48-42Z" fill="#3e4853"/>' +
-        baseEnd
-      );
-    }
-
-    return svgToDataUrl(
-      baseStart +
-        '<g fill="none" stroke="#202831" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">' +
-          '<path d="M150 342l150-164 154 154-154 92Z"/>' +
-          '<path d="M210 404l90-236 82 54 48 118-130 102Z"/>' +
-        "</g>" +
-      baseEnd
-    );
-  }
-
-  function svgToDataUrl(svg) {
-    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
   }
 
   function clamp(value, min, max) {
