@@ -7,9 +7,106 @@
   <meta name="description" content="Übersicht der rechtlichen Seiten von Luderbein: Impressum, Datenschutz, AGB, Widerruf / Verbraucherhinweise, Materialhinweise, Urheberrecht und die Rechteerklärung für Kundenvorlagen." />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <style>
+    body[data-page="rechtliches"] main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    body[data-page="rechtliches"] .hero {
+      padding: clamp(22px, 3vw, 30px);
+    }
+
+    body[data-page="rechtliches"] .hero h1 {
+      margin-bottom: 12px;
+    }
+
+    body[data-page="rechtliches"] .lead {
+      max-width: 62ch;
+    }
+
+    body[data-page="rechtliches"] .section {
+      margin: 0;
+    }
+
+    .legal-overview {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .legal-card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 100%;
+      padding: clamp(20px, 2.4vw, 24px);
+      border: 1px solid rgba(64,62,65,.58);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(31,30,35,.86), rgba(18,12,16,.92));
+      box-shadow: 0 18px 42px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .legal-card:hover {
+      border-color: rgba(219,16,33,.34);
+    }
+
+    .legal-card__content {
+      display: flex;
+      flex: 1 1 auto;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .legal-card h2 {
+      margin: 0;
+      font-size: clamp(1.16rem, 1.4vw, 1.34rem);
+      line-height: 1.25;
+      color: var(--text);
+    }
+
+    .legal-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.97rem;
+      line-height: 1.6;
+    }
+
+    .legal-card__actions {
+      margin-top: auto;
+      padding-top: 4px;
+    }
+
+    .legal-card__actions .btn {
+      width: 100%;
+      min-height: 46px;
+      justify-content: center;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    @media (max-width: 760px) {
+      .legal-overview {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body[data-page="rechtliches"] main {
+        gap: 14px;
+      }
+
+      body[data-page="rechtliches"] .hero,
+      .legal-card {
+        padding: 20px 18px;
+      }
+    }
+  </style>
 </head>
 
-<body data-enablebot="0">
+<body data-enablebot="0" data-page="rechtliches">
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -83,60 +180,74 @@
     </section>
 
     <section class="section" aria-label="Rechtstexte">
-      <div class="grid">
-        <article class="card">
-          <h2>Impressum</h2>
-          <p class="small">Anbieterkennzeichnung, Kontaktangaben und Hinweise zur Verbraucherstreitbeilegung.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/impressum.html">Impressum öffnen</a>
+      <div class="legal-overview">
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>Impressum</h2>
+            <p>Anbieterkennzeichnung, Kontaktangaben und Hinweise zur Verbraucherstreitbeilegung.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/impressum.html">Impressum</a>
           </div>
         </article>
 
-        <article class="card">
-          <h2>Datenschutz</h2>
-          <p class="small">Informationen zur Datenverarbeitung auf der Website, zu Kontaktwegen und zur Ideenpinnwand.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/datenschutz.html">Datenschutz öffnen</a>
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>Datenschutz</h2>
+            <p>Informationen zur Datenverarbeitung auf der Website, zu Kontaktwegen und zur Ideenpinnwand.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/datenschutz.html">Datenschutz</a>
           </div>
         </article>
 
-        <article class="card">
-          <h2>AGB</h2>
-          <p class="small">Bedingungen für individualisierte Auftragsfertigung, Sonderanfertigungen und direkte Beauftragung ohne Shopsystem.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/agb.html">AGB öffnen</a>
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>AGB</h2>
+            <p>Bedingungen für individualisierte Auftragsfertigung, Sonderanfertigungen und direkte Beauftragung ohne Shopsystem.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/agb.html">AGB</a>
           </div>
         </article>
 
-        <article class="card">
-          <h2>Widerruf / Verbraucherhinweise</h2>
-          <p class="small">Sachliche Hinweise dazu, wann Verbraucherrechte relevant sein können und warum die Einordnung vom konkreten Vertragsschluss und vom jeweiligen Auftrag abhängt.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/widerruf.html">Seite öffnen</a>
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>Widerruf / Verbraucherhinweise</h2>
+            <p>Sachliche Hinweise dazu, wann Verbraucherrechte relevant sein können und warum die Einordnung vom konkreten Vertragsschluss und vom jeweiligen Auftrag abhängt.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/widerruf.html">Widerruf</a>
           </div>
         </article>
 
-        <article class="card">
-          <h2>Hinweise zu Material, Pflege und Nutzung</h2>
-          <p class="small">Praktische Kundenhinweise zu Materialbesonderheiten, schonender Pflege, typischen Abweichungen und dem Umgang mit individualisierten Arbeiten.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/material-pflege-nutzung.html">Seite öffnen</a>
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>Hinweise zu Material, Pflege und Nutzung</h2>
+            <p>Praktische Kundenhinweise zu Materialbesonderheiten, schonender Pflege, typischen Abweichungen und dem Umgang mit individualisierten Arbeiten.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/material-pflege-nutzung.html">Pflege &amp; Nutzung</a>
           </div>
         </article>
 
-        <article class="card">
-          <h2>Urheberrecht, Bildrechte &amp; unzulässige Motive</h2>
-          <p class="small">Hinweise zu Kundenvorlagen, Rechten Dritter, problematischen Motiven, eigener Gestaltung und zur zweckgebundenen Bearbeitung eingereichter Vorlagen.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/urheberrecht-bildrechte.html">Seite öffnen</a>
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>Urheberrecht, Bildrechte &amp; unzulässige Motive</h2>
+            <p>Hinweise zu Kundenvorlagen, Rechten Dritter, problematischen Motiven, eigener Gestaltung und zur zweckgebundenen Bearbeitung eingereichter Vorlagen.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/urheberrecht-bildrechte.html">Bildrechte &amp; Motive</a>
           </div>
         </article>
 
-        <article class="card">
-          <h2>Rechteerklärung für Kundenvorlagen</h2>
-          <p class="small">Direkt verlinkbare Online-Bestätigung für kundenseitig gelieferte Motive, Bilddateien, Logos, Grafiken oder Texte mit dokumentierter Zustimmung für den konkreten Auftrag.</p>
-          <div class="cta" style="margin-top:12px;">
-            <a class="btn primary" href="/rechtliches/rechteerklaerung-kundenvorlagen.html">Seite öffnen</a>
+        <article class="legal-card">
+          <div class="legal-card__content">
+            <h2>Rechteerklärung für Kundenvorlagen</h2>
+            <p>Direkt verlinkbare Online-Bestätigung für kundenseitig gelieferte Motive, Bilddateien, Logos, Grafiken oder Texte mit dokumentierter Zustimmung für den konkreten Auftrag.</p>
+          </div>
+          <div class="legal-card__actions">
+            <a class="btn primary" href="/rechtliches/rechteerklaerung-kundenvorlagen.html">Rechteerklärung</a>
           </div>
         </article>
       </div>
