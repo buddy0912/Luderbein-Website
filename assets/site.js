@@ -238,6 +238,90 @@
   }
 
   // ---------------------------------
+  // Visitor Popup
+  // ---------------------------------
+  function initVisitorPopup() {
+    const popup = document.querySelector("[data-lb-visitor-popup]");
+    if (!popup) return;
+
+    const closeBtn = popup.querySelector("[data-visitor-popup-close]");
+    const cta = popup.querySelector("[data-visitor-popup-cta]");
+    const backdrop = popup.querySelector("[data-visitor-popup-backdrop]");
+    const KEY = "lb_visitor_popup_dismissed_at";
+    const TTL = 12 * 60 * 60 * 1000;
+    let lastActive = null;
+
+    function getLastDismissedAt() {
+      try {
+        return parseInt(localStorage.getItem(KEY) || "0", 10) || 0;
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function rememberDismissal() {
+      try {
+        localStorage.setItem(KEY, String(Date.now()));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    function openPopup() {
+      if (popup.classList.contains("is-open")) return;
+      lastActive = document.activeElement;
+      popup.hidden = false;
+      popup.setAttribute("aria-hidden", "false");
+      popup.classList.add("is-open");
+      document.body.classList.add("lb-visitor-popup-open");
+      window.requestAnimationFrame(() => {
+        (cta || closeBtn)?.focus();
+      });
+    }
+
+    function closePopup(options) {
+      const opts = options || {};
+      if (!popup.classList.contains("is-open")) return;
+      if (opts.remember !== false) rememberDismissal();
+      popup.classList.remove("is-open");
+      popup.setAttribute("aria-hidden", "true");
+      popup.hidden = true;
+      document.body.classList.remove("lb-visitor-popup-open");
+      if (opts.restoreFocus !== false && lastActive && typeof lastActive.focus === "function") {
+        lastActive.focus();
+      }
+      lastActive = null;
+    }
+
+    const dismissedAt = getLastDismissedAt();
+    if (Date.now() - dismissedAt <= TTL) {
+      popup.hidden = true;
+      popup.setAttribute("aria-hidden", "true");
+      return;
+    }
+
+    closeBtn?.addEventListener("click", () => {
+      closePopup();
+    });
+
+    cta?.addEventListener("click", () => {
+      rememberDismissal();
+    });
+
+    backdrop?.addEventListener("click", () => {
+      closePopup();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && popup.classList.contains("is-open")) {
+        closePopup();
+      }
+    });
+
+    openPopup();
+  }
+
+  // ---------------------------------
   // Scroll Indicator
   // ---------------------------------
   function initScrollIndicator() {
@@ -1836,6 +1920,7 @@
 
     // Landing Banner / Scroll Indicator / Modal Cards
     initBanner();
+    initVisitorPopup();
     initScrollIndicator();
     initModalCards();
     initImageWatermarks();
