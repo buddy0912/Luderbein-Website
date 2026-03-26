@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Motiv-Vorschau – Luderbein</title>
-  <meta name="description" content="Einfache unverbindliche Motiv-Vorschau von Luderbein: Material, Produkt und Größe wählen, eigenes Bild platzieren und Vorschau speichern." />
+  <meta name="description" content="Einfache unverbindliche Motiv-Vorschau von Luderbein: Material, Produkt, Größe, Bildmotiv und kurzen Zusatztext grob platzieren und Vorschau speichern." />
   <link rel="canonical" href="https://luderbein-gravur.pages.dev/tools/vorschau/" />
 
   <meta property="og:site_name" content="Luderbein" />
@@ -12,12 +12,12 @@
   <meta property="og:locale" content="de_DE" />
   <meta property="og:url" content="https://luderbein-gravur.pages.dev/tools/vorschau/" />
   <meta property="og:title" content="Motiv-Vorschau – Luderbein" />
-  <meta property="og:description" content="Material, Produkt und Größe wählen, eigenes Motiv grob platzieren und als Vorschau speichern." />
+  <meta property="og:description" content="Material, Produkt, Größe, Bildmotiv und kurzen Zusatztext grob platzieren und als Vorschau speichern." />
   <meta property="og:image" content="https://luderbein-gravur.pages.dev/assets/og/og-logo-1200x630.jpg" />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Motiv-Vorschau – Luderbein" />
-  <meta name="twitter:description" content="Material, Produkt und Größe wählen, eigenes Motiv grob platzieren und als Vorschau speichern." />
+  <meta name="twitter:description" content="Material, Produkt, Größe, Bildmotiv und kurzen Zusatztext grob platzieren und als Vorschau speichern." />
   <meta name="twitter:image" content="https://luderbein-gravur.pages.dev/assets/og/og-logo-1200x630.jpg" />
 
   <link rel="stylesheet" href="/assets/style.css" />
@@ -97,7 +97,7 @@
       <h1>Motivwirkung auf Edelstahl grob prüfen.</h1>
       <p class="lead">
         Version 1 startet bewusst reduziert: erst Material wählen, dann Produkt und Größe,
-        danach Vorlage oder eigenes Bild laden und die Motivwirkung auf dem Anhänger ruhig prüfen.
+        danach bewusst zwischen Motiv oder Text wählen und die Motivwirkung auf dem Anhänger ruhig prüfen.
       </p>
 
       <div class="preview-hero__grid">
@@ -118,7 +118,11 @@
           </div>
           <div class="preview-step">
             <span>3</span>
-            <div>Motiv anpassen und die Vorschau als Bild speichern.</div>
+            <div>Zwischen Motiv oder Text wählen.</div>
+          </div>
+          <div class="preview-step">
+            <span>4</span>
+            <div>Den aktiven Modus grob anpassen und die Vorschau als Bild speichern.</div>
           </div>
         </div>
       </div>
@@ -131,7 +135,7 @@
             <p class="preview-kicker">Vorschau</p>
             <h2>Rundes Edelstahl-Plättchen</h2>
           </div>
-          <div class="preview-chip">Drag + Zoom</div>
+          <div class="preview-chip" id="previewModeChip">Motivmodus</div>
         </div>
 
         <div class="preview-stage-shell">
@@ -152,7 +156,11 @@
               <p id="previewProductHint">Kompakter Anhänger mit freier Motivwirkung bis nah an den Rand.</p>
             </div>
             <div class="preview-source">
-              <span>Aktive Quelle</span>
+              <span>Gestaltungsart</span>
+              <strong id="previewModeLabel">Motiv</strong>
+            </div>
+            <div class="preview-source">
+              <span>Aktiver Inhalt</span>
               <strong id="previewSourceLabel">Vorlage: Monogramm</strong>
             </div>
           </div>
@@ -202,16 +210,25 @@
           <p class="preview-help">Die Vorschau reagiert sichtbar auf die gewählte Größe, ohne unruhig zu wirken.</p>
         </div>
 
-        <div class="preview-control-group" aria-labelledby="template-heading">
+        <div class="preview-control-group" aria-labelledby="design-mode-heading">
           <div class="preview-control-title-row">
-            <h3 id="template-heading">4. Vorlage wählen</h3>
+            <h3 id="design-mode-heading">4. Gestaltungsart wählen</h3>
+            <span class="preview-inline-note">Für diese kleinen Schmuckplättchen ist aktuell bewusst nur eine Gestaltungsart gleichzeitig aktiv.</span>
+          </div>
+          <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
+          <p class="preview-help">Bei kleinen Schmuckplättchen ist entweder Motiv oder Text meist die bessere Wahl.</p>
+        </div>
+
+        <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading">
+          <div class="preview-control-title-row">
+            <h3 id="template-heading">5. Vorlage wählen</h3>
             <span class="preview-inline-note">Als Ausgangspunkt, bis du dein eigenes Bild lädst.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
         </div>
 
-        <div class="preview-control-group" aria-labelledby="upload-heading">
-          <h3 id="upload-heading">5. Eigenes Bild laden</h3>
+        <div class="preview-control-group" id="motifUploadGroup" aria-labelledby="upload-heading">
+          <h3 id="upload-heading">6. Eigenes Bild laden</h3>
           <label class="preview-upload">
             <span class="preview-upload__label">Datei wählen</span>
             <input id="uploadInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
@@ -225,9 +242,9 @@
           </div>
         </div>
 
-        <div class="preview-control-group" aria-labelledby="adjust-heading">
+        <div class="preview-control-group" id="motifAdjustGroup" aria-labelledby="adjust-heading">
           <div class="preview-control-title-row">
-            <h3 id="adjust-heading">6. Größe und Position anpassen</h3>
+            <h3 id="adjust-heading">7. Bildgröße und Bildposition anpassen</h3>
             <strong id="scaleValueLabel">100%</strong>
           </div>
           <input
@@ -249,7 +266,54 @@
             <button class="preview-nudge__button" type="button" data-nudge="right" aria-label="Nach rechts verschieben">→</button>
             <button class="preview-nudge__button" type="button" data-nudge="down" aria-label="Nach unten verschieben">↓</button>
           </div>
-          <p class="preview-help">Direkt auf der Vorschau ziehen oder mit den Tasten fein nachjustieren.</p>
+          <p class="preview-help">Direkt auf der Vorschau ziehen oder mit den Tasten fein nachjustieren. Dieser Bereich betrifft nur das Bildmotiv.</p>
+        </div>
+
+        <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
+          <div class="preview-control-title-row">
+            <h3 id="text-heading">5. Text eingeben und positionieren</h3>
+            <strong id="textSizeValueLabel">100%</strong>
+          </div>
+
+          <label class="preview-field">
+            <span class="preview-field__label">Kurzer Text</span>
+            <input
+              id="textInput"
+              class="preview-text-input"
+              type="text"
+              maxlength="18"
+              placeholder="z. B. Emma, LB oder Für immer"
+              aria-describedby="textInputHint textCharacterCount"
+            />
+          </label>
+          <div class="preview-inline-meta">
+            <p class="preview-help" id="textInputHint">Nur für kurze Namen, Initialen oder kleine Zusätze. Mehr als 18 Zeichen werden bewusst nicht zugelassen.</p>
+            <strong class="preview-character-count" id="textCharacterCount">0 / 18</strong>
+          </div>
+
+          <input
+            id="textSizeSlider"
+            class="preview-range"
+            type="range"
+            min="70"
+            max="170"
+            step="1"
+            value="100"
+            aria-label="Textgröße"
+          />
+          <p class="preview-help">Die Textgröße bleibt bewusst einfach und dient nur der groben Vorschau auf dem Produkt.</p>
+
+          <div class="preview-nudge">
+            <button class="preview-nudge__button" type="button" data-text-nudge="up" aria-label="Text nach oben verschieben">↑</button>
+            <button class="preview-nudge__button" type="button" data-text-nudge="left" aria-label="Text nach links verschieben">←</button>
+            <button class="preview-nudge__button preview-nudge__button--center" type="button" id="centerTextButton" aria-label="Text zentrieren">•</button>
+            <button class="preview-nudge__button" type="button" data-text-nudge="right" aria-label="Text nach rechts verschieben">→</button>
+            <button class="preview-nudge__button" type="button" data-text-nudge="down" aria-label="Text nach unten verschieben">↓</button>
+          </div>
+          <div class="preview-inline-actions">
+            <button class="btn" type="button" id="clearTextButton">Text entfernen</button>
+          </div>
+          <p class="preview-help">Im Textmodus ist bewusst nur der Text aktiv. Das hält die Vorschau auf kleinen Plättchen ruhiger und glaubwürdiger.</p>
         </div>
 
         <div class="preview-control-group preview-control-group--notice">

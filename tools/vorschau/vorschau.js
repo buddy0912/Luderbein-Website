@@ -8,18 +8,45 @@
   const materialOptionsEl = document.getElementById("materialOptions");
   const productOptionsEl = document.getElementById("productOptions");
   const sizeOptionsEl = document.getElementById("sizeOptions");
+  const designModeOptionsEl = document.getElementById("designModeOptions");
   const templateOptionsEl = document.getElementById("templateOptions");
+  const motifTemplateGroup = document.getElementById("motifTemplateGroup");
+  const motifUploadGroup = document.getElementById("motifUploadGroup");
+  const motifAdjustGroup = document.getElementById("motifAdjustGroup");
+  const textGroup = document.getElementById("textGroup");
   const uploadInput = document.getElementById("uploadInput");
   const clearUploadButton = document.getElementById("clearUploadButton");
+  const clearTextButton = document.getElementById("clearTextButton");
   const resetPlacementButton = document.getElementById("resetPlacementButton");
   const centerPlacementButton = document.getElementById("centerPlacementButton");
+  const centerTextButton = document.getElementById("centerTextButton");
   const downloadPreviewButton = document.getElementById("downloadPreviewButton");
   const scaleSlider = document.getElementById("scaleSlider");
+  const textSizeSlider = document.getElementById("textSizeSlider");
   const scaleValueLabel = document.getElementById("scaleValueLabel");
+  const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const previewProductName = document.getElementById("previewProductName");
   const previewProductHint = document.getElementById("previewProductHint");
+  const previewModeChip = document.getElementById("previewModeChip");
+  const previewModeLabel = document.getElementById("previewModeLabel");
   const previewSourceLabel = document.getElementById("previewSourceLabel");
   const uploadStatus = document.getElementById("uploadStatus");
+  const textInput = document.getElementById("textInput");
+  const textCharacterCount = document.getElementById("textCharacterCount");
+
+  const MAX_TEXT_LENGTH = 18;
+  const MODE_LIBRARY = [
+    {
+      id: "motif",
+      name: "Motiv",
+      description: "Vorlage oder eigenes Bild nutzen. Für diese Produktgröße die klarere Wahl, wenn eine Form oder ein Symbol im Fokus steht."
+    },
+    {
+      id: "text",
+      name: "Text",
+      description: "Kurzen Namen, Initialen oder ein kleines Wort setzen. Für kleine Plättchen bewusst ohne zusätzliches Motiv."
+    }
+  ];
 
   const CATALOG = {
     materials: [
@@ -76,12 +103,17 @@
     materialId: CATALOG.materials[0].id,
     productId: CATALOG.materials[0].products[0].id,
     sizeId: CATALOG.materials[0].products[0].sizes[2].id,
+    designMode: MODE_LIBRARY[0].id,
     templateId: TEMPLATE_LIBRARY[0].id,
     uploadedImage: null,
     uploadedFileName: "",
     scalePercent: 100,
     offsetX: 0,
     offsetY: 0,
+    textValue: "",
+    textScalePercent: 100,
+    textOffsetX: 0,
+    textOffsetY: 130,
     isDragging: false,
     dragOrigin: null
   };
@@ -100,6 +132,7 @@
     renderMaterialOptions();
     renderProductOptions();
     renderSizeOptions();
+    renderDesignModeOptions();
     renderTemplateOptions();
     bindEvents();
     syncUi();
@@ -113,15 +146,40 @@
       queueRender();
     });
 
+    textSizeSlider.addEventListener("input", function () {
+      state.textScalePercent = Number(textSizeSlider.value);
+      clampTextPlacement();
+      syncUi();
+      queueRender();
+    });
+
+    textInput.addEventListener("input", function () {
+      state.textValue = normalizeTextValue(textInput.value);
+      if (textInput.value !== state.textValue) {
+        textInput.value = state.textValue;
+      }
+      clampTextPlacement();
+      syncUi();
+      queueRender();
+    });
+
     uploadInput.addEventListener("change", onUploadChange);
     clearUploadButton.addEventListener("click", clearUploadedImage);
+    clearTextButton.addEventListener("click", clearText);
     resetPlacementButton.addEventListener("click", resetPlacement);
     centerPlacementButton.addEventListener("click", centerPlacement);
+    centerTextButton.addEventListener("click", centerTextPlacement);
     downloadPreviewButton.addEventListener("click", downloadPreview);
 
     document.querySelectorAll("[data-nudge]").forEach((button) => {
       button.addEventListener("click", function () {
         nudgePlacement(button.getAttribute("data-nudge"));
+      });
+    });
+
+    document.querySelectorAll("[data-text-nudge]").forEach((button) => {
+      button.addEventListener("click", function () {
+        nudgeTextPlacement(button.getAttribute("data-text-nudge"));
       });
     });
 
@@ -202,6 +260,26 @@
     });
   }
 
+  function renderDesignModeOptions() {
+    designModeOptionsEl.innerHTML = "";
+
+    MODE_LIBRARY.forEach((mode) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "preview-option";
+      button.setAttribute("data-design-mode", mode.id);
+      button.innerHTML =
+        '<span class="preview-option__title">' + escapeHtml(mode.name) + "</span>" +
+        '<span class="preview-option__meta">' + escapeHtml(mode.description) + "</span>";
+
+      button.addEventListener("click", function () {
+        setDesignMode(mode.id);
+      });
+
+      designModeOptionsEl.appendChild(button);
+    });
+  }
+
   function renderTemplateOptions() {
     templateOptionsEl.innerHTML = "";
 
@@ -218,7 +296,7 @@
       button.addEventListener("click", function () {
         state.templateId = template.id;
         if (!state.uploadedImage) {
-          resetPlacement();
+          resetImagePlacement();
         } else {
           syncUi();
           queueRender();
@@ -227,6 +305,13 @@
 
       templateOptionsEl.appendChild(button);
     });
+  }
+
+  function setDesignMode(modeId) {
+    if (!MODE_LIBRARY.some((mode) => mode.id === modeId)) return;
+    state.designMode = modeId;
+    syncUi();
+    queueRender();
   }
 
   function onUploadChange(event) {
@@ -239,7 +324,7 @@
         .then((image) => {
           state.uploadedImage = image;
           state.uploadedFileName = file.name;
-          resetPlacement();
+          resetImagePlacement();
         })
         .catch(() => {
           uploadStatus.textContent = "Die Datei konnte nicht geladen werden. Bitte ein anderes Bild versuchen.";
@@ -253,16 +338,53 @@
     state.uploadedImage = null;
     state.uploadedFileName = "";
     uploadInput.value = "";
-    resetPlacement();
+    resetImagePlacement();
+  }
+
+  function clearText() {
+    state.textValue = "";
+    textInput.value = "";
+    state.textScalePercent = 100;
+    textSizeSlider.value = String(state.textScalePercent);
+    state.textOffsetX = 0;
+    state.textOffsetY = getDefaultTextOffsetY();
+    syncUi();
+    queueRender();
   }
 
   function resetPlacement() {
+    if (isMotifMode()) {
+      resetImagePlacement();
+      return;
+    }
+
+    resetTextPlacement();
+  }
+
+  function resetImagePlacement(shouldRender) {
     state.offsetX = 0;
     state.offsetY = 0;
     state.scalePercent = 100;
     scaleSlider.value = String(state.scalePercent);
-    syncUi();
-    queueRender();
+    clampPlacement();
+
+    if (shouldRender !== false) {
+      syncUi();
+      queueRender();
+    }
+  }
+
+  function resetTextPlacement(shouldRender) {
+    state.textScalePercent = 100;
+    textSizeSlider.value = String(state.textScalePercent);
+    state.textOffsetX = 0;
+    state.textOffsetY = getDefaultTextOffsetY();
+    clampTextPlacement();
+
+    if (shouldRender !== false) {
+      syncUi();
+      queueRender();
+    }
   }
 
   function centerPlacement() {
@@ -272,7 +394,17 @@
     queueRender();
   }
 
+  function centerTextPlacement() {
+    state.textOffsetX = 0;
+    state.textOffsetY = getDefaultTextOffsetY();
+    clampTextPlacement();
+    syncUi();
+    queueRender();
+  }
+
   function nudgePlacement(direction) {
+    if (!isMotifMode()) return;
+
     const step = 14;
 
     if (direction === "up") state.offsetY -= step;
@@ -285,7 +417,24 @@
     queueRender();
   }
 
+  function nudgeTextPlacement(direction) {
+    if (!isTextMode() || !hasText()) return;
+
+    const step = 14;
+
+    if (direction === "up") state.textOffsetY -= step;
+    if (direction === "down") state.textOffsetY += step;
+    if (direction === "left") state.textOffsetX -= step;
+    if (direction === "right") state.textOffsetX += step;
+
+    clampTextPlacement();
+    syncUi();
+    queueRender();
+  }
+
   function onCanvasKeydown(event) {
+    if (!isMotifMode()) return;
+
     if (event.key === "ArrowUp") {
       event.preventDefault();
       nudgePlacement("up");
@@ -305,7 +454,7 @@
   }
 
   function onPointerDown(event) {
-    if (!getActiveImage()) return;
+    if (!isMotifMode() || !getActiveImage()) return;
 
     canvas.setPointerCapture(event.pointerId);
     state.isDragging = true;
@@ -360,22 +509,54 @@
     state.offsetY = clamp(state.offsetY, -maxOffsetY, maxOffsetY);
   }
 
+  function clampTextPlacement() {
+    if (!hasText()) {
+      state.textOffsetX = 0;
+      state.textOffsetY = getDefaultTextOffsetY();
+      return;
+    }
+
+    const motifMask = getMotifMask();
+    const textLayout = getTextLayout(state.textValue);
+    const safeHalfWidth = Math.max(motifMask.width * 0.08, (motifMask.width - textLayout.width) / 2);
+    const safeHalfHeight = Math.max(motifMask.height * 0.12, (motifMask.height - textLayout.height) / 2);
+    const maxOffsetX = Math.max(0, safeHalfWidth);
+    const defaultOffsetY = getDefaultTextOffsetY();
+    const minOffsetY = -safeHalfHeight;
+    const maxOffsetY = safeHalfHeight;
+
+    state.textOffsetX = clamp(state.textOffsetX, -maxOffsetX, maxOffsetX);
+    state.textOffsetY = clamp(state.textOffsetY, Math.min(defaultOffsetY, minOffsetY), maxOffsetY);
+  }
+
   function syncUi() {
     const material = getActiveMaterial();
     const product = getActiveProduct();
     const size = getActiveSize();
     const template = getActiveTemplate();
-    const sourceText = state.uploadedImage
-      ? "Eigene Datei: " + state.uploadedFileName
-      : "Vorlage: " + template.name;
+    const modeName = isMotifMode() ? "Motiv" : "Text";
+    const sourceText = isMotifMode()
+      ? (state.uploadedImage ? "Eigene Datei: " + state.uploadedFileName : "Vorlage: " + template.name)
+      : (hasText() ? "Text: " + state.textValue : "Noch kein Text eingegeben");
 
     previewProductName.textContent = product.name + " · " + size.label;
     previewProductHint.textContent = material.name + " · " + size.diameterMm + " mm · Motivwirkung frei bis nah an den Rand.";
+    previewModeChip.textContent = modeName + "modus";
+    previewModeLabel.textContent = modeName;
     previewSourceLabel.textContent = sourceText;
     scaleValueLabel.textContent = state.scalePercent + "%";
+    textSizeValueLabel.textContent = state.textScalePercent + "%";
+    textCharacterCount.textContent = state.textValue.length + " / " + MAX_TEXT_LENGTH;
+    textInput.value = state.textValue;
     uploadStatus.textContent = state.uploadedImage
       ? "Eigene Datei aktiv: " + state.uploadedFileName + ". Ziehen und Größe anpassen, um die Wirkung grob zu prüfen."
       : "Keine eigene Datei geladen. Aktuell wird die gewählte Vorlage gezeigt.";
+    resetPlacementButton.textContent = isMotifMode() ? "Bild zurücksetzen" : "Text zurücksetzen";
+
+    setSectionVisibility(motifTemplateGroup, isMotifMode());
+    setSectionVisibility(motifUploadGroup, isMotifMode());
+    setSectionVisibility(motifAdjustGroup, isMotifMode());
+    setSectionVisibility(textGroup, isTextMode());
 
     materialOptionsEl.querySelectorAll("[data-material-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-material-id") === state.materialId);
@@ -389,8 +570,19 @@
       button.classList.toggle("is-active", button.getAttribute("data-size-id") === state.sizeId);
     });
 
+    designModeOptionsEl.querySelectorAll("[data-design-mode]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-design-mode") === state.designMode);
+    });
+
     templateOptionsEl.querySelectorAll("[data-template-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-template-id") === state.templateId);
+    });
+  }
+
+  function setSectionVisibility(section, isVisible) {
+    section.hidden = !isVisible;
+    section.querySelectorAll("input, button, select, textarea").forEach((element) => {
+      element.disabled = !isVisible;
     });
   }
 
@@ -408,17 +600,24 @@
     const material = getActiveMaterial();
     const product = getActiveProduct();
     const size = getActiveSize();
-    const image = getActiveImage();
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackdrop();
     drawRoundTagBase(size);
     drawMotifMask(size);
 
-    if (image) {
-      drawMotif(size, image);
-    } else {
-      drawPlaceholder(size);
+    if (isMotifMode()) {
+      const image = getActiveImage();
+
+      if (image) {
+        drawMotif(size, image);
+      } else {
+        drawPlaceholder(size);
+      }
+    }
+
+    if (isTextMode() && hasText()) {
+      drawTextOverlay(size);
     }
 
     drawProductHighlights(size);
@@ -592,6 +791,38 @@
     ctx.restore();
   }
 
+  function drawTextOverlay(size) {
+    const motifMask = getMotifMask();
+    const textLayout = getTextLayout(state.textValue);
+    const x = motifMask.x + motifMask.width / 2 + state.textOffsetX;
+    const y = motifMask.y + motifMask.height / 2 + state.textOffsetY;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
+    ctx.clip();
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = textLayout.font;
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "rgba(250, 246, 242, 0.78)";
+    ctx.lineWidth = Math.max(6, textLayout.fontSize * 0.11);
+    ctx.globalAlpha = 0.92;
+    ctx.strokeText(state.textValue, x, y);
+
+    ctx.fillStyle = "rgba(22, 24, 28, 0.84)";
+    ctx.fillText(state.textValue, x, y);
+
+    ctx.globalAlpha = 0.2;
+    ctx.beginPath();
+    ctx.ellipse(x, y + textLayout.height * 0.18, textLayout.width * 0.46, Math.max(10, textLayout.height * 0.18), 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.22)";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
   function drawPlaceholder(size) {
     const motifMask = getMotifMask();
 
@@ -724,6 +955,56 @@
     };
   }
 
+  function getTextLayout(text) {
+    const motifMask = getMotifMask();
+    const maxWidth = motifMask.width * 0.82;
+    const baseFontSize = Math.max(34, motifMask.width * 0.19);
+    let fontSize = baseFontSize * (state.textScalePercent / 100);
+    let metrics = measureText(text, fontSize);
+
+    if (metrics.width > maxWidth) {
+      fontSize *= maxWidth / metrics.width;
+      metrics = measureText(text, fontSize);
+    }
+
+    const safeFontSize = Math.max(22, fontSize);
+    if (safeFontSize !== fontSize) {
+      metrics = measureText(text, safeFontSize);
+      fontSize = safeFontSize;
+    }
+
+    return {
+      fontSize: fontSize,
+      font: "600 " + fontSize + "px system-ui, sans-serif",
+      width: metrics.width,
+      height: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+    };
+  }
+
+  function getDefaultTextOffsetY() {
+    return getMotifMask().height * 0.22;
+  }
+
+  function hasText() {
+    return state.textValue.length > 0;
+  }
+
+  function isMotifMode() {
+    return state.designMode === "motif";
+  }
+
+  function isTextMode() {
+    return state.designMode === "text";
+  }
+
+  function measureText(text, fontSize) {
+    ctx.save();
+    ctx.font = "600 " + fontSize + "px system-ui, sans-serif";
+    const metrics = ctx.measureText(text);
+    ctx.restore();
+    return metrics;
+  }
+
   function drawRoundedRectPath(targetCtx, x, y, width, height, radius) {
     const r = Math.min(radius, width / 2, height / 2);
     targetCtx.moveTo(x + r, y);
@@ -747,6 +1028,13 @@
       image.onerror = reject;
       image.src = src;
     });
+  }
+
+  function normalizeTextValue(value) {
+    return String(value)
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, MAX_TEXT_LENGTH);
   }
 
   function clamp(value, min, max) {
