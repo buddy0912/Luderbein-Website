@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Digitale Speisekarte | Beispielansicht | Luderbein Gravur</title>
+  <meta
+    name="description"
+    content="Beispielansicht für eine digitale Speisekarte per QR-Code oder NFC. PDF direkt öffnen oder im Browser ansehen."
+  />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <link rel="canonical" href="https://luderbein-gravur.pages.dev/gastro-qr/" />
+
+  <meta property="og:site_name" content="Luderbein" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:url" content="https://luderbein-gravur.pages.dev/gastro-qr/" />
+  <meta property="og:title" content="Digitale Speisekarte | Beispielansicht" />
+  <meta
+    property="og:description"
+    content="Beispielansicht für eine digitale Speisekarte per QR-Code oder NFC. PDF direkt öffnen oder im Browser ansehen."
+  />
+  <meta property="og:image" content="https://luderbein-gravur.pages.dev/assets/og/og-logo-1200x630.jpg" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Digitale Speisekarte | Beispielansicht" />
+  <meta
+    name="twitter:description"
+    content="Beispielansicht für eine digitale Speisekarte per QR-Code oder NFC. PDF direkt öffnen oder im Browser ansehen."
+  />
+  <meta name="twitter:image" content="https://luderbein-gravur.pages.dev/assets/og/og-logo-1200x630.jpg" />
+
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    :root {
+      --qr-max: 1080px;
+      --qr-panel: rgba(26, 26, 31, 0.88);
+      --qr-panel-strong: rgba(18, 18, 22, 0.96);
+      --qr-line: rgba(94, 67, 71, 0.7);
+      --qr-soft: rgba(219, 16, 33, 0.14);
+      --qr-soft-2: rgba(255, 255, 255, 0.04);
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .qr-shell {
+      width: min(100% - 28px, var(--qr-max));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .qr-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .qr-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      text-decoration: none;
+      color: var(--text);
+      border: 1px solid rgba(64, 62, 65, 0.5);
+      border-radius: 999px;
+      background: rgba(14, 6, 11, 0.62);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .qr-brand img {
+      width: 30px;
+      height: 30px;
+      display: block;
+    }
+
+    .qr-brand span {
+      font-size: 0.95rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    .qr-panel {
+      border: 1px solid var(--qr-line);
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(58, 14, 20, 0.32), rgba(18, 18, 22, 0) 28%),
+        linear-gradient(180deg, var(--qr-panel), var(--qr-panel));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .qr-head {
+      padding: 26px 22px 18px;
+      border-bottom: 1px solid rgba(64, 62, 65, 0.44);
+      background:
+        radial-gradient(620px 220px at 0% 0%, rgba(219, 16, 33, 0.18), transparent 64%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    }
+
+    .qr-kicker {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(219, 16, 33, 0.24);
+      background: rgba(219, 16, 33, 0.12);
+      color: #f2d7da;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .qr-head h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 5vw, 2.55rem);
+      line-height: 1.08;
+      color: #f3eeec;
+    }
+
+    .qr-head p {
+      margin: 10px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .qr-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .qr-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(64, 62, 65, 0.68);
+      background: rgba(42, 45, 51, 0.44);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .qr-btn:hover,
+    .qr-btn:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(164, 127, 132, 0.72);
+      background: rgba(42, 45, 51, 0.7);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .qr-btn:focus-visible {
+      outline: 2px solid rgba(219, 16, 33, 0.44);
+      outline-offset: 3px;
+    }
+
+    .qr-btn--primary {
+      border-color: rgba(219, 16, 33, 0.48);
+      background: linear-gradient(180deg, rgba(219, 16, 33, 0.92), rgba(161, 11, 23, 0.92));
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(108, 8, 16, 0.28);
+    }
+
+    .qr-btn--primary:hover,
+    .qr-btn--primary:focus-visible {
+      border-color: rgba(255, 118, 132, 0.74);
+      background: linear-gradient(180deg, rgba(235, 26, 44, 0.96), rgba(172, 13, 26, 0.96));
+    }
+
+    .qr-stage {
+      padding: 18px;
+    }
+
+    .qr-viewer {
+      position: relative;
+      min-height: min(72vh, 920px);
+      border: 1px solid rgba(64, 62, 65, 0.62);
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+        var(--qr-panel-strong);
+      overflow: hidden;
+    }
+
+    .qr-viewer iframe {
+      width: 100%;
+      height: min(72vh, 920px);
+      border: 0;
+      display: block;
+      background: #141418;
+    }
+
+    .qr-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background:
+        linear-gradient(180deg, rgba(14, 6, 11, 0.92), rgba(14, 6, 11, 0.96)),
+        var(--qr-panel-strong);
+    }
+
+    .qr-overlay.is-visible {
+      display: flex;
+    }
+
+    .qr-overlay-card {
+      max-width: 560px;
+      text-align: center;
+      padding: 22px;
+      border-radius: 20px;
+      border: 1px solid rgba(219, 16, 33, 0.2);
+      background:
+        radial-gradient(420px 180px at 50% 0%, rgba(219, 16, 33, 0.16), transparent 66%),
+        rgba(20, 20, 24, 0.96);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.35);
+    }
+
+    .qr-overlay-card h2 {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+      color: #f2eceb;
+    }
+
+    .qr-overlay-card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .qr-overlay-card .qr-actions {
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .qr-foot {
+      padding: 12px 22px 18px;
+      color: rgba(154, 146, 142, 0.86);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .qr-note {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(64, 62, 65, 0.55);
+      background: var(--qr-soft-2);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .qr-note strong {
+      color: var(--text);
+    }
+
+    @media (max-width: 720px) {
+      .qr-shell {
+        width: min(100% - 18px, var(--qr-max));
+        padding-top: 12px;
+      }
+
+      .qr-head,
+      .qr-stage {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .qr-head {
+        padding-top: 20px;
+      }
+
+      .qr-viewer,
+      .qr-viewer iframe {
+        min-height: 68vh;
+        height: 68vh;
+      }
+
+      .qr-actions {
+        flex-direction: column;
+      }
+
+      .qr-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="qr-shell">
+    <div class="qr-topbar">
+      <a class="qr-brand" href="/" aria-label="Zur Startseite von Luderbein">
+        <img src="/assets/brand/mark.svg" alt="" aria-hidden="true" />
+        <span>Luderbein Gravur</span>
+      </a>
+    </div>
+
+    <section class="qr-panel" aria-labelledby="gastro-qr-title">
+      <div class="qr-head">
+        <span class="qr-kicker">QR-Code / NFC</span>
+        <h1 id="gastro-qr-title">Digitale Speisekarte / Beispielansicht</h1>
+        <p>
+          Dieses PDF zeigt beispielhaft, wie digitale Inhalte per QR-Code oder NFC einfach bereitgestellt werden können.
+        </p>
+
+        <div class="qr-actions" aria-label="PDF-Aktionen">
+          <a class="qr-btn qr-btn--primary" id="openPdfButton" href="/assets/pdf/gastro-handout.pdf" target="_blank" rel="noopener">
+            PDF öffnen
+          </a>
+          <a class="qr-btn" id="downloadPdfButton" href="/assets/pdf/gastro-handout.pdf" download="gastro-handout.pdf">
+            PDF herunterladen
+          </a>
+        </div>
+
+        <div class="qr-note">
+          <strong>Hinweis:</strong> Falls die Vorschau auf Ihrem Gerät nicht direkt angezeigt wird, öffnen Sie das PDF über den Button oben.
+        </div>
+      </div>
+
+      <div class="qr-stage">
+        <div class="qr-viewer">
+          <iframe
+            id="pdfViewer"
+            title="PDF-Vorschau Digitale Speisekarte"
+            src="/assets/pdf/gastro-handout.pdf#view=FitH"
+            loading="eager"
+          ></iframe>
+
+          <div class="qr-overlay" id="pdfFallback" aria-live="polite">
+            <div class="qr-overlay-card">
+              <h2>PDF direkt öffnen</h2>
+              <p>
+                Wenn Ihr Browser die Vorschau nicht sauber darstellt, können Sie das Handout direkt im PDF-Viewer des Geräts öffnen oder herunterladen.
+              </p>
+              <div class="qr-actions">
+                <a class="qr-btn qr-btn--primary" href="/assets/pdf/gastro-handout.pdf" target="_blank" rel="noopener">
+                  PDF öffnen
+                </a>
+                <a class="qr-btn" href="/assets/pdf/gastro-handout.pdf" download="gastro-handout.pdf">
+                  PDF herunterladen
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qr-foot">Bereitgestellt von Luderbein Gravur</div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const PDF_URL = "/assets/pdf/gastro-handout.pdf";
+      const PDF_VIEW_URL = PDF_URL + "#view=FitH";
+      const viewer = document.getElementById("pdfViewer");
+      const fallback = document.getElementById("pdfFallback");
+      const openButton = document.getElementById("openPdfButton");
+      const downloadButton = document.getElementById("downloadPdfButton");
+
+      openButton.href = PDF_URL;
+      downloadButton.href = PDF_URL;
+      downloadButton.setAttribute("download", PDF_URL.split("/").pop());
+      viewer.src = PDF_VIEW_URL;
+
+      const showFallback = function () {
+        fallback.classList.add("is-visible");
+      };
+
+      window.setTimeout(showFallback, 2800);
+
+      fetch(PDF_URL, { method: "HEAD" })
+        .then(function (response) {
+          if (!response.ok) {
+            showFallback();
+            return;
+          }
+
+          const contentType = response.headers.get("content-type") || "";
+          if (!contentType.includes("pdf")) {
+            showFallback();
+            return;
+          }
+
+          fallback.classList.remove("is-visible");
+        })
+        .catch(showFallback);
+
+      viewer.addEventListener("load", function () {
+        fallback.classList.remove("is-visible");
+      });
+    })();
+  </script>
+</body>
+</html>
