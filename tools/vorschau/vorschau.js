@@ -6,8 +6,11 @@
 
   const ctx = canvas.getContext("2d");
   const materialOptionsEl = document.getElementById("materialOptions");
+  const productGroup = document.getElementById("productGroup");
   const productOptionsEl = document.getElementById("productOptions");
+  const sizeGroup = document.getElementById("sizeGroup");
   const sizeOptionsEl = document.getElementById("sizeOptions");
+  const designModeGroup = document.getElementById("designModeGroup");
   const designModeOptionsEl = document.getElementById("designModeOptions");
   const templateOptionsEl = document.getElementById("templateOptions");
   const motifTemplateGroup = document.getElementById("motifTemplateGroup");
@@ -21,8 +24,13 @@
   const centerPlacementButton = document.getElementById("centerPlacementButton");
   const centerTextButton = document.getElementById("centerTextButton");
   const downloadPreviewButton = document.getElementById("downloadPreviewButton");
+  const requestMenuToggle = document.getElementById("requestMenuToggle");
+  const requestMenuPanel = document.getElementById("requestMenuPanel");
+  const requestWhatsappLink = document.getElementById("requestWhatsappLink");
+  const requestEmailLink = document.getElementById("requestEmailLink");
   const scaleSlider = document.getElementById("scaleSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
+  const textFontSelect = document.getElementById("textFontSelect");
   const scaleValueLabel = document.getElementById("scaleValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const previewProductName = document.getElementById("previewProductName");
@@ -35,6 +43,8 @@
   const textCharacterCount = document.getElementById("textCharacterCount");
 
   const MAX_TEXT_LENGTH = 18;
+  const WHATSAPP_NUMBER = "491725925858";
+  const REQUEST_EMAIL = "luderbein_gravur@icloud.com";
   const MODE_LIBRARY = [
     {
       id: "motif",
@@ -45,6 +55,23 @@
       id: "text",
       name: "Text",
       description: "Kurzen Namen, Initialen oder ein kleines Wort setzen. Für kleine Plättchen bewusst ohne zusätzliches Motiv."
+    }
+  ];
+  const TEXT_FONT_LIBRARY = [
+    {
+      id: "sans",
+      label: "Sans / modern",
+      family: "\"Helvetica Neue\", Arial, sans-serif"
+    },
+    {
+      id: "serif",
+      label: "Serif / klassisch",
+      family: "Georgia, \"Times New Roman\", serif"
+    },
+    {
+      id: "script",
+      label: "Script / elegant",
+      family: "\"Brush Script MT\", \"Segoe Script\", cursive"
     }
   ];
 
@@ -99,25 +126,7 @@
     }
   ];
 
-  const state = {
-    materialId: CATALOG.materials[0].id,
-    productId: CATALOG.materials[0].products[0].id,
-    sizeId: CATALOG.materials[0].products[0].sizes[2].id,
-    designMode: MODE_LIBRARY[0].id,
-    templateId: TEMPLATE_LIBRARY[0].id,
-    uploadedImage: null,
-    uploadedFileName: "",
-    scalePercent: 100,
-    offsetX: 0,
-    offsetY: 0,
-    textValue: "",
-    textScalePercent: 100,
-    textOffsetX: 0,
-    textOffsetY: 130,
-    isDragging: false,
-    dragOrigin: null
-  };
-
+  const state = createInitialState();
   let renderQueued = false;
 
   Promise.all(
@@ -163,13 +172,34 @@
       queueRender();
     });
 
+    textFontSelect.addEventListener("change", function () {
+      state.textFontId = textFontSelect.value;
+      clampTextPlacement();
+      syncUi();
+      queueRender();
+    });
+
+    document.querySelectorAll("[data-text-style]").forEach((button) => {
+      button.addEventListener("click", function () {
+        const styleName = button.getAttribute("data-text-style");
+        if (!Object.prototype.hasOwnProperty.call(state.textStyles, styleName)) return;
+        state.textStyles[styleName] = !state.textStyles[styleName];
+        clampTextPlacement();
+        syncUi();
+        queueRender();
+      });
+    });
+
     uploadInput.addEventListener("change", onUploadChange);
     clearUploadButton.addEventListener("click", clearUploadedImage);
     clearTextButton.addEventListener("click", clearText);
-    resetPlacementButton.addEventListener("click", resetPlacement);
+    resetPlacementButton.addEventListener("click", resetAllSelections);
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
     downloadPreviewButton.addEventListener("click", downloadPreview);
+    requestMenuToggle.addEventListener("click", toggleRequestMenu);
+    requestWhatsappLink.addEventListener("click", closeRequestMenu);
+    requestEmailLink.addEventListener("click", closeRequestMenu);
 
     document.querySelectorAll("[data-nudge]").forEach((button) => {
       button.addEventListener("click", function () {
@@ -189,7 +219,55 @@
     canvas.addEventListener("pointercancel", onPointerUp);
     canvas.addEventListener("pointerleave", onPointerUp);
     canvas.addEventListener("keydown", onCanvasKeydown);
+    document.addEventListener("click", onDocumentClick);
+    document.addEventListener("keydown", onDocumentKeydown);
     canvas.tabIndex = 0;
+  }
+
+  function createInitialState() {
+    return {
+      materialId: null,
+      productId: null,
+      sizeId: null,
+      designMode: null,
+      templateId: null,
+      uploadedImage: null,
+      uploadedFileName: "",
+      scalePercent: 100,
+      offsetX: 0,
+      offsetY: 0,
+      textValue: "",
+      textScalePercent: 100,
+      textFontId: TEXT_FONT_LIBRARY[0].id,
+      textStyles: {
+        bold: false,
+        italic: false,
+        underline: false,
+        strikethrough: false
+      },
+      textOffsetX: 0,
+      textOffsetY: 0,
+      isDragging: false,
+      dragOrigin: null
+    };
+  }
+
+  function resetAllSelections() {
+    const initialState = createInitialState();
+    Object.keys(initialState).forEach((key) => {
+      state[key] = initialState[key];
+    });
+
+    uploadInput.value = "";
+    textInput.value = "";
+    scaleSlider.value = "100";
+    textSizeSlider.value = "100";
+    textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
+    closeRequestMenu();
+    renderProductOptions();
+    renderSizeOptions();
+    syncUi();
+    queueRender();
   }
 
   function renderMaterialOptions() {
@@ -205,13 +283,16 @@
         '<span class="preview-option__meta">' + escapeHtml(material.description) + "</span>";
 
       button.addEventListener("click", function () {
+        if (state.materialId === material.id) return;
         state.materialId = material.id;
-        const firstProduct = material.products[0];
-        state.productId = firstProduct.id;
-        state.sizeId = firstProduct.sizes[0].id;
-        resetPlacement();
+        state.productId = null;
+        state.sizeId = null;
+        state.designMode = null;
+        closeRequestMenu();
         renderProductOptions();
         renderSizeOptions();
+        syncUi();
+        queueRender();
       });
 
       materialOptionsEl.appendChild(button);
@@ -220,6 +301,8 @@
 
   function renderProductOptions() {
     productOptionsEl.innerHTML = "";
+
+    if (!hasMaterialSelection()) return;
 
     getActiveMaterial().products.forEach((product) => {
       const button = document.createElement("button");
@@ -231,10 +314,14 @@
         '<span class="preview-option__meta">' + escapeHtml(product.description) + "</span>";
 
       button.addEventListener("click", function () {
+        if (state.productId === product.id) return;
         state.productId = product.id;
-        state.sizeId = product.sizes[0].id;
+        state.sizeId = null;
+        state.designMode = null;
+        closeRequestMenu();
         renderSizeOptions();
-        resetPlacement();
+        syncUi();
+        queueRender();
       });
 
       productOptionsEl.appendChild(button);
@@ -244,6 +331,8 @@
   function renderSizeOptions() {
     sizeOptionsEl.innerHTML = "";
 
+    if (!hasProductSelection()) return;
+
     getActiveProduct().sizes.forEach((size) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -252,8 +341,14 @@
       button.textContent = size.label;
 
       button.addEventListener("click", function () {
+        if (state.sizeId === size.id) return;
         state.sizeId = size.id;
-        resetPlacement();
+        state.designMode = null;
+        closeRequestMenu();
+        resetImagePlacement(false);
+        resetTextPlacement(false);
+        syncUi();
+        queueRender();
       });
 
       sizeOptionsEl.appendChild(button);
@@ -296,11 +391,10 @@
       button.addEventListener("click", function () {
         state.templateId = template.id;
         if (!state.uploadedImage) {
-          resetImagePlacement();
-        } else {
-          syncUi();
-          queueRender();
+          resetImagePlacement(false);
         }
+        syncUi();
+        queueRender();
       });
 
       templateOptionsEl.appendChild(button);
@@ -308,8 +402,10 @@
   }
 
   function setDesignMode(modeId) {
+    if (!hasSizeSelection()) return;
     if (!MODE_LIBRARY.some((mode) => mode.id === modeId)) return;
     state.designMode = modeId;
+    closeRequestMenu();
     syncUi();
     queueRender();
   }
@@ -324,7 +420,9 @@
         .then((image) => {
           state.uploadedImage = image;
           state.uploadedFileName = file.name;
-          resetImagePlacement();
+          resetImagePlacement(false);
+          syncUi();
+          queueRender();
         })
         .catch(() => {
           uploadStatus.textContent = "Die Datei konnte nicht geladen werden. Bitte ein anderes Bild versuchen.";
@@ -338,34 +436,32 @@
     state.uploadedImage = null;
     state.uploadedFileName = "";
     uploadInput.value = "";
-    resetImagePlacement();
+    resetImagePlacement(false);
+    syncUi();
+    queueRender();
   }
 
   function clearText() {
     state.textValue = "";
     textInput.value = "";
     state.textScalePercent = 100;
-    textSizeSlider.value = String(state.textScalePercent);
-    state.textOffsetX = 0;
-    state.textOffsetY = getDefaultTextOffsetY();
+    textSizeSlider.value = "100";
+    state.textFontId = TEXT_FONT_LIBRARY[0].id;
+    textFontSelect.value = state.textFontId;
+    state.textStyles.bold = false;
+    state.textStyles.italic = false;
+    state.textStyles.underline = false;
+    state.textStyles.strikethrough = false;
+    resetTextPlacement(false);
     syncUi();
     queueRender();
   }
 
-  function resetPlacement() {
-    if (isMotifMode()) {
-      resetImagePlacement();
-      return;
-    }
-
-    resetTextPlacement();
-  }
-
   function resetImagePlacement(shouldRender) {
+    state.scalePercent = 100;
     state.offsetX = 0;
     state.offsetY = 0;
-    state.scalePercent = 100;
-    scaleSlider.value = String(state.scalePercent);
+    scaleSlider.value = "100";
     clampPlacement();
 
     if (shouldRender !== false) {
@@ -376,7 +472,7 @@
 
   function resetTextPlacement(shouldRender) {
     state.textScalePercent = 100;
-    textSizeSlider.value = String(state.textScalePercent);
+    textSizeSlider.value = "100";
     state.textOffsetX = 0;
     state.textOffsetY = getDefaultTextOffsetY();
     clampTextPlacement();
@@ -403,7 +499,7 @@
   }
 
   function nudgePlacement(direction) {
-    if (!isMotifMode()) return;
+    if (!isMotifMode() || !hasActiveMotifContent()) return;
 
     const step = 14;
 
@@ -433,7 +529,7 @@
   }
 
   function onCanvasKeydown(event) {
-    if (!isMotifMode()) return;
+    if (!isMotifMode() || !hasActiveMotifContent()) return;
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
@@ -453,8 +549,35 @@
     }
   }
 
+  function onDocumentClick(event) {
+    if (requestMenuPanel.hidden) return;
+    if (event.target === requestMenuToggle || requestMenuToggle.contains(event.target)) return;
+    if (requestMenuPanel.contains(event.target)) return;
+    closeRequestMenu();
+  }
+
+  function onDocumentKeydown(event) {
+    if (event.key === "Escape") {
+      closeRequestMenu();
+    }
+  }
+
+  function toggleRequestMenu() {
+    if (requestMenuToggle.disabled) return;
+    setRequestMenuOpen(requestMenuPanel.hidden);
+  }
+
+  function closeRequestMenu() {
+    setRequestMenuOpen(false);
+  }
+
+  function setRequestMenuOpen(isOpen) {
+    requestMenuPanel.hidden = !isOpen;
+    requestMenuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  }
+
   function onPointerDown(event) {
-    if (!isMotifMode() || !getActiveImage()) return;
+    if (!isMotifMode() || !hasActiveMotifContent()) return;
 
     canvas.setPointerCapture(event.pointerId);
     state.isDragging = true;
@@ -498,9 +621,9 @@
 
   function clampPlacement() {
     const image = getActiveImage();
-    if (!image) return;
-
     const motifMask = getMotifMask();
+    if (!image || !motifMask) return;
+
     const drawBox = getMotifDrawBox(image);
     const maxOffsetX = Math.max((drawBox.width - motifMask.width) * 0.52, motifMask.width * 0.2);
     const maxOffsetY = Math.max((drawBox.height - motifMask.height) * 0.52, motifMask.height * 0.2);
@@ -510,13 +633,19 @@
   }
 
   function clampTextPlacement() {
+    const motifMask = getMotifMask();
+    if (!motifMask) {
+      state.textOffsetX = 0;
+      state.textOffsetY = 0;
+      return;
+    }
+
     if (!hasText()) {
       state.textOffsetX = 0;
       state.textOffsetY = getDefaultTextOffsetY();
       return;
     }
 
-    const motifMask = getMotifMask();
     const textLayout = getTextLayout(state.textValue);
     const safeHalfWidth = Math.max(motifMask.width * 0.08, (motifMask.width - textLayout.width) / 2);
     const safeHalfHeight = Math.max(motifMask.height * 0.12, (motifMask.height - textLayout.height) / 2);
@@ -530,32 +659,61 @@
   }
 
   function syncUi() {
-    const material = getActiveMaterial();
-    const product = getActiveProduct();
-    const size = getActiveSize();
-    const template = getActiveTemplate();
-    const modeName = isMotifMode() ? "Motiv" : "Text";
-    const sourceText = isMotifMode()
-      ? (state.uploadedImage ? "Eigene Datei: " + state.uploadedFileName : "Vorlage: " + template.name)
-      : (hasText() ? "Text: " + state.textValue : "Noch kein Text eingegeben");
+    const activeMaterial = getActiveMaterial();
+    const activeProduct = getActiveProduct();
+    const activeSize = getActiveSize();
+    const activeTemplate = getActiveTemplate();
+    const readyForDesign = hasSizeSelection();
+    const readyForExport = isConfigurationReady();
+    const sourceText = getActiveSourceLabel(activeTemplate);
 
-    previewProductName.textContent = product.name + " · " + size.label;
-    previewProductHint.textContent = material.name + " · " + size.diameterMm + " mm · Motivwirkung frei bis nah an den Rand.";
-    previewModeChip.textContent = modeName + "modus";
-    previewModeLabel.textContent = modeName;
+    if (!hasMaterialSelection()) {
+      previewProductName.textContent = "Noch nichts ausgewählt";
+      previewProductHint.textContent = "Wähle zuerst ein Material. Danach schaltet sich der Ablauf Schritt für Schritt frei.";
+      previewModeChip.textContent = "Start";
+    } else if (!hasProductSelection()) {
+      previewProductName.textContent = "Material gewählt: " + activeMaterial.name;
+      previewProductHint.textContent = "Wähle jetzt das passende Produkt.";
+      previewModeChip.textContent = "Schritt 2";
+    } else if (!hasSizeSelection()) {
+      previewProductName.textContent = "Produkt gewählt: " + activeProduct.name;
+      previewProductHint.textContent = "Wähle jetzt die passende Größe.";
+      previewModeChip.textContent = "Schritt 3";
+    } else if (!hasDesignModeSelection()) {
+      previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
+      previewProductHint.textContent = "Wähle jetzt, ob du mit Motiv oder mit Text arbeiten möchtest.";
+      previewModeChip.textContent = "Schritt 4";
+    } else {
+      previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
+      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · Motivwirkung frei bis nah an den Rand.";
+      previewModeChip.textContent = isMotifMode() ? "Motivmodus" : "Textmodus";
+    }
+
+    previewModeLabel.textContent = hasDesignModeSelection() ? (isMotifMode() ? "Motiv" : "Text") : "Noch offen";
     previewSourceLabel.textContent = sourceText;
     scaleValueLabel.textContent = state.scalePercent + "%";
     textSizeValueLabel.textContent = state.textScalePercent + "%";
     textCharacterCount.textContent = state.textValue.length + " / " + MAX_TEXT_LENGTH;
     textInput.value = state.textValue;
+    textFontSelect.value = state.textFontId;
     uploadStatus.textContent = state.uploadedImage
       ? "Eigene Datei aktiv: " + state.uploadedFileName + ". Ziehen und Größe anpassen, um die Wirkung grob zu prüfen."
       : "Keine eigene Datei geladen. Aktuell wird die gewählte Vorlage gezeigt.";
-    resetPlacementButton.textContent = isMotifMode() ? "Bild zurücksetzen" : "Text zurücksetzen";
 
+    requestWhatsappLink.href = readyForExport ? buildWhatsappUrl() : "#";
+    requestEmailLink.href = readyForExport ? buildMailtoUrl() : "#";
+    downloadPreviewButton.disabled = !readyForExport;
+    requestMenuToggle.disabled = !readyForExport;
+    if (!readyForExport) {
+      closeRequestMenu();
+    }
+
+    setSectionVisibility(productGroup, hasMaterialSelection());
+    setSectionVisibility(sizeGroup, hasProductSelection());
+    setSectionVisibility(designModeGroup, readyForDesign);
     setSectionVisibility(motifTemplateGroup, isMotifMode());
     setSectionVisibility(motifUploadGroup, isMotifMode());
-    setSectionVisibility(motifAdjustGroup, isMotifMode());
+    setSectionVisibility(motifAdjustGroup, isMotifMode() && hasActiveMotifContent());
     setSectionVisibility(textGroup, isTextMode());
 
     materialOptionsEl.querySelectorAll("[data-material-id]").forEach((button) => {
@@ -577,6 +735,32 @@
     templateOptionsEl.querySelectorAll("[data-template-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-template-id") === state.templateId);
     });
+
+    document.querySelectorAll("[data-text-style]").forEach((button) => {
+      const styleName = button.getAttribute("data-text-style");
+      const isActive = Boolean(state.textStyles[styleName]);
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  }
+
+  function getActiveSourceLabel(activeTemplate) {
+    if (!hasMaterialSelection()) return "Noch keine Auswahl";
+    if (!hasProductSelection()) return "Als Nächstes: Produkt wählen";
+    if (!hasSizeSelection()) return "Als Nächstes: Größe wählen";
+    if (!hasDesignModeSelection()) return "Als Nächstes: Gestaltungsart wählen";
+
+    if (isMotifMode()) {
+      if (state.uploadedImage) {
+        return "Eigene Datei: " + state.uploadedFileName;
+      }
+      if (activeTemplate) {
+        return "Vorlage: " + activeTemplate.name;
+      }
+      return "Noch kein Motiv gewählt";
+    }
+
+    return hasText() ? "Text: " + state.textValue : "Noch kein Text eingegeben";
   }
 
   function setSectionVisibility(section, isVisible) {
@@ -597,27 +781,53 @@
   }
 
   function renderPreview() {
-    const material = getActiveMaterial();
-    const product = getActiveProduct();
-    const size = getActiveSize();
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBackdrop();
+
+    if (!hasMaterialSelection()) {
+      drawEmptyState("1. Material wählen", "Danach baut sich die Vorschau Schritt für Schritt auf.");
+      return;
+    }
+
+    if (!hasProductSelection()) {
+      drawEmptyState("2. Produkt wählen", "Material ist gewählt. Wähle jetzt den passenden Anhänger.");
+      return;
+    }
+
+    if (!hasSizeSelection()) {
+      drawEmptyState("3. Größe wählen", "Produkt ist gewählt. Lege jetzt die Größe fest.");
+      return;
+    }
+
+    const size = getActiveSize();
+    const material = getActiveMaterial();
+    const product = getActiveProduct();
+
     drawRoundTagBase(size);
     drawMotifMask(size);
 
+    if (!hasDesignModeSelection()) {
+      drawMotifPrompt("4. Gestaltungsart wählen", "Danach wird der passende Bearbeitungsbereich freigeschaltet.");
+      drawProductHighlights(size);
+      drawPreviewLabels(material, product, size);
+      return;
+    }
+
     if (isMotifMode()) {
       const image = getActiveImage();
-
       if (image) {
         drawMotif(size, image);
       } else {
-        drawPlaceholder(size);
+        drawMotifPrompt("Vorlage wählen oder Bild laden", "Wähle eine Vorlage oder lade eine eigene Datei hoch.");
       }
     }
 
-    if (isTextMode() && hasText()) {
-      drawTextOverlay(size);
+    if (isTextMode()) {
+      if (hasText()) {
+        drawTextOverlay(size);
+      } else {
+        drawMotifPrompt("Kurzen Text eingeben", "Name, Initialen oder kurzes Wort ruhig und kompakt platzieren.");
+      }
     }
 
     drawProductHighlights(size);
@@ -642,6 +852,42 @@
       ctx.lineTo(1160, y);
       ctx.stroke();
     }
+    ctx.restore();
+  }
+
+  function drawEmptyState(title, description) {
+    ctx.save();
+
+    const panelX = 172;
+    const panelY = 396;
+    const panelWidth = 856;
+    const panelHeight = 408;
+
+    drawRoundedRect(ctx, panelX, panelY, panelWidth, panelHeight, 34);
+    ctx.fillStyle = "rgba(11, 10, 14, 0.84)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(219,16,33,0.22)";
+    drawRoundedRect(ctx, panelX + 34, panelY + 40, 190, 42, 21);
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.font = "700 24px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Geführter Start", panelX + 129, panelY + 68);
+
+    ctx.font = "700 56px system-ui, sans-serif";
+    ctx.fillText(title, 600, 560);
+
+    ctx.fillStyle = "rgba(210,207,206,0.72)";
+    ctx.font = "500 28px system-ui, sans-serif";
+    ctx.fillText(description, 600, 622);
+    ctx.font = "500 22px system-ui, sans-serif";
+    ctx.fillText("Die nächsten Bereiche bleiben zunächst ruhig ausgeblendet.", 600, 680);
+
     ctx.restore();
   }
 
@@ -734,6 +980,7 @@
 
   function drawMotifMask(size) {
     const motifMask = getMotifMask();
+    if (!motifMask) return;
 
     ctx.save();
     ctx.beginPath();
@@ -796,6 +1043,7 @@
     const textLayout = getTextLayout(state.textValue);
     const x = motifMask.x + motifMask.width / 2 + state.textOffsetX;
     const y = motifMask.y + motifMask.height / 2 + state.textOffsetY;
+    const decorationLineWidth = Math.max(3, textLayout.fontSize * 0.06);
 
     ctx.save();
     ctx.beginPath();
@@ -814,6 +1062,28 @@
     ctx.fillStyle = "rgba(22, 24, 28, 0.84)";
     ctx.fillText(state.textValue, x, y);
 
+    if (state.textStyles.underline || state.textStyles.strikethrough) {
+      ctx.strokeStyle = "rgba(22, 24, 28, 0.84)";
+      ctx.lineWidth = decorationLineWidth;
+      ctx.lineCap = "round";
+
+      if (state.textStyles.underline) {
+        const underlineY = y + textLayout.height * 0.34;
+        ctx.beginPath();
+        ctx.moveTo(x - textLayout.width / 2, underlineY);
+        ctx.lineTo(x + textLayout.width / 2, underlineY);
+        ctx.stroke();
+      }
+
+      if (state.textStyles.strikethrough) {
+        const strikeY = y - textLayout.height * 0.04;
+        ctx.beginPath();
+        ctx.moveTo(x - textLayout.width / 2, strikeY);
+        ctx.lineTo(x + textLayout.width / 2, strikeY);
+        ctx.stroke();
+      }
+    }
+
     ctx.globalAlpha = 0.2;
     ctx.beginPath();
     ctx.ellipse(x, y + textLayout.height * 0.18, textLayout.width * 0.46, Math.max(10, textLayout.height * 0.18), 0, 0, Math.PI * 2);
@@ -823,8 +1093,9 @@
     ctx.restore();
   }
 
-  function drawPlaceholder(size) {
+  function drawMotifPrompt(title, description) {
     const motifMask = getMotifMask();
+    if (!motifMask) return;
 
     ctx.save();
     ctx.beginPath();
@@ -835,13 +1106,13 @@
     ctx.restore();
 
     ctx.save();
-    ctx.fillStyle = "rgba(14,16,18,0.42)";
-    ctx.font = "600 36px system-ui, sans-serif";
+    ctx.fillStyle = "rgba(14,16,18,0.44)";
+    ctx.font = "600 34px system-ui, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Motivvorschau", 600, 640);
-    ctx.font = "500 24px system-ui, sans-serif";
-    ctx.fillStyle = "rgba(14,16,18,0.28)";
-    ctx.fillText(size.label + " Edelstahl", 600, 684);
+    ctx.fillText(title, 600, 638);
+    ctx.font = "500 22px system-ui, sans-serif";
+    ctx.fillStyle = "rgba(14,16,18,0.30)";
+    ctx.fillText(description, 600, 684);
     ctx.restore();
   }
 
@@ -864,6 +1135,7 @@
 
   function drawPreviewLabels(material, product, size) {
     const motifMask = getMotifMask();
+    if (!motifMask) return;
 
     ctx.save();
     ctx.fillStyle = "rgba(255,255,255,0.92)";
@@ -882,10 +1154,13 @@
   }
 
   function downloadPreview() {
-    const filename = "luderbein-vorschau-" + state.materialId + "-" + state.productId + "-" + state.sizeId + ".png";
+    if (!isConfigurationReady()) return;
+    closeRequestMenu();
+    const exportCanvas = createExportCanvas();
+    const filename = buildExportFilename();
 
-    if (canvas.toBlob) {
-      canvas.toBlob(function (blob) {
+    if (exportCanvas.toBlob) {
+      exportCanvas.toBlob(function (blob) {
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         triggerDownload(url, filename, true);
@@ -893,7 +1168,7 @@
       return;
     }
 
-    triggerDownload(canvas.toDataURL("image/png"), filename, false);
+    triggerDownload(exportCanvas.toDataURL("image/png"), filename, false);
   }
 
   function triggerDownload(url, filename, revokeAfter) {
@@ -911,30 +1186,298 @@
     }
   }
 
+  function createExportCanvas() {
+    const exportCanvas = document.createElement("canvas");
+    const exportCtx = exportCanvas.getContext("2d");
+    const infoHeight = 332;
+
+    exportCanvas.width = canvas.width;
+    exportCanvas.height = canvas.height + infoHeight;
+
+    exportCtx.fillStyle = "#09080b";
+    exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+    exportCtx.drawImage(canvas, 0, 0);
+
+    drawExportInfoPanel(exportCtx, canvas.height, exportCanvas.width, infoHeight);
+
+    return exportCanvas;
+  }
+
+  function drawExportInfoPanel(targetCtx, startY, width, height) {
+    const primaryFields = [
+      { label: "Material", value: getActiveMaterial().name },
+      { label: "Produkt", value: getActiveProduct().name },
+      { label: "Größe", value: getActiveSize().label },
+      { label: "Gestaltungsart", value: isMotifMode() ? "Motiv" : "Text" }
+    ];
+    const modeFields = isMotifMode() ? getMotifExportFields() : getTextExportFields();
+    const topPadding = 34;
+    const panelY = startY;
+    const leftX = 52;
+    const rightX = width / 2 + 14;
+    const columnWidth = width / 2 - 66;
+
+    targetCtx.save();
+
+    const panelGradient = targetCtx.createLinearGradient(0, panelY, 0, panelY + height);
+    panelGradient.addColorStop(0, "#111015");
+    panelGradient.addColorStop(1, "#0b0a0e");
+    targetCtx.fillStyle = panelGradient;
+    targetCtx.fillRect(0, panelY, width, height);
+
+    targetCtx.fillStyle = "rgba(255,255,255,0.06)";
+    targetCtx.fillRect(0, panelY, width, 1);
+
+    targetCtx.fillStyle = "rgba(255,255,255,0.03)";
+    targetCtx.fillRect(width / 2, panelY + 26, 1, height - 52);
+
+    targetCtx.fillStyle = "rgba(219,16,33,0.18)";
+    targetCtx.fillRect(0, panelY, width, 8);
+
+    targetCtx.fillStyle = "#f5f3f1";
+    targetCtx.font = "700 34px system-ui, sans-serif";
+    targetCtx.textAlign = "left";
+    targetCtx.fillText("Luderbein Vorschau", leftX, panelY + topPadding);
+
+    targetCtx.fillStyle = "rgba(210,207,206,0.74)";
+    targetCtx.font = "500 20px system-ui, sans-serif";
+    targetCtx.fillText("Unverbindliche Orientierung mit den aktuell gewählten Daten", leftX, panelY + topPadding + 34);
+
+    drawExportFieldColumn(targetCtx, primaryFields, leftX, panelY + 104, columnWidth);
+    drawExportFieldColumn(targetCtx, modeFields, rightX, panelY + 104, columnWidth);
+
+    targetCtx.fillStyle = "rgba(210,207,206,0.70)";
+    targetCtx.font = "500 18px system-ui, sans-serif";
+    targetCtx.fillText("Finale technische Ausarbeitung und Produktionsdetails erfolgen vor Fertigung durch Luderbein.", leftX, panelY + height - 34);
+
+    targetCtx.restore();
+  }
+
+  function drawExportFieldColumn(targetCtx, fields, x, startY, maxWidth) {
+    let y = startY;
+
+    fields.forEach((field) => {
+      const label = field.label + ":";
+      const valueLines = wrapText(targetCtx, field.value || "—", maxWidth, "600 22px system-ui, sans-serif");
+
+      targetCtx.fillStyle = "rgba(210,207,206,0.62)";
+      targetCtx.font = "600 16px system-ui, sans-serif";
+      targetCtx.fillText(label, x, y);
+      y += 24;
+
+      targetCtx.fillStyle = "#f5f3f1";
+      targetCtx.font = "600 22px system-ui, sans-serif";
+      valueLines.forEach((line) => {
+        targetCtx.fillText(line, x, y);
+        y += 30;
+      });
+
+      y += 14;
+    });
+  }
+
+  function wrapText(targetCtx, text, maxWidth, font) {
+    const normalized = String(text || "—").trim();
+    const words = normalized.split(/\s+/);
+    const lines = [];
+    let currentLine = "";
+
+    targetCtx.save();
+    targetCtx.font = font;
+
+    words.forEach((word) => {
+      const candidate = currentLine ? currentLine + " " + word : word;
+      if (targetCtx.measureText(candidate).width <= maxWidth || !currentLine) {
+        currentLine = candidate;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    });
+
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+
+    targetCtx.restore();
+
+    return lines.slice(0, 3).map((line, index, allLines) => {
+      if (index !== 2 || allLines.length <= 3) return line;
+      return truncateToWidth(targetCtx, line, maxWidth, font);
+    });
+  }
+
+  function truncateToWidth(targetCtx, text, maxWidth, font) {
+    let output = text;
+
+    targetCtx.save();
+    targetCtx.font = font;
+
+    while (output.length > 1 && targetCtx.measureText(output + " …").width > maxWidth) {
+      output = output.slice(0, -1).trimEnd();
+    }
+
+    targetCtx.restore();
+    return output + " …";
+  }
+
+  function getMotifExportFields() {
+    return [
+      {
+        label: "Motivquelle",
+        value: state.uploadedImage ? "Eigene Datei" : (getActiveTemplate() ? getActiveTemplate().name : "Noch kein Motiv gewählt")
+      },
+      {
+        label: "Datei",
+        value: state.uploadedImage ? state.uploadedFileName : (getActiveTemplate() ? "Vorlage aus dem Vorschau-Tool" : "—")
+      }
+    ];
+  }
+
+  function buildWhatsappUrl() {
+    return "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(buildRequestMessage());
+  }
+
+  function buildMailtoUrl() {
+    return "mailto:" + REQUEST_EMAIL + "?subject=" + encodeURIComponent(buildRequestSubject()) + "&body=" + encodeURIComponent(buildRequestMessage());
+  }
+
+  function buildRequestSubject() {
+    return "Anfrage zur Motiv-Vorschau – " + getActiveProduct().name + " " + getActiveSize().label;
+  }
+
+  function buildRequestMessage() {
+    const lines = [
+      "Hallo Luderbein,",
+      "",
+      "ich habe eine Anfrage zur Motiv-Vorschau. Hier sind die ersten Infos:",
+      "",
+      "Material: " + getActiveMaterial().name,
+      "Produkt: " + getActiveProduct().name,
+      "Größe: " + getActiveSize().label,
+      "Gestaltungsart: " + (isMotifMode() ? "Motiv" : "Text")
+    ];
+
+    if (isMotifMode()) {
+      lines.push("Motivquelle: " + (state.uploadedImage ? "Eigene Datei verwendet" : (getActiveTemplate() ? "Vorlage " + getActiveTemplate().name : "Noch kein Motiv gewählt")));
+      if (state.uploadedImage) {
+        lines.push("Datei: " + state.uploadedFileName);
+      }
+    } else {
+      lines.push("Textinhalt: " + (hasText() ? state.textValue : "Noch kein Text eingegeben"));
+      lines.push("Schriftart: " + getActiveTextFont().label);
+      lines.push("Textstile: " + (getActiveTextStyleLabels().join(", ") || "Standard"));
+      lines.push("Textgröße: " + state.textScalePercent + "%");
+    }
+
+    lines.push("");
+    lines.push("Viele Grüße");
+
+    return lines.join("\n");
+  }
+
+  function getTextExportFields() {
+    return [
+      {
+        label: "Textinhalt",
+        value: hasText() ? state.textValue : "Kein Text eingegeben"
+      },
+      {
+        label: "Schriftart",
+        value: getActiveTextFont().label
+      },
+      {
+        label: "Textstil",
+        value: getActiveTextStyleLabels().join(", ") || "Standard"
+      }
+    ];
+  }
+
+  function getActiveTextStyleLabels() {
+    const labels = [];
+
+    if (state.textStyles.bold) labels.push("Fett");
+    if (state.textStyles.italic) labels.push("Kursiv");
+    if (state.textStyles.underline) labels.push("Unterstrichen");
+    if (state.textStyles.strikethrough) labels.push("Durchgestrichen");
+
+    return labels;
+  }
+
+  function buildExportFilename() {
+    const parts = [
+      "luderbein-vorschau",
+      slugify(getActiveMaterial().name),
+      slugify(getActiveProduct().name),
+      slugify(getActiveSize().label),
+      isMotifMode() ? "motiv" : "text"
+    ];
+
+    if (isMotifMode()) {
+      parts.push(state.uploadedImage ? "eigene-datei" : (getActiveTemplate() ? slugify(getActiveTemplate().name) : "ohne-motiv"));
+    } else if (hasText()) {
+      parts.push(slugify(state.textValue).slice(0, 28));
+    }
+
+    return parts.filter(Boolean).join("-") + ".png";
+  }
+
+  function hasMaterialSelection() {
+    return Boolean(state.materialId);
+  }
+
+  function hasProductSelection() {
+    return Boolean(state.productId);
+  }
+
+  function hasSizeSelection() {
+    return Boolean(state.sizeId);
+  }
+
+  function hasDesignModeSelection() {
+    return Boolean(state.designMode);
+  }
+
+  function isConfigurationReady() {
+    return hasMaterialSelection() && hasProductSelection() && hasSizeSelection() && hasDesignModeSelection();
+  }
+
+  function hasActiveMotifContent() {
+    return Boolean(state.uploadedImage || state.templateId);
+  }
+
   function getActiveMaterial() {
-    return CATALOG.materials.find((material) => material.id === state.materialId) || CATALOG.materials[0];
+    return CATALOG.materials.find((material) => material.id === state.materialId) || null;
   }
 
   function getActiveProduct() {
     const material = getActiveMaterial();
-    return material.products.find((product) => product.id === state.productId) || material.products[0];
+    if (!material) return null;
+    return material.products.find((product) => product.id === state.productId) || null;
   }
 
   function getActiveSize() {
     const product = getActiveProduct();
-    return product.sizes.find((size) => size.id === state.sizeId) || product.sizes[0];
+    if (!product) return null;
+    return product.sizes.find((size) => size.id === state.sizeId) || null;
   }
 
   function getActiveTemplate() {
-    return TEMPLATE_LIBRARY.find((template) => template.id === state.templateId) || TEMPLATE_LIBRARY[0];
+    return TEMPLATE_LIBRARY.find((template) => template.id === state.templateId) || null;
   }
 
   function getActiveImage() {
-    return state.uploadedImage || getActiveTemplate().image || null;
+    return state.uploadedImage || (getActiveTemplate() ? getActiveTemplate().image : null) || null;
+  }
+
+  function getActiveTextFont() {
+    return TEXT_FONT_LIBRARY.find((font) => font.id === state.textFontId) || TEXT_FONT_LIBRARY[0];
   }
 
   function getMotifMask() {
     const size = getActiveSize();
+    if (!size) return null;
+
     const radius = size.productRadius * size.engravingRatio;
     return {
       x: 600 - radius,
@@ -975,14 +1518,30 @@
 
     return {
       fontSize: fontSize,
-      font: "600 " + fontSize + "px system-ui, sans-serif",
+      font: buildTextFont(fontSize),
       width: metrics.width,
       height: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
     };
   }
 
+  function buildTextFont(fontSize) {
+    const font = getActiveTextFont();
+    const fontParts = [];
+
+    if (state.textStyles.italic) {
+      fontParts.push("italic");
+    }
+
+    fontParts.push(state.textStyles.bold ? "700" : "600");
+    fontParts.push(fontSize + "px");
+    fontParts.push(font.family);
+
+    return fontParts.join(" ");
+  }
+
   function getDefaultTextOffsetY() {
-    return getMotifMask().height * 0.22;
+    const motifMask = getMotifMask();
+    return motifMask ? motifMask.height * 0.22 : 0;
   }
 
   function hasText() {
@@ -999,10 +1558,25 @@
 
   function measureText(text, fontSize) {
     ctx.save();
-    ctx.font = "600 " + fontSize + "px system-ui, sans-serif";
+    ctx.font = buildTextFont(fontSize);
     const metrics = ctx.measureText(text);
     ctx.restore();
     return metrics;
+  }
+
+  function drawRoundedRect(targetCtx, x, y, width, height, radius) {
+    const r = Math.min(radius, width / 2, height / 2);
+    targetCtx.beginPath();
+    targetCtx.moveTo(x + r, y);
+    targetCtx.lineTo(x + width - r, y);
+    targetCtx.quadraticCurveTo(x + width, y, x + width, y + r);
+    targetCtx.lineTo(x + width, y + height - r);
+    targetCtx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    targetCtx.lineTo(x + r, y + height);
+    targetCtx.quadraticCurveTo(x, y + height, x, y + height - r);
+    targetCtx.lineTo(x, y + r);
+    targetCtx.quadraticCurveTo(x, y, x + r, y);
+    targetCtx.closePath();
   }
 
   function drawRoundedRectPath(targetCtx, x, y, width, height, radius) {
@@ -1035,6 +1609,16 @@
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, MAX_TEXT_LENGTH);
+  }
+
+  function slugify(value) {
+    return String(value)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ß/g, "ss")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
   }
 
   function clamp(value, min, max) {
