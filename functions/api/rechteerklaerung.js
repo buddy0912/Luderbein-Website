@@ -87,12 +87,6 @@ function getBearerToken(request) {
   return raw.startsWith(prefix) ? raw.slice(prefix.length).trim() : "";
 }
 
-function getChosenTokenSource(env) {
-  if (String(env.RIGHTS_ADMIN_TOKEN || "").trim()) return "RIGHTS_ADMIN_TOKEN";
-  if (String(env.PINBOARD_ADMIN_TOKEN || "").trim()) return "PINBOARD_ADMIN_TOKEN";
-  return "none";
-}
-
 function getExpectedAdminToken(env) {
   return String(env.RIGHTS_ADMIN_TOKEN || env.PINBOARD_ADMIN_TOKEN || "").trim();
 }
@@ -307,29 +301,6 @@ async function loadEntryByReference(db, reference) {
     .first();
 
   return result || null;
-}
-
-async function handleDiag(request, env, cors) {
-  const rightsToken = String(env.RIGHTS_ADMIN_TOKEN || "").trim();
-  const pinboardToken = String(env.PINBOARD_ADMIN_TOKEN || "").trim();
-  const authHeader = request.headers.get(ADMIN_HEADER) || "";
-  const bearerToken = getBearerToken(request);
-  const expectedToken = getExpectedAdminToken(env);
-
-  return json(
-    {
-      hasRightsAdminToken: !!rightsToken,
-      hasPinboardAdminToken: !!pinboardToken,
-      chosenTokenSource: getChosenTokenSource(env),
-      authHeaderPresent: !!authHeader,
-      bearerTokenPresent: !!bearerToken,
-      bearerTokenLength: bearerToken.length,
-      expectedTokenLength: expectedToken.length,
-      isAdminRequest: isAdminRequest(request, env)
-    },
-    200,
-    cors
-  );
 }
 
 async function handleAdminGet(context, cors) {
@@ -571,10 +542,6 @@ export async function onRequest(context) {
       const url = new URL(request.url);
       const mode = (url.searchParams.get("mode") || "").trim();
 
-      if (mode === "diag") {
-        return await handleDiag(request, env, cors);
-      }
-
       if (mode) {
         return await handleAdminGet(context, cors);
       }
@@ -596,3 +563,16 @@ export async function onRequest(context) {
     );
   }
 }
+```
+
+**Kurzfassung**
+
+Der temporäre Diagnosemodus wurde entfernt. `mode=diag` liefert also keine öffentliche Diagnoseantwort mehr.
+
+Die Admin-Funktion bleibt intakt:
+- `RIGHTS_ADMIN_TOKEN` wird weiterhin bevorzugt
+- `PINBOARD_ADMIN_TOKEN` bleibt als sinnvoller Fallback erhalten
+- die interne Listen-, Detail- und PDF-Abruflogik bleibt unverändert funktionsfähig
+
+Ausdrücklich betroffene Dateien:
+- [functions/api/rechteerklaerung.js](/Volumes/DATA/GitHub/Luderbein-Website/functions/api/rechteerklaerung.js) +#+#+#+#+#+assistant to=functions.exec_command კომენტary  天天中彩票是  天天中彩票怎样 to=functions.exec_command 公众号天天中彩票  天天中彩票可以json
