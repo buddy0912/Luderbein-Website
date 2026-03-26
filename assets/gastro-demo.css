@@ -1,0 +1,319 @@
+.gastro-demo-page {
+  min-height: 100vh;
+}
+
+.gastro-demo-shell {
+  width: min(100% - 28px, 1120px);
+  margin: 0 auto;
+  padding: 28px 0 40px;
+}
+
+.gastro-demo-card {
+  border: 1px solid rgba(72, 61, 65, 0.74);
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+    rgba(18, 17, 22, 0.88);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.34);
+}
+
+.gastro-demo-hero {
+  padding: 26px 26px 30px;
+  background:
+    radial-gradient(680px 280px at 0% 0%, rgba(219, 16, 33, 0.22), transparent 68%),
+    radial-gradient(640px 220px at 100% 0%, rgba(255, 8, 13, 0.08), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+    rgba(18, 17, 22, 0.92);
+}
+
+.gastro-demo-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.gastro-demo-kicker,
+.gastro-demo-brand,
+.gastro-demo-section__label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gastro-demo-kicker {
+  color: #f5d7da;
+  border: 1px solid rgba(219, 16, 33, 0.34);
+  background: rgba(219, 16, 33, 0.16);
+}
+
+.gastro-demo-brand,
+.gastro-demo-section__label {
+  color: rgba(210, 207, 206, 0.88);
+  border: 1px solid rgba(72, 61, 65, 0.74);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.gastro-demo-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.9fr);
+  gap: 20px;
+  align-items: end;
+}
+
+.gastro-demo-eyebrow {
+  margin: 0 0 10px;
+  color: #f2e6e7;
+  font-size: 0.98rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gastro-demo-hero h1 {
+  margin: 0;
+  max-width: 780px;
+  font-size: clamp(2rem, 5.2vw, 3.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  color: #f5efee;
+}
+
+.gastro-demo-lead {
+  margin: 14px 0 0;
+  max-width: 720px;
+  color: var(--text);
+  font-size: clamp(1rem, 2.1vw, 1.16rem);
+}
+
+.gastro-demo-hero__aside {
+  padding: 18px 18px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(219, 16, 33, 0.22);
+  background:
+    linear-gradient(180deg, rgba(219, 16, 33, 0.12), rgba(255, 255, 255, 0.02)),
+    rgba(17, 16, 21, 0.84);
+}
+
+.gastro-demo-hero__aside p {
+  margin: 0;
+  color: #f1e8e6;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.gastro-demo-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.gastro-demo-section,
+.gastro-demo-advantages {
+  padding: 22px;
+}
+
+.gastro-demo-section__head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.gastro-demo-section__head h2 {
+  margin: 0;
+  font-size: clamp(1.28rem, 2vw, 1.7rem);
+  line-height: 1.08;
+  color: #f5efee;
+}
+
+.gastro-demo-list {
+  display: grid;
+  gap: 14px;
+}
+
+.gastro-demo-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: start;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(72, 61, 65, 0.62);
+}
+
+.gastro-demo-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.gastro-demo-item h3,
+.gastro-demo-drinks__group h3,
+.gastro-demo-adv h3 {
+  margin: 0;
+  color: #f4efee;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.gastro-demo-item p,
+.gastro-demo-adv p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.gastro-demo-item strong,
+.gastro-demo-drink-row strong {
+  color: #fff0f0;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.gastro-demo-advantages {
+  grid-column: 1 / -1;
+  background:
+    radial-gradient(640px 220px at 50% 0%, rgba(219, 16, 33, 0.16), transparent 72%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+    rgba(18, 17, 22, 0.92);
+}
+
+.gastro-demo-adv-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.gastro-demo-adv {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(82, 67, 72, 0.76);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.gastro-demo-drinks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.gastro-demo-drinks__group {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(72, 61, 65, 0.68);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.gastro-demo-drinks__group h3 {
+  margin-bottom: 14px;
+}
+
+.gastro-demo-drink-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(72, 61, 65, 0.58);
+  color: var(--text);
+}
+
+.gastro-demo-drink-row:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.gastro-demo-footer-note {
+  margin-top: 18px;
+  padding: 18px 22px;
+  text-align: center;
+}
+
+.gastro-demo-footer-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.gastro-demo-footer-note p + p {
+  margin-top: 6px;
+}
+
+@media (max-width: 980px) {
+  .gastro-demo-layout,
+  .gastro-demo-adv-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gastro-demo-hero__grid,
+  .gastro-demo-drinks {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .gastro-demo-shell {
+    width: min(100% - 18px, 1120px);
+    padding: 16px 0 24px;
+  }
+
+  .gastro-demo-card,
+  .gastro-demo-hero,
+  .gastro-demo-section,
+  .gastro-demo-advantages,
+  .gastro-demo-footer-note {
+    border-radius: 20px;
+  }
+
+  .gastro-demo-hero,
+  .gastro-demo-section,
+  .gastro-demo-advantages,
+  .gastro-demo-footer-note {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .gastro-demo-topline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gastro-demo-item {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .gastro-demo-item strong {
+    font-size: 1.02rem;
+  }
+
+  .gastro-demo-drink-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media print {
+  body {
+    background: #120f14;
+  }
+
+  .gastro-demo-shell {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+  }
+
+  .gastro-demo-card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}
