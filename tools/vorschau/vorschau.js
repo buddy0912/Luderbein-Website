@@ -50,25 +50,25 @@
       id: "monogram",
       name: "Monogramm",
       description: "Reduziertes Initial-Beispiel.",
-      imageSrc: "/tools/vorschau/assets/templates/monogramm.svg"
+      imageSrc: "/assets/tools/vorschau/vorlage-monogramm.png"
     },
     {
       id: "paw",
       name: "Pfote",
       description: "Klares Symbolmotiv.",
-      imageSrc: "/tools/vorschau/assets/templates/pfote.svg"
+      imageSrc: "/assets/tools/vorschau/vorlage-pfote.png"
     },
     {
       id: "portrait",
       name: "Porträt",
       description: "Silhouettenartige Fotowirkung.",
-      imageSrc: "/tools/vorschau/assets/templates/portraet.svg"
+      imageSrc: "/assets/tools/vorschau/vorlage-portraet.png"
     },
     {
       id: "emblem",
       name: "Emblem",
       description: "Technische Logo-Anmutung.",
-      imageSrc: "/tools/vorschau/assets/templates/emblem.svg"
+      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png"
     }
   ];
 
