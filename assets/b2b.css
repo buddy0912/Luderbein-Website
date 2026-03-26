@@ -538,6 +538,13 @@ body.page-b2b .btn:hover {
   resize: vertical;
 }
 
+.b2b-field-help {
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: rgba(171, 183, 194, 0.82);
+}
+
 .b2b-form__actions {
   display: flex;
   align-items: center;
