@@ -251,7 +251,7 @@
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="template-heading">5. Motivart wählen</h3>
-            <span class="preview-inline-note">Monogramm, Foto / Porträt, Tierpfoten oder Emblem.</span>
+            <span class="preview-inline-note">Monogramm, Foto / Porträt, Wappen / Emblem oder Tiersymbole.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
           <input
@@ -382,17 +382,20 @@
   </main>
 
   <div class="preview-motif-overlay" id="motifVariantOverlay" hidden>
-    <button class="preview-motif-overlay__backdrop" type="button" id="motifVariantOverlayBackdrop" aria-label="Pfoten-Auswahl schließen"></button>
+    <button class="preview-motif-overlay__backdrop" type="button" id="motifVariantOverlayBackdrop" aria-label="Varianten-Auswahl schließen"></button>
     <div class="preview-motif-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="motifVariantOverlayTitle">
       <div class="preview-card__head">
         <div>
           <p class="preview-kicker">Motivwahl</p>
-          <h2 id="motifVariantOverlayTitle">Tierpfoten wählen</h2>
+          <h2 id="motifVariantOverlayTitle">Variante wählen</h2>
         </div>
-        <button class="btn" type="button" id="closeMotifVariantOverlayButton">Schließen</button>
+        <div class="preview-overlay-actions">
+          <button class="btn" type="button" id="motifVariantOverlayBackButton" hidden>Zurück</button>
+          <button class="btn" type="button" id="closeMotifVariantOverlayButton">Schließen</button>
+        </div>
       </div>
-      <p class="preview-help">Wähle direkt die passende Tierpfoten-Variante. Die Hauptschritte bleiben dabei unverändert.</p>
-      <div id="motifVariantOptions" class="preview-size-grid"></div>
+      <p class="preview-help" id="motifVariantOverlayHelp">Wähle direkt die passende Variante. Die Hauptschritte bleiben dabei unverändert.</p>
+      <div id="motifOverlayOptions" class="preview-option-grid preview-option-grid--templates"></div>
     </div>
   </div>
 

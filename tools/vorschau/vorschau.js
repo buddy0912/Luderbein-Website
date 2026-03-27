@@ -15,10 +15,13 @@
   const designModeOptionsEl = document.getElementById("designModeOptions");
   const templateOptionsEl = document.getElementById("templateOptions");
   const motifTemplateGroup = document.getElementById("motifTemplateGroup");
-  const motifVariantOptionsEl = document.getElementById("motifVariantOptions");
+  const motifOverlayOptionsEl = document.getElementById("motifOverlayOptions");
   const motifVariantOverlay = document.getElementById("motifVariantOverlay");
   const motifVariantOverlayBackdrop = document.getElementById("motifVariantOverlayBackdrop");
   const closeMotifVariantOverlayButton = document.getElementById("closeMotifVariantOverlayButton");
+  const motifVariantOverlayBackButton = document.getElementById("motifVariantOverlayBackButton");
+  const motifVariantOverlayTitle = document.getElementById("motifVariantOverlayTitle");
+  const motifVariantOverlayHelp = document.getElementById("motifVariantOverlayHelp");
   const motifAdjustGroup = document.getElementById("motifAdjustGroup");
   const textGroup = document.getElementById("textGroup");
   const uploadInput = document.getElementById("uploadInput");
@@ -233,11 +236,11 @@
       prefersUpload: true
     },
     {
-      id: "animal-paws",
-      name: "Tierpfoten",
-      description: "Pfotenmotive als klare Symbolrichtung. Mit vorbereiteter Variantenstruktur.",
-      imageSrc: "/assets/tools/vorschau/vorlage-pfote.png",
-      category: "animal-paws",
+      id: "animal-symbols",
+      name: "Tiersymbole",
+      description: "Hund, Katze, Pferd oder Vogel als eigene Tiergruppe mit klaren Varianten.",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-01-klassisch.svg",
+      category: "animal-symbols",
       hasVariants: true
     },
     {
@@ -251,11 +254,171 @@
 
   const MOTIF_VARIANT_LIBRARY = [
     {
-      id: "paw-classic",
-      parentId: "animal-paws",
-      name: "Klassische Pfote",
-      description: "Erste Basisvariante für Tierpfoten.",
-      imageSrc: "/assets/tools/vorschau/vorlage-pfote.png"
+      id: "hund-01-klassisch",
+      parentId: "animal-dog",
+      name: "Klassisch",
+      description: "hund-01-klassisch.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-01-klassisch.svg"
+    },
+    {
+      id: "hund-02-breit-herz",
+      parentId: "animal-dog",
+      name: "Breit mit Herz",
+      description: "hund-02-breit-herz.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-02-breit-herz.svg"
+    },
+    {
+      id: "hund-03-klein-zart",
+      parentId: "animal-dog",
+      name: "Klein und zart",
+      description: "hund-03-klein-zart.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-03-klein-zart.svg"
+    },
+    {
+      id: "hund-04-minimalistisch",
+      parentId: "animal-dog",
+      name: "Minimalistisch",
+      description: "hund-04-minimalistisch.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-04-minimalistisch.svg"
+    },
+    {
+      id: "hund-05-konturiert-elegant",
+      parentId: "animal-dog",
+      name: "Konturiert elegant",
+      description: "hund-05-konturiert-elegant.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-05-konturiert-elegant.svg"
+    },
+    {
+      id: "katze-01-klassisch",
+      parentId: "animal-cat",
+      name: "Klassisch",
+      description: "katze-01-klassisch.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/katze/katze-01-klassisch.svg"
+    },
+    {
+      id: "katze-02-zart-herz",
+      parentId: "animal-cat",
+      name: "Zart mit Herz",
+      description: "katze-02-zart-herz.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/katze/katze-02-zart-herz.svg"
+    },
+    {
+      id: "katze-03-elegant",
+      parentId: "animal-cat",
+      name: "Elegant",
+      description: "katze-03-elegant.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/katze/katze-03-elegant.svg"
+    },
+    {
+      id: "katze-04-zart",
+      parentId: "animal-cat",
+      name: "Zart",
+      description: "katze-04-zart.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/katze/katze-04-zart.svg"
+    },
+    {
+      id: "katze-05-krallen",
+      parentId: "animal-cat",
+      name: "Krallen",
+      description: "katze-05-krallen.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/katze/katze-05-krallen.svg"
+    },
+    {
+      id: "pferd-01-hufeisen-schlicht",
+      parentId: "animal-horse",
+      name: "Hufeisen schlicht",
+      description: "pferd-01-hufeisen-schlicht.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-01-hufeisen-schlicht.svg"
+    },
+    {
+      id: "pferd-02-hufabdruck-stilisiert",
+      parentId: "animal-horse",
+      name: "Hufabdruck stilisiert",
+      description: "pferd-02-hufabdruck-stilisiert.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-02-hufabdruck-stilisiert.svg"
+    },
+    {
+      id: "pferd-03-pferdekopf-silhouette",
+      parentId: "animal-horse",
+      name: "Pferdekopf Silhouette",
+      description: "pferd-03-pferdekopf-silhouette.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-03-pferdekopf-silhouette.svg"
+    },
+    {
+      id: "pferd-04-pferdeprofil-elegant",
+      parentId: "animal-horse",
+      name: "Pferdeprofil elegant",
+      description: "pferd-04-pferdeprofil-elegant.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-04-pferdeprofil-elegant.svg"
+    },
+    {
+      id: "pferd-05-pferde-emblem-reduziert",
+      parentId: "animal-horse",
+      name: "Pferde-Emblem reduziert",
+      description: "pferd-05-pferde-emblem-reduziert.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-05-pferde-emblem-reduziert.svg"
+    },
+    {
+      id: "vogel-01-silhouette-sitzend",
+      parentId: "animal-bird",
+      name: "Silhouette sitzend",
+      description: "vogel-01-silhouette-sitzend.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-01-silhouette-sitzend.svg"
+    },
+    {
+      id: "vogel-02-silhouette-fliegend",
+      parentId: "animal-bird",
+      name: "Silhouette fliegend",
+      description: "vogel-02-silhouette-fliegend.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-02-silhouette-fliegend.svg"
+    },
+    {
+      id: "vogel-03-singvogel-minimalistisch",
+      parentId: "animal-bird",
+      name: "Singvogel minimalistisch",
+      description: "vogel-03-singvogel-minimalistisch.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-03-singvogel-minimalistisch.svg"
+    },
+    {
+      id: "vogel-04-feder-schlicht",
+      parentId: "animal-bird",
+      name: "Feder schlicht",
+      description: "vogel-04-feder-schlicht.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-04-feder-schlicht.svg"
+    },
+    {
+      id: "vogel-05-vogel-emblem-reduziert",
+      parentId: "animal-bird",
+      name: "Vogel-Emblem reduziert",
+      description: "vogel-05-vogel-emblem-reduziert.svg",
+      imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-05-vogel-emblem-reduziert.svg"
+    }
+  ];
+
+  const ANIMAL_GROUP_LIBRARY = [
+    {
+      id: "animal-dog",
+      name: "Hund",
+      description: "Ruhige Hundemotive mit klaren Varianten von klassisch bis elegant.",
+      imageSrc: "/assets/tools/vorschau/tiere/hund/hund-02-breit-herz.svg"
+    },
+    {
+      id: "animal-cat",
+      name: "Katze",
+      description: "Katzenmotive von zart bis markanter Krallenwirkung.",
+      imageSrc: "/assets/tools/vorschau/tiere/katze/katze-03-elegant.svg"
+    },
+    {
+      id: "animal-horse",
+      name: "Pferd",
+      description: "Pferdemotive mit Hufeisen, Profilen und reduzierten Emblemen.",
+      imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-03-pferdekopf-silhouette.svg"
+    },
+    {
+      id: "animal-bird",
+      name: "Vogel",
+      description: "Vogelmotive von Silhouette bis schlichter Feder.",
+      imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-01-silhouette-sitzend.svg"
     }
   ];
 
@@ -311,7 +474,7 @@
     renderSizeOptions();
     renderDesignModeOptions();
     renderTemplateOptions();
-    renderMotifVariantOptions();
+    renderMotifOverlayOptions();
     bindEvents();
     syncUi();
     queueRender();
@@ -321,6 +484,7 @@
     return {
       designMode: null,
       templateId: null,
+      animalGroupId: null,
       motifVariantId: null,
       uploadedImage: null,
       uploadedFileName: "",
@@ -353,6 +517,7 @@
         front: createSideState(),
         back: createSideState()
       },
+      motifOverlayStep: "groups",
       isDragging: false,
       dragOrigin: null,
       isMotifVariantOverlayOpen: false
@@ -416,6 +581,7 @@
     uploadInput.addEventListener("change", onUploadChange);
     motifVariantOverlayBackdrop.addEventListener("click", closeMotifVariantOverlay);
     closeMotifVariantOverlayButton.addEventListener("click", closeMotifVariantOverlay);
+    motifVariantOverlayBackButton.addEventListener("click", showAnimalGroupOverlay);
     clearTextButton.addEventListener("click", clearText);
     resetPlacementButton.addEventListener("click", resetAllSelections);
     centerPlacementButton.addEventListener("click", centerPlacement);
@@ -486,6 +652,10 @@
 
       if (template.category === "photo") {
         return false;
+      }
+
+      if (template.category === "animal-symbols") {
+        return Boolean(getSideState(sideId).motifVariantId);
       }
 
       return true;
@@ -775,7 +945,7 @@
       button.className = "preview-option";
       button.setAttribute("data-template-id", template.id);
       button.innerHTML =
-        '<span class="preview-option__thumb"><img src="' + template.imageSrc + '" alt=""></span>' +
+        buildTemplateThumbMarkup(template) +
         '<span class="preview-option__title">' + escapeHtml(template.name) + "</span>" +
         '<span class="preview-option__meta">' + escapeHtml(template.description) + "</span>";
 
@@ -787,15 +957,77 @@
     });
   }
 
-  function renderMotifVariantOptions() {
-    motifVariantOptionsEl.innerHTML = "";
+  function buildTemplateThumbMarkup(template) {
+    let thumbClass = "preview-option__thumb-media";
+    if (template.category === "monogram") {
+      thumbClass += " preview-option__thumb-media--monogram";
+    }
+    if (template.category === "photo") {
+      thumbClass += " preview-option__thumb-media--photo";
+    }
+    if (template.category === "emblem") {
+      thumbClass += " preview-option__thumb-media--emblem";
+    }
+    if (template.category === "animal-symbols") {
+      thumbClass += " preview-option__thumb-media--animal-root";
+    }
 
-    MOTIF_VARIANT_LIBRARY.forEach((variant) => {
+    return (
+      '<span class="preview-option__thumb">' +
+        '<span class="' + thumbClass + '">' +
+          '<img src="' + template.imageSrc + '" alt="">' +
+        "</span>" +
+      "</span>"
+    );
+  }
+
+  function buildAnimalGroupThumbMarkup(animalGroup) {
+    return (
+      '<span class="preview-option__thumb">' +
+        '<span class="preview-option__thumb-media preview-option__thumb-media--animal-group">' +
+          '<img src="' + animalGroup.imageSrc + '" alt="">' +
+        "</span>" +
+      "</span>"
+    );
+  }
+
+  function renderMotifOverlayOptions() {
+    motifOverlayOptionsEl.innerHTML = "";
+
+    if (state.motifOverlayStep === "groups") {
+      ANIMAL_GROUP_LIBRARY.forEach((animalGroup) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option";
+        button.setAttribute("data-animal-group-id", animalGroup.id);
+        button.innerHTML =
+          buildAnimalGroupThumbMarkup(animalGroup) +
+          '<span class="preview-option__title">' + escapeHtml(animalGroup.name) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(animalGroup.description) + "</span>";
+
+        button.addEventListener("click", function () {
+          selectAnimalGroup(animalGroup.id);
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
+    const activeAnimalGroup = getActiveAnimalGroup();
+    const variants = activeAnimalGroup
+      ? MOTIF_VARIANT_LIBRARY.filter((variant) => variant.parentId === activeAnimalGroup.id)
+      : [];
+
+    variants.forEach((variant) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "preview-size-chip";
+      button.className = "preview-option";
       button.setAttribute("data-motif-variant-id", variant.id);
-      button.textContent = variant.name;
+      button.innerHTML =
+        '<span class="preview-option__thumb"><img src="' + variant.imageSrc + '" alt=""></span>' +
+        '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
+        '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
 
       button.addEventListener("click", function () {
         if (getActiveSideState().motifVariantId === variant.id) return;
@@ -803,7 +1035,7 @@
         closeMotifVariantOverlay();
       });
 
-      motifVariantOptionsEl.appendChild(button);
+      motifOverlayOptionsEl.appendChild(button);
     });
   }
 
@@ -813,7 +1045,14 @@
 
     const activeSideState = getActiveSideState();
     const isPhotoTemplate = template.category === "photo";
-    const isPawTemplate = template.category === "animal-paws";
+    const isAnimalSymbolsTemplate = template.category === "animal-symbols";
+    const isSameTemplate = activeSideState.templateId === template.id;
+
+    if (isAnimalSymbolsTemplate && isSameTemplate) {
+      state.motifOverlayStep = "groups";
+      openMotifVariantOverlay("groups");
+      return;
+    }
 
     if (!isPhotoTemplate) {
       clearUploadedImage(false);
@@ -821,16 +1060,12 @@
 
     closeMotifVariantOverlay();
     activeSideState.templateId = template.id;
-    activeSideState.motifVariantId = isPawTemplate ? getDefaultMotifVariantId(template.id) : null;
-
-    if (isPawTemplate && activeSideState.motifVariantId) {
-      const variant = getMotifVariantById(activeSideState.motifVariantId);
-      if (variant) {
-        activeSideState.templateId = variant.id;
-      }
-    }
+    activeSideState.animalGroupId = null;
+    activeSideState.motifVariantId = null;
+    state.motifOverlayStep = "groups";
 
     resetImagePlacement(false);
+    renderMotifOverlayOptions();
     syncUi();
     queueRender();
 
@@ -838,9 +1073,25 @@
       openPhotoUpload();
     }
 
-    if (isPawTemplate) {
-      openMotifVariantOverlay();
+    if (isAnimalSymbolsTemplate) {
+      openMotifVariantOverlay("groups");
     }
+  }
+
+  function selectAnimalGroup(animalGroupId) {
+    const animalGroup = getAnimalGroupById(animalGroupId);
+    if (!animalGroup) return;
+
+    const activeSideState = getActiveSideState();
+    activeSideState.animalGroupId = animalGroup.id;
+    activeSideState.motifVariantId = null;
+    state.motifOverlayStep = "variants";
+    clearUploadedImage(false);
+    resetImagePlacement(false);
+    renderMotifOverlayOptions();
+    syncUi();
+    queueRender();
+    openMotifVariantOverlay("variants");
   }
 
   function selectMotifVariant(variantId) {
@@ -849,7 +1100,6 @@
 
     const activeSideState = getActiveSideState();
     activeSideState.motifVariantId = variant.id;
-    activeSideState.templateId = variant.id;
     clearUploadedImage(false);
     resetImagePlacement(false);
     syncUi();
@@ -868,15 +1118,29 @@
     uploadInput.click();
   }
 
-  function openMotifVariantOverlay() {
-    if (!isMotifMode() || !isAnimalPawsSelected()) return;
+  function openMotifVariantOverlay(step) {
+    if (!isMotifMode() || !isAnimalSymbolsSelected()) return;
+    state.motifOverlayStep = step === "variants" ? "variants" : "groups";
     state.isMotifVariantOverlayOpen = true;
+    renderMotifOverlayOptions();
+    updateMotifVariantOverlayCopy();
     syncUi();
   }
 
   function closeMotifVariantOverlay() {
     if (!state.isMotifVariantOverlayOpen) return;
     state.isMotifVariantOverlayOpen = false;
+    state.motifOverlayStep = "groups";
+    renderMotifOverlayOptions();
+    syncUi();
+  }
+
+  function showAnimalGroupOverlay() {
+    if (!isMotifMode() || !isAnimalSymbolsSelected()) return;
+    state.motifOverlayStep = "groups";
+    state.isMotifVariantOverlayOpen = true;
+    renderMotifOverlayOptions();
+    updateMotifVariantOverlayCopy();
     syncUi();
   }
 
@@ -1226,10 +1490,12 @@
     setSectionVisibility(motifAdjustGroup, isMotifMode() && hasActiveMotifContent());
     setSectionVisibility(textGroup, isTextMode());
 
-    if (!isMotifMode() || !isAnimalPawsSelected()) {
+    if (!isMotifMode() || !isAnimalSymbolsSelected()) {
       state.isMotifVariantOverlayOpen = false;
+      state.motifOverlayStep = "groups";
     }
     motifVariantOverlay.hidden = !state.isMotifVariantOverlayOpen;
+    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || state.motifOverlayStep !== "variants";
 
     materialOptionsEl.querySelectorAll("[data-material-id]").forEach((button) => {
       const material = getMaterialById(button.getAttribute("data-material-id"));
@@ -1256,7 +1522,11 @@
       button.classList.toggle("is-active", template && template.id === activeTopLevelId);
     });
 
-    motifVariantOptionsEl.querySelectorAll("[data-motif-variant-id]").forEach((button) => {
+    motifOverlayOptionsEl.querySelectorAll("[data-animal-group-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-animal-group-id") === activeSideState.animalGroupId);
+    });
+
+    motifOverlayOptionsEl.querySelectorAll("[data-motif-variant-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-motif-variant-id") === activeSideState.motifVariantId);
     });
 
@@ -1297,9 +1567,16 @@
       if (getActiveSideState().uploadedImage) {
         return "Foto / Porträt: " + getActiveSideState().uploadedFileName;
       }
-      if (isAnimalPawsSelected()) {
+      if (isAnimalSymbolsSelected()) {
         const variant = getActiveMotifVariant();
-        return variant ? "Tierpfoten: " + variant.name : "Tierpfoten";
+        const animalGroup = getActiveAnimalGroup();
+        if (variant && animalGroup) {
+          return animalGroup.name + ": " + variant.name;
+        }
+        if (animalGroup) {
+          return "Tiergruppe: " + animalGroup.name;
+        }
+        return "Motivart: Tiersymbole";
       }
       if (activeTemplate) {
         return "Motivart: " + activeTemplate.name;
@@ -1400,7 +1677,18 @@
       if (image) {
         drawMotif(size, image);
       } else {
-        drawMotifPrompt("Motivart wählen", "Wähle Monogramm, Foto / Porträt, Tierpfoten oder Emblem.");
+        drawMotifPrompt(
+          isAnimalSymbolsSelected() && getActiveAnimalGroup()
+            ? "Variante wählen"
+            : isAnimalSymbolsSelected()
+              ? "Tiergruppe wählen"
+              : "Motivart wählen",
+          isAnimalSymbolsSelected() && getActiveAnimalGroup()
+            ? "Wähle jetzt die passende konkrete Variante für die gewählte Tiergruppe."
+            : isAnimalSymbolsSelected()
+              ? "Wähle zuerst Hund, Katze, Pferd oder Vogel und danach die passende Variante."
+              : "Wähle Monogramm, Foto / Porträt, Wappen / Emblem oder Tiersymbole."
+        );
       }
     }
 
@@ -2081,7 +2369,20 @@
 
   function hasActiveMotifContent(sideId) {
     const sideState = getSideState(sideId);
-    return Boolean(sideState.uploadedImage || sideState.templateId);
+    if (sideState.uploadedImage) {
+      return true;
+    }
+
+    const activeTemplate = getActiveTemplate(sideId);
+    if (!activeTemplate) {
+      return false;
+    }
+
+    if (activeTemplate.category === "animal-symbols") {
+      return Boolean(sideState.motifVariantId);
+    }
+
+    return Boolean(sideState.templateId);
   }
 
   function hasText(sideId) {
@@ -2137,8 +2438,12 @@
       return "Noch kein Motiv gewählt";
     }
 
-    if (activeTemplate.category === "animal-paws") {
-      return activeMotifVariant ? "Tierpfoten · " + activeMotifVariant.name : "Tierpfoten";
+    if (activeTemplate.category === "animal-symbols") {
+      const animalGroup = getActiveAnimalGroup(sideId);
+      if (!animalGroup) {
+        return "Tiersymbole · Tiergruppe offen";
+      }
+      return activeMotifVariant ? animalGroup.name + " · " + activeMotifVariant.name : animalGroup.name;
     }
 
     return activeTemplate.name;
@@ -2146,6 +2451,10 @@
 
   function getTemplateById(templateId) {
     return TEMPLATE_LIBRARY.find((template) => template.id === templateId) || null;
+  }
+
+  function getAnimalGroupById(animalGroupId) {
+    return ANIMAL_GROUP_LIBRARY.find((animalGroup) => animalGroup.id === animalGroupId) || null;
   }
 
   function getMotifVariantById(variantId) {
@@ -2158,14 +2467,7 @@
   }
 
   function getActiveTopLevelTemplateId(sideId) {
-    const sideState = getSideState(sideId);
-
-    if (sideState.motifVariantId) {
-      const variant = getMotifVariantById(sideState.motifVariantId);
-      return variant ? variant.parentId : sideState.templateId;
-    }
-
-    return sideState.templateId;
+    return getSideState(sideId).templateId;
   }
 
   function getActiveTemplate(sideId) {
@@ -2178,10 +2480,25 @@
     return sideState.motifVariantId ? getMotifVariantById(sideState.motifVariantId) : null;
   }
 
+  function getActiveAnimalGroup(sideId) {
+    const sideState = getSideState(sideId);
+    return sideState.animalGroupId ? getAnimalGroupById(sideState.animalGroupId) : null;
+  }
+
   function getActiveImage(sideId) {
     const sideState = getSideState(sideId);
     const activeVariant = getActiveMotifVariant(sideId);
-    return sideState.uploadedImage || (activeVariant ? activeVariant.image : null) || (getActiveTemplate(sideId) ? getActiveTemplate(sideId).image : null) || null;
+    const activeTemplate = getActiveTemplate(sideId);
+
+    if (sideState.uploadedImage) {
+      return sideState.uploadedImage;
+    }
+
+    if (activeTemplate && activeTemplate.category === "animal-symbols") {
+      return activeVariant ? activeVariant.image : null;
+    }
+
+    return (activeTemplate ? activeTemplate.image : null) || null;
   }
 
   function isPhotoMotifSelected(sideId) {
@@ -2191,7 +2508,34 @@
 
   function isAnimalPawsSelected(sideId) {
     const template = getActiveTemplate(sideId);
-    return Boolean(template && template.category === "animal-paws");
+    return Boolean(template && template.category === "animal-symbols");
+  }
+
+  function isAnimalMotifSelected(sideId) {
+    return isAnimalPawsSelected(sideId);
+  }
+
+  function updateMotifVariantOverlayCopy() {
+    const activeTemplate = getActiveTemplate();
+    const activeAnimalGroup = getActiveAnimalGroup();
+    if (!activeTemplate || activeTemplate.category !== "animal-symbols") {
+      motifVariantOverlayTitle.textContent = "Tiersymbole";
+      motifVariantOverlayHelp.textContent = "Wähle direkt die passende Tiergruppe und danach die gewünschte Variante.";
+      return;
+    }
+
+    if (state.motifOverlayStep === "groups" || !activeAnimalGroup) {
+      motifVariantOverlayTitle.textContent = "Tiersymbole wählen";
+      motifVariantOverlayHelp.textContent = "Wähle Hund, Katze, Pferd oder Vogel. Danach öffnet sich direkt die konkrete Variantenwahl.";
+      return;
+    }
+
+    motifVariantOverlayTitle.textContent = activeAnimalGroup.name + " wählen";
+    motifVariantOverlayHelp.textContent = "Wähle direkt die passende " + activeAnimalGroup.name.toLowerCase() + "-Variante.";
+  }
+
+  function isAnimalSymbolsSelected(sideId) {
+    return isAnimalMotifSelected(sideId);
   }
 
   function getMaterialById(materialId) {
