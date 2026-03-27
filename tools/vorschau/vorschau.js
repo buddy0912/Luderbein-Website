@@ -5,6 +5,7 @@
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
+  const materialGroup = document.getElementById("materialGroup");
   const materialOptionsEl = document.getElementById("materialOptions");
   const productGroup = document.getElementById("productGroup");
   const productOptionsEl = document.getElementById("productOptions");
@@ -14,17 +15,18 @@
   const designModeOptionsEl = document.getElementById("designModeOptions");
   const templateOptionsEl = document.getElementById("templateOptions");
   const motifTemplateGroup = document.getElementById("motifTemplateGroup");
-  const motifUploadGroup = document.getElementById("motifUploadGroup");
+  const motifVariantOptionsEl = document.getElementById("motifVariantOptions");
+  const motifVariantOverlay = document.getElementById("motifVariantOverlay");
+  const motifVariantOverlayBackdrop = document.getElementById("motifVariantOverlayBackdrop");
+  const closeMotifVariantOverlayButton = document.getElementById("closeMotifVariantOverlayButton");
   const motifAdjustGroup = document.getElementById("motifAdjustGroup");
   const textGroup = document.getElementById("textGroup");
   const uploadInput = document.getElementById("uploadInput");
-  const clearUploadButton = document.getElementById("clearUploadButton");
   const clearTextButton = document.getElementById("clearTextButton");
   const resetPlacementButton = document.getElementById("resetPlacementButton");
   const centerPlacementButton = document.getElementById("centerPlacementButton");
   const centerTextButton = document.getElementById("centerTextButton");
   const downloadPreviewButton = document.getElementById("downloadPreviewButton");
-  const requestMenuToggle = document.getElementById("requestMenuToggle");
   const requestMenuPanel = document.getElementById("requestMenuPanel");
   const requestWhatsappLink = document.getElementById("requestWhatsappLink");
   const requestEmailLink = document.getElementById("requestEmailLink");
@@ -36,15 +38,29 @@
   const previewProductName = document.getElementById("previewProductName");
   const previewProductHint = document.getElementById("previewProductHint");
   const previewModeChip = document.getElementById("previewModeChip");
+  const previewActiveSideLabel = document.getElementById("previewActiveSideLabel");
   const previewModeLabel = document.getElementById("previewModeLabel");
   const previewSourceLabel = document.getElementById("previewSourceLabel");
-  const uploadStatus = document.getElementById("uploadStatus");
+  const sideSwitchGroup = document.getElementById("sideSwitchGroup");
+  const sideTabs = document.getElementById("sideTabs");
+  const sideSwitchStatus = document.getElementById("sideSwitchStatus");
+  const sideSwitchHint = document.getElementById("sideSwitchHint");
+  const enableBackSideButton = document.getElementById("enableBackSideButton");
+  const sideFrontButton = document.getElementById("sideFrontButton");
+  const sideBackButton = document.getElementById("sideBackButton");
   const textInput = document.getElementById("textInput");
   const textCharacterCount = document.getElementById("textCharacterCount");
 
   const MAX_TEXT_LENGTH = 18;
   const WHATSAPP_NUMBER = "491725925858";
   const REQUEST_EMAIL = "luderbein_gravur@icloud.com";
+  const ACTIVE_STEP_SEQUENCE = ["material", "product", "size", "designMode"];
+  const SIDE_IDS = ["front", "back"];
+  const BACK_SIDE_OPTION = {
+    surchargeCents: 0,
+    surchargeLabel: ""
+  };
+
   const MODE_LIBRARY = [
     {
       id: "motif",
@@ -57,6 +73,7 @@
       description: "Kurzen Namen, Initialen oder ein kleines Wort setzen. Für kleine Plättchen bewusst ohne zusätzliches Motiv."
     }
   ];
+
   const TEXT_FONT_LIBRARY = [
     {
       id: "sans",
@@ -81,20 +98,120 @@
         id: "stainless-steel",
         name: "Edelstahl",
         description: "Aktiver Startzustand für Version 1.",
-        products: [
+        pricing: {
+          fromCents: 0,
+          surchargeCents: 0
+        },
+        productFamilies: [
           {
-            id: "round-tag",
-            name: "Rundes Edelstahl-Plättchen",
-            description: "Runder Anhänger als erster realer Produkttyp.",
-            sizes: [
-              { id: "8mm", label: "8 mm", diameterMm: 8, productRadius: 180, engravingRatio: 0.94, ringOuter: 54, ringInner: 26, ringY: 362, lift: 56 },
-              { id: "10mm", label: "10 mm", diameterMm: 10, productRadius: 210, engravingRatio: 0.95, ringOuter: 58, ringInner: 28, ringY: 334, lift: 64 },
-              { id: "12mm", label: "12 mm", diameterMm: 12, productRadius: 238, engravingRatio: 0.955, ringOuter: 62, ringInner: 30, ringY: 306, lift: 72 },
-              { id: "15mm", label: "15 mm", diameterMm: 15, productRadius: 272, engravingRatio: 0.96, ringOuter: 68, ringInner: 32, ringY: 272, lift: 82 },
-              { id: "20mm", label: "20 mm", diameterMm: 20, productRadius: 326, engravingRatio: 0.965, ringOuter: 78, ringInner: 38, ringY: 214, lift: 98 }
+            id: "single-pendant",
+            name: "Einzelner Anhänger",
+            description: "Aktuell die geführte Startfamilie. Weitere Familien können später als eigener Schritt ergänzt werden.",
+            pricing: {
+              fromCents: 0,
+              surchargeCents: 0
+            },
+            products: [
+              {
+                id: "round-tag",
+                name: "Rundes Edelstahl-Plättchen",
+                description: "Runder Anhänger als erster realer Produkttyp.",
+                pricing: {
+                  fromCents: 0,
+                  surchargeCents: 0
+                },
+                sizes: [
+                  {
+                    id: "8mm",
+                    label: "8 mm",
+                    diameterMm: 8,
+                    productRadius: 180,
+                    engravingRatio: 0.94,
+                    ringOuter: 54,
+                    ringInner: 26,
+                    ringY: 362,
+                    lift: 56,
+                    pricing: {
+                      fromCents: 0,
+                      surchargeCents: 0
+                    }
+                  },
+                  {
+                    id: "10mm",
+                    label: "10 mm",
+                    diameterMm: 10,
+                    productRadius: 210,
+                    engravingRatio: 0.95,
+                    ringOuter: 58,
+                    ringInner: 28,
+                    ringY: 334,
+                    lift: 64,
+                    pricing: {
+                      fromCents: 0,
+                      surchargeCents: 0
+                    }
+                  },
+                  {
+                    id: "12mm",
+                    label: "12 mm",
+                    diameterMm: 12,
+                    productRadius: 238,
+                    engravingRatio: 0.955,
+                    ringOuter: 62,
+                    ringInner: 30,
+                    ringY: 306,
+                    lift: 72,
+                    pricing: {
+                      fromCents: 0,
+                      surchargeCents: 0
+                    }
+                  },
+                  {
+                    id: "15mm",
+                    label: "15 mm",
+                    diameterMm: 15,
+                    productRadius: 272,
+                    engravingRatio: 0.96,
+                    ringOuter: 68,
+                    ringInner: 32,
+                    ringY: 272,
+                    lift: 82,
+                    pricing: {
+                      fromCents: 0,
+                      surchargeCents: 0
+                    }
+                  },
+                  {
+                    id: "20mm",
+                    label: "20 mm",
+                    diameterMm: 20,
+                    productRadius: 326,
+                    engravingRatio: 0.965,
+                    ringOuter: 78,
+                    ringInner: 38,
+                    ringY: 214,
+                    lift: 98,
+                    pricing: {
+                      fromCents: 0,
+                      surchargeCents: 0
+                    }
+                  }
+                ]
+              }
             ]
           }
         ]
+      },
+      {
+        id: "wood",
+        name: "Holz",
+        description: "Noch nicht aktiv in der UI, aber in der Struktur für spätere Schritte vorbereitet.",
+        isComingSoon: true,
+        pricing: {
+          fromCents: 0,
+          surchargeCents: 0
+        },
+        productFamilies: []
       }
     ]
   };
@@ -104,35 +221,86 @@
       id: "monogram",
       name: "Monogramm",
       description: "Reduziertes Initial-Beispiel.",
-      imageSrc: "/assets/tools/vorschau/vorlage-monogramm.png"
+      imageSrc: "/assets/tools/vorschau/vorlage-monogramm.png",
+      category: "monogram"
     },
     {
-      id: "paw",
-      name: "Pfote",
-      description: "Klares Symbolmotiv.",
-      imageSrc: "/assets/tools/vorschau/vorlage-pfote.png"
+      id: "photo-portrait",
+      name: "Foto / Porträt",
+      description: "Eigenes Bild hochladen oder eine fotoartige Silhouettenwirkung grob prüfen.",
+      imageSrc: "/assets/tools/vorschau/vorlage-portraet.png",
+      category: "photo",
+      prefersUpload: true
     },
     {
-      id: "portrait",
-      name: "Porträt",
-      description: "Silhouettenartige Fotowirkung.",
-      imageSrc: "/assets/tools/vorschau/vorlage-portraet.png"
+      id: "animal-paws",
+      name: "Tierpfoten",
+      description: "Pfotenmotive als klare Symbolrichtung. Mit vorbereiteter Variantenstruktur.",
+      imageSrc: "/assets/tools/vorschau/vorlage-pfote.png",
+      category: "animal-paws",
+      hasVariants: true
     },
     {
       id: "emblem",
-      name: "Emblem",
-      description: "Technische Logo-Anmutung.",
-      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png"
+      name: "Wappen / Emblem",
+      description: "Klare Zeichen-, Logo- oder Wappenwirkung.",
+      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
+      category: "emblem"
     }
   ];
+
+  const MOTIF_VARIANT_LIBRARY = [
+    {
+      id: "paw-classic",
+      parentId: "animal-paws",
+      name: "Klassische Pfote",
+      description: "Erste Basisvariante für Tierpfoten.",
+      imageSrc: "/assets/tools/vorschau/vorlage-pfote.png"
+    }
+  ];
+
+  const STEP_DEFINITIONS = {
+    material: {
+      id: "material",
+      stateKey: "materialId",
+      groupEl: materialGroup,
+      getNextValue: function (selectedId) {
+        const material = getMaterialById(selectedId);
+        const families = material ? getAvailableProductFamilies(material) : [];
+        return {
+          materialId: selectedId,
+          productFamilyId: families.length === 1 ? families[0].id : null
+        };
+      }
+    },
+    productFamily: {
+      id: "productFamily",
+      stateKey: "productFamilyId"
+    },
+    product: {
+      id: "product",
+      stateKey: "productId",
+      groupEl: productGroup
+    },
+    size: {
+      id: "size",
+      stateKey: "sizeId",
+      groupEl: sizeGroup
+    },
+    designMode: {
+      id: "designMode",
+      stateKey: "designMode",
+      groupEl: designModeGroup
+    }
+  };
 
   const state = createInitialState();
   let renderQueued = false;
 
   Promise.all(
-    TEMPLATE_LIBRARY.map((template) =>
-      loadImage(template.imageSrc).then((image) => {
-        template.image = image;
+    TEMPLATE_LIBRARY.concat(MOTIF_VARIANT_LIBRARY).map((entry) =>
+      loadImage(entry.imageSrc).then((image) => {
+        entry.image = image;
       })
     )
   ).then(init);
@@ -143,29 +311,83 @@
     renderSizeOptions();
     renderDesignModeOptions();
     renderTemplateOptions();
+    renderMotifVariantOptions();
     bindEvents();
     syncUi();
     queueRender();
   }
 
+  function createSideState() {
+    return {
+      designMode: null,
+      templateId: null,
+      motifVariantId: null,
+      uploadedImage: null,
+      uploadedFileName: "",
+      scalePercent: 100,
+      offsetX: 0,
+      offsetY: 0,
+      textValue: "",
+      textScalePercent: 100,
+      textFontId: TEXT_FONT_LIBRARY[0].id,
+      textStyles: {
+        bold: false,
+        italic: false,
+        underline: false,
+        strikethrough: false
+      },
+      textOffsetX: 0,
+      textOffsetY: 0
+    };
+  }
+
+  function createInitialState() {
+    return {
+      materialId: null,
+      productFamilyId: null,
+      productId: null,
+      sizeId: null,
+      activeSide: "front",
+      backSideEnabled: false,
+      sides: {
+        front: createSideState(),
+        back: createSideState()
+      },
+      isDragging: false,
+      dragOrigin: null,
+      isMotifVariantOverlayOpen: false
+    };
+  }
+
   function bindEvents() {
+    enableBackSideButton.addEventListener("click", enableBackSide);
+
+    sideFrontButton.addEventListener("click", function () {
+      setActiveSide("front");
+    });
+
+    sideBackButton.addEventListener("click", function () {
+      setActiveSide("back");
+    });
+
     scaleSlider.addEventListener("input", function () {
-      state.scalePercent = Number(scaleSlider.value);
+      getActiveSideState().scalePercent = Number(scaleSlider.value);
       syncUi();
       queueRender();
     });
 
     textSizeSlider.addEventListener("input", function () {
-      state.textScalePercent = Number(textSizeSlider.value);
+      getActiveSideState().textScalePercent = Number(textSizeSlider.value);
       clampTextPlacement();
       syncUi();
       queueRender();
     });
 
     textInput.addEventListener("input", function () {
-      state.textValue = normalizeTextValue(textInput.value);
-      if (textInput.value !== state.textValue) {
-        textInput.value = state.textValue;
+      const activeSideState = getActiveSideState();
+      activeSideState.textValue = normalizeTextValue(textInput.value);
+      if (textInput.value !== activeSideState.textValue) {
+        textInput.value = activeSideState.textValue;
       }
       clampTextPlacement();
       syncUi();
@@ -173,7 +395,7 @@
     });
 
     textFontSelect.addEventListener("change", function () {
-      state.textFontId = textFontSelect.value;
+      getActiveSideState().textFontId = textFontSelect.value;
       clampTextPlacement();
       syncUi();
       queueRender();
@@ -182,8 +404,9 @@
     document.querySelectorAll("[data-text-style]").forEach((button) => {
       button.addEventListener("click", function () {
         const styleName = button.getAttribute("data-text-style");
-        if (!Object.prototype.hasOwnProperty.call(state.textStyles, styleName)) return;
-        state.textStyles[styleName] = !state.textStyles[styleName];
+        const activeSideState = getActiveSideState();
+        if (!Object.prototype.hasOwnProperty.call(activeSideState.textStyles, styleName)) return;
+        activeSideState.textStyles[styleName] = !activeSideState.textStyles[styleName];
         clampTextPlacement();
         syncUi();
         queueRender();
@@ -191,13 +414,13 @@
     });
 
     uploadInput.addEventListener("change", onUploadChange);
-    clearUploadButton.addEventListener("click", clearUploadedImage);
+    motifVariantOverlayBackdrop.addEventListener("click", closeMotifVariantOverlay);
+    closeMotifVariantOverlayButton.addEventListener("click", closeMotifVariantOverlay);
     clearTextButton.addEventListener("click", clearText);
     resetPlacementButton.addEventListener("click", resetAllSelections);
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
     downloadPreviewButton.addEventListener("click", downloadPreview);
-    requestMenuToggle.addEventListener("click", toggleRequestMenu);
     requestWhatsappLink.addEventListener("click", closeRequestMenu);
     requestEmailLink.addEventListener("click", closeRequestMenu);
 
@@ -224,36 +447,75 @@
     canvas.tabIndex = 0;
   }
 
-  function createInitialState() {
-    return {
-      materialId: null,
-      productId: null,
-      sizeId: null,
-      designMode: null,
-      templateId: null,
-      uploadedImage: null,
-      uploadedFileName: "",
-      scalePercent: 100,
-      offsetX: 0,
-      offsetY: 0,
-      textValue: "",
-      textScalePercent: 100,
-      textFontId: TEXT_FONT_LIBRARY[0].id,
-      textStyles: {
-        bold: false,
-        italic: false,
-        underline: false,
-        strikethrough: false
-      },
-      textOffsetX: 0,
-      textOffsetY: 0,
-      isDragging: false,
-      dragOrigin: null
-    };
+  function getSideState(sideId) {
+    return state.sides[sideId || state.activeSide];
+  }
+
+  function getActiveSideState() {
+    return getSideState(state.activeSide);
+  }
+
+  function isBackSideEnabled() {
+    return state.backSideEnabled;
+  }
+
+  function getSideLabel(sideId) {
+    return sideId === "back" ? "Rückseite" : "Vorderseite";
+  }
+
+  function getEnabledSideIds() {
+    return isBackSideEnabled() ? SIDE_IDS.slice() : ["front"];
+  }
+
+  function hasMeaningfulSideConfiguration(sideId) {
+    const sideState = getSideState(sideId);
+
+    if (!sideState.designMode) {
+      return false;
+    }
+
+    if (sideState.designMode === "motif") {
+      if (sideState.uploadedImage) {
+        return true;
+      }
+
+      const template = getActiveTemplate(sideId);
+      if (!template) {
+        return false;
+      }
+
+      if (template.category === "photo") {
+        return false;
+      }
+
+      return true;
+    }
+
+    if (sideState.designMode === "text") {
+      return sideState.textValue.trim().length > 0;
+    }
+
+    return false;
+  }
+
+  function isFrontConfigured() {
+    return hasMeaningfulSideConfiguration("front");
+  }
+
+  function enableBackSide() {
+    if (!hasSizeSelection() || isBackSideEnabled() || !isFrontConfigured()) return;
+    state.backSideEnabled = true;
+    state.sides.back = createSideState();
+    state.isMotifVariantOverlayOpen = false;
+    state.activeSide = "back";
+    syncUi();
+    queueRender();
+    requestAnimationFrame(scrollToBackSideConfiguration);
   }
 
   function resetAllSelections() {
     const initialState = createInitialState();
+
     Object.keys(initialState).forEach((key) => {
       state[key] = initialState[key];
     });
@@ -270,6 +532,152 @@
     queueRender();
   }
 
+  function setActiveSide(sideId) {
+    if (sideId === "back" && !isBackSideEnabled()) return;
+    if (!SIDE_IDS.includes(sideId) || state.activeSide === sideId) return;
+    state.activeSide = sideId;
+    state.isMotifVariantOverlayOpen = false;
+    syncUi();
+    queueRender();
+  }
+
+  function applyStepSelection(stepId, value) {
+    const definition = STEP_DEFINITIONS[stepId];
+    if (!definition || !isStepAvailable(stepId)) return;
+
+    clearSelectionsAfter(stepId);
+
+    if (stepId === "designMode") {
+      getActiveSideState().designMode = value;
+    } else {
+      const nextValue = definition.getNextValue ? definition.getNextValue(value) : { [definition.stateKey]: value };
+      Object.keys(nextValue).forEach((key) => {
+        state[key] = nextValue[key];
+      });
+    }
+
+    if (stepId === "material") {
+      renderProductOptions();
+      renderSizeOptions();
+    }
+
+    if (stepId === "product") {
+      renderSizeOptions();
+    }
+
+    if (stepId === "size") {
+      resetImagePlacement(false);
+      resetTextPlacement(false);
+    }
+
+    closeRequestMenu();
+    syncUi();
+    queueRender();
+  }
+
+  function clearSelectionsAfter(stepId) {
+    const startIndex = ACTIVE_STEP_SEQUENCE.indexOf(stepId);
+    if (startIndex === -1) return;
+
+    const stepStateKeys = getFlowStepIds()
+      .slice(startIndex + 1)
+      .map(function (activeStepId) {
+        return STEP_DEFINITIONS[activeStepId].stateKey;
+      });
+
+    stepStateKeys.forEach(function (key) {
+      state[key] = null;
+    });
+
+    if (stepId !== "designMode") {
+      state.activeSide = "front";
+      state.backSideEnabled = false;
+      state.sides.front = createSideState();
+      state.sides.back = createSideState();
+    }
+
+    state.isMotifVariantOverlayOpen = false;
+    uploadInput.value = "";
+    textInput.value = "";
+    resetImagePlacement(false);
+    resetTextPlacement(false);
+    textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
+  }
+
+  function getFlowStepIds() {
+    return ACTIVE_STEP_SEQUENCE.filter(function (stepId) {
+      return stepId !== "productFamily";
+    });
+  }
+
+  function getStepOrder(stepId) {
+    return ACTIVE_STEP_SEQUENCE.indexOf(stepId);
+  }
+
+  function getPreviousStepId(stepId) {
+    const currentIndex = getStepOrder(stepId);
+    if (currentIndex <= 0) return null;
+    return ACTIVE_STEP_SEQUENCE[currentIndex - 1] || null;
+  }
+
+  function isStepAvailable(stepId) {
+    if (getStepOrder(stepId) === 0) return true;
+    const previousStepId = getPreviousStepId(stepId);
+    return previousStepId ? isStepComplete(previousStepId) : true;
+  }
+
+  function isStepComplete(stepId) {
+    if (stepId === "designMode") {
+      return hasDesignModeSelection();
+    }
+    const definition = STEP_DEFINITIONS[stepId];
+    return Boolean(definition && state[definition.stateKey]);
+  }
+
+  function getCurrentStepId() {
+    const flowStepIds = getFlowStepIds();
+
+    for (let index = 0; index < flowStepIds.length; index += 1) {
+      const stepId = flowStepIds[index];
+      if (!isStepComplete(stepId)) {
+        return stepId;
+      }
+    }
+
+    return flowStepIds[flowStepIds.length - 1];
+  }
+
+  function getStepVisualState(stepId) {
+    if (!isStepAvailable(stepId)) return "locked";
+    if (getCurrentStepId() === stepId && !isStepComplete(stepId)) return "active";
+    if (isStepComplete(stepId)) return "completed";
+    return "idle";
+  }
+
+  function getStepSummary(stepId) {
+    if (stepId === "material") {
+      const material = getActiveMaterial();
+      return material ? material.name : "Noch nicht gewählt";
+    }
+
+    if (stepId === "product") {
+      const product = getActiveProduct();
+      return product ? product.name : "Noch nicht gewählt";
+    }
+
+    if (stepId === "size") {
+      const size = getActiveSize();
+      return size ? size.label : "Noch nicht gewählt";
+    }
+
+    if (stepId === "designMode") {
+      if (!hasDesignModeSelection()) return "Noch nicht gewählt";
+      return isMotifMode() ? "Motiv" : "Text";
+    }
+
+    return "";
+  }
+
   function renderMaterialOptions() {
     materialOptionsEl.innerHTML = "";
 
@@ -283,16 +691,9 @@
         '<span class="preview-option__meta">' + escapeHtml(material.description) + "</span>";
 
       button.addEventListener("click", function () {
+        if (material.isComingSoon) return;
         if (state.materialId === material.id) return;
-        state.materialId = material.id;
-        state.productId = null;
-        state.sizeId = null;
-        state.designMode = null;
-        closeRequestMenu();
-        renderProductOptions();
-        renderSizeOptions();
-        syncUi();
-        queueRender();
+        applyStepSelection("material", material.id);
       });
 
       materialOptionsEl.appendChild(button);
@@ -302,9 +703,10 @@
   function renderProductOptions() {
     productOptionsEl.innerHTML = "";
 
-    if (!hasMaterialSelection()) return;
+    const productFamily = getActiveProductFamily();
+    if (!productFamily) return;
 
-    getActiveMaterial().products.forEach((product) => {
+    productFamily.products.forEach((product) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "preview-option";
@@ -315,13 +717,7 @@
 
       button.addEventListener("click", function () {
         if (state.productId === product.id) return;
-        state.productId = product.id;
-        state.sizeId = null;
-        state.designMode = null;
-        closeRequestMenu();
-        renderSizeOptions();
-        syncUi();
-        queueRender();
+        applyStepSelection("product", product.id);
       });
 
       productOptionsEl.appendChild(button);
@@ -331,9 +727,10 @@
   function renderSizeOptions() {
     sizeOptionsEl.innerHTML = "";
 
-    if (!hasProductSelection()) return;
+    const product = getActiveProduct();
+    if (!product) return;
 
-    getActiveProduct().sizes.forEach((size) => {
+    product.sizes.forEach((size) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "preview-size-chip";
@@ -342,13 +739,7 @@
 
       button.addEventListener("click", function () {
         if (state.sizeId === size.id) return;
-        state.sizeId = size.id;
-        state.designMode = null;
-        closeRequestMenu();
-        resetImagePlacement(false);
-        resetTextPlacement(false);
-        syncUi();
-        queueRender();
+        applyStepSelection("size", size.id);
       });
 
       sizeOptionsEl.appendChild(button);
@@ -389,78 +780,167 @@
         '<span class="preview-option__meta">' + escapeHtml(template.description) + "</span>";
 
       button.addEventListener("click", function () {
-        state.templateId = template.id;
-        if (!state.uploadedImage) {
-          resetImagePlacement(false);
-        }
-        syncUi();
-        queueRender();
+        selectMotifTemplate(template.id);
       });
 
       templateOptionsEl.appendChild(button);
     });
   }
 
-  function setDesignMode(modeId) {
-    if (!hasSizeSelection()) return;
-    if (!MODE_LIBRARY.some((mode) => mode.id === modeId)) return;
-    state.designMode = modeId;
-    closeRequestMenu();
+  function renderMotifVariantOptions() {
+    motifVariantOptionsEl.innerHTML = "";
+
+    MOTIF_VARIANT_LIBRARY.forEach((variant) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "preview-size-chip";
+      button.setAttribute("data-motif-variant-id", variant.id);
+      button.textContent = variant.name;
+
+      button.addEventListener("click", function () {
+        if (getActiveSideState().motifVariantId === variant.id) return;
+        selectMotifVariant(variant.id);
+        closeMotifVariantOverlay();
+      });
+
+      motifVariantOptionsEl.appendChild(button);
+    });
+  }
+
+  function selectMotifTemplate(templateId) {
+    const template = getTemplateById(templateId);
+    if (!template) return;
+
+    const activeSideState = getActiveSideState();
+    const isPhotoTemplate = template.category === "photo";
+    const isPawTemplate = template.category === "animal-paws";
+
+    if (!isPhotoTemplate) {
+      clearUploadedImage(false);
+    }
+
+    closeMotifVariantOverlay();
+    activeSideState.templateId = template.id;
+    activeSideState.motifVariantId = isPawTemplate ? getDefaultMotifVariantId(template.id) : null;
+
+    if (isPawTemplate && activeSideState.motifVariantId) {
+      const variant = getMotifVariantById(activeSideState.motifVariantId);
+      if (variant) {
+        activeSideState.templateId = variant.id;
+      }
+    }
+
+    resetImagePlacement(false);
     syncUi();
     queueRender();
+
+    if (isPhotoTemplate) {
+      openPhotoUpload();
+    }
+
+    if (isPawTemplate) {
+      openMotifVariantOverlay();
+    }
+  }
+
+  function selectMotifVariant(variantId) {
+    const variant = getMotifVariantById(variantId);
+    if (!variant) return;
+
+    const activeSideState = getActiveSideState();
+    activeSideState.motifVariantId = variant.id;
+    activeSideState.templateId = variant.id;
+    clearUploadedImage(false);
+    resetImagePlacement(false);
+    syncUi();
+    queueRender();
+  }
+
+  function setDesignMode(modeId) {
+    if (!isStepAvailable("designMode")) return;
+    if (!MODE_LIBRARY.some((mode) => mode.id === modeId)) return;
+    if (getActiveSideState().designMode === modeId) return;
+    applyStepSelection("designMode", modeId);
+  }
+
+  function openPhotoUpload() {
+    if (!isMotifMode() || !isPhotoMotifSelected()) return;
+    uploadInput.click();
+  }
+
+  function openMotifVariantOverlay() {
+    if (!isMotifMode() || !isAnimalPawsSelected()) return;
+    state.isMotifVariantOverlayOpen = true;
+    syncUi();
+  }
+
+  function closeMotifVariantOverlay() {
+    if (!state.isMotifVariantOverlayOpen) return;
+    state.isMotifVariantOverlayOpen = false;
+    syncUi();
   }
 
   function onUploadChange(event) {
     const file = event.target.files && event.target.files[0];
     if (!file) return;
 
+    const targetSideState = getActiveSideState();
     const reader = new FileReader();
+
     reader.onload = function () {
       loadImage(String(reader.result))
         .then((image) => {
-          state.uploadedImage = image;
-          state.uploadedFileName = file.name;
-          resetImagePlacement(false);
+          targetSideState.uploadedImage = image;
+          targetSideState.uploadedFileName = file.name;
+          targetSideState.scalePercent = 100;
+          targetSideState.offsetX = 0;
+          targetSideState.offsetY = 0;
           syncUi();
           queueRender();
         })
-        .catch(() => {
-          uploadStatus.textContent = "Die Datei konnte nicht geladen werden. Bitte ein anderes Bild versuchen.";
+        .catch(function () {
+          closeMotifVariantOverlay();
         });
     };
 
     reader.readAsDataURL(file);
   }
 
-  function clearUploadedImage() {
-    state.uploadedImage = null;
-    state.uploadedFileName = "";
+  function clearUploadedImage(shouldRender) {
+    const activeSideState = getActiveSideState();
+    activeSideState.uploadedImage = null;
+    activeSideState.uploadedFileName = "";
     uploadInput.value = "";
     resetImagePlacement(false);
-    syncUi();
-    queueRender();
+
+    if (shouldRender !== false) {
+      syncUi();
+      queueRender();
+    }
   }
 
   function clearText() {
-    state.textValue = "";
+    const activeSideState = getActiveSideState();
+    activeSideState.textValue = "";
     textInput.value = "";
-    state.textScalePercent = 100;
+    activeSideState.textScalePercent = 100;
     textSizeSlider.value = "100";
-    state.textFontId = TEXT_FONT_LIBRARY[0].id;
-    textFontSelect.value = state.textFontId;
-    state.textStyles.bold = false;
-    state.textStyles.italic = false;
-    state.textStyles.underline = false;
-    state.textStyles.strikethrough = false;
+    activeSideState.textFontId = TEXT_FONT_LIBRARY[0].id;
+    textFontSelect.value = activeSideState.textFontId;
+    activeSideState.textStyles.bold = false;
+    activeSideState.textStyles.italic = false;
+    activeSideState.textStyles.underline = false;
+    activeSideState.textStyles.strikethrough = false;
     resetTextPlacement(false);
     syncUi();
     queueRender();
   }
 
   function resetImagePlacement(shouldRender) {
-    state.scalePercent = 100;
-    state.offsetX = 0;
-    state.offsetY = 0;
+    const activeSideState = getActiveSideState();
+    activeSideState.scalePercent = 100;
+    activeSideState.offsetX = 0;
+    activeSideState.offsetY = 0;
     scaleSlider.value = "100";
     clampPlacement();
 
@@ -471,10 +951,11 @@
   }
 
   function resetTextPlacement(shouldRender) {
-    state.textScalePercent = 100;
+    const activeSideState = getActiveSideState();
+    activeSideState.textScalePercent = 100;
     textSizeSlider.value = "100";
-    state.textOffsetX = 0;
-    state.textOffsetY = getDefaultTextOffsetY();
+    activeSideState.textOffsetX = 0;
+    activeSideState.textOffsetY = getDefaultTextOffsetY();
     clampTextPlacement();
 
     if (shouldRender !== false) {
@@ -484,15 +965,17 @@
   }
 
   function centerPlacement() {
-    state.offsetX = 0;
-    state.offsetY = 0;
+    const activeSideState = getActiveSideState();
+    activeSideState.offsetX = 0;
+    activeSideState.offsetY = 0;
     syncUi();
     queueRender();
   }
 
   function centerTextPlacement() {
-    state.textOffsetX = 0;
-    state.textOffsetY = getDefaultTextOffsetY();
+    const activeSideState = getActiveSideState();
+    activeSideState.textOffsetX = 0;
+    activeSideState.textOffsetY = getDefaultTextOffsetY();
     clampTextPlacement();
     syncUi();
     queueRender();
@@ -501,12 +984,13 @@
   function nudgePlacement(direction) {
     if (!isMotifMode() || !hasActiveMotifContent()) return;
 
+    const activeSideState = getActiveSideState();
     const step = 14;
 
-    if (direction === "up") state.offsetY -= step;
-    if (direction === "down") state.offsetY += step;
-    if (direction === "left") state.offsetX -= step;
-    if (direction === "right") state.offsetX += step;
+    if (direction === "up") activeSideState.offsetY -= step;
+    if (direction === "down") activeSideState.offsetY += step;
+    if (direction === "left") activeSideState.offsetX -= step;
+    if (direction === "right") activeSideState.offsetX += step;
 
     clampPlacement();
     syncUi();
@@ -516,12 +1000,13 @@
   function nudgeTextPlacement(direction) {
     if (!isTextMode() || !hasText()) return;
 
+    const activeSideState = getActiveSideState();
     const step = 14;
 
-    if (direction === "up") state.textOffsetY -= step;
-    if (direction === "down") state.textOffsetY += step;
-    if (direction === "left") state.textOffsetX -= step;
-    if (direction === "right") state.textOffsetX += step;
+    if (direction === "up") activeSideState.textOffsetY -= step;
+    if (direction === "down") activeSideState.textOffsetY += step;
+    if (direction === "left") activeSideState.textOffsetX -= step;
+    if (direction === "right") activeSideState.textOffsetX += step;
 
     clampTextPlacement();
     syncUi();
@@ -551,7 +1036,7 @@
 
   function onDocumentClick(event) {
     if (requestMenuPanel.hidden) return;
-    if (event.target === requestMenuToggle || requestMenuToggle.contains(event.target)) return;
+    if (event.target === downloadPreviewButton || downloadPreviewButton.contains(event.target)) return;
     if (requestMenuPanel.contains(event.target)) return;
     closeRequestMenu();
   }
@@ -559,12 +1044,8 @@
   function onDocumentKeydown(event) {
     if (event.key === "Escape") {
       closeRequestMenu();
+      closeMotifVariantOverlay();
     }
-  }
-
-  function toggleRequestMenu() {
-    if (requestMenuToggle.disabled) return;
-    setRequestMenuOpen(requestMenuPanel.hidden);
   }
 
   function closeRequestMenu() {
@@ -573,19 +1054,20 @@
 
   function setRequestMenuOpen(isOpen) {
     requestMenuPanel.hidden = !isOpen;
-    requestMenuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    downloadPreviewButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
   }
 
   function onPointerDown(event) {
     if (!isMotifMode() || !hasActiveMotifContent()) return;
 
+    const activeSideState = getActiveSideState();
     canvas.setPointerCapture(event.pointerId);
     state.isDragging = true;
     state.dragOrigin = {
       x: event.clientX,
       y: event.clientY,
-      offsetX: state.offsetX,
-      offsetY: state.offsetY
+      offsetX: activeSideState.offsetX,
+      offsetY: activeSideState.offsetY
     };
     canvas.classList.add("is-dragging");
   }
@@ -598,9 +1080,10 @@
     const ratioY = canvas.height / rect.height;
     const deltaX = (event.clientX - state.dragOrigin.x) * ratioX;
     const deltaY = (event.clientY - state.dragOrigin.y) * ratioY;
+    const activeSideState = getActiveSideState();
 
-    state.offsetX = state.dragOrigin.offsetX + deltaX;
-    state.offsetY = state.dragOrigin.offsetY + deltaY;
+    activeSideState.offsetX = state.dragOrigin.offsetX + deltaX;
+    activeSideState.offsetY = state.dragOrigin.offsetY + deltaY;
     clampPlacement();
     syncUi();
     queueRender();
@@ -608,6 +1091,7 @@
 
   function onPointerUp(event) {
     if (!state.isDragging) return;
+
     state.isDragging = false;
     state.dragOrigin = null;
     canvas.classList.remove("is-dragging");
@@ -624,29 +1108,32 @@
     const motifMask = getMotifMask();
     if (!image || !motifMask) return;
 
+    const activeSideState = getActiveSideState();
     const drawBox = getMotifDrawBox(image);
     const maxOffsetX = Math.max((drawBox.width - motifMask.width) * 0.52, motifMask.width * 0.2);
     const maxOffsetY = Math.max((drawBox.height - motifMask.height) * 0.52, motifMask.height * 0.2);
 
-    state.offsetX = clamp(state.offsetX, -maxOffsetX, maxOffsetX);
-    state.offsetY = clamp(state.offsetY, -maxOffsetY, maxOffsetY);
+    activeSideState.offsetX = clamp(activeSideState.offsetX, -maxOffsetX, maxOffsetX);
+    activeSideState.offsetY = clamp(activeSideState.offsetY, -maxOffsetY, maxOffsetY);
   }
 
   function clampTextPlacement() {
     const motifMask = getMotifMask();
+    const activeSideState = getActiveSideState();
+
     if (!motifMask) {
-      state.textOffsetX = 0;
-      state.textOffsetY = 0;
+      activeSideState.textOffsetX = 0;
+      activeSideState.textOffsetY = 0;
       return;
     }
 
     if (!hasText()) {
-      state.textOffsetX = 0;
-      state.textOffsetY = getDefaultTextOffsetY();
+      activeSideState.textOffsetX = 0;
+      activeSideState.textOffsetY = getDefaultTextOffsetY();
       return;
     }
 
-    const textLayout = getTextLayout(state.textValue);
+    const textLayout = getTextLayout(activeSideState.textValue);
     const safeHalfWidth = Math.max(motifMask.width * 0.08, (motifMask.width - textLayout.width) / 2);
     const safeHalfHeight = Math.max(motifMask.height * 0.12, (motifMask.height - textLayout.height) / 2);
     const maxOffsetX = Math.max(0, safeHalfWidth);
@@ -654,8 +1141,8 @@
     const minOffsetY = -safeHalfHeight;
     const maxOffsetY = safeHalfHeight;
 
-    state.textOffsetX = clamp(state.textOffsetX, -maxOffsetX, maxOffsetX);
-    state.textOffsetY = clamp(state.textOffsetY, Math.min(defaultOffsetY, minOffsetY), maxOffsetY);
+    activeSideState.textOffsetX = clamp(activeSideState.textOffsetX, -maxOffsetX, maxOffsetX);
+    activeSideState.textOffsetY = clamp(activeSideState.textOffsetY, Math.min(defaultOffsetY, minOffsetY), maxOffsetY);
   }
 
   function syncUi() {
@@ -663,9 +1150,10 @@
     const activeProduct = getActiveProduct();
     const activeSize = getActiveSize();
     const activeTemplate = getActiveTemplate();
-    const readyForDesign = hasSizeSelection();
+    const activeSideState = getActiveSideState();
     const readyForExport = isConfigurationReady();
-    const sourceText = getActiveSourceLabel(activeTemplate);
+
+    syncStepGroups();
 
     if (!hasMaterialSelection()) {
       previewProductName.textContent = "Noch nichts ausgewählt";
@@ -681,43 +1169,73 @@
       previewModeChip.textContent = "Schritt 3";
     } else if (!hasDesignModeSelection()) {
       previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
-      previewProductHint.textContent = "Wähle jetzt, ob du mit Motiv oder mit Text arbeiten möchtest.";
+      previewProductHint.textContent = isBackSideEnabled()
+        ? "Die Vorderseite bleibt der Standard. Die Rückseite ist jetzt als Zusatzseite zugeschaltet."
+        : "Arbeite jetzt zuerst die Vorderseite durch. Die optionale Rückseite erscheint erst ganz unten nach der Vorderseiten-Konfiguration.";
       previewModeChip.textContent = "Schritt 4";
     } else {
       previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
-      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · Motivwirkung frei bis nah an den Rand.";
-      previewModeChip.textContent = isMotifMode() ? "Motivmodus" : "Textmodus";
+      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · aktive Seite: " + getSideLabel(state.activeSide) + ".";
+      previewModeChip.textContent = getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motivmodus" : "Textmodus");
     }
 
+    previewActiveSideLabel.textContent = getSideLabel(state.activeSide);
     previewModeLabel.textContent = hasDesignModeSelection() ? (isMotifMode() ? "Motiv" : "Text") : "Noch offen";
-    previewSourceLabel.textContent = sourceText;
-    scaleValueLabel.textContent = state.scalePercent + "%";
-    textSizeValueLabel.textContent = state.textScalePercent + "%";
-    textCharacterCount.textContent = state.textValue.length + " / " + MAX_TEXT_LENGTH;
-    textInput.value = state.textValue;
-    textFontSelect.value = state.textFontId;
-    uploadStatus.textContent = state.uploadedImage
-      ? "Eigene Datei aktiv: " + state.uploadedFileName + ". Ziehen und Größe anpassen, um die Wirkung grob zu prüfen."
-      : "Keine eigene Datei geladen. Aktuell wird die gewählte Vorlage gezeigt.";
+    previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
+
+    scaleSlider.value = String(activeSideState.scalePercent);
+    textSizeSlider.value = String(activeSideState.textScalePercent);
+    scaleValueLabel.textContent = activeSideState.scalePercent + "%";
+    textSizeValueLabel.textContent = activeSideState.textScalePercent + "%";
+    textCharacterCount.textContent = activeSideState.textValue.length + " / " + MAX_TEXT_LENGTH;
+    textInput.value = activeSideState.textValue;
+    textFontSelect.value = activeSideState.textFontId;
 
     requestWhatsappLink.href = readyForExport ? buildWhatsappUrl() : "#";
     requestEmailLink.href = readyForExport ? buildMailtoUrl() : "#";
     downloadPreviewButton.disabled = !readyForExport;
-    requestMenuToggle.disabled = !readyForExport;
     if (!readyForExport) {
       closeRequestMenu();
     }
 
-    setSectionVisibility(productGroup, hasMaterialSelection());
-    setSectionVisibility(sizeGroup, hasProductSelection());
-    setSectionVisibility(designModeGroup, readyForDesign);
+    const canShowBackSideSection = hasSizeSelection() && (isFrontConfigured() || isBackSideEnabled());
+    sideSwitchGroup.hidden = !canShowBackSideSection;
+    sideSwitchGroup.setAttribute("aria-hidden", canShowBackSideSection ? "false" : "true");
+    sideTabs.hidden = !isBackSideEnabled();
+    enableBackSideButton.hidden = isBackSideEnabled();
+    sideSwitchStatus.textContent = isBackSideEnabled()
+      ? (state.activeSide === "back" ? "Rückseite wird jetzt als Zusatzseite bearbeitet" : "Vorderseite fertig, Rückseite ist zusätzlich freigeschaltet")
+      : "Vorderseite fertig. Rückseite ist als Zusatzoption verfügbar";
+    sideSwitchHint.textContent = isBackSideEnabled()
+      ? "Jetzt kannst du zwischen Vorderseite und Rückseite umschalten. Beide Seiten behalten ihren eigenen Zustand."
+      : "Wenn du zusätzlich eine Rückseite gestalten möchtest, kannst du sie hier unten jetzt freischalten.";
+
+    const surchargeHint = getBackSideSurchargeHint();
+    if (!isBackSideEnabled()) {
+      sideSwitchHint.textContent = "Wenn du zusätzlich eine Rückseite gestalten möchtest, kannst du sie hier unten jetzt freischalten." + (surchargeHint ? " " + surchargeHint : "");
+    } else if (surchargeHint) {
+      sideSwitchHint.textContent += " " + surchargeHint;
+    }
+
+    sideFrontButton.classList.toggle("is-active", state.activeSide === "front");
+    sideBackButton.classList.toggle("is-active", state.activeSide === "back");
+    sideFrontButton.setAttribute("aria-selected", state.activeSide === "front" ? "true" : "false");
+    sideBackButton.setAttribute("aria-selected", state.activeSide === "back" ? "true" : "false");
+
     setSectionVisibility(motifTemplateGroup, isMotifMode());
-    setSectionVisibility(motifUploadGroup, isMotifMode());
     setSectionVisibility(motifAdjustGroup, isMotifMode() && hasActiveMotifContent());
     setSectionVisibility(textGroup, isTextMode());
 
+    if (!isMotifMode() || !isAnimalPawsSelected()) {
+      state.isMotifVariantOverlayOpen = false;
+    }
+    motifVariantOverlay.hidden = !state.isMotifVariantOverlayOpen;
+
     materialOptionsEl.querySelectorAll("[data-material-id]").forEach((button) => {
+      const material = getMaterialById(button.getAttribute("data-material-id"));
       button.classList.toggle("is-active", button.getAttribute("data-material-id") === state.materialId);
+      button.classList.toggle("is-disabled", material.isComingSoon === true);
+      button.disabled = material.isComingSoon === true;
     });
 
     productOptionsEl.querySelectorAll("[data-product-id]").forEach((button) => {
@@ -729,18 +1247,43 @@
     });
 
     designModeOptionsEl.querySelectorAll("[data-design-mode]").forEach((button) => {
-      button.classList.toggle("is-active", button.getAttribute("data-design-mode") === state.designMode);
+      button.classList.toggle("is-active", button.getAttribute("data-design-mode") === activeSideState.designMode);
     });
 
     templateOptionsEl.querySelectorAll("[data-template-id]").forEach((button) => {
-      button.classList.toggle("is-active", button.getAttribute("data-template-id") === state.templateId);
+      const template = getTemplateById(button.getAttribute("data-template-id"));
+      const activeTopLevelId = getActiveTopLevelTemplateId();
+      button.classList.toggle("is-active", template && template.id === activeTopLevelId);
+    });
+
+    motifVariantOptionsEl.querySelectorAll("[data-motif-variant-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-motif-variant-id") === activeSideState.motifVariantId);
     });
 
     document.querySelectorAll("[data-text-style]").forEach((button) => {
       const styleName = button.getAttribute("data-text-style");
-      const isActive = Boolean(state.textStyles[styleName]);
+      const isActive = Boolean(activeSideState.textStyles[styleName]);
       button.classList.toggle("is-active", isActive);
       button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  }
+
+  function syncStepGroups() {
+    getFlowStepIds().forEach(function (stepId) {
+      const definition = STEP_DEFINITIONS[stepId];
+      if (!definition.groupEl) return;
+
+      const isVisible = stepId === "material" ? true : isStepAvailable(stepId);
+      const visualState = getStepVisualState(stepId);
+      const summary = getStepSummary(stepId);
+      const titleRow = definition.groupEl.querySelector(".preview-control-title-row");
+
+      definition.groupEl.hidden = !isVisible;
+      definition.groupEl.setAttribute("data-step-state", visualState);
+      definition.groupEl.setAttribute("data-step-id", stepId);
+      if (titleRow) {
+        titleRow.setAttribute("data-step-summary", summary);
+      }
     });
   }
 
@@ -751,16 +1294,20 @@
     if (!hasDesignModeSelection()) return "Als Nächstes: Gestaltungsart wählen";
 
     if (isMotifMode()) {
-      if (state.uploadedImage) {
-        return "Eigene Datei: " + state.uploadedFileName;
+      if (getActiveSideState().uploadedImage) {
+        return "Foto / Porträt: " + getActiveSideState().uploadedFileName;
+      }
+      if (isAnimalPawsSelected()) {
+        const variant = getActiveMotifVariant();
+        return variant ? "Tierpfoten: " + variant.name : "Tierpfoten";
       }
       if (activeTemplate) {
-        return "Vorlage: " + activeTemplate.name;
+        return "Motivart: " + activeTemplate.name;
       }
       return "Noch kein Motiv gewählt";
     }
 
-    return hasText() ? "Text: " + state.textValue : "Noch kein Text eingegeben";
+    return hasText() ? "Text: " + getActiveSideState().textValue : "Noch kein Text eingegeben";
   }
 
   function setSectionVisibility(section, isVisible) {
@@ -768,6 +1315,36 @@
     section.querySelectorAll("input, button, select, textarea").forEach((element) => {
       element.disabled = !isVisible;
     });
+  }
+
+  function scrollToBackSideConfiguration() {
+    const targetSection = getBackSideScrollTarget();
+    if (!targetSection) return;
+
+    targetSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  function getBackSideScrollTarget() {
+    if (!state.backSideEnabled) {
+      return null;
+    }
+
+    if (!hasDesignModeSelection()) {
+      return designModeGroup;
+    }
+
+    if (isMotifMode()) {
+      return motifTemplateGroup.hidden ? designModeGroup : motifTemplateGroup;
+    }
+
+    if (isTextMode()) {
+      return textGroup.hidden ? designModeGroup : textGroup;
+    }
+
+    return designModeGroup;
   }
 
   function queueRender() {
@@ -807,7 +1384,12 @@
     drawMotifMask(size);
 
     if (!hasDesignModeSelection()) {
-      drawMotifPrompt("4. Gestaltungsart wählen", "Danach wird der passende Bearbeitungsbereich freigeschaltet.");
+      drawMotifPrompt(
+        state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "4. Gestaltungsart wählen",
+        state.activeSide === "back" && isBackSideEnabled()
+          ? "Die Rückseite ist optional aktiviert. Du kannst sie leer lassen oder separat gestalten."
+          : "Die Vorderseite ist der Standard. Danach wird der passende Bearbeitungsbereich freigeschaltet."
+      );
       drawProductHighlights(size);
       drawPreviewLabels(material, product, size);
       return;
@@ -818,7 +1400,7 @@
       if (image) {
         drawMotif(size, image);
       } else {
-        drawMotifPrompt("Vorlage wählen oder Bild laden", "Wähle eine Vorlage oder lade eine eigene Datei hoch.");
+        drawMotifPrompt("Motivart wählen", "Wähle Monogramm, Foto / Porträt, Tierpfoten oder Emblem.");
       }
     }
 
@@ -845,8 +1427,8 @@
     ctx.save();
     ctx.strokeStyle = "rgba(255,255,255,0.03)";
     ctx.lineWidth = 1;
-    for (let i = 0; i < 18; i += 1) {
-      const y = 86 + i * 58;
+    for (let index = 0; index < 18; index += 1) {
+      const y = 86 + index * 58;
       ctx.beginPath();
       ctx.moveTo(40, y);
       ctx.lineTo(1160, y);
@@ -937,8 +1519,8 @@
 
     ctx.strokeStyle = "rgba(18,18,22,0.08)";
     ctx.lineWidth = 1;
-    for (let i = 0; i < 40; i += 1) {
-      const y = centerY - radius + i * ((radius * 2) / 40);
+    for (let index = 0; index < 40; index += 1) {
+      const y = centerY - radius + index * ((radius * 2) / 40);
       ctx.beginPath();
       ctx.moveTo(centerX - radius - 16, y);
       ctx.lineTo(centerX + radius + 16, y - 10);
@@ -966,14 +1548,7 @@
     ctx.fill("evenodd");
 
     ctx.beginPath();
-    drawRoundedRectPath(
-      ctx,
-      x - 34,
-      y + size.ringInner - 4,
-      68,
-      size.lift,
-      34
-    );
+    drawRoundedRectPath(ctx, x - 34, y + size.ringInner - 4, 68, size.lift, 34);
     ctx.fill();
     ctx.restore();
   }
@@ -998,8 +1573,9 @@
   function drawMotif(size, image) {
     const motifMask = getMotifMask();
     const drawBox = getMotifDrawBox(image);
-    const x = motifMask.x + motifMask.width / 2 - drawBox.width / 2 + state.offsetX;
-    const y = motifMask.y + motifMask.height / 2 - drawBox.height / 2 + state.offsetY;
+    const activeSideState = getActiveSideState();
+    const x = motifMask.x + motifMask.width / 2 - drawBox.width / 2 + activeSideState.offsetX;
+    const y = motifMask.y + motifMask.height / 2 - drawBox.height / 2 + activeSideState.offsetY;
 
     ctx.save();
     ctx.beginPath();
@@ -1027,8 +1603,8 @@
     ctx.globalCompositeOperation = "source-over";
     ctx.strokeStyle = "rgba(0, 0, 0, 0.12)";
     ctx.lineWidth = 1;
-    for (let i = 0; i < 18; i += 1) {
-      const lineY = motifMask.y + 8 + i * (motifMask.height / 18);
+    for (let index = 0; index < 18; index += 1) {
+      const lineY = motifMask.y + 8 + index * (motifMask.height / 18);
       ctx.beginPath();
       ctx.moveTo(motifMask.x - 18, lineY);
       ctx.lineTo(motifMask.x + motifMask.width + 18, lineY - 10);
@@ -1040,9 +1616,10 @@
 
   function drawTextOverlay(size) {
     const motifMask = getMotifMask();
-    const textLayout = getTextLayout(state.textValue);
-    const x = motifMask.x + motifMask.width / 2 + state.textOffsetX;
-    const y = motifMask.y + motifMask.height / 2 + state.textOffsetY;
+    const activeSideState = getActiveSideState();
+    const textLayout = getTextLayout(activeSideState.textValue);
+    const x = motifMask.x + motifMask.width / 2 + activeSideState.textOffsetX;
+    const y = motifMask.y + motifMask.height / 2 + activeSideState.textOffsetY;
     const decorationLineWidth = Math.max(3, textLayout.fontSize * 0.06);
 
     ctx.save();
@@ -1057,17 +1634,17 @@
     ctx.strokeStyle = "rgba(250, 246, 242, 0.78)";
     ctx.lineWidth = Math.max(6, textLayout.fontSize * 0.11);
     ctx.globalAlpha = 0.92;
-    ctx.strokeText(state.textValue, x, y);
+    ctx.strokeText(activeSideState.textValue, x, y);
 
     ctx.fillStyle = "rgba(22, 24, 28, 0.84)";
-    ctx.fillText(state.textValue, x, y);
+    ctx.fillText(activeSideState.textValue, x, y);
 
-    if (state.textStyles.underline || state.textStyles.strikethrough) {
+    if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
       ctx.strokeStyle = "rgba(22, 24, 28, 0.84)";
       ctx.lineWidth = decorationLineWidth;
       ctx.lineCap = "round";
 
-      if (state.textStyles.underline) {
+      if (activeSideState.textStyles.underline) {
         const underlineY = y + textLayout.height * 0.34;
         ctx.beginPath();
         ctx.moveTo(x - textLayout.width / 2, underlineY);
@@ -1075,7 +1652,7 @@
         ctx.stroke();
       }
 
-      if (state.textStyles.strikethrough) {
+      if (activeSideState.textStyles.strikethrough) {
         const strikeY = y - textLayout.height * 0.04;
         ctx.beginPath();
         ctx.moveTo(x - textLayout.width / 2, strikeY);
@@ -1155,6 +1732,7 @@
 
   function downloadPreview() {
     if (!isConfigurationReady()) return;
+
     closeRequestMenu();
     const exportCanvas = createExportCanvas();
     const filename = buildExportFilename();
@@ -1164,11 +1742,13 @@
         if (!blob) return;
         const url = URL.createObjectURL(blob);
         triggerDownload(url, filename, true);
+        setRequestMenuOpen(true);
       }, "image/png");
       return;
     }
 
     triggerDownload(exportCanvas.toDataURL("image/png"), filename, false);
+    setRequestMenuOpen(true);
   }
 
   function triggerDownload(url, filename, revokeAfter) {
@@ -1187,151 +1767,193 @@
   }
 
   function createExportCanvas() {
+    const sideIds = getEnabledSideIds();
+    const capturedSides = captureExportPreviews(sideIds);
     const exportCanvas = document.createElement("canvas");
     const exportCtx = exportCanvas.getContext("2d");
-    const infoHeight = 332;
+    const width = 1200;
+    const headerHeight = 170;
+    const footerHeight = 140;
+    const outerPadding = 48;
+    const cardGap = 28;
+    const cardPadding = 24;
+    const previewSize = Math.min(920, width - outerPadding * 2 - cardPadding * 2);
+    const summaryHeight = 96;
+    const cardHeight = cardPadding + 58 + previewSize + 24 + summaryHeight + 24;
+    const totalHeight = headerHeight + sideIds.length * cardHeight + Math.max(0, sideIds.length - 1) * cardGap + footerHeight;
 
-    exportCanvas.width = canvas.width;
-    exportCanvas.height = canvas.height + infoHeight;
+    exportCanvas.width = width;
+    exportCanvas.height = totalHeight;
 
-    exportCtx.fillStyle = "#09080b";
-    exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-    exportCtx.drawImage(canvas, 0, 0);
+    drawExportBackground(exportCtx, width, totalHeight);
+    drawExportHeader(exportCtx, width, headerHeight);
 
-    drawExportInfoPanel(exportCtx, canvas.height, exportCanvas.width, infoHeight);
+    sideIds.forEach(function (sideId, index) {
+      const cardY = headerHeight + index * (cardHeight + cardGap);
+      drawExportSideCard(exportCtx, {
+        x: outerPadding,
+        y: cardY,
+        width: width - outerPadding * 2,
+        height: cardHeight,
+        previewSize: previewSize,
+        cardPadding: cardPadding,
+        sideId: sideId,
+        previewCanvas: capturedSides[sideId]
+      });
+    });
 
+    drawExportFooter(exportCtx, totalHeight - footerHeight, width, footerHeight);
     return exportCanvas;
   }
 
-  function drawExportInfoPanel(targetCtx, startY, width, height) {
-    const primaryFields = [
-      { label: "Material", value: getActiveMaterial().name },
-      { label: "Produkt", value: getActiveProduct().name },
-      { label: "Größe", value: getActiveSize().label },
-      { label: "Gestaltungsart", value: isMotifMode() ? "Motiv" : "Text" }
-    ];
-    const modeFields = isMotifMode() ? getMotifExportFields() : getTextExportFields();
-    const topPadding = 34;
-    const panelY = startY;
-    const leftX = 52;
-    const rightX = width / 2 + 14;
-    const columnWidth = width / 2 - 66;
+  function captureExportPreviews(sideIds) {
+    const previousSide = state.activeSide;
+    const previews = {};
+
+    sideIds.forEach(function (sideId) {
+      state.activeSide = sideId;
+      renderPreview();
+
+      const snapshot = document.createElement("canvas");
+      snapshot.width = canvas.width;
+      snapshot.height = canvas.height;
+      snapshot.getContext("2d").drawImage(canvas, 0, 0);
+      previews[sideId] = snapshot;
+    });
+
+    state.activeSide = previousSide;
+    syncUi();
+    renderPreview();
+
+    return previews;
+  }
+
+  function drawExportBackground(targetCtx, width, height) {
+    const gradient = targetCtx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, "#0f0c11");
+    gradient.addColorStop(1, "#07060a");
+    targetCtx.fillStyle = gradient;
+    targetCtx.fillRect(0, 0, width, height);
 
     targetCtx.save();
+    targetCtx.strokeStyle = "rgba(255,255,255,0.03)";
+    targetCtx.lineWidth = 1;
+    for (let index = 0; index < Math.ceil(height / 64); index += 1) {
+      const y = 40 + index * 64;
+      targetCtx.beginPath();
+      targetCtx.moveTo(40, y);
+      targetCtx.lineTo(width - 40, y);
+      targetCtx.stroke();
+    }
+    targetCtx.restore();
+  }
 
-    const panelGradient = targetCtx.createLinearGradient(0, panelY, 0, panelY + height);
-    panelGradient.addColorStop(0, "#111015");
-    panelGradient.addColorStop(1, "#0b0a0e");
-    targetCtx.fillStyle = panelGradient;
-    targetCtx.fillRect(0, panelY, width, height);
+  function drawExportHeader(targetCtx, width, height) {
+    const product = getActiveProduct();
+    const size = getActiveSize();
+    const material = getActiveMaterial();
 
-    targetCtx.fillStyle = "rgba(255,255,255,0.06)";
-    targetCtx.fillRect(0, panelY, width, 1);
-
-    targetCtx.fillStyle = "rgba(255,255,255,0.03)";
-    targetCtx.fillRect(width / 2, panelY + 26, 1, height - 52);
-
+    targetCtx.save();
     targetCtx.fillStyle = "rgba(219,16,33,0.18)";
-    targetCtx.fillRect(0, panelY, width, 8);
+    targetCtx.fillRect(0, 0, width, 8);
 
     targetCtx.fillStyle = "#f5f3f1";
-    targetCtx.font = "700 34px system-ui, sans-serif";
+    targetCtx.font = "700 38px system-ui, sans-serif";
     targetCtx.textAlign = "left";
-    targetCtx.fillText("Luderbein Vorschau", leftX, panelY + topPadding);
+    targetCtx.fillText("Luderbein Vorschau", 52, 68);
 
     targetCtx.fillStyle = "rgba(210,207,206,0.74)";
-    targetCtx.font = "500 20px system-ui, sans-serif";
-    targetCtx.fillText("Unverbindliche Orientierung mit den aktuell gewählten Daten", leftX, panelY + topPadding + 34);
+    targetCtx.font = "500 22px system-ui, sans-serif";
+    targetCtx.fillText(material.name + " · " + product.name + " · " + size.label, 52, 108);
+    targetCtx.fillText(
+      isBackSideEnabled()
+        ? "Export mit Vorderseite und zugeschalteter Rückseite"
+        : "Export der aktiven Standardseite Vorderseite",
+      52,
+      140
+    );
+    targetCtx.restore();
+  }
 
-    drawExportFieldColumn(targetCtx, primaryFields, leftX, panelY + 104, columnWidth);
-    drawExportFieldColumn(targetCtx, modeFields, rightX, panelY + 104, columnWidth);
+  function drawExportSideCard(targetCtx, config) {
+    const sideLabel = getSideLabel(config.sideId);
+    const sideState = getSideState(config.sideId);
+    const cardRadius = 26;
+    const previewX = config.x + config.cardPadding;
+    const previewY = config.y + config.cardPadding + 58;
+    const summaryY = previewY + config.previewSize + 36;
+    const modeLabel = sideState.designMode ? (sideState.designMode === "motif" ? "Motiv" : "Text") : "Leer";
 
-    targetCtx.fillStyle = "rgba(210,207,206,0.70)";
+    targetCtx.save();
+    drawRoundedRect(targetCtx, config.x, config.y, config.width, config.height, cardRadius);
+    targetCtx.fillStyle = "rgba(19,16,22,0.92)";
+    targetCtx.fill();
+    targetCtx.strokeStyle = "rgba(255,255,255,0.08)";
+    targetCtx.lineWidth = 2;
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = "#f5f3f1";
+    targetCtx.font = "700 28px system-ui, sans-serif";
+    targetCtx.textAlign = "left";
+    targetCtx.fillText(sideLabel, config.x + config.cardPadding, config.y + config.cardPadding + 6);
+
+    targetCtx.fillStyle = "rgba(210,207,206,0.68)";
     targetCtx.font = "500 18px system-ui, sans-serif";
-    targetCtx.fillText("Finale technische Ausarbeitung und Produktionsdetails erfolgen vor Fertigung durch Luderbein.", leftX, panelY + height - 34);
+    targetCtx.fillText(modeLabel, config.x + config.cardPadding, config.y + config.cardPadding + 34);
+
+    targetCtx.drawImage(config.previewCanvas, previewX, previewY, config.previewSize, config.previewSize);
+
+    targetCtx.fillStyle = "rgba(255,255,255,0.92)";
+    targetCtx.font = "600 20px system-ui, sans-serif";
+    targetCtx.fillText("Inhalt", config.x + config.cardPadding, summaryY);
+
+    targetCtx.fillStyle = "rgba(210,207,206,0.72)";
+    targetCtx.font = "500 18px system-ui, sans-serif";
+    wrapTextToCanvas(targetCtx, getSideSummary(config.sideId), config.x + config.cardPadding, summaryY + 30, config.width - config.cardPadding * 2, 26, 2);
+    targetCtx.restore();
+  }
+
+  function drawExportFooter(targetCtx, startY, width, height) {
+    targetCtx.save();
+    targetCtx.fillStyle = "rgba(255,255,255,0.05)";
+    targetCtx.fillRect(0, startY, width, 1);
+
+    targetCtx.fillStyle = "rgba(210,207,206,0.72)";
+    targetCtx.font = "500 18px system-ui, sans-serif";
+    targetCtx.textAlign = "left";
+    targetCtx.fillText("Diese Vorschau ist unverbindlich. Finale Gravuraufbereitung und technische Ausarbeitung erfolgen vor Fertigung durch Luderbein.", 52, startY + 46);
+
+    if (isBackSideEnabled()) {
+      targetCtx.fillText("Die Rückseite wurde als Zusatzoption aktiviert und ist hier gemeinsam mit der Vorderseite dargestellt.", 52, startY + 78);
+    }
 
     targetCtx.restore();
   }
 
-  function drawExportFieldColumn(targetCtx, fields, x, startY, maxWidth) {
-    let y = startY;
-
-    fields.forEach((field) => {
-      const label = field.label + ":";
-      const valueLines = wrapText(targetCtx, field.value || "—", maxWidth, "600 22px system-ui, sans-serif");
-
-      targetCtx.fillStyle = "rgba(210,207,206,0.62)";
-      targetCtx.font = "600 16px system-ui, sans-serif";
-      targetCtx.fillText(label, x, y);
-      y += 24;
-
-      targetCtx.fillStyle = "#f5f3f1";
-      targetCtx.font = "600 22px system-ui, sans-serif";
-      valueLines.forEach((line) => {
-        targetCtx.fillText(line, x, y);
-        y += 30;
-      });
-
-      y += 14;
-    });
-  }
-
-  function wrapText(targetCtx, text, maxWidth, font) {
-    const normalized = String(text || "—").trim();
-    const words = normalized.split(/\s+/);
+  function wrapTextToCanvas(targetCtx, text, x, startY, maxWidth, lineHeight, maxLines) {
+    const words = String(text).trim().split(/\s+/);
     const lines = [];
     let currentLine = "";
+    let y = startY;
 
-    targetCtx.save();
-    targetCtx.font = font;
-
-    words.forEach((word) => {
-      const candidate = currentLine ? currentLine + " " + word : word;
-      if (targetCtx.measureText(candidate).width <= maxWidth || !currentLine) {
-        currentLine = candidate;
-      } else {
+    words.forEach(function (word) {
+      const next = currentLine ? currentLine + " " + word : word;
+      if (targetCtx.measureText(next).width <= maxWidth || !currentLine) {
+        currentLine = next;
+      } else if (lines.length < maxLines) {
         lines.push(currentLine);
         currentLine = word;
       }
     });
 
-    if (currentLine) {
+    if (currentLine && lines.length < maxLines) {
       lines.push(currentLine);
     }
 
-    targetCtx.restore();
-
-    return lines.slice(0, 3).map((line, index, allLines) => {
-      if (index !== 2 || allLines.length <= 3) return line;
-      return truncateToWidth(targetCtx, line, maxWidth, font);
+    lines.forEach(function (line) {
+      targetCtx.fillText(line, x, y);
+      y += lineHeight;
     });
-  }
-
-  function truncateToWidth(targetCtx, text, maxWidth, font) {
-    let output = text;
-
-    targetCtx.save();
-    targetCtx.font = font;
-
-    while (output.length > 1 && targetCtx.measureText(output + " …").width > maxWidth) {
-      output = output.slice(0, -1).trimEnd();
-    }
-
-    targetCtx.restore();
-    return output + " …";
-  }
-
-  function getMotifExportFields() {
-    return [
-      {
-        label: "Motivquelle",
-        value: state.uploadedImage ? "Eigene Datei" : (getActiveTemplate() ? getActiveTemplate().name : "Noch kein Motiv gewählt")
-      },
-      {
-        label: "Datei",
-        value: state.uploadedImage ? state.uploadedFileName : (getActiveTemplate() ? "Vorlage aus dem Vorschau-Tool" : "—")
-      }
-    ];
   }
 
   function buildWhatsappUrl() {
@@ -1347,6 +1969,7 @@
   }
 
   function buildRequestMessage() {
+    const pricingHint = getPricingHint();
     const lines = [
       "Hallo Luderbein,",
       "",
@@ -1355,19 +1978,12 @@
       "Material: " + getActiveMaterial().name,
       "Produkt: " + getActiveProduct().name,
       "Größe: " + getActiveSize().label,
-      "Gestaltungsart: " + (isMotifMode() ? "Motiv" : "Text")
+      "Vorderseite: " + getSideSummary("front"),
+      "Rückseite: " + getSideSummary("back")
     ];
 
-    if (isMotifMode()) {
-      lines.push("Motivquelle: " + (state.uploadedImage ? "Eigene Datei verwendet" : (getActiveTemplate() ? "Vorlage " + getActiveTemplate().name : "Noch kein Motiv gewählt")));
-      if (state.uploadedImage) {
-        lines.push("Datei: " + state.uploadedFileName);
-      }
-    } else {
-      lines.push("Textinhalt: " + (hasText() ? state.textValue : "Noch kein Text eingegeben"));
-      lines.push("Schriftart: " + getActiveTextFont().label);
-      lines.push("Textstile: " + (getActiveTextStyleLabels().join(", ") || "Standard"));
-      lines.push("Textgröße: " + state.textScalePercent + "%");
+    if (pricingHint) {
+      lines.push("Preisstruktur: " + pricingHint);
     }
 
     lines.push("");
@@ -1376,50 +1992,70 @@
     return lines.join("\n");
   }
 
-  function getTextExportFields() {
-    return [
-      {
-        label: "Textinhalt",
-        value: hasText() ? state.textValue : "Kein Text eingegeben"
-      },
-      {
-        label: "Schriftart",
-        value: getActiveTextFont().label
-      },
-      {
-        label: "Textstil",
-        value: getActiveTextStyleLabels().join(", ") || "Standard"
-      }
-    ];
-  }
+  function getPricingHint() {
+    const priceParts = [getActiveMaterial(), getActiveProductFamily(), getActiveProduct(), getActiveSize()]
+      .filter(Boolean)
+      .map(function (entry) {
+        return entry.pricing || null;
+      })
+      .filter(Boolean);
 
-  function getActiveTextStyleLabels() {
-    const labels = [];
+    const totalFrom = priceParts.reduce(function (sum, pricing) {
+      return sum + (pricing.fromCents || 0);
+    }, 0);
+    const totalSurcharge = priceParts.reduce(function (sum, pricing) {
+      return sum + (pricing.surchargeCents || 0);
+    }, 0);
 
-    if (state.textStyles.bold) labels.push("Fett");
-    if (state.textStyles.italic) labels.push("Kursiv");
-    if (state.textStyles.underline) labels.push("Unterstrichen");
-    if (state.textStyles.strikethrough) labels.push("Durchgestrichen");
+    if (totalFrom <= 0 && totalSurcharge <= 0) {
+      return "";
+    }
 
-    return labels;
+    const parts = [];
+    if (totalFrom > 0) {
+      parts.push("ab " + formatEuro(totalFrom));
+    }
+    if (totalSurcharge > 0) {
+      parts.push("Aufpreis " + formatEuro(totalSurcharge));
+    }
+
+    return parts.join(" · ");
   }
 
   function buildExportFilename() {
+    const activeSideState = getActiveSideState();
     const parts = [
       "luderbein-vorschau",
       slugify(getActiveMaterial().name),
       slugify(getActiveProduct().name),
-      slugify(getActiveSize().label),
-      isMotifMode() ? "motiv" : "text"
+      slugify(getActiveSize().label)
     ];
 
+    if (isBackSideEnabled()) {
+      parts.push("mit-rueckseite");
+    } else {
+      parts.push("vorderseite");
+    }
+
     if (isMotifMode()) {
-      parts.push(state.uploadedImage ? "eigene-datei" : (getActiveTemplate() ? slugify(getActiveTemplate().name) : "ohne-motiv"));
-    } else if (hasText()) {
-      parts.push(slugify(state.textValue).slice(0, 28));
+      parts.push("motiv");
+      if (activeSideState.uploadedImage) {
+        parts.push("eigene-datei");
+      } else if (getActiveMotifVariant()) {
+        parts.push(slugify(getActiveMotifVariant().name));
+      } else if (getActiveTemplate()) {
+        parts.push(slugify(getActiveTemplate().name));
+      }
+    } else if (isTextMode() && hasText()) {
+      parts.push("text");
+      parts.push(slugify(activeSideState.textValue).slice(0, 28));
     }
 
     return parts.filter(Boolean).join("-") + ".png";
+  }
+
+  function getBackSideSurchargeHint() {
+    return BACK_SIDE_OPTION.surchargeLabel || "";
   }
 
   function hasMaterialSelection() {
@@ -1434,26 +2070,167 @@
     return Boolean(state.sizeId);
   }
 
-  function hasDesignModeSelection() {
-    return Boolean(state.designMode);
+  function hasDesignModeSelection(sideId) {
+    if (sideId === "back" && !isBackSideEnabled()) return false;
+    return Boolean(getSideState(sideId).designMode);
   }
 
   function isConfigurationReady() {
-    return hasMaterialSelection() && hasProductSelection() && hasSizeSelection() && hasDesignModeSelection();
+    return hasMaterialSelection() && hasProductSelection() && hasSizeSelection() && hasDesignModeSelection("front");
   }
 
-  function hasActiveMotifContent() {
-    return Boolean(state.uploadedImage || state.templateId);
+  function hasActiveMotifContent(sideId) {
+    const sideState = getSideState(sideId);
+    return Boolean(sideState.uploadedImage || sideState.templateId);
+  }
+
+  function hasText(sideId) {
+    return getSideState(sideId).textValue.length > 0;
+  }
+
+  function isMotifMode(sideId) {
+    return getSideState(sideId).designMode === "motif";
+  }
+
+  function isTextMode(sideId) {
+    return getSideState(sideId).designMode === "text";
+  }
+
+  function getSideSummary(sideId) {
+    if (sideId === "back" && !isBackSideEnabled()) {
+      return "nicht aktiviert";
+    }
+
+    const sideState = getSideState(sideId);
+    const sideTemplate = getActiveTemplate(sideId);
+    const sideVariant = getActiveMotifVariant(sideId);
+
+    if (!sideState.designMode) {
+      return sideId === "back" ? "aktiviert, aktuell leer" : "noch nicht gestaltet";
+    }
+
+    if (sideState.designMode === "motif") {
+      if (sideState.uploadedImage) {
+        return "Motiv · Foto / Porträt · " + sideState.uploadedFileName;
+      }
+      if (sideTemplate) {
+        return "Motiv · " + getMotifSourceSummary(sideTemplate, sideVariant, sideId);
+      }
+      return "Motiv · noch keine Auswahl";
+    }
+
+    if (!sideState.textValue) {
+      return "Text · leer";
+    }
+
+    return "Text · " + sideState.textValue;
+  }
+
+  function getMotifSourceSummary(activeTemplate, activeMotifVariant, sideId) {
+    const sideState = getSideState(sideId);
+
+    if (sideState.uploadedImage) {
+      return "Foto / Porträt mit eigener Datei";
+    }
+
+    if (!activeTemplate) {
+      return "Noch kein Motiv gewählt";
+    }
+
+    if (activeTemplate.category === "animal-paws") {
+      return activeMotifVariant ? "Tierpfoten · " + activeMotifVariant.name : "Tierpfoten";
+    }
+
+    return activeTemplate.name;
+  }
+
+  function getTemplateById(templateId) {
+    return TEMPLATE_LIBRARY.find((template) => template.id === templateId) || null;
+  }
+
+  function getMotifVariantById(variantId) {
+    return MOTIF_VARIANT_LIBRARY.find((variant) => variant.id === variantId) || null;
+  }
+
+  function getDefaultMotifVariantId(parentId) {
+    const firstVariant = MOTIF_VARIANT_LIBRARY.find((variant) => variant.parentId === parentId);
+    return firstVariant ? firstVariant.id : null;
+  }
+
+  function getActiveTopLevelTemplateId(sideId) {
+    const sideState = getSideState(sideId);
+
+    if (sideState.motifVariantId) {
+      const variant = getMotifVariantById(sideState.motifVariantId);
+      return variant ? variant.parentId : sideState.templateId;
+    }
+
+    return sideState.templateId;
+  }
+
+  function getActiveTemplate(sideId) {
+    const topLevelTemplateId = getActiveTopLevelTemplateId(sideId);
+    return getTemplateById(topLevelTemplateId);
+  }
+
+  function getActiveMotifVariant(sideId) {
+    const sideState = getSideState(sideId);
+    return sideState.motifVariantId ? getMotifVariantById(sideState.motifVariantId) : null;
+  }
+
+  function getActiveImage(sideId) {
+    const sideState = getSideState(sideId);
+    const activeVariant = getActiveMotifVariant(sideId);
+    return sideState.uploadedImage || (activeVariant ? activeVariant.image : null) || (getActiveTemplate(sideId) ? getActiveTemplate(sideId).image : null) || null;
+  }
+
+  function isPhotoMotifSelected(sideId) {
+    const template = getActiveTemplate(sideId);
+    return Boolean(template && template.category === "photo");
+  }
+
+  function isAnimalPawsSelected(sideId) {
+    const template = getActiveTemplate(sideId);
+    return Boolean(template && template.category === "animal-paws");
+  }
+
+  function getMaterialById(materialId) {
+    return CATALOG.materials.find((material) => material.id === materialId) || null;
   }
 
   function getActiveMaterial() {
-    return CATALOG.materials.find((material) => material.id === state.materialId) || null;
+    return getMaterialById(state.materialId);
+  }
+
+  function getAvailableProductFamilies(material) {
+    return (material.productFamilies || []).filter(function (family) {
+      return !family.isComingSoon;
+    });
+  }
+
+  function getActiveProductFamily() {
+    const material = getActiveMaterial();
+    if (!material) return null;
+
+    const families = getAvailableProductFamilies(material);
+    if (!families.length) return null;
+
+    if (state.productFamilyId) {
+      return families.find((family) => family.id === state.productFamilyId) || null;
+    }
+
+    if (families.length === 1) {
+      state.productFamilyId = families[0].id;
+      return families[0];
+    }
+
+    return null;
   }
 
   function getActiveProduct() {
-    const material = getActiveMaterial();
-    if (!material) return null;
-    return material.products.find((product) => product.id === state.productId) || null;
+    const productFamily = getActiveProductFamily();
+    if (!productFamily) return null;
+    return productFamily.products.find((product) => product.id === state.productId) || null;
   }
 
   function getActiveSize() {
@@ -1462,16 +2239,9 @@
     return product.sizes.find((size) => size.id === state.sizeId) || null;
   }
 
-  function getActiveTemplate() {
-    return TEMPLATE_LIBRARY.find((template) => template.id === state.templateId) || null;
-  }
-
-  function getActiveImage() {
-    return state.uploadedImage || (getActiveTemplate() ? getActiveTemplate().image : null) || null;
-  }
-
-  function getActiveTextFont() {
-    return TEXT_FONT_LIBRARY.find((font) => font.id === state.textFontId) || TEXT_FONT_LIBRARY[0];
+  function getActiveTextFont(sideId) {
+    const sideState = getSideState(sideId);
+    return TEXT_FONT_LIBRARY.find((font) => font.id === sideState.textFontId) || TEXT_FONT_LIBRARY[0];
   }
 
   function getMotifMask() {
@@ -1490,8 +2260,9 @@
 
   function getMotifDrawBox(image) {
     const motifMask = getMotifMask();
+    const activeSideState = getActiveSideState();
     const fitScale = Math.max(motifMask.width / image.width, motifMask.height / image.height);
-    const scaleFactor = state.scalePercent / 100;
+    const scaleFactor = activeSideState.scalePercent / 100;
     return {
       width: image.width * fitScale * scaleFactor,
       height: image.height * fitScale * scaleFactor
@@ -1500,9 +2271,10 @@
 
   function getTextLayout(text) {
     const motifMask = getMotifMask();
+    const activeSideState = getActiveSideState();
     const maxWidth = motifMask.width * 0.82;
     const baseFontSize = Math.max(34, motifMask.width * 0.19);
-    let fontSize = baseFontSize * (state.textScalePercent / 100);
+    let fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
     let metrics = measureText(text, fontSize);
 
     if (metrics.width > maxWidth) {
@@ -1525,14 +2297,15 @@
   }
 
   function buildTextFont(fontSize) {
+    const activeSideState = getActiveSideState();
     const font = getActiveTextFont();
     const fontParts = [];
 
-    if (state.textStyles.italic) {
+    if (activeSideState.textStyles.italic) {
       fontParts.push("italic");
     }
 
-    fontParts.push(state.textStyles.bold ? "700" : "600");
+    fontParts.push(activeSideState.textStyles.bold ? "700" : "600");
     fontParts.push(fontSize + "px");
     fontParts.push(font.family);
 
@@ -1542,18 +2315,6 @@
   function getDefaultTextOffsetY() {
     const motifMask = getMotifMask();
     return motifMask ? motifMask.height * 0.22 : 0;
-  }
-
-  function hasText() {
-    return state.textValue.length > 0;
-  }
-
-  function isMotifMode() {
-    return state.designMode === "motif";
-  }
-
-  function isTextMode() {
-    return state.designMode === "text";
   }
 
   function measureText(text, fontSize) {
@@ -1609,6 +2370,13 @@
       .replace(/\s+/g, " ")
       .trim()
       .slice(0, MAX_TEXT_LENGTH);
+  }
+
+  function formatEuro(cents) {
+    return (cents / 100).toLocaleString("de-DE", {
+      style: "currency",
+      currency: "EUR"
+    });
   }
 
   function slugify(value) {

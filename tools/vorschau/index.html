@@ -118,7 +118,7 @@
           </div>
           <div class="preview-step">
             <span>3</span>
-            <div>Erst dann den passenden Bearbeitungsbereich ruhig nutzen.</div>
+            <div>Optional bei Bedarf eine Rückseite zuschalten.</div>
           </div>
           <div class="preview-step">
             <span>4</span>
@@ -156,6 +156,10 @@
               <p id="previewProductHint">Wähle zuerst ein Material. Danach schaltet sich der Ablauf Schritt für Schritt frei.</p>
             </div>
             <div class="preview-source">
+              <span>Aktive Seite</span>
+              <strong id="previewActiveSideLabel">Vorderseite</strong>
+            </div>
+            <div class="preview-source">
               <span>Gestaltungsart</span>
               <strong id="previewModeLabel">Noch offen</strong>
             </div>
@@ -167,17 +171,16 @@
         </div>
 
         <div class="preview-actions">
-          <button class="btn primary" type="button" id="downloadPreviewButton" disabled>Vorschau speichern</button>
           <div class="preview-request">
             <button
-              class="btn"
+              class="btn primary"
               type="button"
-              id="requestMenuToggle"
+              id="downloadPreviewButton"
               aria-expanded="false"
               aria-controls="requestMenuPanel"
               disabled
             >
-              Anfrage senden
+              Vorschau speichern und als Angebot senden
             </button>
             <div class="preview-request-menu" id="requestMenuPanel" hidden>
               <a
@@ -198,8 +201,8 @@
         </div>
 
         <p class="preview-caption">
-          Das Motiv darf in dieser Version deutlich freier bis an den Rand des Anhängers wirken,
-          bleibt aber sauber am runden Produkt orientiert.
+          Die Vorderseite bleibt der Standard. Eine Rückseite wird nur dann zugeschaltet,
+          wenn du sie bewusst zusätzlich nutzen möchtest.
         </p>
       </article>
 
@@ -211,7 +214,7 @@
           </div>
         </div>
 
-        <div class="preview-control-group" aria-labelledby="material-heading">
+        <div class="preview-control-group" id="materialGroup" aria-labelledby="material-heading">
           <div class="preview-control-title-row">
             <h3 id="material-heading">1. Material wählen</h3>
             <span class="preview-inline-note">Weitere Materialien bleiben intern vorbereitbar, sind hier aber noch nicht aktiv.</span>
@@ -242,35 +245,26 @@
             <span class="preview-inline-note">Für diese kleinen Schmuckplättchen ist aktuell bewusst nur eine Gestaltungsart gleichzeitig aktiv.</span>
           </div>
           <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
-          <p class="preview-help">Bei kleinen Schmuckplättchen ist entweder Motiv oder Text meist die bessere Wahl.</p>
+          <p class="preview-help">Die Vorderseite ist der normale Start. Die Rückseite kann, wenn aktiviert, separat anders gestaltet werden.</p>
         </div>
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="template-heading">5. Vorlage wählen</h3>
-            <span class="preview-inline-note">Als Ausgangspunkt, bis du dein eigenes Bild lädst.</span>
+            <h3 id="template-heading">5. Motivart wählen</h3>
+            <span class="preview-inline-note">Monogramm, Foto / Porträt, Tierpfoten oder Emblem.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
-        </div>
-
-        <div class="preview-control-group" id="motifUploadGroup" aria-labelledby="upload-heading" hidden>
-          <h3 id="upload-heading">6. Eigenes Bild laden</h3>
-          <label class="preview-upload">
-            <span class="preview-upload__label">Datei wählen</span>
-            <input id="uploadInput" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
-          </label>
-          <p class="preview-help">
-            Am besten funktionieren klare Motive mit gutem Kontrast. Transparente PNGs, JPG, WebP und SVG sind möglich.
-          </p>
-          <div class="preview-upload-actions">
-            <button class="btn" type="button" id="clearUploadButton">Eigenes Bild entfernen</button>
-            <div class="preview-status" id="uploadStatus" aria-live="polite">Keine eigene Datei geladen. Aktuell wird die gewählte Vorlage gezeigt.</div>
-          </div>
+          <input
+            id="uploadInput"
+            class="preview-hidden-input"
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/svg+xml"
+          />
         </div>
 
         <div class="preview-control-group" id="motifAdjustGroup" aria-labelledby="adjust-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="adjust-heading">7. Bildgröße und Bildposition anpassen</h3>
+            <h3 id="adjust-heading">Motivgröße und Position anpassen</h3>
             <strong id="scaleValueLabel">100%</strong>
           </div>
           <input
@@ -361,6 +355,21 @@
           <p class="preview-help">Im Textmodus ist bewusst nur der Text aktiv. Das hält die Vorschau auf kleinen Plättchen ruhiger und glaubwürdiger.</p>
         </div>
 
+        <div class="preview-side-switch-group" id="sideSwitchGroup" hidden>
+          <div class="preview-side-switch__top">
+            <div class="preview-side-switch__copy">
+              <span class="preview-side-switch__label">Optionale Rückseite</span>
+              <strong id="sideSwitchStatus">Vorderseite zuerst fertig gestalten</strong>
+            </div>
+            <button class="btn" type="button" id="enableBackSideButton">Rückseite zusätzlich konfigurieren</button>
+          </div>
+          <p class="preview-help" id="sideSwitchHint">Erst nach der Vorderseite kannst du unten entscheiden, ob zusätzlich eine Rückseite gestaltet werden soll.</p>
+          <div class="preview-side-switch" id="sideTabs" role="tablist" aria-label="Zwischen Vorderseite und Rückseite wechseln" hidden>
+            <button class="preview-side-switch__button" id="sideFrontButton" type="button" role="tab" aria-selected="true">Vorderseite</button>
+            <button class="preview-side-switch__button" id="sideBackButton" type="button" role="tab" aria-selected="false">Rückseite</button>
+          </div>
+        </div>
+
         <div class="preview-control-group preview-control-group--notice">
           <h3>Wichtiger Hinweis</h3>
           <p>
@@ -371,6 +380,21 @@
       </article>
     </section>
   </main>
+
+  <div class="preview-motif-overlay" id="motifVariantOverlay" hidden>
+    <button class="preview-motif-overlay__backdrop" type="button" id="motifVariantOverlayBackdrop" aria-label="Pfoten-Auswahl schließen"></button>
+    <div class="preview-motif-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="motifVariantOverlayTitle">
+      <div class="preview-card__head">
+        <div>
+          <p class="preview-kicker">Motivwahl</p>
+          <h2 id="motifVariantOverlayTitle">Tierpfoten wählen</h2>
+        </div>
+        <button class="btn" type="button" id="closeMotifVariantOverlayButton">Schließen</button>
+      </div>
+      <p class="preview-help">Wähle direkt die passende Tierpfoten-Variante. Die Hauptschritte bleiben dabei unverändert.</p>
+      <div id="motifVariantOptions" class="preview-size-grid"></div>
+    </div>
+  </div>
 
   <footer id="site-footer"></footer>
 

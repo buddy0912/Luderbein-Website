@@ -7,6 +7,56 @@
   if (window.__lbNavDropdownLoaded) return;
   window.__lbNavDropdownLoaded = true;
 
+  const NAV_LINKS = {
+    preview: {
+      key: "preview",
+      href: "/tools/vorschau/",
+      label: "Motiv-Vorschau",
+      role: "menuitem",
+      beforeHref: "/service/",
+      afterHref: "/tools/kalkulator/",
+    },
+  };
+
+  function normHref(value) {
+    return (value || "").toString().trim();
+  }
+
+  function insertMenuLink(container, config) {
+    if (!container) return;
+    if (container.querySelector(`[data-nav-${config.key}]`)) return;
+    if (container.querySelector(`a[href="${config.href}"]`)) return;
+
+    const link = document.createElement("a");
+    link.setAttribute("href", config.href);
+    link.textContent = config.label;
+    link.setAttribute(`data-nav-${config.key}`, "1");
+
+    if (config.role) {
+      link.setAttribute("role", config.role);
+    }
+
+    const allLinks = Array.from(container.querySelectorAll("a[href]"));
+    const beforeLink = config.beforeHref
+      ? allLinks.find((candidate) => normHref(candidate.getAttribute("href")) === config.beforeHref)
+      : null;
+    const afterLink = config.afterHref
+      ? allLinks.find((candidate) => normHref(candidate.getAttribute("href")) === config.afterHref)
+      : null;
+
+    if (beforeLink && beforeLink.parentNode) {
+      beforeLink.parentNode.insertBefore(link, beforeLink);
+      return;
+    }
+
+    if (afterLink && afterLink.parentNode) {
+      afterLink.parentNode.insertBefore(link, afterLink.nextSibling);
+      return;
+    }
+
+    container.appendChild(link);
+  }
+
   function initNavDropdown() {
     const drops = Array.from(document.querySelectorAll("[data-navdrop]"));
     if (!drops.length) return;
@@ -28,7 +78,10 @@
 
     drops.forEach((drop) => {
       const btn = drop.querySelector(".navdrop__sum");
+      const panel = drop.querySelector(".navdrop__panel");
       if (!btn) return;
+
+      insertMenuLink(panel, NAV_LINKS.preview);
 
       setOpen(drop, false);
 
