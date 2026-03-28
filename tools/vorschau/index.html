@@ -399,6 +399,35 @@
     </section>
   </main>
 
+  <div class="preview-mobile-bottom-cta" aria-label="Mobile Angebotsaktion">
+    <div class="preview-mobile-bottom-cta__inner">
+      <button
+        class="btn primary preview-mobile-bottom-cta__button"
+        type="button"
+        id="downloadPreviewButtonMobile"
+        aria-expanded="false"
+        aria-controls="requestMenuPanelMobile"
+        disabled
+      >
+        Vorschau speichern und als Angebot senden
+      </button>
+      <div class="preview-request-menu preview-request-menu--mobile" id="requestMenuPanelMobile" hidden>
+        <a
+          class="preview-request-menu__item"
+          id="requestWhatsappLinkMobile"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp
+        </a>
+        <a class="preview-request-menu__item" id="requestEmailLinkMobile" href="#">
+          E-Mail
+        </a>
+      </div>
+    </div>
+  </div>
+
   <div class="preview-motif-overlay" id="motifVariantOverlay" hidden>
     <button class="preview-motif-overlay__backdrop" type="button" id="motifVariantOverlayBackdrop" aria-label="Varianten-Auswahl schließen"></button>
     <div class="preview-motif-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="motifVariantOverlayTitle">

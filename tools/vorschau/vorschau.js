@@ -32,9 +32,13 @@
   const centerPlacementButton = document.getElementById("centerPlacementButton");
   const centerTextButton = document.getElementById("centerTextButton");
   const downloadPreviewButton = document.getElementById("downloadPreviewButton");
+  const downloadPreviewButtonMobile = document.getElementById("downloadPreviewButtonMobile");
   const requestMenuPanel = document.getElementById("requestMenuPanel");
+  const requestMenuPanelMobile = document.getElementById("requestMenuPanelMobile");
   const requestWhatsappLink = document.getElementById("requestWhatsappLink");
+  const requestWhatsappLinkMobile = document.getElementById("requestWhatsappLinkMobile");
   const requestEmailLink = document.getElementById("requestEmailLink");
+  const requestEmailLinkMobile = document.getElementById("requestEmailLinkMobile");
   const scaleSlider = document.getElementById("scaleSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
   const textFontSelect = document.getElementById("textFontSelect");
@@ -591,9 +595,17 @@
     resetPlacementButton.addEventListener("click", resetAllSelections);
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
-    downloadPreviewButton.addEventListener("click", downloadPreview);
+    [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
+      button.addEventListener("click", downloadPreview);
+    });
     requestWhatsappLink.addEventListener("click", closeRequestMenu);
     requestEmailLink.addEventListener("click", closeRequestMenu);
+    if (requestWhatsappLinkMobile) {
+      requestWhatsappLinkMobile.addEventListener("click", closeRequestMenu);
+    }
+    if (requestEmailLinkMobile) {
+      requestEmailLinkMobile.addEventListener("click", closeRequestMenu);
+    }
 
     document.querySelectorAll("[data-nudge]").forEach((button) => {
       button.addEventListener("click", function () {
@@ -1304,9 +1316,8 @@
   }
 
   function onDocumentClick(event) {
-    if (requestMenuPanel.hidden) return;
-    if (event.target === downloadPreviewButton || downloadPreviewButton.contains(event.target)) return;
-    if (requestMenuPanel.contains(event.target)) return;
+    if (isMenuInteraction(event.target)) return;
+    if (requestMenuPanel.hidden && (!requestMenuPanelMobile || requestMenuPanelMobile.hidden)) return;
     closeRequestMenu();
   }
 
@@ -1323,7 +1334,20 @@
 
   function setRequestMenuOpen(isOpen) {
     requestMenuPanel.hidden = !isOpen;
-    downloadPreviewButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (requestMenuPanelMobile) {
+      requestMenuPanelMobile.hidden = !isOpen;
+    }
+    [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
+      button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    });
+  }
+
+  function isMenuInteraction(target) {
+    return [downloadPreviewButton, downloadPreviewButtonMobile, requestMenuPanel, requestMenuPanelMobile]
+      .filter(Boolean)
+      .some(function (element) {
+        return element === target || element.contains(target);
+      });
   }
 
   function onPointerDown(event) {
@@ -1471,7 +1495,15 @@
 
     requestWhatsappLink.href = readyForExport ? buildWhatsappUrl() : "#";
     requestEmailLink.href = readyForExport ? buildMailtoUrl() : "#";
-    downloadPreviewButton.disabled = !readyForExport;
+    if (requestWhatsappLinkMobile) {
+      requestWhatsappLinkMobile.href = requestWhatsappLink.href;
+    }
+    if (requestEmailLinkMobile) {
+      requestEmailLinkMobile.href = requestEmailLink.href;
+    }
+    [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
+      button.disabled = !readyForExport;
+    });
     if (!readyForExport) {
       closeRequestMenu();
     }
