@@ -5,6 +5,8 @@
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
+  const mobileCanvas = document.getElementById("previewCanvasMobile");
+  const mobileCtx = mobileCanvas ? mobileCanvas.getContext("2d") : null;
   const materialGroup = document.getElementById("materialGroup");
   const materialOptionsEl = document.getElementById("materialOptions");
   const productGroup = document.getElementById("productGroup");
@@ -39,9 +41,12 @@
   const scaleValueLabel = document.getElementById("scaleValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const previewProductName = document.getElementById("previewProductName");
+  const previewProductNameMobile = document.getElementById("previewProductNameMobile");
   const previewProductHint = document.getElementById("previewProductHint");
   const previewModeChip = document.getElementById("previewModeChip");
+  const previewModeChipMobile = document.getElementById("previewModeChipMobile");
   const previewActiveSideLabel = document.getElementById("previewActiveSideLabel");
+  const previewActiveSideLabelMobile = document.getElementById("previewActiveSideLabelMobile");
   const previewModeLabel = document.getElementById("previewModeLabel");
   const previewSourceLabel = document.getElementById("previewSourceLabel");
   const sideSwitchGroup = document.getElementById("sideSwitchGroup");
@@ -1444,6 +1449,15 @@
     }
 
     previewActiveSideLabel.textContent = getSideLabel(state.activeSide);
+    if (previewProductNameMobile) {
+      previewProductNameMobile.textContent = previewProductName.textContent;
+    }
+    if (previewModeChipMobile) {
+      previewModeChipMobile.textContent = previewModeChip.textContent;
+    }
+    if (previewActiveSideLabelMobile) {
+      previewActiveSideLabelMobile.textContent = previewActiveSideLabel.textContent;
+    }
     previewModeLabel.textContent = hasDesignModeSelection() ? (isMotifMode() ? "Motiv" : "Text") : "Offen";
     previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
 
@@ -1640,16 +1654,19 @@
 
     if (!hasMaterialSelection()) {
       drawEmptyState("1. Material wählen", "Danach geht es Schritt für Schritt weiter.");
+      syncMobilePreviewCanvas();
       return;
     }
 
     if (!hasProductSelection()) {
       drawEmptyState("2. Produkt wählen", "Wähle jetzt den passenden Anhänger.");
+      syncMobilePreviewCanvas();
       return;
     }
 
     if (!hasSizeSelection()) {
       drawEmptyState("3. Größe wählen", "Lege jetzt die passende Größe fest.");
+      syncMobilePreviewCanvas();
       return;
     }
 
@@ -1669,6 +1686,7 @@
       );
       drawProductHighlights(size);
       drawPreviewLabels(material, product, size);
+      syncMobilePreviewCanvas();
       return;
     }
 
@@ -1702,6 +1720,13 @@
 
     drawProductHighlights(size);
     drawPreviewLabels(material, product, size);
+    syncMobilePreviewCanvas();
+  }
+
+  function syncMobilePreviewCanvas() {
+    if (!mobileCtx || !mobileCanvas) return;
+    mobileCtx.clearRect(0, 0, mobileCanvas.width, mobileCanvas.height);
+    mobileCtx.drawImage(canvas, 0, 0, mobileCanvas.width, mobileCanvas.height);
   }
 
   function drawBackdrop() {

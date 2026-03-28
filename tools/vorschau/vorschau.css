@@ -58,6 +58,17 @@
   gap: 18px;
 }
 
+.preview-mobile-sticky {
+  display: none;
+}
+
+.preview-mobile-sticky__inner {
+  border: 1px solid rgba(64,62,65,.58);
+  background: linear-gradient(180deg, rgba(29,29,35,.94), rgba(18,16,20,.9));
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
 .preview-card {
   padding: 18px;
 }
@@ -821,12 +832,87 @@
 }
 
 @media (max-width: 640px) {
+  .preview-page {
+    padding-bottom: 56px;
+  }
+
   .preview-hero__grid {
     gap: 12px;
   }
 
   .preview-steps {
     display: none;
+  }
+
+  .preview-mobile-sticky {
+    display: block;
+    position: sticky;
+    top: calc(var(--header-h, 72px) + env(safe-area-inset-top, 0px) + 8px);
+    z-index: 24;
+    margin-top: 16px;
+  }
+
+  .preview-mobile-sticky__inner {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    backdrop-filter: blur(10px);
+  }
+
+  .preview-mobile-sticky__frame {
+    position: relative;
+    width: 112px;
+    height: 112px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(88,86,89,.68);
+    background:
+      radial-gradient(circle at top, rgba(255,255,255,.08), transparent 44%),
+      linear-gradient(180deg, rgba(14,6,11,.88), rgba(10,8,12,.98));
+  }
+
+  .preview-mobile-sticky__canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .preview-mobile-sticky__copy {
+    min-width: 0;
+    display: grid;
+    gap: 8px;
+  }
+
+  .preview-mobile-sticky__label {
+    color: var(--muted);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .preview-mobile-sticky__copy strong {
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .preview-mobile-sticky__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .preview-mobile-sticky__meta span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(64,62,65,.68);
+    background: rgba(42,45,51,.24);
+    color: var(--text);
+    font-size: .82rem;
   }
 
   .preview-card {
@@ -853,6 +939,15 @@
 
   .preview-control-card {
     gap: 12px;
+  }
+
+  .preview-stage-card {
+    position: static;
+  }
+
+  .preview-stage-frame {
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
   }
 
   .preview-side-switch-group {
@@ -892,15 +987,67 @@
   }
 
   .preview-option-grid--products,
-  .preview-option-grid--modes,
-  .preview-option-grid--templates {
+  .preview-option-grid--modes {
     grid-template-columns: 1fr;
   }
 
+  .preview-option-grid--templates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  #motifOverlayOptions.preview-option-grid--templates {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .preview-option {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
   .preview-option__thumb {
-    height: 136px;
-    flex-basis: 136px;
-    padding: 8px;
+    height: 120px;
+    flex-basis: 120px;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .preview-option__meta {
+    margin-top: 4px;
+    font-size: .86rem;
+    line-height: 1.35;
+  }
+
+  .preview-option__thumb img {
+    object-position: center center;
+  }
+
+  .preview-option__thumb-media img {
+    width: 82%;
+    height: 82%;
+  }
+
+  .preview-option__thumb-media--monogram img {
+    width: 102%;
+    height: 102%;
+  }
+
+  .preview-option__thumb-media--photo img {
+    width: 98%;
+    height: 98%;
+    transform: translateY(-3%);
+  }
+
+  .preview-option__thumb-media--emblem img {
+    width: 104%;
+    height: 104%;
+    transform: translateY(-4%);
+  }
+
+  .preview-option__thumb-media--animal-root img,
+  .preview-option__thumb-media--animal-group img {
+    width: 80%;
+    height: 80%;
   }
 
   .preview-actions .btn {
@@ -931,13 +1078,13 @@
   }
 
   .preview-motif-overlay {
-    padding: 14px;
+    padding: 12px;
     align-items: end;
   }
 
   .preview-motif-overlay__panel {
     width: 100%;
-    max-height: min(78vh, 560px);
+    max-height: min(74vh, 560px);
     overflow: auto;
     padding: 14px;
     border-radius: 20px 20px 16px 16px;
