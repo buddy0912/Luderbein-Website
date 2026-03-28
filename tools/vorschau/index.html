@@ -270,15 +270,39 @@
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="template-heading">5. Motivart wählen</h3>
-            <span class="preview-inline-note">Monogramm, Foto, Emblem oder Tiermotiv.</span>
+            <span class="preview-inline-note">Monogramm, Foto, Tiersymbol oder Wappen / Emblem / QR-Code.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
+          <p class="preview-help preview-help--notice" id="motifSizeHint" hidden></p>
           <input
             id="uploadInput"
             class="preview-hidden-input"
             type="file"
             accept="image/png,image/jpeg,image/webp,image/svg+xml"
           />
+        </div>
+
+        <div class="preview-control-group" id="qrCodeGroup" aria-labelledby="qr-heading" hidden>
+          <div class="preview-control-title-row">
+            <h3 id="qr-heading">QR-Inhalt eingeben</h3>
+            <strong id="qrCharacterCount">0 / 180</strong>
+          </div>
+
+          <label class="preview-field">
+            <span class="preview-field__label">Link oder kurzer Inhalt</span>
+            <input
+              id="qrInput"
+              class="preview-text-input"
+              type="text"
+              maxlength="180"
+              placeholder="z. B. https://beispiel.de oder kurze Info"
+              aria-describedby="qrInputHint qrCharacterCount"
+            />
+          </label>
+          <p class="preview-help" id="qrInputHint">Die Vorschau erzeugt aus deiner Eingabe einen echten QR-Code und zeigt seine Wirkung auf dem Anhänger.</p>
+          <div class="preview-inline-actions">
+            <button class="btn" type="button" id="clearQrButton">QR-Inhalt entfernen</button>
+          </div>
         </div>
 
         <div class="preview-control-group" id="motifAdjustGroup" aria-labelledby="adjust-heading" hidden>
@@ -451,6 +475,7 @@
   <script src="/assets/footer.js"></script>
   <script src="/assets/site.js"></script>
   <script src="/assets/nav-dropdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script src="/tools/vorschau/vorschau.js"></script>
 </body>
 </html>

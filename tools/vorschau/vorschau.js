@@ -25,9 +25,11 @@
   const motifVariantOverlayTitle = document.getElementById("motifVariantOverlayTitle");
   const motifVariantOverlayHelp = document.getElementById("motifVariantOverlayHelp");
   const motifAdjustGroup = document.getElementById("motifAdjustGroup");
+  const qrCodeGroup = document.getElementById("qrCodeGroup");
   const textGroup = document.getElementById("textGroup");
   const uploadInput = document.getElementById("uploadInput");
   const clearTextButton = document.getElementById("clearTextButton");
+  const clearQrButton = document.getElementById("clearQrButton");
   const resetPlacementButton = document.getElementById("resetPlacementButton");
   const centerPlacementButton = document.getElementById("centerPlacementButton");
   const centerTextButton = document.getElementById("centerTextButton");
@@ -42,8 +44,11 @@
   const scaleSlider = document.getElementById("scaleSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
   const textFontSelect = document.getElementById("textFontSelect");
+  const qrInput = document.getElementById("qrInput");
+  const qrCharacterCount = document.getElementById("qrCharacterCount");
   const scaleValueLabel = document.getElementById("scaleValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
+  const motifSizeHint = document.getElementById("motifSizeHint");
   const previewProductName = document.getElementById("previewProductName");
   const previewProductNameMobile = document.getElementById("previewProductNameMobile");
   const previewProductHint = document.getElementById("previewProductHint");
@@ -64,6 +69,7 @@
   const textCharacterCount = document.getElementById("textCharacterCount");
 
   const MAX_TEXT_LENGTH = 18;
+  const MAX_QR_LENGTH = 180;
   const WHATSAPP_NUMBER = "491725925858";
   const REQUEST_EMAIL = "luderbein_gravur@icloud.com";
   const ACTIVE_STEP_SEQUENCE = ["material", "product", "size", "designMode"];
@@ -254,10 +260,70 @@
     },
     {
       id: "emblem",
-      name: "Wappen / Emblem",
-      description: "Klares Emblem oder Symbol.",
+      name: "Wappen / Emblem / QR-Code",
+      description: "Variante im Symbolbereich wählen.",
       imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
       category: "emblem"
+    }
+  ];
+
+  const EMBLEM_VARIANT_LIBRARY = [
+    {
+      id: "crest",
+      parentId: "emblem",
+      name: "Wappen",
+      description: "Klarer Schildcharakter mit etwas mehr Detail.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M100 26 152 44v48c0 40-22 67-52 84-30-17-52-44-52-84V44Z" fill="#16181c"/>' +
+          '<path d="M100 44 136 56v34c0 28-15 47-36 60-21-13-36-32-36-60V56Z" fill="#f6f2ee"/>' +
+          '<path d="M100 64 110 88h26l-21 15 8 24-23-15-23 15 8-24-21-15h26Z" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem",
+      parentId: "emblem",
+      name: "Emblem",
+      description: "Reduzierte Symbolwirkung mit ruhiger Form.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="62" fill="none" stroke="#16181c" stroke-width="18"/>' +
+          '<circle cx="100" cy="100" r="18" fill="#16181c"/>' +
+          '<path d="M100 44v112M44 100h112" stroke="#16181c" stroke-width="14" stroke-linecap="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "qr",
+      parentId: "emblem",
+      name: "QR-Code",
+      description: "Für Link oder kurze Information.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<rect x="28" y="28" width="48" height="48" fill="#16181c"/>' +
+          '<rect x="40" y="40" width="24" height="24" fill="#f6f2ee"/>' +
+          '<rect x="124" y="28" width="48" height="48" fill="#16181c"/>' +
+          '<rect x="136" y="40" width="24" height="24" fill="#f6f2ee"/>' +
+          '<rect x="28" y="124" width="48" height="48" fill="#16181c"/>' +
+          '<rect x="40" y="136" width="24" height="24" fill="#f6f2ee"/>' +
+          '<rect x="104" y="96" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="120" y="96" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="136" y="96" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="104" y="112" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="136" y="112" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="88" y="128" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="120" y="128" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="152" y="128" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="88" y="144" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="104" y="144" width="12" height="12" fill="#16181c"/>' +
+          '<rect x="136" y="144" width="12" height="12" fill="#16181c"/>' +
+        '</svg>'
+      ),
+      isQr: true
     }
   ];
 
@@ -470,7 +536,7 @@
   let renderQueued = false;
 
   Promise.all(
-    TEMPLATE_LIBRARY.concat(MOTIF_VARIANT_LIBRARY).map((entry) =>
+    TEMPLATE_LIBRARY.concat(MOTIF_VARIANT_LIBRARY, EMBLEM_VARIANT_LIBRARY).map((entry) =>
       loadImage(entry.imageSrc).then((image) => {
         entry.image = image;
       })
@@ -495,8 +561,12 @@
       templateId: null,
       animalGroupId: null,
       motifVariantId: null,
+      emblemVariantId: null,
       uploadedImage: null,
       uploadedFileName: "",
+      qrValue: "",
+      qrCodeModel: null,
+      qrCodeModelValue: "",
       scalePercent: 100,
       offsetX: 0,
       offsetY: 0,
@@ -575,6 +645,18 @@
       queueRender();
     });
 
+    qrInput.addEventListener("input", function () {
+      const activeSideState = getActiveSideState();
+      activeSideState.qrValue = normalizeQrValue(qrInput.value);
+      activeSideState.qrCodeModel = null;
+      activeSideState.qrCodeModelValue = "";
+      if (qrInput.value !== activeSideState.qrValue) {
+        qrInput.value = activeSideState.qrValue;
+      }
+      syncUi();
+      queueRender();
+    });
+
     document.querySelectorAll("[data-text-style]").forEach((button) => {
       button.addEventListener("click", function () {
         const styleName = button.getAttribute("data-text-style");
@@ -592,6 +674,7 @@
     closeMotifVariantOverlayButton.addEventListener("click", closeMotifVariantOverlay);
     motifVariantOverlayBackButton.addEventListener("click", showAnimalGroupOverlay);
     clearTextButton.addEventListener("click", clearText);
+    clearQrButton.addEventListener("click", clearQrValue);
     resetPlacementButton.addEventListener("click", resetAllSelections);
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
@@ -673,6 +756,13 @@
 
       if (template.category === "animal-symbols") {
         return Boolean(getSideState(sideId).motifVariantId);
+      }
+
+      if (template.category === "emblem") {
+        if (getSideState(sideId).emblemVariantId === "qr") {
+          return getSideState(sideId).qrValue.trim().length > 0;
+        }
+        return Boolean(getSideState(sideId).emblemVariantId);
       }
 
       return true;
@@ -1011,6 +1101,28 @@
   function renderMotifOverlayOptions() {
     motifOverlayOptionsEl.innerHTML = "";
 
+    if (state.motifOverlayStep === "emblemVariants") {
+      EMBLEM_VARIANT_LIBRARY.forEach((variant) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option";
+        button.setAttribute("data-emblem-variant-id", variant.id);
+        button.innerHTML =
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><img src="' + variant.imageSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
+
+        button.addEventListener("click", function () {
+          if (getActiveSideState().emblemVariantId === variant.id) return;
+          selectEmblemVariant(variant.id);
+          closeMotifVariantOverlay();
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
     if (state.motifOverlayStep === "groups") {
       ANIMAL_GROUP_LIBRARY.forEach((animalGroup) => {
         const button = document.createElement("button");
@@ -1063,11 +1175,17 @@
     const activeSideState = getActiveSideState();
     const isPhotoTemplate = template.category === "photo";
     const isAnimalSymbolsTemplate = template.category === "animal-symbols";
+    const isEmblemTemplate = template.category === "emblem";
     const isSameTemplate = activeSideState.templateId === template.id;
 
     if (isAnimalSymbolsTemplate && isSameTemplate) {
       state.motifOverlayStep = "groups";
       openMotifVariantOverlay("groups");
+      return;
+    }
+
+    if (isEmblemTemplate && isSameTemplate) {
+      openMotifVariantOverlay("emblemVariants");
       return;
     }
 
@@ -1079,6 +1197,8 @@
     activeSideState.templateId = template.id;
     activeSideState.animalGroupId = null;
     activeSideState.motifVariantId = null;
+    activeSideState.emblemVariantId = null;
+    activeSideState.qrValue = "";
     state.motifOverlayStep = "groups";
 
     resetImagePlacement(false);
@@ -1092,6 +1212,10 @@
 
     if (isAnimalSymbolsTemplate) {
       openMotifVariantOverlay("groups");
+    }
+
+    if (isEmblemTemplate) {
+      openMotifVariantOverlay("emblemVariants");
     }
   }
 
@@ -1123,6 +1247,23 @@
     queueRender();
   }
 
+  function selectEmblemVariant(variantId) {
+    const variant = getEmblemVariantById(variantId);
+    if (!variant) return;
+
+    const activeSideState = getActiveSideState();
+    activeSideState.emblemVariantId = variant.id;
+    if (!variant.isQr) {
+      activeSideState.qrValue = "";
+    }
+    activeSideState.qrCodeModel = null;
+    activeSideState.qrCodeModelValue = "";
+    clearUploadedImage(false);
+    resetImagePlacement(false);
+    syncUi();
+    queueRender();
+  }
+
   function setDesignMode(modeId) {
     if (!isStepAvailable("designMode")) return;
     if (!MODE_LIBRARY.some((mode) => mode.id === modeId)) return;
@@ -1136,8 +1277,14 @@
   }
 
   function openMotifVariantOverlay(step) {
-    if (!isMotifMode() || !isAnimalSymbolsSelected()) return;
-    state.motifOverlayStep = step === "variants" ? "variants" : "groups";
+    if (!isMotifMode()) return;
+    if (isAnimalSymbolsSelected()) {
+      state.motifOverlayStep = step === "variants" ? "variants" : "groups";
+    } else if (isEmblemTemplateSelected()) {
+      state.motifOverlayStep = "emblemVariants";
+    } else {
+      return;
+    }
     state.isMotifVariantOverlayOpen = true;
     renderMotifOverlayOptions();
     updateMotifVariantOverlayCopy();
@@ -1153,8 +1300,14 @@
   }
 
   function showAnimalGroupOverlay() {
-    if (!isMotifMode() || !isAnimalSymbolsSelected()) return;
-    state.motifOverlayStep = "groups";
+    if (!isMotifMode()) return;
+    if (isAnimalSymbolsSelected()) {
+      state.motifOverlayStep = "groups";
+    } else if (isEmblemTemplateSelected()) {
+      state.motifOverlayStep = "emblemVariants";
+    } else {
+      return;
+    }
     state.isMotifVariantOverlayOpen = true;
     renderMotifOverlayOptions();
     updateMotifVariantOverlayCopy();
@@ -1213,6 +1366,16 @@
     activeSideState.textStyles.underline = false;
     activeSideState.textStyles.strikethrough = false;
     resetTextPlacement(false);
+    syncUi();
+    queueRender();
+  }
+
+  function clearQrValue() {
+    const activeSideState = getActiveSideState();
+    activeSideState.qrValue = "";
+    activeSideState.qrCodeModel = null;
+    activeSideState.qrCodeModelValue = "";
+    qrInput.value = "";
     syncUi();
     queueRender();
   }
@@ -1492,6 +1655,8 @@
     textCharacterCount.textContent = activeSideState.textValue.length + " / " + MAX_TEXT_LENGTH;
     textInput.value = activeSideState.textValue;
     textFontSelect.value = activeSideState.textFontId;
+    qrCharacterCount.textContent = activeSideState.qrValue.length + " / " + MAX_QR_LENGTH;
+    qrInput.value = activeSideState.qrValue;
 
     requestWhatsappLink.href = readyForExport ? buildWhatsappUrl() : "#";
     requestEmailLink.href = readyForExport ? buildMailtoUrl() : "#";
@@ -1533,10 +1698,15 @@
     sideBackButton.setAttribute("aria-selected", state.activeSide === "back" ? "true" : "false");
 
     setSectionVisibility(motifTemplateGroup, isMotifMode());
-    setSectionVisibility(motifAdjustGroup, isMotifMode() && hasActiveMotifContent());
+    setSectionVisibility(motifAdjustGroup, isMotifMode() && hasActiveMotifContent() && !isQrSelected());
+    setSectionVisibility(qrCodeGroup, isMotifMode() && isQrSelected());
     setSectionVisibility(textGroup, isTextMode());
 
-    if (!isMotifMode() || !isAnimalSymbolsSelected()) {
+    const motifHint = getMotifSizeHint();
+    motifSizeHint.hidden = !motifHint;
+    motifSizeHint.textContent = motifHint;
+
+    if (!isMotifMode() || (!isAnimalSymbolsSelected() && !isEmblemTemplateSelected())) {
       state.isMotifVariantOverlayOpen = false;
       state.motifOverlayStep = "groups";
     }
@@ -1574,6 +1744,10 @@
 
     motifOverlayOptionsEl.querySelectorAll("[data-motif-variant-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-motif-variant-id") === activeSideState.motifVariantId);
+    });
+
+    motifOverlayOptionsEl.querySelectorAll("[data-emblem-variant-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-emblem-variant-id") === activeSideState.emblemVariantId);
     });
 
     document.querySelectorAll("[data-text-style]").forEach((button) => {
@@ -1623,6 +1797,15 @@
           return "Tiermotiv: " + animalGroup.name;
         }
         return "Tiermotiv";
+      }
+      if (isEmblemTemplateSelected()) {
+        const emblemVariant = getActiveEmblemVariant();
+        if (emblemVariant && emblemVariant.isQr) {
+          return hasQrValue() ? "QR-Code" : "QR-Code offen";
+        }
+        if (emblemVariant) {
+          return "Wappen / Emblem: " + emblemVariant.name;
+        }
       }
       if (activeTemplate) {
         return activeTemplate.name;
@@ -1726,6 +1909,22 @@
       const image = getActiveImage();
       if (image) {
         drawMotif(size, image);
+      } else if (isEmblemTemplateSelected()) {
+        if (isQrSelected()) {
+          if (hasQrValue()) {
+            drawQrMotif(size);
+          } else {
+            drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
+          }
+        } else {
+          drawMotifPrompt("Variante wählen", "Passende Symbolvariante festlegen.");
+        }
+      } else if (isQrSelected()) {
+        if (hasQrValue()) {
+          drawQrMotif(size);
+        } else {
+          drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
+        }
       } else {
         drawMotifPrompt(
           isAnimalSymbolsSelected() && getActiveAnimalGroup()
@@ -1955,6 +2154,48 @@
       ctx.lineTo(motifMask.x + motifMask.width + 18, lineY - 10);
       ctx.stroke();
     }
+
+    ctx.restore();
+  }
+
+  function drawQrMotif(size) {
+    const motifMask = getMotifMask();
+    const qrModel = getQrCodeModel();
+    if (!qrModel || !motifMask) {
+      drawMotifPrompt("QR-Code nicht bereit", "Bitte Inhalt prüfen oder kurz erneut versuchen.");
+      return;
+    }
+
+    const moduleCount = qrModel.getModuleCount();
+    const quietZone = 4;
+    const availableSize = Math.floor(motifMask.width * 0.82);
+    const moduleSize = Math.max(2, Math.floor(availableSize / (moduleCount + quietZone * 2)));
+    const outerSize = moduleSize * (moduleCount + quietZone * 2);
+    const squareX = Math.round(motifMask.x + (motifMask.width - outerSize) / 2);
+    const squareY = Math.round(motifMask.y + (motifMask.height - outerSize) / 2);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
+    ctx.clip();
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "#f7f4f0";
+    ctx.fillRect(squareX, squareY, outerSize, outerSize);
+
+    ctx.fillStyle = "#14181c";
+    for (let row = 0; row < moduleCount; row += 1) {
+      for (let column = 0; column < moduleCount; column += 1) {
+        if (!qrModel.isDark(row, column)) continue;
+        const x = squareX + (column + quietZone) * moduleSize;
+        const y = squareY + (row + quietZone) * moduleSize;
+        ctx.fillRect(x, y, moduleSize, moduleSize);
+      }
+    }
+
+    ctx.strokeStyle = "rgba(12,16,18,0.18)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(squareX + 0.5, squareY + 0.5, outerSize - 1, outerSize - 1);
 
     ctx.restore();
   }
@@ -2386,8 +2627,12 @@
       parts.push("motiv");
       if (activeSideState.uploadedImage) {
         parts.push("eigene-datei");
+      } else if (isQrSelected()) {
+        parts.push("qr-code");
       } else if (getActiveMotifVariant()) {
         parts.push(slugify(getActiveMotifVariant().name));
+      } else if (getActiveEmblemVariant()) {
+        parts.push(slugify(getActiveEmblemVariant().name));
       } else if (getActiveTemplate()) {
         parts.push(slugify(getActiveTemplate().name));
       }
@@ -2439,6 +2684,13 @@
       return Boolean(sideState.motifVariantId);
     }
 
+    if (activeTemplate.category === "emblem") {
+      if (sideState.emblemVariantId === "qr") {
+        return sideState.qrValue.trim().length > 0;
+      }
+      return Boolean(sideState.emblemVariantId);
+    }
+
     return Boolean(sideState.templateId);
   }
 
@@ -2470,6 +2722,9 @@
     if (sideState.designMode === "motif") {
       if (sideState.uploadedImage) {
         return "Motiv · Foto · " + sideState.uploadedFileName;
+      }
+      if (sideState.emblemVariantId === "qr") {
+        return sideState.qrValue ? "Motiv · QR-Code · " + truncateText(sideState.qrValue, 46) : "Motiv · QR-Code offen";
       }
       if (sideTemplate) {
         return "Motiv · " + getMotifSourceSummary(sideTemplate, sideVariant, sideId);
@@ -2503,6 +2758,17 @@
       return activeMotifVariant ? animalGroup.name + " · " + activeMotifVariant.name : animalGroup.name;
     }
 
+    if (activeTemplate.category === "emblem") {
+      const emblemVariant = getActiveEmblemVariant(sideId);
+      if (!emblemVariant) {
+        return "Wappen / Emblem · offen";
+      }
+      if (emblemVariant.isQr) {
+        return getSideState(sideId).qrValue ? "QR-Code" : "QR-Code offen";
+      }
+      return emblemVariant.name;
+    }
+
     return activeTemplate.name;
   }
 
@@ -2516,6 +2782,10 @@
 
   function getMotifVariantById(variantId) {
     return MOTIF_VARIANT_LIBRARY.find((variant) => variant.id === variantId) || null;
+  }
+
+  function getEmblemVariantById(variantId) {
+    return EMBLEM_VARIANT_LIBRARY.find((variant) => variant.id === variantId) || null;
   }
 
   function getDefaultMotifVariantId(parentId) {
@@ -2537,6 +2807,11 @@
     return sideState.motifVariantId ? getMotifVariantById(sideState.motifVariantId) : null;
   }
 
+  function getActiveEmblemVariant(sideId) {
+    const sideState = getSideState(sideId);
+    return sideState.emblemVariantId ? getEmblemVariantById(sideState.emblemVariantId) : null;
+  }
+
   function getActiveAnimalGroup(sideId) {
     const sideState = getSideState(sideId);
     return sideState.animalGroupId ? getAnimalGroupById(sideState.animalGroupId) : null;
@@ -2553,6 +2828,11 @@
 
     if (activeTemplate && activeTemplate.category === "animal-symbols") {
       return activeVariant ? activeVariant.image : null;
+    }
+
+    if (activeTemplate && activeTemplate.category === "emblem") {
+      const emblemVariant = getActiveEmblemVariant(sideId);
+      return emblemVariant && !emblemVariant.isQr ? emblemVariant.image : null;
     }
 
     return (activeTemplate ? activeTemplate.image : null) || null;
@@ -2572,12 +2852,31 @@
     return isAnimalPawsSelected(sideId);
   }
 
+  function isEmblemTemplateSelected(sideId) {
+    const template = getActiveTemplate(sideId);
+    return Boolean(template && template.category === "emblem");
+  }
+
+  function isQrSelected(sideId) {
+    const emblemVariant = getActiveEmblemVariant(sideId);
+    return Boolean(emblemVariant && emblemVariant.isQr);
+  }
+
+  function hasQrValue(sideId) {
+    return getSideState(sideId).qrValue.trim().length > 0;
+  }
+
   function updateMotifVariantOverlayCopy() {
     const activeTemplate = getActiveTemplate();
     const activeAnimalGroup = getActiveAnimalGroup();
     if (!activeTemplate || activeTemplate.category !== "animal-symbols") {
-      motifVariantOverlayTitle.textContent = "Tiermotiv";
-      motifVariantOverlayHelp.textContent = "Wähle eine Tiergruppe.";
+      if (isEmblemTemplateSelected()) {
+        motifVariantOverlayTitle.textContent = "Wappen / Emblem";
+        motifVariantOverlayHelp.textContent = "Variante wählen.";
+      } else {
+        motifVariantOverlayTitle.textContent = "Tiermotiv";
+        motifVariantOverlayHelp.textContent = "Wähle eine Tiergruppe.";
+      }
       return;
     }
 
@@ -2593,6 +2892,32 @@
 
   function isAnimalSymbolsSelected(sideId) {
     return isAnimalMotifSelected(sideId);
+  }
+
+  function getMotifSizeHint(sideId) {
+    const template = getActiveTemplate(sideId);
+    const size = getActiveSize();
+    if (!template || !size || !isMotifMode(sideId)) return "";
+
+    if (template.category === "photo" && size.diameterMm <= 12) {
+      return size.diameterMm <= 10
+        ? "Bei 8 oder 10 mm wirken Fotos oft ruhiger und weniger detailreich. Ein größerer Anhänger zeigt Porträts meist klarer."
+        : "Bei 12 mm wirken Fotos meist besser, wenn das Motiv nicht zu fein ist. Für mehr Detail ist oft eine größere Größe sinnvoll.";
+    }
+
+    if (template.category === "emblem") {
+      if (isQrSelected(sideId) && size.diameterMm <= 12) {
+        return size.diameterMm <= 10
+          ? "Bei 8 oder 10 mm kann ein QR-Code nur eingeschränkt lesbar wirken. Für QR ist meist ein größerer Anhänger die sicherere Wahl."
+          : "Bei 12 mm ist ein QR-Code möglich, wirkt aber auf größeren Anhängern meist klarer und ruhiger lesbar.";
+      }
+
+      if (!isQrSelected(sideId) && size.diameterMm <= 10) {
+        return "Feine Linien in Wappen oder Emblemen wirken auf 8 oder 10 mm zurückhaltender. Größere Anhänger geben solchen Motiven meist mehr Ruhe.";
+      }
+    }
+
+    return "";
   }
 
   function getMaterialById(materialId) {
@@ -2764,6 +3089,58 @@
       image.onerror = reject;
       image.src = src;
     });
+  }
+
+  function getQrCodeModel(sideId) {
+    const sideState = getSideState(sideId);
+    const qrValue = sideState.qrValue.trim();
+    if (!qrValue) {
+      return null;
+    }
+
+    if (sideState.qrCodeModel && sideState.qrCodeModelValue === qrValue) {
+      return sideState.qrCodeModel;
+    }
+
+    if (typeof window.qrcode !== "function") {
+      return null;
+    }
+
+    const levels = qrValue.length <= 60 ? ["Q", "M", "L"] : ["M", "L"];
+
+    for (let index = 0; index < levels.length; index += 1) {
+      try {
+        const qrModel = window.qrcode(0, levels[index]);
+        qrModel.addData(qrValue, "Byte");
+        qrModel.make();
+        sideState.qrCodeModel = qrModel;
+        sideState.qrCodeModelValue = qrValue;
+        return qrModel;
+      } catch (_) {
+        // try lower error correction level
+      }
+    }
+
+    sideState.qrCodeModel = null;
+    sideState.qrCodeModelValue = "";
+    return null;
+  }
+
+  function normalizeQrValue(value) {
+    return String(value)
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, MAX_QR_LENGTH);
+  }
+
+  function truncateText(value, maxLength) {
+    const text = String(value);
+    if (text.length <= maxLength) return text;
+    return text.slice(0, Math.max(0, maxLength - 1)) + "…";
+  }
+
+  function buildInlineSvgDataUri(svg) {
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
 
   function normalizeTextValue(value) {

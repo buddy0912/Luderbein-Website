@@ -182,6 +182,15 @@
   margin: 6px 0 0;
 }
 
+.preview-help--notice {
+  margin-top: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(219,16,33,.18);
+  background: rgba(71,26,33,.14);
+  color: rgba(224,220,218,.92);
+}
+
 .preview-source {
   min-width: 180px;
   display: grid;
@@ -969,6 +978,12 @@
   .preview-caption,
   .preview-inline-note {
     display: none;
+  }
+
+  .preview-help--notice {
+    padding: 11px 12px;
+    font-size: .9rem;
+    line-height: 1.45;
   }
 
   .preview-control-card {
