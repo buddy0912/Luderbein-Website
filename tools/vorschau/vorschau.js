@@ -11,6 +11,8 @@
   const materialOptionsEl = document.getElementById("materialOptions");
   const productGroup = document.getElementById("productGroup");
   const productOptionsEl = document.getElementById("productOptions");
+  const setGroup = document.getElementById("setGroup");
+  const setOptionsEl = document.getElementById("setOptions");
   const sizeGroup = document.getElementById("sizeGroup");
   const sizeOptionsEl = document.getElementById("sizeOptions");
   const designModeGroup = document.getElementById("designModeGroup");
@@ -54,10 +56,16 @@
   const previewProductHint = document.getElementById("previewProductHint");
   const previewModeChip = document.getElementById("previewModeChip");
   const previewModeChipMobile = document.getElementById("previewModeChipMobile");
+  const previewSetLabel = document.getElementById("previewSetLabel");
+  const previewPendantLabel = document.getElementById("previewPendantLabel");
   const previewActiveSideLabel = document.getElementById("previewActiveSideLabel");
   const previewActiveSideLabelMobile = document.getElementById("previewActiveSideLabelMobile");
   const previewModeLabel = document.getElementById("previewModeLabel");
   const previewSourceLabel = document.getElementById("previewSourceLabel");
+  const pendantSwitchGroup = document.getElementById("pendantSwitchGroup");
+  const pendantTabs = document.getElementById("pendantTabs");
+  const pendantSwitchStatus = document.getElementById("pendantSwitchStatus");
+  const pendantSwitchHint = document.getElementById("pendantSwitchHint");
   const sideSwitchGroup = document.getElementById("sideSwitchGroup");
   const sideTabs = document.getElementById("sideTabs");
   const sideSwitchStatus = document.getElementById("sideSwitchStatus");
@@ -72,7 +80,7 @@
   const MAX_QR_LENGTH = 180;
   const WHATSAPP_NUMBER = "491725925858";
   const REQUEST_EMAIL = "luderbein_gravur@icloud.com";
-  const ACTIVE_STEP_SEQUENCE = ["material", "product", "size", "designMode"];
+  const ACTIVE_STEP_SEQUENCE = ["material", "product", "set", "size", "designMode"];
   const SIDE_IDS = ["front", "back"];
   const BACK_SIDE_OPTION = {
     surchargeCents: 0,
@@ -89,6 +97,44 @@
       id: "text",
       name: "Text",
       description: "Namen, Initialen oder ein kurzes Wort setzen."
+    }
+  ];
+
+  const SET_LIBRARY = [
+    {
+      id: "single",
+      count: 1,
+      name: "Einzelanhänger",
+      shortLabel: "Einzel",
+      description: "Ein einzelnes rundes Edelstahl-Plättchen."
+    },
+    {
+      id: "set-2",
+      count: 2,
+      name: "Set mit 2 Anhängern",
+      shortLabel: "2er-Set",
+      description: "Zwei Anhänger als ruhiges kleines Set."
+    },
+    {
+      id: "set-3",
+      count: 3,
+      name: "Set mit 3 Anhängern",
+      shortLabel: "3er-Set",
+      description: "Drei Anhänger mit klarer Staffelung."
+    },
+    {
+      id: "set-4",
+      count: 4,
+      name: "Set mit 4 Anhängern",
+      shortLabel: "4er-Set",
+      description: "Vier Anhänger als erstes Familien- oder Setbild."
+    },
+    {
+      id: "set-5",
+      count: 5,
+      name: "Set mit 5 Anhängern",
+      shortLabel: "5er-Set",
+      description: "Fünf Anhänger als ruhige kleine Gruppe."
     }
   ];
 
@@ -520,9 +566,14 @@
       stateKey: "productId",
       groupEl: productGroup
     },
+    set: {
+      id: "set",
+      stateKey: "setId",
+      groupEl: setGroup
+    },
     size: {
       id: "size",
-      stateKey: "sizeId",
+      stateKey: "pendantSizeId",
       groupEl: sizeGroup
     },
     designMode: {
@@ -546,10 +597,12 @@
   function init() {
     renderMaterialOptions();
     renderProductOptions();
+    renderSetOptions();
     renderSizeOptions();
     renderDesignModeOptions();
     renderTemplateOptions();
     renderMotifOverlayOptions();
+    renderPendantTabs();
     bindEvents();
     syncUi();
     queueRender();
@@ -584,18 +637,26 @@
     };
   }
 
+  function createPendantState() {
+    return {
+      sizeId: null,
+      backSideEnabled: false,
+      sides: {
+        front: createSideState(),
+        back: createSideState()
+      }
+    };
+  }
+
   function createInitialState() {
     return {
       materialId: null,
       productFamilyId: null,
       productId: null,
-      sizeId: null,
+      setId: SET_LIBRARY[0].id,
+      activePendantIndex: 0,
       activeSide: "front",
-      backSideEnabled: false,
-      sides: {
-        front: createSideState(),
-        back: createSideState()
-      },
+      pendants: [createPendantState()],
       motifOverlayStep: "groups",
       isDragging: false,
       dragOrigin: null,
@@ -713,28 +774,90 @@
     canvas.tabIndex = 0;
   }
 
-  function getSideState(sideId) {
-    return state.sides[sideId || state.activeSide];
+  function getPendantState(pendantIndex) {
+    return state.pendants[pendantIndex] || state.pendants[0];
+  }
+
+  function getActivePendantState() {
+    return getPendantState(state.activePendantIndex);
+  }
+
+  function getSetOptionById(setId) {
+    return SET_LIBRARY.find((option) => option.id === setId) || SET_LIBRARY[0];
+  }
+
+  function getActiveSetOption() {
+    return getSetOptionById(state.setId);
+  }
+
+  function getPendantCount() {
+    return getActiveSetOption().count;
+  }
+
+  function getPendantIndices() {
+    return Array.from({ length: getPendantCount() }, function (_, index) {
+      return index;
+    });
+  }
+
+  function getPendantLabel(pendantIndex) {
+    return "Anhänger " + (pendantIndex + 1);
+  }
+
+  function getPendantTabLabel(pendantIndex) {
+    const size = getActiveSize(pendantIndex);
+    return size ? getPendantLabel(pendantIndex) + " · " + size.label : getPendantLabel(pendantIndex);
+  }
+
+  function buildPendantSizeSummaryText() {
+    return getPendantIndices().map(function (pendantIndex) {
+      const size = getActiveSize(pendantIndex);
+      return getPendantLabel(pendantIndex) + ": " + (size ? size.label : "offen");
+    }).join(" · ");
+  }
+
+  function buildSizeSummaryLabel() {
+    if (!hasAnyPendantSizeSelection()) {
+      return "Offen";
+    }
+
+    const labels = getPendantIndices().map(function (pendantIndex) {
+      const size = getActiveSize(pendantIndex);
+      return size ? size.label : "offen";
+    });
+    const uniqueLabels = Array.from(new Set(labels));
+
+    return uniqueLabels.length === 1 ? uniqueLabels[0] : "individuell";
+  }
+
+  function getSideState(sideId, pendantIndex) {
+    return getPendantState(pendantIndex == null ? state.activePendantIndex : pendantIndex).sides[sideId || state.activeSide];
   }
 
   function getActiveSideState() {
     return getSideState(state.activeSide);
   }
 
-  function isBackSideEnabled() {
-    return state.backSideEnabled;
+  function isBackSideEnabled(pendantIndex) {
+    return getPendantState(pendantIndex == null ? state.activePendantIndex : pendantIndex).backSideEnabled;
   }
 
   function getSideLabel(sideId) {
     return sideId === "back" ? "Rückseite" : "Vorderseite";
   }
 
-  function getEnabledSideIds() {
-    return isBackSideEnabled() ? SIDE_IDS.slice() : ["front"];
+  function hasAnyBackSideEnabled() {
+    return getPendantIndices().some(function (pendantIndex) {
+      return isBackSideEnabled(pendantIndex);
+    });
   }
 
-  function hasMeaningfulSideConfiguration(sideId) {
-    const sideState = getSideState(sideId);
+  function getEnabledSideIds() {
+    return hasAnyBackSideEnabled() ? SIDE_IDS.slice() : ["front"];
+  }
+
+  function hasMeaningfulSideConfiguration(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
 
     if (!sideState.designMode) {
       return false;
@@ -745,7 +868,7 @@
         return true;
       }
 
-      const template = getActiveTemplate(sideId);
+      const template = getActiveTemplate(sideId, pendantIndex);
       if (!template) {
         return false;
       }
@@ -755,14 +878,14 @@
       }
 
       if (template.category === "animal-symbols") {
-        return Boolean(getSideState(sideId).motifVariantId);
+        return Boolean(getSideState(sideId, pendantIndex).motifVariantId);
       }
 
       if (template.category === "emblem") {
-        if (getSideState(sideId).emblemVariantId === "qr") {
-          return getSideState(sideId).qrValue.trim().length > 0;
+        if (getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
+          return getSideState(sideId, pendantIndex).qrValue.trim().length > 0;
         }
-        return Boolean(getSideState(sideId).emblemVariantId);
+        return Boolean(getSideState(sideId, pendantIndex).emblemVariantId);
       }
 
       return true;
@@ -775,14 +898,15 @@
     return false;
   }
 
-  function isFrontConfigured() {
-    return hasMeaningfulSideConfiguration("front");
+  function isFrontConfigured(pendantIndex) {
+    return hasMeaningfulSideConfiguration("front", pendantIndex == null ? state.activePendantIndex : pendantIndex);
   }
 
   function enableBackSide() {
+    const activePendantState = getActivePendantState();
     if (!hasSizeSelection() || isBackSideEnabled() || !isFrontConfigured()) return;
-    state.backSideEnabled = true;
-    state.sides.back = createSideState();
+    activePendantState.backSideEnabled = true;
+    activePendantState.sides.back = createSideState();
     state.isMotifVariantOverlayOpen = false;
     state.activeSide = "back";
     syncUi();
@@ -804,7 +928,9 @@
     textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
     closeRequestMenu();
     renderProductOptions();
+    renderSetOptions();
     renderSizeOptions();
+    renderPendantTabs();
     syncUi();
     queueRender();
   }
@@ -816,6 +942,31 @@
     state.isMotifVariantOverlayOpen = false;
     syncUi();
     queueRender();
+  }
+
+  function setActivePendant(pendantIndex) {
+    if (pendantIndex < 0 || pendantIndex >= getPendantCount()) return;
+    if (state.activePendantIndex === pendantIndex) return;
+    state.activePendantIndex = pendantIndex;
+    if (state.activeSide === "back" && !isBackSideEnabled(pendantIndex)) {
+      state.activeSide = "front";
+    }
+    state.isMotifVariantOverlayOpen = false;
+    renderSizeOptions();
+    syncUi();
+    queueRender();
+  }
+
+  function syncPendantStateCount() {
+    const nextCount = getPendantCount();
+    const nextPendants = [];
+
+    for (let index = 0; index < nextCount; index += 1) {
+      nextPendants.push(state.pendants[index] || createPendantState());
+    }
+
+    state.pendants = nextPendants;
+    state.activePendantIndex = clamp(state.activePendantIndex, 0, Math.max(0, nextCount - 1));
   }
 
   function applyStepSelection(stepId, value) {
@@ -835,10 +986,18 @@
 
     if (stepId === "material") {
       renderProductOptions();
+      renderSetOptions();
       renderSizeOptions();
     }
 
     if (stepId === "product") {
+      renderSetOptions();
+      renderSizeOptions();
+    }
+
+    if (stepId === "set") {
+      syncPendantStateCount();
+      renderPendantTabs();
       renderSizeOptions();
     }
 
@@ -867,10 +1026,11 @@
     });
 
     if (stepId !== "designMode") {
+      state.activePendantIndex = 0;
       state.activeSide = "front";
-      state.backSideEnabled = false;
-      state.sides.front = createSideState();
-      state.sides.back = createSideState();
+      state.pendants = Array.from({ length: getPendantCount() }, function () {
+        return createPendantState();
+      });
     }
 
     state.isMotifVariantOverlayOpen = false;
@@ -898,14 +1058,22 @@
   }
 
   function isStepAvailable(stepId) {
+    if (stepId === "designMode") {
+      return hasSizeSelection();
+    }
     if (getStepOrder(stepId) === 0) return true;
     const previousStepId = getPreviousStepId(stepId);
     return previousStepId ? isStepComplete(previousStepId) : true;
   }
 
   function isStepComplete(stepId) {
+    if (stepId === "size") {
+      return haveAllPendantSizes();
+    }
     if (stepId === "designMode") {
-      return hasDesignModeSelection();
+      return getPendantIndices().every(function (pendantIndex) {
+        return hasDesignModeSelection("front", pendantIndex);
+      });
     }
     const definition = STEP_DEFINITIONS[stepId];
     return Boolean(definition && state[definition.stateKey]);
@@ -942,9 +1110,13 @@
       return product ? product.name : "Offen";
     }
 
+    if (stepId === "set") {
+      const setOption = getActiveSetOption();
+      return state.setId ? setOption.shortLabel : "Offen";
+    }
+
     if (stepId === "size") {
-      const size = getActiveSize();
-      return size ? size.label : "Offen";
+      return buildSizeSummaryLabel();
     }
 
     if (stepId === "designMode") {
@@ -1001,6 +1173,50 @@
     });
   }
 
+  function renderSetOptions() {
+    setOptionsEl.innerHTML = "";
+
+    SET_LIBRARY.forEach((setOption) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "preview-option preview-option--set";
+      button.setAttribute("data-set-id", setOption.id);
+      button.innerHTML =
+        buildSetThumbMarkup(setOption.count) +
+        '<span class="preview-option__title">' + escapeHtml(setOption.name) + "</span>" +
+        '<span class="preview-option__meta">' + escapeHtml(setOption.description) + "</span>";
+
+      button.addEventListener("click", function () {
+        if (state.setId === setOption.id) return;
+        applyStepSelection("set", setOption.id);
+      });
+
+      setOptionsEl.appendChild(button);
+    });
+  }
+
+  function renderPendantTabs() {
+    if (!pendantTabs) return;
+    pendantTabs.innerHTML = "";
+
+    getPendantIndices().forEach(function (pendantIndex) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "preview-side-switch__button preview-side-switch__button--pendant";
+      button.setAttribute("role", "tab");
+      button.setAttribute("data-pendant-index", String(pendantIndex));
+      button.textContent = getPendantTabLabel(pendantIndex);
+      button.addEventListener("click", function () {
+        setActivePendant(pendantIndex);
+      });
+      pendantTabs.appendChild(button);
+    });
+  }
+
+  function buildSetThumbMarkup(count) {
+    return '<span class="preview-option__thumb preview-option__thumb--set" aria-hidden="true">' + buildSetThumbSvg(count) + "</span>";
+  }
+
   function renderSizeOptions() {
     sizeOptionsEl.innerHTML = "";
 
@@ -1015,8 +1231,15 @@
       button.textContent = size.label;
 
       button.addEventListener("click", function () {
-        if (state.sizeId === size.id) return;
-        applyStepSelection("size", size.id);
+        const activePendantState = getActivePendantState();
+        if (activePendantState.sizeId === size.id) return;
+        activePendantState.sizeId = size.id;
+        resetImagePlacement(false);
+        resetTextPlacement(false);
+        renderPendantTabs();
+        closeRequestMenu();
+        syncUi();
+        queueRender();
       });
 
       sizeOptionsEl.appendChild(button);
@@ -1399,7 +1622,7 @@
     activeSideState.textScalePercent = 100;
     textSizeSlider.value = "100";
     activeSideState.textOffsetX = 0;
-    activeSideState.textOffsetY = getDefaultTextOffsetY();
+    activeSideState.textOffsetY = getDefaultTextOffsetY(state.activePendantIndex);
     clampTextPlacement();
 
     if (shouldRender !== false) {
@@ -1419,7 +1642,7 @@
   function centerTextPlacement() {
     const activeSideState = getActiveSideState();
     activeSideState.textOffsetX = 0;
-    activeSideState.textOffsetY = getDefaultTextOffsetY();
+    activeSideState.textOffsetY = getDefaultTextOffsetY(state.activePendantIndex);
     clampTextPlacement();
     syncUi();
     queueRender();
@@ -1514,6 +1737,16 @@
   }
 
   function onPointerDown(event) {
+    const pendantIndex = getPendantIndexAtClientPoint(event.clientX, event.clientY);
+    const clickedDifferentPendant = pendantIndex !== -1 && pendantIndex !== state.activePendantIndex;
+    if (clickedDifferentPendant) {
+      setActivePendant(pendantIndex);
+    }
+
+    if (clickedDifferentPendant) {
+      return;
+    }
+
     if (!isMotifMode() || !hasActiveMotifContent()) return;
 
     const activeSideState = getActiveSideState();
@@ -1559,9 +1792,24 @@
     }
   }
 
+  function getPendantIndexAtClientPoint(clientX, clientY) {
+    if (!hasAnyPendantSizeSelection()) return -1;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (clientX - rect.left) * (canvas.width / rect.width);
+    const y = (clientY - rect.top) * (canvas.height / rect.height);
+    return getPendantLayouts().findIndex(function (layout, pendantIndex) {
+      const size = getActiveSize(pendantIndex);
+      const dx = x - layout.x;
+      const dy = y - layout.y;
+      const radius = (size ? size.productRadius : 116) * layout.scale;
+      return Math.sqrt(dx * dx + dy * dy) <= radius;
+    });
+  }
+
   function clampPlacement() {
     const image = getActiveImage();
-    const motifMask = getMotifMask();
+    const motifMask = getMotifMask(state.activePendantIndex);
     if (!image || !motifMask) return;
 
     const activeSideState = getActiveSideState();
@@ -1574,7 +1822,7 @@
   }
 
   function clampTextPlacement() {
-    const motifMask = getMotifMask();
+    const motifMask = getMotifMask(state.activePendantIndex);
     const activeSideState = getActiveSideState();
 
     if (!motifMask) {
@@ -1585,7 +1833,7 @@
 
     if (!hasText()) {
       activeSideState.textOffsetX = 0;
-      activeSideState.textOffsetY = getDefaultTextOffsetY();
+      activeSideState.textOffsetY = getDefaultTextOffsetY(state.activePendantIndex);
       return;
     }
 
@@ -1593,7 +1841,7 @@
     const safeHalfWidth = Math.max(motifMask.width * 0.08, (motifMask.width - textLayout.width) / 2);
     const safeHalfHeight = Math.max(motifMask.height * 0.12, (motifMask.height - textLayout.height) / 2);
     const maxOffsetX = Math.max(0, safeHalfWidth);
-    const defaultOffsetY = getDefaultTextOffsetY();
+    const defaultOffsetY = getDefaultTextOffsetY(state.activePendantIndex);
     const minOffsetY = -safeHalfHeight;
     const maxOffsetY = safeHalfHeight;
 
@@ -1619,22 +1867,28 @@
       previewProductName.textContent = activeMaterial.name;
       previewProductHint.textContent = "Wähle jetzt den passenden Anhänger.";
       previewModeChip.textContent = "Schritt 2";
-    } else if (!hasSizeSelection()) {
+    } else if (!hasSetSelection()) {
       previewProductName.textContent = activeProduct.name;
-      previewProductHint.textContent = "Wähle jetzt die passende Größe.";
+      previewProductHint.textContent = "Lege jetzt fest, wie viele Anhänger im Set gezeigt werden.";
       previewModeChip.textContent = "Schritt 3";
-    } else if (!hasDesignModeSelection()) {
-      previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
-      previewProductHint.textContent = isBackSideEnabled()
-        ? "Die Rückseite ist zusätzlich verfügbar."
-        : "Wähle jetzt Motiv oder Text.";
+    } else if (!hasSizeSelection()) {
+      previewProductName.textContent = activeProduct.name + " · " + getActiveSetOption().shortLabel;
+      previewProductHint.textContent = "Wähle jetzt die passende Größe für " + getPendantLabel(state.activePendantIndex) + ".";
       previewModeChip.textContent = "Schritt 4";
+    } else if (!hasDesignModeSelection()) {
+      previewProductName.textContent = activeProduct.name + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
+      previewProductHint.textContent = isBackSideEnabled()
+        ? "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist zusätzlich verfügbar."
+        : "Wähle jetzt Motiv oder Text für " + getPendantLabel(state.activePendantIndex) + ".";
+      previewModeChip.textContent = "Schritt 5";
     } else {
-      previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
-      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · " + getSideLabel(state.activeSide);
-      previewModeChip.textContent = getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motiv" : "Text");
+      previewProductName.textContent = activeProduct.name + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
+      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · " + getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide);
+      previewModeChip.textContent = getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motiv" : "Text");
     }
 
+    previewSetLabel.textContent = hasSetSelection() ? getActiveSetOption().shortLabel : "Einzel";
+    previewPendantLabel.textContent = getPendantTabLabel(state.activePendantIndex);
     previewActiveSideLabel.textContent = getSideLabel(state.activeSide);
     if (previewProductNameMobile) {
       previewProductNameMobile.textContent = previewProductName.textContent;
@@ -1674,16 +1928,24 @@
     }
 
     const canShowBackSideSection = hasSizeSelection() && (isFrontConfigured() || isBackSideEnabled());
+    const canShowPendantSection = hasSetSelection() && getPendantCount() > 1;
+    pendantSwitchGroup.hidden = !canShowPendantSection;
+    if (canShowPendantSection) {
+      pendantSwitchStatus.textContent = getPendantLabel(state.activePendantIndex) + " wird gerade bearbeitet";
+      pendantSwitchHint.textContent = hasSizeSelection()
+        ? "Wähle den Anhänger, den du gerade gestalten möchtest. Größe, Seiten und Gestaltung gelten immer nur für diesen Anhänger."
+        : "Wähle zuerst den Anhänger, den du gerade bearbeiten möchtest. Danach legst du die Größe nur für diesen Anhänger fest.";
+    }
     sideSwitchGroup.hidden = !canShowBackSideSection;
     sideSwitchGroup.setAttribute("aria-hidden", canShowBackSideSection ? "false" : "true");
     sideTabs.hidden = !isBackSideEnabled();
     enableBackSideButton.hidden = isBackSideEnabled();
     sideSwitchStatus.textContent = isBackSideEnabled()
-      ? (state.activeSide === "back" ? "Du gestaltest gerade die Rückseite" : "Die Rückseite ist jetzt verfügbar")
-      : "Die Rückseite ist optional verfügbar";
+      ? (state.activeSide === "back" ? "Du gestaltest gerade die Rückseite von " + getPendantLabel(state.activePendantIndex) : "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist verfügbar")
+      : "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist optional";
     sideSwitchHint.textContent = isBackSideEnabled()
-      ? "Du kannst jetzt zwischen Vorder- und Rückseite wechseln."
-      : "Wenn du möchtest, kannst du zusätzlich eine Rückseite anlegen.";
+      ? "Du kannst jetzt für diesen Anhänger zwischen Vorder- und Rückseite wechseln."
+      : "Wenn du möchtest, kannst du zusätzlich nur für diesen Anhänger eine Rückseite anlegen.";
 
     const surchargeHint = getBackSideSurchargeHint();
     if (!isBackSideEnabled()) {
@@ -1725,12 +1987,25 @@
     });
 
     sizeOptionsEl.querySelectorAll("[data-size-id]").forEach((button) => {
-      button.classList.toggle("is-active", button.getAttribute("data-size-id") === state.sizeId);
+      button.classList.toggle("is-active", button.getAttribute("data-size-id") === getActivePendantState().sizeId);
     });
 
     designModeOptionsEl.querySelectorAll("[data-design-mode]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-design-mode") === activeSideState.designMode);
     });
+
+    setOptionsEl.querySelectorAll("[data-set-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-set-id") === state.setId);
+    });
+
+    if (pendantTabs) {
+      pendantTabs.querySelectorAll("[data-pendant-index]").forEach((button) => {
+        const pendantIndex = Number(button.getAttribute("data-pendant-index"));
+        const isActive = pendantIndex === state.activePendantIndex;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+    }
 
     templateOptionsEl.querySelectorAll("[data-template-id]").forEach((button) => {
       const template = getTemplateById(button.getAttribute("data-template-id"));
@@ -1780,7 +2055,8 @@
   function getActiveSourceLabel(activeTemplate) {
     if (!hasMaterialSelection()) return "Offen";
     if (!hasProductSelection()) return "Weiter mit Produkt";
-    if (!hasSizeSelection()) return "Weiter mit Größe";
+    if (!hasSetSelection()) return "Weiter mit Set";
+    if (!hasSizeSelection()) return "Weiter mit Größe von " + getPendantLabel(state.activePendantIndex);
     if (!hasDesignModeSelection()) return "Weiter mit Gestaltungsart";
 
     if (isMotifMode()) {
@@ -1834,7 +2110,7 @@
   }
 
   function getBackSideScrollTarget() {
-    if (!state.backSideEnabled) {
+    if (!isBackSideEnabled()) {
       return null;
     }
 
@@ -1879,79 +2155,284 @@
       return;
     }
 
-    if (!hasSizeSelection()) {
-      drawEmptyState("3. Größe wählen", "Lege jetzt die passende Größe fest.");
+    if (!hasSetSelection()) {
+      drawEmptyState("3. Set wählen", "Lege fest, ob du einen oder mehrere Anhänger gestalten möchtest.");
       syncMobilePreviewCanvas();
       return;
     }
 
-    const size = getActiveSize();
+    if (!hasAnyPendantSizeSelection()) {
+      drawSetSelectionPreview();
+      syncMobilePreviewCanvas();
+      return;
+    }
+
     const material = getActiveMaterial();
     const product = getActiveProduct();
 
-    drawRoundTagBase(size);
-    drawMotifMask(size);
-
-    if (!hasDesignModeSelection()) {
-      drawMotifPrompt(
-        state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "4. Gestaltungsart wählen",
-        state.activeSide === "back" && isBackSideEnabled()
-          ? "Du kannst die Rückseite separat gestalten oder frei lassen."
-          : "Wähle jetzt Motiv oder Text."
-      );
-      drawProductHighlights(size);
-      drawPreviewLabels(material, product, size);
-      syncMobilePreviewCanvas();
-      return;
-    }
-
-    if (isMotifMode()) {
-      const image = getActiveImage();
-      if (image) {
-        drawMotif(size, image);
-      } else if (isEmblemTemplateSelected()) {
-        if (isQrSelected()) {
-          if (hasQrValue()) {
-            drawQrMotif(size);
-          } else {
-            drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
-          }
-        } else {
-          drawMotifPrompt("Variante wählen", "Passende Symbolvariante festlegen.");
-        }
-      } else if (isQrSelected()) {
-        if (hasQrValue()) {
-          drawQrMotif(size);
-        } else {
-          drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
-        }
+    getPendantLayouts().forEach(function (layout, pendantIndex) {
+      const pendantSize = getActiveSize(pendantIndex);
+      if (pendantSize) {
+        renderPendantPreview(pendantSize, pendantIndex, layout);
       } else {
+        drawSchematicPendant(layout, pendantIndex === state.activePendantIndex);
+      }
+    });
+
+    drawPreviewLabels(material, product);
+    syncMobilePreviewCanvas();
+  }
+
+  function renderPendantPreview(size, pendantIndex, layout) {
+    withPendantTransform(layout, function () {
+      drawRoundTagBase(size);
+      drawMotifMask(size, pendantIndex);
+
+      if (hasDesignModeSelection(state.activeSide, pendantIndex)) {
+        if (isMotifMode(state.activeSide, pendantIndex)) {
+          const image = getActiveImage(state.activeSide, pendantIndex);
+          if (image) {
+            drawMotif(size, image, pendantIndex);
+          } else if (isEmblemTemplateSelected(state.activeSide, pendantIndex)) {
+            if (isQrSelected(state.activeSide, pendantIndex)) {
+              if (hasQrValue(state.activeSide, pendantIndex)) {
+                drawQrMotif(size, pendantIndex);
+              } else if (pendantIndex === state.activePendantIndex) {
+                drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
+              }
+            } else if (pendantIndex === state.activePendantIndex) {
+              drawMotifPrompt("Variante wählen", "Passende Symbolvariante festlegen.");
+            }
+          } else if (pendantIndex === state.activePendantIndex) {
+            drawMotifPrompt(
+              isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
+                ? "Variante wählen"
+                : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
+                  ? "Tiergruppe wählen"
+                  : "Motivart wählen",
+              isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
+                ? "Wähle die passende Variante."
+                : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
+                  ? "Wähle zuerst die Tiergruppe."
+                  : "Wähle die passende Motivart."
+            );
+          }
+        }
+
+        if (isTextMode(state.activeSide, pendantIndex)) {
+          if (hasText(state.activeSide, pendantIndex)) {
+            drawTextOverlay(size, pendantIndex);
+          } else if (pendantIndex === state.activePendantIndex) {
+            drawMotifPrompt("Text eingeben", "Name, Initialen oder kurzes Wort.");
+          }
+        }
+      } else if (pendantIndex === state.activePendantIndex) {
         drawMotifPrompt(
-          isAnimalSymbolsSelected() && getActiveAnimalGroup()
-            ? "Variante wählen"
-            : isAnimalSymbolsSelected()
-              ? "Tiergruppe wählen"
-              : "Motivart wählen",
-          isAnimalSymbolsSelected() && getActiveAnimalGroup()
-            ? "Wähle die passende Variante."
-            : isAnimalSymbolsSelected()
-              ? "Wähle zuerst die Tiergruppe."
-              : "Wähle die passende Motivart."
+          state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "5. Gestaltungsart wählen",
+          state.activeSide === "back" && isBackSideEnabled()
+            ? "Du kannst die Rückseite dieses Anhängers separat gestalten oder frei lassen."
+            : "Wähle jetzt Motiv oder Text für diesen Anhänger."
         );
       }
+
+      drawProductHighlights(size);
+    });
+
+    drawPendantSelectionHalo(size, layout, pendantIndex);
+  }
+
+  function withPendantTransform(layout, callback) {
+    ctx.save();
+    ctx.translate(layout.x, layout.y);
+    ctx.scale(layout.scale, layout.scale);
+    ctx.translate(-600, -650);
+    callback();
+    ctx.restore();
+  }
+
+  function drawPendantSelectionHalo(size, layout, pendantIndex) {
+    const radius = size.productRadius * layout.scale;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(layout.x, layout.y, radius + 18, 0, Math.PI * 2);
+    ctx.strokeStyle = pendantIndex === state.activePendantIndex
+      ? "rgba(219,16,33,0.64)"
+      : "rgba(255,255,255,0.12)";
+    ctx.lineWidth = pendantIndex === state.activePendantIndex ? 3 : 1.5;
+    ctx.stroke();
+
+    if (pendantIndex === state.activePendantIndex) {
+      ctx.shadowColor = "rgba(219,16,33,0.28)";
+      ctx.shadowBlur = 18;
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(10,10,14,0.76)";
+      drawRoundedRect(ctx, layout.x - 78, layout.y + radius + 22, 156, 38, 19);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.08)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.font = "600 18px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(getPendantLabel(pendantIndex), layout.x, layout.y + radius + 47);
     }
 
-    if (isTextMode()) {
-      if (hasText()) {
-        drawTextOverlay(size);
-      } else {
-        drawMotifPrompt("Text eingeben", "Name, Initialen oder kurzes Wort.");
-      }
+    ctx.restore();
+  }
+
+  function getPendantLayouts(countValue) {
+    const count = countValue || getPendantCount();
+    const useStaticLayout = countValue != null;
+    const centerX = 600;
+    const centerY = 676;
+    let layouts;
+
+    if (count === 2) {
+      layouts = [
+        { x: 470, y: 664, scale: 0.84 },
+        { x: 730, y: 664, scale: 0.84 }
+      ];
+    } else if (count === 3) {
+      layouts = [
+        { x: 600, y: 488, scale: 0.69 },
+        { x: 438, y: 770, scale: 0.69 },
+        { x: 762, y: 770, scale: 0.69 }
+      ];
+    } else if (count === 4) {
+      layouts = [
+        { x: 446, y: 510, scale: 0.62 },
+        { x: 754, y: 510, scale: 0.62 },
+        { x: 446, y: 808, scale: 0.62 },
+        { x: 754, y: 808, scale: 0.62 }
+      ];
+    } else if (count === 5) {
+      layouts = [
+        { x: 600, y: 414, scale: 0.56 },
+        { x: 456, y: 612, scale: 0.56 },
+        { x: 744, y: 612, scale: 0.56 },
+        { x: 510, y: 820, scale: 0.56 },
+        { x: 690, y: 820, scale: 0.56 }
+      ];
+    } else {
+      layouts = [
+        { x: 600, y: 650, scale: 1 }
+      ];
     }
 
-    drawProductHighlights(size);
-    drawPreviewLabels(material, product, size);
-    syncMobilePreviewCanvas();
+    if (useStaticLayout || count === 1) {
+      return layouts;
+    }
+
+    const maxDiameter = getPendantIndices().reduce(function (maxValue, pendantIndex) {
+      const size = getActiveSize(pendantIndex);
+      return Math.max(maxValue, size ? size.diameterMm : 8);
+    }, 8);
+    const spreadRatio = (maxDiameter - 8) / 12;
+    const spreadFactor = 1 + spreadRatio * 0.5;
+    const verticalOffset = 22 + spreadRatio * 46;
+
+    return layouts.map(function (layout) {
+      return {
+        x: Number((centerX + (layout.x - centerX) * spreadFactor).toFixed(1)),
+        y: Number((centerY + (layout.y - centerY) * spreadFactor + verticalOffset).toFixed(1)),
+        scale: layout.scale
+      };
+    });
+  }
+
+  function drawSetSelectionPreview() {
+    const product = getActiveProduct();
+    const setOption = getActiveSetOption();
+    const layouts = getPendantLayouts(setOption.count);
+
+    layouts.forEach(function (layout, pendantIndex) {
+      drawSchematicPendant(layout, pendantIndex === state.activePendantIndex);
+    });
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.font = "700 26px system-ui, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(product.name + " · " + setOption.shortLabel, 86, 86);
+
+    ctx.fillStyle = "rgba(210,207,206,0.66)";
+    ctx.font = "500 22px system-ui, sans-serif";
+    ctx.fillText("Schematische Set-Vorschau vor der Größenwahl", 86, 122);
+
+    drawRoundedRect(ctx, 220, 948, 760, 134, 28);
+    ctx.fillStyle = "rgba(11, 10, 14, 0.78)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,0.94)";
+    ctx.font = "700 34px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("4. Größe wählen", 600, 1002);
+
+    ctx.fillStyle = "rgba(210,207,206,0.72)";
+    ctx.font = "500 22px system-ui, sans-serif";
+    ctx.fillText("Die Set-Anordnung steht. Wähle jetzt die passende Größe für " + getPendantLabel(state.activePendantIndex) + ".", 600, 1046);
+    ctx.restore();
+  }
+
+  function drawSchematicPendant(layout, isActive) {
+    const radius = 116 * layout.scale;
+    const centerX = layout.x;
+    const centerY = layout.y + 8;
+    const ringY = centerY - radius - 46 * layout.scale;
+    const ringOuter = 20 * layout.scale;
+    const ringInner = 10 * layout.scale;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.18)";
+    ctx.shadowBlur = 26 * layout.scale;
+    ctx.shadowOffsetY = 9 * layout.scale;
+
+    const pendantGradient = ctx.createLinearGradient(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+    pendantGradient.addColorStop(0, "#fcfaf7");
+    pendantGradient.addColorStop(0.5, "#c4beb8");
+    pendantGradient.addColorStop(1, "#fdfbf9");
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fillStyle = pendantGradient;
+    ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.28)";
+    ctx.lineWidth = Math.max(1.2, 1.35 * layout.scale);
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(18,18,22,0.05)";
+    ctx.lineWidth = 0.8;
+    for (let index = 0; index < 22; index += 1) {
+      const y = centerY - radius + index * ((radius * 2) / 22);
+      ctx.beginPath();
+      ctx.moveTo(centerX - radius - 8, y);
+      ctx.lineTo(centerX + radius + 8, y - 6);
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.arc(centerX, ringY, ringOuter, 0, Math.PI * 2);
+    ctx.arc(centerX, ringY, ringInner, 0, Math.PI * 2, true);
+    ctx.fillStyle = "rgba(240,236,232,0.98)";
+    ctx.fill("evenodd");
+
+    if (isActive) {
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + 14, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(219,16,33,0.58)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   function syncMobilePreviewCanvas() {
@@ -2097,8 +2578,8 @@
     ctx.restore();
   }
 
-  function drawMotifMask(size) {
-    const motifMask = getMotifMask();
+  function drawMotifMask(size, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
     if (!motifMask) return;
 
     ctx.save();
@@ -2114,10 +2595,10 @@
     ctx.restore();
   }
 
-  function drawMotif(size, image) {
-    const motifMask = getMotifMask();
-    const drawBox = getMotifDrawBox(image);
-    const activeSideState = getActiveSideState();
+  function drawMotif(size, image, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const drawBox = getMotifDrawBox(image, pendantIndex);
+    const activeSideState = getSideState(state.activeSide, pendantIndex);
     const x = motifMask.x + motifMask.width / 2 - drawBox.width / 2 + activeSideState.offsetX;
     const y = motifMask.y + motifMask.height / 2 - drawBox.height / 2 + activeSideState.offsetY;
 
@@ -2158,9 +2639,9 @@
     ctx.restore();
   }
 
-  function drawQrMotif(size) {
-    const motifMask = getMotifMask();
-    const qrModel = getQrCodeModel();
+  function drawQrMotif(size, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const qrModel = getQrCodeModel(state.activeSide, pendantIndex);
     if (!qrModel || !motifMask) {
       drawMotifPrompt("QR-Code nicht bereit", "Bitte Inhalt prüfen oder kurz erneut versuchen.");
       return;
@@ -2200,10 +2681,10 @@
     ctx.restore();
   }
 
-  function drawTextOverlay(size) {
-    const motifMask = getMotifMask();
-    const activeSideState = getActiveSideState();
-    const textLayout = getTextLayout(activeSideState.textValue);
+  function drawTextOverlay(size, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const activeSideState = getSideState(state.activeSide, pendantIndex);
+    const textLayout = getTextLayout(activeSideState.textValue, pendantIndex);
     const x = motifMask.x + motifMask.width / 2 + activeSideState.textOffsetX;
     const y = motifMask.y + motifMask.height / 2 + activeSideState.textOffsetY;
     const decorationLineWidth = Math.max(3, textLayout.fontSize * 0.06);
@@ -2257,7 +2738,7 @@
   }
 
   function drawMotifPrompt(title, description) {
-    const motifMask = getMotifMask();
+    const motifMask = getMotifMask(state.activePendantIndex);
     if (!motifMask) return;
 
     ctx.save();
@@ -2296,23 +2777,36 @@
     ctx.restore();
   }
 
-  function drawPreviewLabels(material, product, size) {
-    const motifMask = getMotifMask();
+  function drawPreviewLabels(material, product) {
+    const activeSize = getActiveSize();
+    const previewPendantIndex = activeSize
+      ? state.activePendantIndex
+      : getPendantIndices().find(function (pendantIndex) {
+          return Boolean(getActiveSize(pendantIndex));
+        });
+    const motifMask = previewPendantIndex == null ? null : getMotifMask(previewPendantIndex);
     if (!motifMask) return;
 
     ctx.save();
+    drawRoundedRect(ctx, 60, 52, 474, 106, 26);
+    ctx.fillStyle = "rgba(9, 8, 12, 0.78)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.06)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
     ctx.fillStyle = "rgba(255,255,255,0.92)";
     ctx.font = "700 26px system-ui, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(material.name + " · " + product.name, 86, 86);
+    ctx.fillText(material.name + " · " + product.name + " · " + getActiveSetOption().shortLabel, 86, 92);
 
     ctx.fillStyle = "rgba(210,207,206,0.64)";
     ctx.font = "500 22px system-ui, sans-serif";
-    ctx.fillText("Große " + size.label + " · freie Motivwirkung bis nah an den Rand", 86, 122);
+    ctx.fillText("Größen " + buildSizeSummaryLabel() + " · " + getPendantLabel(state.activePendantIndex) + (activeSize ? " aktiv" : " auswählen"), 86, 128);
 
     ctx.fillStyle = "rgba(255,255,255,0.82)";
     ctx.font = "600 18px system-ui, sans-serif";
-    ctx.fillText("Orientierungsbereich", motifMask.x + 6, motifMask.y - 18);
+    ctx.fillText("Orientierungsbereich", motifMask.x + 6, Math.max(176, motifMask.y - 20));
     ctx.restore();
   }
 
@@ -2394,10 +2888,21 @@
 
   function captureExportPreviews(sideIds) {
     const previousSide = state.activeSide;
+    const previousPendantIndex = state.activePendantIndex;
     const previews = {};
 
     sideIds.forEach(function (sideId) {
       state.activeSide = sideId;
+      if (sideId === "back") {
+        const firstBackPendantIndex = getPendantIndices().find(function (pendantIndex) {
+          return isBackSideEnabled(pendantIndex);
+        });
+        if (typeof firstBackPendantIndex === "number") {
+          state.activePendantIndex = firstBackPendantIndex;
+        }
+      } else {
+        state.activePendantIndex = previousPendantIndex;
+      }
       renderPreview();
 
       const snapshot = document.createElement("canvas");
@@ -2408,6 +2913,7 @@
     });
 
     state.activeSide = previousSide;
+    state.activePendantIndex = previousPendantIndex;
     syncUi();
     renderPreview();
 
@@ -2436,7 +2942,6 @@
 
   function drawExportHeader(targetCtx, width, height) {
     const product = getActiveProduct();
-    const size = getActiveSize();
     const material = getActiveMaterial();
 
     targetCtx.save();
@@ -2450,10 +2955,10 @@
 
     targetCtx.fillStyle = "rgba(210,207,206,0.74)";
     targetCtx.font = "500 22px system-ui, sans-serif";
-    targetCtx.fillText(material.name + " · " + product.name + " · " + size.label, 52, 108);
+    targetCtx.fillText(material.name + " · " + product.name + " · " + getActiveSetOption().shortLabel + " · " + buildSizeSummaryLabel(), 52, 108);
     targetCtx.fillText(
-      isBackSideEnabled()
-        ? "Export mit Vorderseite und zugeschalteter Rückseite"
+      hasAnyBackSideEnabled()
+        ? "Export mit individuellen Vorder- und Rückseiten"
         : "Export der aktiven Standardseite Vorderseite",
       52,
       140
@@ -2463,12 +2968,11 @@
 
   function drawExportSideCard(targetCtx, config) {
     const sideLabel = getSideLabel(config.sideId);
-    const sideState = getSideState(config.sideId);
     const cardRadius = 26;
     const previewX = config.x + config.cardPadding;
     const previewY = config.y + config.cardPadding + 58;
     const summaryY = previewY + config.previewSize + 36;
-    const modeLabel = sideState.designMode ? (sideState.designMode === "motif" ? "Motiv" : "Text") : "Leer";
+    const modeLabel = getActiveSetOption().name;
 
     targetCtx.save();
     drawRoundedRect(targetCtx, config.x, config.y, config.width, config.height, cardRadius);
@@ -2495,7 +2999,7 @@
 
     targetCtx.fillStyle = "rgba(210,207,206,0.72)";
     targetCtx.font = "500 18px system-ui, sans-serif";
-    wrapTextToCanvas(targetCtx, getSideSummary(config.sideId), config.x + config.cardPadding, summaryY + 30, config.width - config.cardPadding * 2, 26, 2);
+    wrapTextToCanvas(targetCtx, buildSideSummaryText(config.sideId), config.x + config.cardPadding, summaryY + 30, config.width - config.cardPadding * 2, 26, 3);
     targetCtx.restore();
   }
 
@@ -2509,8 +3013,8 @@
     targetCtx.textAlign = "left";
     targetCtx.fillText("Diese Vorschau ist unverbindlich. Finale Gravuraufbereitung und technische Ausarbeitung erfolgen vor Fertigung durch Luderbein.", 52, startY + 46);
 
-    if (isBackSideEnabled()) {
-      targetCtx.fillText("Die Rückseite wurde als Zusatzoption aktiviert und ist hier gemeinsam mit der Vorderseite dargestellt.", 52, startY + 78);
+    if (hasAnyBackSideEnabled()) {
+      targetCtx.fillText("Die Rückseiten wurden pro Anhänger individuell aktiviert und hier gemeinsam mit den Vorderseiten dargestellt.", 52, startY + 78);
     }
 
     targetCtx.restore();
@@ -2551,7 +3055,7 @@
   }
 
   function buildRequestSubject() {
-    return "Anfrage zur Motiv-Vorschau – " + getActiveProduct().name + " " + getActiveSize().label;
+    return "Anfrage zur Motiv-Vorschau – " + getActiveProduct().name + " · " + getActiveSetOption().shortLabel + " · " + (getPendantCount() > 1 ? "individuelle Größen" : getActiveSize().label);
   }
 
   function buildRequestMessage() {
@@ -2563,9 +3067,10 @@
       "",
       "Material: " + getActiveMaterial().name,
       "Produkt: " + getActiveProduct().name,
-      "Größe: " + getActiveSize().label,
-      "Vorderseite: " + getSideSummary("front"),
-      "Rückseite: " + getSideSummary("back")
+      "Set: " + getActiveSetOption().name,
+      "Größen: " + buildPendantSizeSummaryText(),
+      "Vorderseite: " + buildSideSummaryText("front"),
+      "Rückseite: " + buildSideSummaryText("back")
     ];
 
     if (pricingHint) {
@@ -2579,7 +3084,7 @@
   }
 
   function getPricingHint() {
-    const priceParts = [getActiveMaterial(), getActiveProductFamily(), getActiveProduct(), getActiveSize()]
+    const priceParts = [getActiveMaterial(), getActiveProductFamily(), getActiveProduct()]
       .filter(Boolean)
       .map(function (entry) {
         return entry.pricing || null;
@@ -2614,14 +3119,16 @@
       "luderbein-vorschau",
       slugify(getActiveMaterial().name),
       slugify(getActiveProduct().name),
-      slugify(getActiveSize().label)
+      slugify(getActiveSetOption().shortLabel)
     ];
 
-    if (isBackSideEnabled()) {
+    if (hasAnyBackSideEnabled()) {
       parts.push("mit-rueckseite");
     } else {
       parts.push("vorderseite");
     }
+
+    parts.push(getPendantCount() > 1 ? "individuelle-groessen" : slugify(getActiveSize().label));
 
     if (isMotifMode()) {
       parts.push("motiv");
@@ -2656,17 +3163,39 @@
     return Boolean(state.productId);
   }
 
-  function hasSizeSelection() {
-    return Boolean(state.sizeId);
+  function hasSetSelection() {
+    return Boolean(state.setId);
   }
 
-  function hasDesignModeSelection(sideId) {
-    if (sideId === "back" && !isBackSideEnabled()) return false;
-    return Boolean(getSideState(sideId).designMode);
+  function hasSizeSelection(pendantIndex) {
+    return Boolean(getPendantState(pendantIndex == null ? state.activePendantIndex : pendantIndex).sizeId);
+  }
+
+  function hasAnyPendantSizeSelection() {
+    return getPendantIndices().some(function (pendantIndex) {
+      return hasSizeSelection(pendantIndex);
+    });
+  }
+
+  function haveAllPendantSizes() {
+    return getPendantIndices().every(function (pendantIndex) {
+      return hasSizeSelection(pendantIndex);
+    });
+  }
+
+  function hasDesignModeSelection(sideId, pendantIndex) {
+    if (sideId === "back" && !isBackSideEnabled(pendantIndex)) return false;
+    return Boolean(getSideState(sideId, pendantIndex).designMode);
   }
 
   function isConfigurationReady() {
-    return hasMaterialSelection() && hasProductSelection() && hasSizeSelection() && hasDesignModeSelection("front");
+    return hasMaterialSelection() &&
+      hasProductSelection() &&
+      hasSetSelection() &&
+      haveAllPendantSizes() &&
+      getPendantIndices().every(function (pendantIndex) {
+        return hasDesignModeSelection("front", pendantIndex);
+      });
   }
 
   function hasActiveMotifContent(sideId) {
@@ -2694,26 +3223,26 @@
     return Boolean(sideState.templateId);
   }
 
-  function hasText(sideId) {
-    return getSideState(sideId).textValue.length > 0;
+  function hasText(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).textValue.length > 0;
   }
 
-  function isMotifMode(sideId) {
-    return getSideState(sideId).designMode === "motif";
+  function isMotifMode(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).designMode === "motif";
   }
 
-  function isTextMode(sideId) {
-    return getSideState(sideId).designMode === "text";
+  function isTextMode(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).designMode === "text";
   }
 
-  function getSideSummary(sideId) {
-    if (sideId === "back" && !isBackSideEnabled()) {
+  function getSideSummary(sideId, pendantIndex) {
+    if (sideId === "back" && !isBackSideEnabled(pendantIndex)) {
       return "nicht aktiviert";
     }
 
-    const sideState = getSideState(sideId);
-    const sideTemplate = getActiveTemplate(sideId);
-    const sideVariant = getActiveMotifVariant(sideId);
+    const sideState = getSideState(sideId, pendantIndex);
+    const sideTemplate = getActiveTemplate(sideId, pendantIndex);
+    const sideVariant = getActiveMotifVariant(sideId, pendantIndex);
 
     if (!sideState.designMode) {
       return sideId === "back" ? "aktiviert, noch offen" : "offen";
@@ -2727,7 +3256,7 @@
         return sideState.qrValue ? "Motiv · QR-Code · " + truncateText(sideState.qrValue, 46) : "Motiv · QR-Code offen";
       }
       if (sideTemplate) {
-        return "Motiv · " + getMotifSourceSummary(sideTemplate, sideVariant, sideId);
+        return "Motiv · " + getMotifSourceSummary(sideTemplate, sideVariant, sideId, pendantIndex);
       }
       return "Motiv · offen";
     }
@@ -2739,8 +3268,14 @@
     return "Text · " + sideState.textValue;
   }
 
-  function getMotifSourceSummary(activeTemplate, activeMotifVariant, sideId) {
-    const sideState = getSideState(sideId);
+  function buildSideSummaryText(sideId) {
+    return getPendantIndices().map(function (pendantIndex) {
+      return getPendantLabel(pendantIndex) + ": " + getSideSummary(sideId, pendantIndex);
+    }).join(" · ");
+  }
+
+  function getMotifSourceSummary(activeTemplate, activeMotifVariant, sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
 
     if (sideState.uploadedImage) {
       return "Foto mit eigener Datei";
@@ -2751,7 +3286,7 @@
     }
 
     if (activeTemplate.category === "animal-symbols") {
-      const animalGroup = getActiveAnimalGroup(sideId);
+      const animalGroup = getActiveAnimalGroup(sideId, pendantIndex);
       if (!animalGroup) {
         return "Tiermotiv · offen";
       }
@@ -2759,12 +3294,12 @@
     }
 
     if (activeTemplate.category === "emblem") {
-      const emblemVariant = getActiveEmblemVariant(sideId);
+      const emblemVariant = getActiveEmblemVariant(sideId, pendantIndex);
       if (!emblemVariant) {
         return "Wappen / Emblem · offen";
       }
       if (emblemVariant.isQr) {
-        return getSideState(sideId).qrValue ? "QR-Code" : "QR-Code offen";
+        return getSideState(sideId, pendantIndex).qrValue ? "QR-Code" : "QR-Code offen";
       }
       return emblemVariant.name;
     }
@@ -2793,34 +3328,34 @@
     return firstVariant ? firstVariant.id : null;
   }
 
-  function getActiveTopLevelTemplateId(sideId) {
-    return getSideState(sideId).templateId;
+  function getActiveTopLevelTemplateId(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).templateId;
   }
 
-  function getActiveTemplate(sideId) {
-    const topLevelTemplateId = getActiveTopLevelTemplateId(sideId);
+  function getActiveTemplate(sideId, pendantIndex) {
+    const topLevelTemplateId = getActiveTopLevelTemplateId(sideId, pendantIndex);
     return getTemplateById(topLevelTemplateId);
   }
 
-  function getActiveMotifVariant(sideId) {
-    const sideState = getSideState(sideId);
+  function getActiveMotifVariant(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
     return sideState.motifVariantId ? getMotifVariantById(sideState.motifVariantId) : null;
   }
 
-  function getActiveEmblemVariant(sideId) {
-    const sideState = getSideState(sideId);
+  function getActiveEmblemVariant(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
     return sideState.emblemVariantId ? getEmblemVariantById(sideState.emblemVariantId) : null;
   }
 
-  function getActiveAnimalGroup(sideId) {
-    const sideState = getSideState(sideId);
+  function getActiveAnimalGroup(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
     return sideState.animalGroupId ? getAnimalGroupById(sideState.animalGroupId) : null;
   }
 
-  function getActiveImage(sideId) {
-    const sideState = getSideState(sideId);
-    const activeVariant = getActiveMotifVariant(sideId);
-    const activeTemplate = getActiveTemplate(sideId);
+  function getActiveImage(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    const activeVariant = getActiveMotifVariant(sideId, pendantIndex);
+    const activeTemplate = getActiveTemplate(sideId, pendantIndex);
 
     if (sideState.uploadedImage) {
       return sideState.uploadedImage;
@@ -2831,39 +3366,39 @@
     }
 
     if (activeTemplate && activeTemplate.category === "emblem") {
-      const emblemVariant = getActiveEmblemVariant(sideId);
+      const emblemVariant = getActiveEmblemVariant(sideId, pendantIndex);
       return emblemVariant && !emblemVariant.isQr ? emblemVariant.image : null;
     }
 
     return (activeTemplate ? activeTemplate.image : null) || null;
   }
 
-  function isPhotoMotifSelected(sideId) {
-    const template = getActiveTemplate(sideId);
+  function isPhotoMotifSelected(sideId, pendantIndex) {
+    const template = getActiveTemplate(sideId, pendantIndex);
     return Boolean(template && template.category === "photo");
   }
 
-  function isAnimalPawsSelected(sideId) {
-    const template = getActiveTemplate(sideId);
+  function isAnimalPawsSelected(sideId, pendantIndex) {
+    const template = getActiveTemplate(sideId, pendantIndex);
     return Boolean(template && template.category === "animal-symbols");
   }
 
-  function isAnimalMotifSelected(sideId) {
-    return isAnimalPawsSelected(sideId);
+  function isAnimalMotifSelected(sideId, pendantIndex) {
+    return isAnimalPawsSelected(sideId, pendantIndex);
   }
 
-  function isEmblemTemplateSelected(sideId) {
-    const template = getActiveTemplate(sideId);
+  function isEmblemTemplateSelected(sideId, pendantIndex) {
+    const template = getActiveTemplate(sideId, pendantIndex);
     return Boolean(template && template.category === "emblem");
   }
 
-  function isQrSelected(sideId) {
-    const emblemVariant = getActiveEmblemVariant(sideId);
+  function isQrSelected(sideId, pendantIndex) {
+    const emblemVariant = getActiveEmblemVariant(sideId, pendantIndex);
     return Boolean(emblemVariant && emblemVariant.isQr);
   }
 
-  function hasQrValue(sideId) {
-    return getSideState(sideId).qrValue.trim().length > 0;
+  function hasQrValue(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).qrValue.trim().length > 0;
   }
 
   function updateMotifVariantOverlayCopy() {
@@ -2890,14 +3425,14 @@
     motifVariantOverlayHelp.textContent = "Passende Variante auswählen.";
   }
 
-  function isAnimalSymbolsSelected(sideId) {
-    return isAnimalMotifSelected(sideId);
+  function isAnimalSymbolsSelected(sideId, pendantIndex) {
+    return isAnimalMotifSelected(sideId, pendantIndex);
   }
 
-  function getMotifSizeHint(sideId) {
-    const template = getActiveTemplate(sideId);
-    const size = getActiveSize();
-    if (!template || !size || !isMotifMode(sideId)) return "";
+  function getMotifSizeHint(sideId, pendantIndex) {
+    const template = getActiveTemplate(sideId, pendantIndex);
+    const size = getActiveSize(pendantIndex);
+    if (!template || !size || !isMotifMode(sideId, pendantIndex)) return "";
 
     if (template.category === "photo" && size.diameterMm <= 12) {
       return size.diameterMm <= 10
@@ -2906,13 +3441,13 @@
     }
 
     if (template.category === "emblem") {
-      if (isQrSelected(sideId) && size.diameterMm <= 12) {
+      if (isQrSelected(sideId, pendantIndex) && size.diameterMm <= 12) {
         return size.diameterMm <= 10
           ? "Bei 8 oder 10 mm kann ein QR-Code nur eingeschränkt lesbar wirken. Für QR ist meist ein größerer Anhänger die sicherere Wahl."
           : "Bei 12 mm ist ein QR-Code möglich, wirkt aber auf größeren Anhängern meist klarer und ruhiger lesbar.";
       }
 
-      if (!isQrSelected(sideId) && size.diameterMm <= 10) {
+      if (!isQrSelected(sideId, pendantIndex) && size.diameterMm <= 10) {
         return "Feine Linien in Wappen oder Emblemen wirken auf 8 oder 10 mm zurückhaltender. Größere Anhänger geben solchen Motiven meist mehr Ruhe.";
       }
     }
@@ -2959,19 +3494,20 @@
     return productFamily.products.find((product) => product.id === state.productId) || null;
   }
 
-  function getActiveSize() {
+  function getActiveSize(pendantIndex) {
     const product = getActiveProduct();
+    const targetPendantState = getPendantState(pendantIndex == null ? state.activePendantIndex : pendantIndex);
     if (!product) return null;
-    return product.sizes.find((size) => size.id === state.sizeId) || null;
+    return product.sizes.find((size) => size.id === targetPendantState.sizeId) || null;
   }
 
-  function getActiveTextFont(sideId) {
-    const sideState = getSideState(sideId);
+  function getActiveTextFont(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
     return TEXT_FONT_LIBRARY.find((font) => font.id === sideState.textFontId) || TEXT_FONT_LIBRARY[0];
   }
 
-  function getMotifMask() {
-    const size = getActiveSize();
+  function getMotifMask(pendantIndex) {
+    const size = getActiveSize(pendantIndex);
     if (!size) return null;
 
     const radius = size.productRadius * size.engravingRatio;
@@ -2984,9 +3520,9 @@
     };
   }
 
-  function getMotifDrawBox(image) {
-    const motifMask = getMotifMask();
-    const activeSideState = getActiveSideState();
+  function getMotifDrawBox(image, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const activeSideState = getSideState(state.activeSide, pendantIndex);
     const fitScale = Math.max(motifMask.width / image.width, motifMask.height / image.height);
     const scaleFactor = activeSideState.scalePercent / 100;
     return {
@@ -2995,36 +3531,36 @@
     };
   }
 
-  function getTextLayout(text) {
-    const motifMask = getMotifMask();
-    const activeSideState = getActiveSideState();
+  function getTextLayout(text, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const activeSideState = getSideState(state.activeSide, pendantIndex);
     const maxWidth = motifMask.width * 0.82;
     const baseFontSize = Math.max(34, motifMask.width * 0.19);
     let fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
-    let metrics = measureText(text, fontSize);
+    let metrics = measureText(text, fontSize, pendantIndex);
 
     if (metrics.width > maxWidth) {
       fontSize *= maxWidth / metrics.width;
-      metrics = measureText(text, fontSize);
+      metrics = measureText(text, fontSize, pendantIndex);
     }
 
     const safeFontSize = Math.max(22, fontSize);
     if (safeFontSize !== fontSize) {
-      metrics = measureText(text, safeFontSize);
+      metrics = measureText(text, safeFontSize, pendantIndex);
       fontSize = safeFontSize;
     }
 
     return {
       fontSize: fontSize,
-      font: buildTextFont(fontSize),
+      font: buildTextFont(fontSize, pendantIndex),
       width: metrics.width,
       height: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
     };
   }
 
-  function buildTextFont(fontSize) {
-    const activeSideState = getActiveSideState();
-    const font = getActiveTextFont();
+  function buildTextFont(fontSize, pendantIndex) {
+    const activeSideState = getSideState(state.activeSide, pendantIndex);
+    const font = getActiveTextFont(state.activeSide, pendantIndex);
     const fontParts = [];
 
     if (activeSideState.textStyles.italic) {
@@ -3038,14 +3574,14 @@
     return fontParts.join(" ");
   }
 
-  function getDefaultTextOffsetY() {
-    const motifMask = getMotifMask();
+  function getDefaultTextOffsetY(pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
     return motifMask ? motifMask.height * 0.22 : 0;
   }
 
-  function measureText(text, fontSize) {
+  function measureText(text, fontSize, pendantIndex) {
     ctx.save();
-    ctx.font = buildTextFont(fontSize);
+    ctx.font = buildTextFont(fontSize, pendantIndex);
     const metrics = ctx.measureText(text);
     ctx.restore();
     return metrics;
@@ -3091,8 +3627,8 @@
     });
   }
 
-  function getQrCodeModel(sideId) {
-    const sideState = getSideState(sideId);
+  function getQrCodeModel(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
     const qrValue = sideState.qrValue.trim();
     if (!qrValue) {
       return null;
@@ -3141,6 +3677,59 @@
 
   function buildInlineSvgDataUri(svg) {
     return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  }
+
+  function buildSetThumbSvg(count) {
+    const layouts = getPendantLayouts(count).map(function (layout) {
+      return {
+        x: Number((100 + (layout.x - 600) * 0.188).toFixed(1)),
+        y: Number((58 + (layout.y - 650) * 0.188).toFixed(1)),
+        scale: layout.scale
+      };
+    });
+
+    if (count === 5 && layouts.length === 5) {
+      layouts[0].y = Number((layouts[0].y + 10.5).toFixed(1));
+      layouts[1].x = Number((layouts[1].x - 12.5).toFixed(1));
+      layouts[2].x = Number((layouts[2].x + 12.5).toFixed(1));
+      layouts[3].x = Number((layouts[3].x - 14.5).toFixed(1));
+      layouts[4].x = Number((layouts[4].x + 14.5).toFixed(1));
+    }
+
+    const circles = layouts.map(function (layout, index) {
+      const radius = Number((25.7 * layout.scale).toFixed(1));
+      const ringOuter = Number((5.1 * layout.scale).toFixed(1));
+      const ringInner = Number((2.5 * layout.scale).toFixed(1));
+      const ringY = Number((layout.y - radius - 8.8 * layout.scale).toFixed(1));
+      const activeStroke = index === 0 ? ' stroke="#db1021" stroke-width="1.2"' : ' stroke="#ffffff" stroke-width="0"';
+      const shadowY = Number((layout.y + radius * 0.78).toFixed(1));
+      const shadowRx = Number((radius * 0.78).toFixed(1));
+      const shadowRy = Number((radius * 0.22).toFixed(1));
+
+      return (
+        '<g>' +
+          '<ellipse cx="' + layout.x + '" cy="' + shadowY + '" rx="' + shadowRx + '" ry="' + shadowRy + '" fill="#000000" opacity=".22"/>' +
+          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + radius + '" fill="url(#setPendantFill)" stroke="#191b20" stroke-width="1.6"/>' +
+          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + (radius - 2.1) + '" fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width="1"/>' +
+          '<circle cx="' + layout.x + '" cy="' + ringY + '" r="' + ringOuter + '" fill="none" stroke="#171a1f" stroke-width="1.05"/>' +
+          '<circle cx="' + layout.x + '" cy="' + ringY + '" r="' + ringInner + '" fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width=".7"/>' +
+          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + (radius + 3.8) + '"' + activeStroke + ' fill="none"/>' +
+        '</g>'
+      );
+    }).join("");
+
+    return (
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 112" role="img" aria-hidden="true">' +
+        '<defs>' +
+          '<linearGradient id="setPendantFill" x1="0%" y1="0%" x2="100%" y2="100%">' +
+            '<stop offset="0%" stop-color="#fbf7f2"/>' +
+            '<stop offset="42%" stop-color="#c9c0b8"/>' +
+            '<stop offset="100%" stop-color="#f3eee9"/>' +
+          '</linearGradient>' +
+        '</defs>' +
+        circles +
+      '</svg>'
+    );
   }
 
   function normalizeTextValue(value) {

@@ -176,6 +176,14 @@
               <p id="previewProductHint">Wähle zuerst ein Material. Danach schaltet sich der Ablauf Schritt für Schritt frei.</p>
             </div>
             <div class="preview-source">
+              <span>Set</span>
+              <strong id="previewSetLabel">Einzel</strong>
+            </div>
+            <div class="preview-source">
+              <span>Aktiver Anhänger</span>
+              <strong id="previewPendantLabel">Anhänger 1</strong>
+            </div>
+            <div class="preview-source">
               <span>Aktive Seite</span>
               <strong id="previewActiveSideLabel">Vorderseite</strong>
             </div>
@@ -249,9 +257,29 @@
           <div id="productOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
 
+        <div class="preview-control-group" id="setGroup" aria-labelledby="set-heading" hidden>
+          <div class="preview-control-title-row">
+            <h3 id="set-heading">3. Set wählen</h3>
+            <span class="preview-inline-note">Einzel, 2er-, 3er-, 4er- oder 5er-Set.</span>
+          </div>
+          <div id="setOptions" class="preview-option-grid preview-option-grid--products"></div>
+          <p class="preview-help">Das Set legt fest, wie viele runde Anhänger gemeinsam gezeigt und bearbeitet werden.</p>
+        </div>
+
+        <div class="preview-side-switch-group" id="pendantSwitchGroup" hidden>
+          <div class="preview-side-switch__top">
+            <div class="preview-side-switch__copy">
+              <span class="preview-side-switch__label">Set-Bearbeitung</span>
+              <strong id="pendantSwitchStatus">Anhänger 1 wird gerade bearbeitet</strong>
+            </div>
+          </div>
+          <p class="preview-help" id="pendantSwitchHint">Wähle den Anhänger, den du gerade gestalten möchtest.</p>
+          <div class="preview-side-switch preview-side-switch--pendants" id="pendantTabs" role="tablist" aria-label="Zwischen Anhängern im Set wechseln"></div>
+        </div>
+
         <div class="preview-control-group" id="sizeGroup" aria-labelledby="size-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="size-heading">3. Größe wählen</h3>
+            <h3 id="size-heading">4. Größe wählen</h3>
             <span class="preview-inline-note">8 / 10 / 12 / 15 / 20 mm</span>
           </div>
           <div id="sizeOptions" class="preview-size-grid"></div>
@@ -260,7 +288,7 @@
 
         <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="design-mode-heading">4. Gestaltungsart wählen</h3>
+            <h3 id="design-mode-heading">5. Gestaltungsart wählen</h3>
             <span class="preview-inline-note">Pro Seite ist aktuell Motiv oder Text möglich.</span>
           </div>
           <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
@@ -269,7 +297,7 @@
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="template-heading">5. Motivart wählen</h3>
+            <h3 id="template-heading">6. Motivart wählen</h3>
             <span class="preview-inline-note">Monogramm, Foto, Tiersymbol oder Wappen / Emblem / QR-Code.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
@@ -334,7 +362,7 @@
 
         <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="text-heading">5. Text eingeben und positionieren</h3>
+            <h3 id="text-heading">6. Text eingeben und positionieren</h3>
             <strong id="textSizeValueLabel">100%</strong>
           </div>
 
