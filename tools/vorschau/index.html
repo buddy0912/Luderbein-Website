@@ -228,6 +228,23 @@
           <button class="btn" type="button" id="resetPlacementButton">Zurücksetzen</button>
         </div>
 
+        <div class="preview-price-box" id="priceSummaryBox" hidden aria-live="polite">
+          <div class="preview-price-box__breakdown" id="priceBreakdown"></div>
+          <div class="preview-price-box__row">
+            <span>Zwischensumme</span>
+            <strong id="priceSubtotal">0,00 €</strong>
+          </div>
+          <div class="preview-price-box__row" id="priceDiscountRow" hidden>
+            <span id="priceDiscountLabel">Set-Rabatt</span>
+            <strong id="priceDiscount">-0,00 €</strong>
+          </div>
+          <div class="preview-price-box__row preview-price-box__row--total">
+            <span>Gesamtpreis</span>
+            <strong id="priceTotal">0,00 €</strong>
+          </div>
+          <p class="preview-price-box__hint" id="priceSummaryHint">Preis wird berechnet, sobald die Anhänger vollständig gewählt sind.</p>
+        </div>
+
         <p class="preview-caption">
           Die Vorderseite ist der Start. Eine Rückseite kannst du bei Bedarf ergänzen.
         </p>
@@ -289,10 +306,10 @@
         <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="design-mode-heading">5. Gestaltungsart wählen</h3>
-            <span class="preview-inline-note">Pro Seite ist aktuell Motiv oder Text möglich.</span>
+            <span class="preview-inline-note">Pro Seite genau eine Gestaltung.</span>
           </div>
           <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
-          <p class="preview-help">Die Rückseite kannst du bei Bedarf separat gestalten.</p>
+          <p class="preview-help" id="designModeRuleHint">Pro Seite ist genau eine Gestaltung möglich: Text ODER Motiv ODER QR ODER Foto.</p>
         </div>
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
@@ -302,6 +319,7 @@
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
           <p class="preview-help preview-help--notice" id="motifSizeHint" hidden></p>
+          <p class="preview-help preview-help--notice" id="photoPricingHint" hidden></p>
           <input
             id="uploadInput"
             class="preview-hidden-input"

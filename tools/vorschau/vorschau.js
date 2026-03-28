@@ -51,6 +51,15 @@
   const scaleValueLabel = document.getElementById("scaleValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const motifSizeHint = document.getElementById("motifSizeHint");
+  const photoPricingHint = document.getElementById("photoPricingHint");
+  const priceSummaryBox = document.getElementById("priceSummaryBox");
+  const priceBreakdown = document.getElementById("priceBreakdown");
+  const priceSubtotal = document.getElementById("priceSubtotal");
+  const priceDiscountRow = document.getElementById("priceDiscountRow");
+  const priceDiscountLabel = document.getElementById("priceDiscountLabel");
+  const priceDiscount = document.getElementById("priceDiscount");
+  const priceTotal = document.getElementById("priceTotal");
+  const priceSummaryHint = document.getElementById("priceSummaryHint");
   const previewProductName = document.getElementById("previewProductName");
   const previewProductNameMobile = document.getElementById("previewProductNameMobile");
   const previewProductHint = document.getElementById("previewProductHint");
@@ -82,9 +91,22 @@
   const REQUEST_EMAIL = "luderbein_gravur@icloud.com";
   const ACTIVE_STEP_SEQUENCE = ["material", "product", "set", "size", "designMode"];
   const SIDE_IDS = ["front", "back"];
-  const BACK_SIDE_OPTION = {
-    surchargeCents: 0,
-    surchargeLabel: ""
+  const PHOTO_SIZE_12_HINT = "Foto bei 12 mm nur unter Vorbehalt: Ergebnis hängt stark von der Vorlage ab (Kontrast/Details).";
+  const PHOTO_DISCOUNT_HINT = "Foto wird händisch optimiert (Zufriedenheitsgarantie). Der Rabatt gilt nur bei identischem Foto (keine Neuaufbereitung).";
+  const PRICE_BY_SIZE_GROUP_CENTS = {
+    S: 995,
+    M: 1195,
+    L: 1395
+  };
+  const BACK_SIDE_STANDARD_CENTS = 495;
+  const PHOTO_NEW_PREP_CENTS = 3495;
+  const PHOTO_REPEAT_FRONT_CENTS = 2495;
+  const PHOTO_REPEAT_BACK_CENTS = 995;
+  const SET_DISCOUNT_RATES = {
+    2: 0.10,
+    3: 0.12,
+    4: 0.14,
+    5: 0.15
   };
 
   const MODE_LIBRARY = [
@@ -616,6 +638,7 @@
       motifVariantId: null,
       emblemVariantId: null,
       uploadedImage: null,
+      uploadedImageSrc: "",
       uploadedFileName: "",
       qrValue: "",
       qrCodeModel: null,
@@ -850,6 +873,201 @@
     return getPendantIndices().some(function (pendantIndex) {
       return isBackSideEnabled(pendantIndex);
     });
+  }
+
+  function getSizeGroup(size) {
+    if (!size) return null;
+    if (size.diameterMm <= 12) return "S";
+    if (size.diameterMm === 15) return "M";
+    return "L";
+  }
+
+  function getBasePriceForSize(size) {
+    const sizeGroup = getSizeGroup(size);
+    return sizeGroup ? PRICE_BY_SIZE_GROUP_CENTS[sizeGroup] : 0;
+  }
+
+  function getSetDiscountRate(pendantCount) {
+    return SET_DISCOUNT_RATES[pendantCount] || 0;
+  }
+
+  function roundCentsToFive(cents) {
+    return Math.round(cents / 5) * 5;
+  }
+
+  function getSelectedSideType(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    if (!sideState.designMode) return null;
+
+    if (sideState.designMode === "text") {
+      return "text";
+    }
+
+    const template = getActiveTemplate(sideId, pendantIndex);
+    if (!template) return null;
+
+    if (template.category === "photo") {
+      return "photo";
+    }
+
+    if (template.category === "emblem" && getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
+      return "qr";
+    }
+
+    return "motif";
+  }
+
+  function getSideContentType(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    if (!sideState.designMode) return null;
+
+    if (sideState.designMode === "text") {
+      return sideState.textValue.trim() ? "text" : null;
+    }
+
+    const template = getActiveTemplate(sideId, pendantIndex);
+    if (!template) return null;
+
+    if (template.category === "photo") {
+      return sideState.uploadedImageSrc ? "photo" : null;
+    }
+
+    if (template.category === "emblem" && getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
+      return getSideState(sideId, pendantIndex).qrValue.trim() ? "qr" : null;
+    }
+
+    if (template.category === "animal-symbols") {
+      return getSideState(sideId, pendantIndex).motifVariantId ? "motif" : null;
+    }
+
+    if (template.category === "emblem") {
+      return getSideState(sideId, pendantIndex).emblemVariantId ? "motif" : null;
+    }
+
+    return "motif";
+  }
+
+  function isSideConfigured(sideId, pendantIndex) {
+    if (sideId === "back" && !isBackSideEnabled(pendantIndex)) {
+      return true;
+    }
+
+    return Boolean(getSideContentType(sideId, pendantIndex));
+  }
+
+  function canUsePhotoOnPendant(pendantIndex) {
+    const size = getActiveSize(pendantIndex);
+    return Boolean(size && size.diameterMm >= 12);
+  }
+
+  function getPhotoIdentityKey(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    return sideState.uploadedImageSrc || "";
+  }
+
+  function hasAnyPhotoSelection() {
+    return getPendantIndices().some(function (pendantIndex) {
+      return SIDE_IDS.some(function (sideId) {
+        return isPhotoMotifSelected(sideId, pendantIndex);
+      });
+    });
+  }
+
+  function calculatePriceSummary() {
+    const result = {
+      isReady: false,
+      subtotalCents: 0,
+      discountCents: 0,
+      totalCents: 0,
+      discountRate: getSetDiscountRate(getPendantCount()),
+      pendantCount: getPendantCount(),
+      hasPhoto: false,
+      hasPhotoAt12mm: false,
+      invalidReason: "",
+      items: []
+    };
+
+    if (!hasMaterialSelection() || !hasProductSelection() || !hasSetSelection()) {
+      result.invalidReason = "Preis wird berechnet, sobald Material, Produkt und Set gewählt sind.";
+      return result;
+    }
+
+    const preparedPhotoKeys = new Set();
+
+    function getChargeForPhotoSide(sideId, pendantIndex) {
+      const size = getActiveSize(pendantIndex);
+      if (!canUsePhotoOnPendant(pendantIndex)) {
+        result.invalidReason = "Foto ist erst ab 12 mm möglich.";
+        return 0;
+      }
+
+      result.hasPhoto = true;
+      if (size && size.diameterMm === 12) {
+        result.hasPhotoAt12mm = true;
+      }
+
+      const sideType = getSideContentType(sideId, pendantIndex);
+      const photoKey = sideType === "photo"
+        ? getPhotoIdentityKey(sideId, pendantIndex)
+        : "pending-photo-" + pendantIndex + "-" + sideId;
+
+      if (!preparedPhotoKeys.has(photoKey)) {
+        preparedPhotoKeys.add(photoKey);
+        return PHOTO_NEW_PREP_CENTS;
+      }
+
+      return sideId === "front" ? PHOTO_REPEAT_FRONT_CENTS : PHOTO_REPEAT_BACK_CENTS;
+    }
+
+    for (let pendantIndex = 0; pendantIndex < getPendantCount(); pendantIndex += 1) {
+      const size = getActiveSize(pendantIndex);
+      if (!size) {
+        result.invalidReason = "Preis wird berechnet, sobald alle Anhänger eine Größe haben.";
+        return result;
+      }
+
+      const frontSelectedType = getSelectedSideType("front", pendantIndex);
+      const backSelectedType = isBackSideEnabled(pendantIndex) ? getSelectedSideType("back", pendantIndex) : null;
+      const item = {
+        pendantIndex: pendantIndex,
+        label: getPendantLabel(pendantIndex),
+        sizeLabel: size.label,
+        baseCents: 0,
+        backCents: 0,
+        totalCents: 0,
+        metaParts: []
+      };
+
+      item.baseCents = frontSelectedType === "photo"
+        ? getChargeForPhotoSide("front", pendantIndex)
+        : getBasePriceForSize(size);
+      item.metaParts.push((frontSelectedType === "photo" ? "Foto Vorderseite " : "Basis ") + formatEuro(item.baseCents));
+
+      if (isBackSideEnabled(pendantIndex)) {
+        item.backCents = backSelectedType === "photo"
+          ? getChargeForPhotoSide("back", pendantIndex)
+          : BACK_SIDE_STANDARD_CENTS;
+        item.metaParts.push((backSelectedType === "photo" ? "Foto Rückseite " : "Rückseite +") + formatEuro(item.backCents));
+      }
+
+      item.totalCents = item.baseCents + item.backCents;
+      result.subtotalCents += item.totalCents;
+      result.items.push(item);
+    }
+
+    const discountMultiplier = 1 - result.discountRate;
+    const discountedCents = Math.round(result.subtotalCents * discountMultiplier);
+    result.totalCents = roundCentsToFive(discountedCents);
+    result.discountCents = Math.max(0, result.subtotalCents - result.totalCents);
+    result.isReady = true;
+
+    if (!result.invalidReason) {
+      result.invalidReason = result.hasPhoto
+        ? "Foto wird bei identischem Bild automatisch rabattiert. Ohne identische Bilddatei wird zunächst neue Aufbereitung gerechnet."
+        : "Preis basiert auf Größenwahl, aktivierten Rückseiten und Set-Rabatt.";
+    }
+
+    return result;
   }
 
   function getEnabledSideIds() {
@@ -1184,6 +1402,7 @@
       button.innerHTML =
         buildSetThumbMarkup(setOption.count) +
         '<span class="preview-option__title">' + escapeHtml(setOption.name) + "</span>" +
+        '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(getSetStartingPriceCents(setOption.count))) + "</strong></span>" +
         '<span class="preview-option__meta">' + escapeHtml(setOption.description) + "</span>";
 
       button.addEventListener("click", function () {
@@ -1217,6 +1436,12 @@
     return '<span class="preview-option__thumb preview-option__thumb--set" aria-hidden="true">' + buildSetThumbSvg(count) + "</span>";
   }
 
+  function getSetStartingPriceCents(count) {
+    const subtotalCents = PRICE_BY_SIZE_GROUP_CENTS.S * count;
+    const discountedCents = Math.round(subtotalCents * (1 - getSetDiscountRate(count)));
+    return roundCentsToFive(discountedCents);
+  }
+
   function renderSizeOptions() {
     sizeOptionsEl.innerHTML = "";
 
@@ -1234,6 +1459,7 @@
         const activePendantState = getActivePendantState();
         if (activePendantState.sizeId === size.id) return;
         activePendantState.sizeId = size.id;
+        sanitizePhotoSelectionsForPendant(state.activePendantIndex);
         resetImagePlacement(false);
         resetTextPlacement(false);
         renderPendantTabs();
@@ -1394,6 +1620,7 @@
   function selectMotifTemplate(templateId) {
     const template = getTemplateById(templateId);
     if (!template) return;
+    if (template.category === "photo" && !canUsePhotoOnPendant()) return;
 
     const activeSideState = getActiveSideState();
     const isPhotoTemplate = template.category === "photo";
@@ -1548,6 +1775,7 @@
       loadImage(String(reader.result))
         .then((image) => {
           targetSideState.uploadedImage = image;
+          targetSideState.uploadedImageSrc = String(reader.result);
           targetSideState.uploadedFileName = file.name;
           targetSideState.scalePercent = 100;
           targetSideState.offsetX = 0;
@@ -1566,6 +1794,7 @@
   function clearUploadedImage(shouldRender) {
     const activeSideState = getActiveSideState();
     activeSideState.uploadedImage = null;
+    activeSideState.uploadedImageSrc = "";
     activeSideState.uploadedFileName = "";
     uploadInput.value = "";
     resetImagePlacement(false);
@@ -1573,6 +1802,41 @@
     if (shouldRender !== false) {
       syncUi();
       queueRender();
+    }
+  }
+
+  function clearPhotoState(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    sideState.templateId = null;
+    sideState.uploadedImage = null;
+    sideState.uploadedImageSrc = "";
+    sideState.uploadedFileName = "";
+    sideState.animalGroupId = null;
+    sideState.motifVariantId = null;
+    sideState.emblemVariantId = null;
+    sideState.qrValue = "";
+    sideState.qrCodeModel = null;
+    sideState.qrCodeModelValue = "";
+    sideState.scalePercent = 100;
+    sideState.offsetX = 0;
+    sideState.offsetY = 0;
+
+    if ((pendantIndex == null ? state.activePendantIndex : pendantIndex) === state.activePendantIndex && state.activeSide === sideId) {
+      uploadInput.value = "";
+    }
+  }
+
+  function sanitizePhotoSelectionsForPendant(pendantIndex) {
+    if (canUsePhotoOnPendant(pendantIndex)) return;
+
+    SIDE_IDS.forEach(function (sideId) {
+      if (isPhotoMotifSelected(sideId, pendantIndex)) {
+        clearPhotoState(sideId, pendantIndex);
+      }
+    });
+
+    if (state.activeSide === "back" && !isBackSideEnabled(pendantIndex)) {
+      state.activeSide = "front";
     }
   }
 
@@ -1855,6 +2119,7 @@
     const activeSize = getActiveSize();
     const activeTemplate = getActiveTemplate();
     const activeSideState = getActiveSideState();
+    const priceState = calculatePriceSummary();
     const readyForExport = isConfigurationReady();
 
     syncStepGroups();
@@ -1967,6 +2232,37 @@
     const motifHint = getMotifSizeHint();
     motifSizeHint.hidden = !motifHint;
     motifSizeHint.textContent = motifHint;
+    photoPricingHint.hidden = !(priceState.hasPhoto || hasAnyPhotoSelection());
+    photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_DISCOUNT_HINT;
+
+    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && hasSetSelection();
+    priceSummaryBox.hidden = !shouldShowPriceBox;
+    if (shouldShowPriceBox) {
+      if (priceState.items.length) {
+        priceBreakdown.innerHTML = priceState.items.map(function (item) {
+          return (
+            '<div class="preview-price-box__item">' +
+              '<div class="preview-price-box__item-head">' +
+                '<span>' + escapeHtml(item.label + " · " + item.sizeLabel) + '</span>' +
+                '<strong>' + escapeHtml(formatEuro(item.totalCents)) + "</strong>" +
+              "</div>" +
+              '<div class="preview-price-box__item-meta">' + escapeHtml(item.metaParts.join(" · ")) + "</div>" +
+            "</div>"
+          );
+        }).join("");
+      } else {
+        priceBreakdown.innerHTML = "";
+      }
+
+      priceSubtotal.textContent = priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
+      priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
+      priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
+      priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
+      priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
+      priceSummaryHint.textContent = priceState.items.length
+        ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
+        : priceState.invalidReason;
+    }
 
     if (!isMotifMode() || (!isAnimalSymbolsSelected() && !isEmblemTemplateSelected())) {
       state.isMotifVariantOverlayOpen = false;
@@ -2010,7 +2306,10 @@
     templateOptionsEl.querySelectorAll("[data-template-id]").forEach((button) => {
       const template = getTemplateById(button.getAttribute("data-template-id"));
       const activeTopLevelId = getActiveTopLevelTemplateId();
+      const isPhotoDisabled = Boolean(template && template.category === "photo" && !canUsePhotoOnPendant());
       button.classList.toggle("is-active", template && template.id === activeTopLevelId);
+      button.classList.toggle("is-disabled", isPhotoDisabled);
+      button.disabled = isPhotoDisabled;
     });
 
     motifOverlayOptionsEl.querySelectorAll("[data-animal-group-id]").forEach((button) => {
@@ -3073,7 +3372,7 @@
   }
 
   function buildRequestMessage() {
-    const pricingHint = getPricingHint();
+    const priceState = calculatePriceSummary();
     const lines = [
       "Hallo Luderbein,",
       "",
@@ -3087,8 +3386,14 @@
       "Rückseite: " + buildSideSummaryText("back")
     ];
 
-    if (pricingHint) {
-      lines.push("Preisstruktur: " + pricingHint);
+    if (priceState.isReady) {
+      lines.push("Zwischensumme: " + formatEuro(priceState.subtotalCents));
+      if (priceState.discountRate) {
+        lines.push("Set-Rabatt (" + Math.round(priceState.discountRate * 100) + "%): -" + formatEuro(priceState.discountCents));
+      }
+      lines.push("Gesamtpreis: " + formatEuro(priceState.totalCents));
+    } else if (priceState.invalidReason) {
+      lines.push("Preisstatus: " + priceState.invalidReason);
     }
 
     lines.push("");
@@ -3098,32 +3403,16 @@
   }
 
   function getPricingHint() {
-    const priceParts = [getActiveMaterial(), getActiveProductFamily(), getActiveProduct()]
-      .filter(Boolean)
-      .map(function (entry) {
-        return entry.pricing || null;
-      })
-      .filter(Boolean);
-
-    const totalFrom = priceParts.reduce(function (sum, pricing) {
-      return sum + (pricing.fromCents || 0);
-    }, 0);
-    const totalSurcharge = priceParts.reduce(function (sum, pricing) {
-      return sum + (pricing.surchargeCents || 0);
-    }, 0);
-
-    if (totalFrom <= 0 && totalSurcharge <= 0) {
+    const priceState = calculatePriceSummary();
+    if (!priceState.isReady) {
       return "";
     }
 
-    const parts = [];
-    if (totalFrom > 0) {
-      parts.push("ab " + formatEuro(totalFrom));
+    const parts = ["Zwischensumme " + formatEuro(priceState.subtotalCents)];
+    if (priceState.discountRate) {
+      parts.push("Set-Rabatt " + Math.round(priceState.discountRate * 100) + "%");
     }
-    if (totalSurcharge > 0) {
-      parts.push("Aufpreis " + formatEuro(totalSurcharge));
-    }
-
+    parts.push("Gesamtpreis " + formatEuro(priceState.totalCents));
     return parts.join(" · ");
   }
 
@@ -3166,7 +3455,7 @@
   }
 
   function getBackSideSurchargeHint() {
-    return BACK_SIDE_OPTION.surchargeLabel || "";
+    return "Rückseite je Anhänger: +" + formatEuro(BACK_SIDE_STANDARD_CENTS) + ".";
   }
 
   function hasMaterialSelection() {
@@ -3203,13 +3492,21 @@
   }
 
   function isConfigurationReady() {
+    const priceState = calculatePriceSummary();
     return hasMaterialSelection() &&
       hasProductSelection() &&
       hasSetSelection() &&
       haveAllPendantSizes() &&
       getPendantIndices().every(function (pendantIndex) {
-        return hasDesignModeSelection("front", pendantIndex);
-      });
+        if (!isSideConfigured("front", pendantIndex)) {
+          return false;
+        }
+        if (isBackSideEnabled(pendantIndex) && !isSideConfigured("back", pendantIndex)) {
+          return false;
+        }
+        return true;
+      }) &&
+      priceState.isReady;
   }
 
   function hasActiveMotifContent(sideId) {
@@ -3221,6 +3518,10 @@
     const activeTemplate = getActiveTemplate(sideId);
     if (!activeTemplate) {
       return false;
+    }
+
+    if (activeTemplate.category === "photo") {
+      return Boolean(sideState.uploadedImage);
     }
 
     if (activeTemplate.category === "animal-symbols") {
@@ -3263,8 +3564,8 @@
     }
 
     if (sideState.designMode === "motif") {
-      if (sideState.uploadedImage) {
-        return "Motiv · Foto · " + sideState.uploadedFileName;
+      if (isPhotoMotifSelected(sideId, pendantIndex)) {
+        return sideState.uploadedImage ? "Foto · " + sideState.uploadedFileName : "Foto · offen";
       }
       if (sideState.emblemVariantId === "qr") {
         return sideState.qrValue ? "Motiv · QR-Code · " + truncateText(sideState.qrValue, 46) : "Motiv · QR-Code offen";
@@ -3449,9 +3750,7 @@
     if (!template || !size || !isMotifMode(sideId, pendantIndex)) return "";
 
     if (template.category === "photo" && size.diameterMm <= 12) {
-      return size.diameterMm <= 10
-        ? "Bei 8 oder 10 mm wirken Fotos oft ruhiger und weniger detailreich. Ein größerer Anhänger zeigt Porträts meist klarer."
-        : "Bei 12 mm wirken Fotos meist besser, wenn das Motiv nicht zu fein ist. Für mehr Detail ist oft eine größere Größe sinnvoll.";
+      return size.diameterMm <= 10 ? "" : PHOTO_SIZE_12_HINT;
     }
 
     if (template.category === "emblem") {

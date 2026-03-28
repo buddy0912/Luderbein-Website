@@ -211,6 +211,86 @@
   align-items: stretch;
 }
 
+.preview-price-box {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(64,62,65,.58);
+  background: linear-gradient(180deg, rgba(25,23,28,.88), rgba(16,14,18,.92));
+}
+
+.preview-price-box[hidden] {
+  display: none !important;
+}
+
+.preview-price-box__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  color: rgba(210,207,206,.88);
+}
+
+.preview-price-box__breakdown {
+  display: grid;
+  gap: 8px;
+}
+
+.preview-price-box__item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.025);
+}
+
+.preview-price-box__item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.preview-price-box__item-head strong {
+  color: var(--text);
+  font-size: .98rem;
+}
+
+.preview-price-box__item-head span {
+  color: rgba(210,207,206,.82);
+  font-size: .9rem;
+}
+
+.preview-price-box__item-meta {
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.45;
+}
+
+.preview-price-box__row strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.preview-price-box__row--total {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.preview-price-box__row--total strong {
+  font-size: 1.18rem;
+}
+
+.preview-price-box__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
 .preview-request {
   flex: 1.6 1 360px;
   position: relative;
@@ -478,6 +558,25 @@
 
 .preview-option--set .preview-option__title {
   font-size: .96rem;
+}
+
+.preview-option__price {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  color: rgba(245,243,241,.94);
+  font-size: .84rem;
+  letter-spacing: .02em;
+}
+
+.preview-option__price strong {
+  color: var(--text);
+  margin-left: 4px;
 }
 
 .preview-option.is-disabled {
