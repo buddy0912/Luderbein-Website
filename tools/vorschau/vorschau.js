@@ -68,12 +68,12 @@
     {
       id: "motif",
       name: "Motiv",
-      description: "Vorlage oder eigenes Bild nutzen. Für diese Produktgröße die klarere Wahl, wenn eine Form oder ein Symbol im Fokus steht."
+      description: "Vorlage wählen oder eigenes Bild nutzen."
     },
     {
       id: "text",
       name: "Text",
-      description: "Kurzen Namen, Initialen oder ein kleines Wort setzen. Für kleine Plättchen bewusst ohne zusätzliches Motiv."
+      description: "Namen, Initialen oder ein kurzes Wort setzen."
     }
   ];
 
@@ -100,7 +100,7 @@
       {
         id: "stainless-steel",
         name: "Edelstahl",
-        description: "Aktiver Startzustand für Version 1.",
+        description: "Klar, langlebig und vielseitig.",
         pricing: {
           fromCents: 0,
           surchargeCents: 0
@@ -109,7 +109,7 @@
           {
             id: "single-pendant",
             name: "Einzelner Anhänger",
-            description: "Aktuell die geführte Startfamilie. Weitere Familien können später als eigener Schritt ergänzt werden.",
+            description: "Schlichter Anhänger für einen klaren Start.",
             pricing: {
               fromCents: 0,
               surchargeCents: 0
@@ -118,7 +118,7 @@
               {
                 id: "round-tag",
                 name: "Rundes Edelstahl-Plättchen",
-                description: "Runder Anhänger als erster realer Produkttyp.",
+                description: "Runder Anhänger mit klarer, ruhiger Wirkung.",
                 pricing: {
                   fromCents: 0,
                   surchargeCents: 0
@@ -208,7 +208,7 @@
       {
         id: "wood",
         name: "Holz",
-        description: "Noch nicht aktiv in der UI, aber in der Struktur für spätere Schritte vorbereitet.",
+        description: "Folgt später.",
         isComingSoon: true,
         pricing: {
           fromCents: 0,
@@ -223,14 +223,14 @@
     {
       id: "monogram",
       name: "Monogramm",
-      description: "Reduziertes Initial-Beispiel.",
+      description: "Klares Zeichen oder Initial.",
       imageSrc: "/assets/tools/vorschau/vorlage-monogramm.png",
       category: "monogram"
     },
     {
       id: "photo-portrait",
       name: "Foto / Porträt",
-      description: "Eigenes Bild hochladen oder eine fotoartige Silhouettenwirkung grob prüfen.",
+      description: "Eigenes Bild für die Vorschau nutzen.",
       imageSrc: "/assets/tools/vorschau/vorlage-portraet.png",
       category: "photo",
       prefersUpload: true
@@ -238,7 +238,7 @@
     {
       id: "animal-symbols",
       name: "Tiersymbole",
-      description: "Hund, Katze, Pferd oder Vogel als eigene Tiergruppe mit klaren Varianten.",
+      description: "Hund, Katze, Pferd oder Vogel auswählen.",
       imageSrc: "/assets/tools/vorschau/tiere/hund/hund-01-klassisch.svg",
       category: "animal-symbols",
       hasVariants: true
@@ -246,7 +246,7 @@
     {
       id: "emblem",
       name: "Wappen / Emblem",
-      description: "Klare Zeichen-, Logo- oder Wappenwirkung.",
+      description: "Klares Emblem oder Symbol.",
       imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
       category: "emblem"
     }
@@ -399,25 +399,25 @@
     {
       id: "animal-dog",
       name: "Hund",
-      description: "Ruhige Hundemotive mit klaren Varianten von klassisch bis elegant.",
+      description: "Von klassisch bis fein reduziert.",
       imageSrc: "/assets/tools/vorschau/tiere/hund/hund-02-breit-herz.svg"
     },
     {
       id: "animal-cat",
       name: "Katze",
-      description: "Katzenmotive von zart bis markanter Krallenwirkung.",
+      description: "Von zart bis markant.",
       imageSrc: "/assets/tools/vorschau/tiere/katze/katze-03-elegant.svg"
     },
     {
       id: "animal-horse",
       name: "Pferd",
-      description: "Pferdemotive mit Hufeisen, Profilen und reduzierten Emblemen.",
+      description: "Profile, Hufeisen und reduzierte Zeichen.",
       imageSrc: "/assets/tools/vorschau/tiere/pferd/pferd-03-pferdekopf-silhouette.svg"
     },
     {
       id: "animal-bird",
       name: "Vogel",
-      description: "Vogelmotive von Silhouette bis schlichter Feder.",
+      description: "Silhouetten und feine Formen.",
       imageSrc: "/assets/tools/vorschau/tiere/vogel/vogel-01-silhouette-sitzend.svg"
     }
   ];
@@ -827,21 +827,21 @@
   function getStepSummary(stepId) {
     if (stepId === "material") {
       const material = getActiveMaterial();
-      return material ? material.name : "Noch nicht gewählt";
+      return material ? material.name : "Offen";
     }
 
     if (stepId === "product") {
       const product = getActiveProduct();
-      return product ? product.name : "Noch nicht gewählt";
+      return product ? product.name : "Offen";
     }
 
     if (stepId === "size") {
       const size = getActiveSize();
-      return size ? size.label : "Noch nicht gewählt";
+      return size ? size.label : "Offen";
     }
 
     if (stepId === "designMode") {
-      if (!hasDesignModeSelection()) return "Noch nicht gewählt";
+      if (!hasDesignModeSelection()) return "Offen";
       return isMotifMode() ? "Motiv" : "Text";
     }
 
@@ -1421,30 +1421,30 @@
 
     if (!hasMaterialSelection()) {
       previewProductName.textContent = "Noch nichts ausgewählt";
-      previewProductHint.textContent = "Wähle zuerst ein Material. Danach schaltet sich der Ablauf Schritt für Schritt frei.";
+      previewProductHint.textContent = "Wähle zuerst ein Material.";
       previewModeChip.textContent = "Start";
     } else if (!hasProductSelection()) {
-      previewProductName.textContent = "Material gewählt: " + activeMaterial.name;
-      previewProductHint.textContent = "Wähle jetzt das passende Produkt.";
+      previewProductName.textContent = activeMaterial.name;
+      previewProductHint.textContent = "Wähle jetzt den passenden Anhänger.";
       previewModeChip.textContent = "Schritt 2";
     } else if (!hasSizeSelection()) {
-      previewProductName.textContent = "Produkt gewählt: " + activeProduct.name;
+      previewProductName.textContent = activeProduct.name;
       previewProductHint.textContent = "Wähle jetzt die passende Größe.";
       previewModeChip.textContent = "Schritt 3";
     } else if (!hasDesignModeSelection()) {
       previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
       previewProductHint.textContent = isBackSideEnabled()
-        ? "Die Vorderseite bleibt der Standard. Die Rückseite ist jetzt als Zusatzseite zugeschaltet."
-        : "Arbeite jetzt zuerst die Vorderseite durch. Die optionale Rückseite erscheint erst ganz unten nach der Vorderseiten-Konfiguration.";
+        ? "Die Rückseite ist zusätzlich verfügbar."
+        : "Wähle jetzt Motiv oder Text.";
       previewModeChip.textContent = "Schritt 4";
     } else {
       previewProductName.textContent = activeProduct.name + " · " + activeSize.label;
-      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · aktive Seite: " + getSideLabel(state.activeSide) + ".";
-      previewModeChip.textContent = getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motivmodus" : "Textmodus");
+      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · " + getSideLabel(state.activeSide);
+      previewModeChip.textContent = getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motiv" : "Text");
     }
 
     previewActiveSideLabel.textContent = getSideLabel(state.activeSide);
-    previewModeLabel.textContent = hasDesignModeSelection() ? (isMotifMode() ? "Motiv" : "Text") : "Noch offen";
+    previewModeLabel.textContent = hasDesignModeSelection() ? (isMotifMode() ? "Motiv" : "Text") : "Offen";
     previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
 
     scaleSlider.value = String(activeSideState.scalePercent);
@@ -1468,15 +1468,15 @@
     sideTabs.hidden = !isBackSideEnabled();
     enableBackSideButton.hidden = isBackSideEnabled();
     sideSwitchStatus.textContent = isBackSideEnabled()
-      ? (state.activeSide === "back" ? "Rückseite wird jetzt als Zusatzseite bearbeitet" : "Vorderseite fertig, Rückseite ist zusätzlich freigeschaltet")
-      : "Vorderseite fertig. Rückseite ist als Zusatzoption verfügbar";
+      ? (state.activeSide === "back" ? "Du gestaltest gerade die Rückseite" : "Die Rückseite ist jetzt verfügbar")
+      : "Die Rückseite ist optional verfügbar";
     sideSwitchHint.textContent = isBackSideEnabled()
-      ? "Jetzt kannst du zwischen Vorderseite und Rückseite umschalten. Beide Seiten behalten ihren eigenen Zustand."
-      : "Wenn du zusätzlich eine Rückseite gestalten möchtest, kannst du sie hier unten jetzt freischalten.";
+      ? "Du kannst jetzt zwischen Vorder- und Rückseite wechseln."
+      : "Wenn du möchtest, kannst du zusätzlich eine Rückseite anlegen.";
 
     const surchargeHint = getBackSideSurchargeHint();
     if (!isBackSideEnabled()) {
-      sideSwitchHint.textContent = "Wenn du zusätzlich eine Rückseite gestalten möchtest, kannst du sie hier unten jetzt freischalten." + (surchargeHint ? " " + surchargeHint : "");
+      sideSwitchHint.textContent = "Wenn du möchtest, kannst du zusätzlich eine Rückseite anlegen." + (surchargeHint ? " " + surchargeHint : "");
     } else if (surchargeHint) {
       sideSwitchHint.textContent += " " + surchargeHint;
     }
@@ -1558,14 +1558,14 @@
   }
 
   function getActiveSourceLabel(activeTemplate) {
-    if (!hasMaterialSelection()) return "Noch keine Auswahl";
-    if (!hasProductSelection()) return "Als Nächstes: Produkt wählen";
-    if (!hasSizeSelection()) return "Als Nächstes: Größe wählen";
-    if (!hasDesignModeSelection()) return "Als Nächstes: Gestaltungsart wählen";
+    if (!hasMaterialSelection()) return "Offen";
+    if (!hasProductSelection()) return "Weiter mit Produkt";
+    if (!hasSizeSelection()) return "Weiter mit Größe";
+    if (!hasDesignModeSelection()) return "Weiter mit Gestaltungsart";
 
     if (isMotifMode()) {
       if (getActiveSideState().uploadedImage) {
-        return "Foto / Porträt: " + getActiveSideState().uploadedFileName;
+        return "Foto: " + getActiveSideState().uploadedFileName;
       }
       if (isAnimalSymbolsSelected()) {
         const variant = getActiveMotifVariant();
@@ -1574,17 +1574,17 @@
           return animalGroup.name + ": " + variant.name;
         }
         if (animalGroup) {
-          return "Tiergruppe: " + animalGroup.name;
+          return "Tiermotiv: " + animalGroup.name;
         }
-        return "Motivart: Tiersymbole";
+        return "Tiermotiv";
       }
       if (activeTemplate) {
-        return "Motivart: " + activeTemplate.name;
+        return activeTemplate.name;
       }
-      return "Noch kein Motiv gewählt";
+      return "Noch kein Motiv";
     }
 
-    return hasText() ? "Text: " + getActiveSideState().textValue : "Noch kein Text eingegeben";
+    return hasText() ? "Text: " + getActiveSideState().textValue : "Noch kein Text";
   }
 
   function setSectionVisibility(section, isVisible) {
@@ -1639,17 +1639,17 @@
     drawBackdrop();
 
     if (!hasMaterialSelection()) {
-      drawEmptyState("1. Material wählen", "Danach baut sich die Vorschau Schritt für Schritt auf.");
+      drawEmptyState("1. Material wählen", "Danach geht es Schritt für Schritt weiter.");
       return;
     }
 
     if (!hasProductSelection()) {
-      drawEmptyState("2. Produkt wählen", "Material ist gewählt. Wähle jetzt den passenden Anhänger.");
+      drawEmptyState("2. Produkt wählen", "Wähle jetzt den passenden Anhänger.");
       return;
     }
 
     if (!hasSizeSelection()) {
-      drawEmptyState("3. Größe wählen", "Produkt ist gewählt. Lege jetzt die Größe fest.");
+      drawEmptyState("3. Größe wählen", "Lege jetzt die passende Größe fest.");
       return;
     }
 
@@ -1664,8 +1664,8 @@
       drawMotifPrompt(
         state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "4. Gestaltungsart wählen",
         state.activeSide === "back" && isBackSideEnabled()
-          ? "Die Rückseite ist optional aktiviert. Du kannst sie leer lassen oder separat gestalten."
-          : "Die Vorderseite ist der Standard. Danach wird der passende Bearbeitungsbereich freigeschaltet."
+          ? "Du kannst die Rückseite separat gestalten oder frei lassen."
+          : "Wähle jetzt Motiv oder Text."
       );
       drawProductHighlights(size);
       drawPreviewLabels(material, product, size);
@@ -1684,10 +1684,10 @@
               ? "Tiergruppe wählen"
               : "Motivart wählen",
           isAnimalSymbolsSelected() && getActiveAnimalGroup()
-            ? "Wähle jetzt die passende konkrete Variante für die gewählte Tiergruppe."
+            ? "Wähle die passende Variante."
             : isAnimalSymbolsSelected()
-              ? "Wähle zuerst Hund, Katze, Pferd oder Vogel und danach die passende Variante."
-              : "Wähle Monogramm, Foto / Porträt, Wappen / Emblem oder Tiersymbole."
+              ? "Wähle zuerst die Tiergruppe."
+              : "Wähle die passende Motivart."
         );
       }
     }
@@ -1696,7 +1696,7 @@
       if (hasText()) {
         drawTextOverlay(size);
       } else {
-        drawMotifPrompt("Kurzen Text eingeben", "Name, Initialen oder kurzes Wort ruhig und kompakt platzieren.");
+        drawMotifPrompt("Text eingeben", "Name, Initialen oder kurzes Wort.");
       }
     }
 
@@ -2407,21 +2407,21 @@
     const sideVariant = getActiveMotifVariant(sideId);
 
     if (!sideState.designMode) {
-      return sideId === "back" ? "aktiviert, aktuell leer" : "noch nicht gestaltet";
+      return sideId === "back" ? "aktiviert, noch offen" : "offen";
     }
 
     if (sideState.designMode === "motif") {
       if (sideState.uploadedImage) {
-        return "Motiv · Foto / Porträt · " + sideState.uploadedFileName;
+        return "Motiv · Foto · " + sideState.uploadedFileName;
       }
       if (sideTemplate) {
         return "Motiv · " + getMotifSourceSummary(sideTemplate, sideVariant, sideId);
       }
-      return "Motiv · noch keine Auswahl";
+      return "Motiv · offen";
     }
 
     if (!sideState.textValue) {
-      return "Text · leer";
+      return "Text · offen";
     }
 
     return "Text · " + sideState.textValue;
@@ -2431,17 +2431,17 @@
     const sideState = getSideState(sideId);
 
     if (sideState.uploadedImage) {
-      return "Foto / Porträt mit eigener Datei";
+      return "Foto mit eigener Datei";
     }
 
     if (!activeTemplate) {
-      return "Noch kein Motiv gewählt";
+      return "Noch kein Motiv";
     }
 
     if (activeTemplate.category === "animal-symbols") {
       const animalGroup = getActiveAnimalGroup(sideId);
       if (!animalGroup) {
-        return "Tiersymbole · Tiergruppe offen";
+        return "Tiermotiv · offen";
       }
       return activeMotifVariant ? animalGroup.name + " · " + activeMotifVariant.name : animalGroup.name;
     }
@@ -2519,19 +2519,19 @@
     const activeTemplate = getActiveTemplate();
     const activeAnimalGroup = getActiveAnimalGroup();
     if (!activeTemplate || activeTemplate.category !== "animal-symbols") {
-      motifVariantOverlayTitle.textContent = "Tiersymbole";
-      motifVariantOverlayHelp.textContent = "Wähle direkt die passende Tiergruppe und danach die gewünschte Variante.";
+      motifVariantOverlayTitle.textContent = "Tiermotiv";
+      motifVariantOverlayHelp.textContent = "Wähle eine Tiergruppe.";
       return;
     }
 
     if (state.motifOverlayStep === "groups" || !activeAnimalGroup) {
-      motifVariantOverlayTitle.textContent = "Tiersymbole wählen";
-      motifVariantOverlayHelp.textContent = "Wähle Hund, Katze, Pferd oder Vogel. Danach öffnet sich direkt die konkrete Variantenwahl.";
+      motifVariantOverlayTitle.textContent = "Tiergruppe wählen";
+      motifVariantOverlayHelp.textContent = "Hund, Katze, Pferd oder Vogel auswählen.";
       return;
     }
 
     motifVariantOverlayTitle.textContent = activeAnimalGroup.name + " wählen";
-    motifVariantOverlayHelp.textContent = "Wähle direkt die passende " + activeAnimalGroup.name.toLowerCase() + "-Variante.";
+    motifVariantOverlayHelp.textContent = "Passende Variante auswählen.";
   }
 
   function isAnimalSymbolsSelected(sideId) {

@@ -96,33 +96,31 @@
       <span class="badge"><i></i> Tool</span>
       <h1>Motivwirkung auf Edelstahl grob prüfen.</h1>
       <p class="lead">
-        Version 1 startet bewusst reduziert: erst Material wählen, dann Produkt und Größe,
-        danach bewusst zwischen Motiv oder Text wählen und die Motivwirkung auf dem Anhänger ruhig prüfen.
+        Material, Anhänger, Größe und Motivwirkung in wenigen Schritten prüfen.
       </p>
 
       <div class="preview-hero__grid">
         <div class="preview-note">
           <strong>Wichtig:</strong>
-          Diese Vorschau ist unverbindlich und dient nur der groben Orientierung. Finale Gestaltung,
-          technische Aufbereitung und die saubere Produktionsausarbeitung erfolgt vor Fertigung durch Luderbein.
+          Diese Vorschau dient zur Orientierung. Die finale Ausarbeitung erfolgt vor der Fertigung.
         </div>
 
         <div class="preview-steps" aria-label="Kurzanleitung">
           <div class="preview-step">
             <span>1</span>
-            <div>Material, Produkt und Größe nacheinander wählen.</div>
+            <div>Material, Anhänger und Größe wählen.</div>
           </div>
           <div class="preview-step">
             <span>2</span>
-            <div>Danach die Gestaltungsart Motiv oder Text festlegen.</div>
+            <div>Motiv oder Text festlegen.</div>
           </div>
           <div class="preview-step">
             <span>3</span>
-            <div>Optional bei Bedarf eine Rückseite zuschalten.</div>
+            <div>Auf Wunsch eine Rückseite ergänzen.</div>
           </div>
           <div class="preview-step">
             <span>4</span>
-            <div>Zum Schluss Vorschau speichern oder direkt eine Anfrage vorbereiten.</div>
+            <div>Vorschau speichern und Anfrage senden.</div>
           </div>
         </div>
       </div>
@@ -161,11 +159,11 @@
             </div>
             <div class="preview-source">
               <span>Gestaltungsart</span>
-              <strong id="previewModeLabel">Noch offen</strong>
+              <strong id="previewModeLabel">Offen</strong>
             </div>
             <div class="preview-source">
               <span>Aktiver Inhalt</span>
-              <strong id="previewSourceLabel">Noch keine Auswahl</strong>
+              <strong id="previewSourceLabel">Offen</strong>
             </div>
           </div>
         </div>
@@ -201,23 +199,22 @@
         </div>
 
         <p class="preview-caption">
-          Die Vorderseite bleibt der Standard. Eine Rückseite wird nur dann zugeschaltet,
-          wenn du sie bewusst zusätzlich nutzen möchtest.
+          Die Vorderseite ist der Start. Eine Rückseite kannst du bei Bedarf ergänzen.
         </p>
       </article>
 
       <article class="preview-card preview-control-card">
         <div class="preview-card__head">
           <div>
-            <p class="preview-kicker">Steuerung</p>
-            <h2>Einfach einstellen</h2>
+            <p class="preview-kicker">Auswahl</p>
+            <h2>Schritt für Schritt</h2>
           </div>
         </div>
 
         <div class="preview-control-group" id="materialGroup" aria-labelledby="material-heading">
           <div class="preview-control-title-row">
             <h3 id="material-heading">1. Material wählen</h3>
-            <span class="preview-inline-note">Weitere Materialien bleiben intern vorbereitbar, sind hier aber noch nicht aktiv.</span>
+            <span class="preview-inline-note">Weitere Materialien folgen.</span>
           </div>
           <div id="materialOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
@@ -225,7 +222,7 @@
         <div class="preview-control-group" id="productGroup" aria-labelledby="product-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="product-heading">2. Produkt wählen</h3>
-            <span class="preview-inline-note">Aktuell bewusst reduziert auf den ersten realen Starttyp.</span>
+            <span class="preview-inline-note">Aktuell steht der erste Starttyp bereit.</span>
           </div>
           <div id="productOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
@@ -236,22 +233,22 @@
             <span class="preview-inline-note">8 / 10 / 12 / 15 / 20 mm</span>
           </div>
           <div id="sizeOptions" class="preview-size-grid"></div>
-          <p class="preview-help">Die Vorschau reagiert sichtbar auf die gewählte Größe, ohne unruhig zu wirken.</p>
+          <p class="preview-help">Die Größe aktualisiert die Vorschau direkt.</p>
         </div>
 
         <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="design-mode-heading">4. Gestaltungsart wählen</h3>
-            <span class="preview-inline-note">Für diese kleinen Schmuckplättchen ist aktuell bewusst nur eine Gestaltungsart gleichzeitig aktiv.</span>
+            <span class="preview-inline-note">Pro Seite ist aktuell Motiv oder Text möglich.</span>
           </div>
           <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
-          <p class="preview-help">Die Vorderseite ist der normale Start. Die Rückseite kann, wenn aktiviert, separat anders gestaltet werden.</p>
+          <p class="preview-help">Die Rückseite kannst du bei Bedarf separat gestalten.</p>
         </div>
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="template-heading">5. Motivart wählen</h3>
-            <span class="preview-inline-note">Monogramm, Foto / Porträt, Wappen / Emblem oder Tiersymbole.</span>
+            <span class="preview-inline-note">Monogramm, Foto, Emblem oder Tiermotiv.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
           <input
@@ -277,7 +274,7 @@
             value="100"
             aria-label="Motivgröße"
           />
-          <p class="preview-help">Der Regler verändert nur die Vorschau-Platzierung, nicht die finale technische Ausarbeitung.</p>
+          <p class="preview-help">Größe und Wirkung des Motivs in der Vorschau anpassen.</p>
 
           <div class="preview-nudge">
             <button class="preview-nudge__button" type="button" data-nudge="up" aria-label="Nach oben verschieben">↑</button>
@@ -286,7 +283,7 @@
             <button class="preview-nudge__button" type="button" data-nudge="right" aria-label="Nach rechts verschieben">→</button>
             <button class="preview-nudge__button" type="button" data-nudge="down" aria-label="Nach unten verschieben">↓</button>
           </div>
-          <p class="preview-help">Direkt auf der Vorschau ziehen oder mit den Tasten fein nachjustieren. Dieser Bereich betrifft nur das Bildmotiv.</p>
+          <p class="preview-help">Motiv direkt ziehen oder fein verschieben.</p>
         </div>
 
         <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
@@ -307,7 +304,7 @@
             />
           </label>
           <div class="preview-inline-meta">
-            <p class="preview-help" id="textInputHint">Nur für kurze Namen, Initialen oder kleine Zusätze. Mehr als 18 Zeichen werden bewusst nicht zugelassen.</p>
+            <p class="preview-help" id="textInputHint">Für Namen, Initialen oder kurze Worte.</p>
             <strong class="preview-character-count" id="textCharacterCount">0 / 18</strong>
           </div>
 
@@ -340,7 +337,7 @@
             value="100"
             aria-label="Textgröße"
           />
-          <p class="preview-help">Die Textgröße bleibt bewusst einfach und dient nur der groben Vorschau auf dem Produkt.</p>
+          <p class="preview-help">Schriftgröße in der Vorschau anpassen.</p>
 
           <div class="preview-nudge">
             <button class="preview-nudge__button" type="button" data-text-nudge="up" aria-label="Text nach oben verschieben">↑</button>
@@ -352,7 +349,7 @@
           <div class="preview-inline-actions">
             <button class="btn" type="button" id="clearTextButton">Text entfernen</button>
           </div>
-          <p class="preview-help">Im Textmodus ist bewusst nur der Text aktiv. Das hält die Vorschau auf kleinen Plättchen ruhiger und glaubwürdiger.</p>
+          <p class="preview-help">Im Textmodus wird nur der Text gezeigt.</p>
         </div>
 
         <div class="preview-side-switch-group" id="sideSwitchGroup" hidden>
@@ -363,7 +360,7 @@
             </div>
             <button class="btn" type="button" id="enableBackSideButton">Rückseite zusätzlich konfigurieren</button>
           </div>
-          <p class="preview-help" id="sideSwitchHint">Erst nach der Vorderseite kannst du unten entscheiden, ob zusätzlich eine Rückseite gestaltet werden soll.</p>
+          <p class="preview-help" id="sideSwitchHint">Nach der Vorderseite kannst du bei Bedarf eine Rückseite ergänzen.</p>
           <div class="preview-side-switch" id="sideTabs" role="tablist" aria-label="Zwischen Vorderseite und Rückseite wechseln" hidden>
             <button class="preview-side-switch__button" id="sideFrontButton" type="button" role="tab" aria-selected="true">Vorderseite</button>
             <button class="preview-side-switch__button" id="sideBackButton" type="button" role="tab" aria-selected="false">Rückseite</button>
@@ -373,8 +370,7 @@
         <div class="preview-control-group preview-control-group--notice">
           <h3>Wichtiger Hinweis</h3>
           <p>
-            Diese Vorschau ist nur eine grobe Orientierung zur Motivwirkung auf dem Produkt. Finale Positionierung,
-            Kontrast, technische Gravuraufbereitung und Produktionsdetails werden vor Fertigung durch Luderbein sauber ausgearbeitet.
+            Diese Vorschau zeigt die ungefähre Wirkung. Die finale Ausarbeitung erfolgt vor der Fertigung.
           </p>
         </div>
       </article>
@@ -387,14 +383,14 @@
       <div class="preview-card__head">
         <div>
           <p class="preview-kicker">Motivwahl</p>
-          <h2 id="motifVariantOverlayTitle">Variante wählen</h2>
+          <h2 id="motifVariantOverlayTitle">Auswahl</h2>
         </div>
         <div class="preview-overlay-actions">
           <button class="btn" type="button" id="motifVariantOverlayBackButton" hidden>Zurück</button>
           <button class="btn" type="button" id="closeMotifVariantOverlayButton">Schließen</button>
         </div>
       </div>
-      <p class="preview-help" id="motifVariantOverlayHelp">Wähle direkt die passende Variante. Die Hauptschritte bleiben dabei unverändert.</p>
+      <p class="preview-help" id="motifVariantOverlayHelp">Tiergruppe oder Variante auswählen.</p>
       <div id="motifOverlayOptions" class="preview-option-grid preview-option-grid--templates"></div>
     </div>
   </div>
