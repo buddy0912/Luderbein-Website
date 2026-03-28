@@ -501,13 +501,15 @@
   height: 108%;
   filter: grayscale(1) contrast(1.16) brightness(1.04);
   mix-blend-mode: multiply;
+  transform: translateY(-4%);
 }
 
 .preview-option__thumb-media--emblem img {
-  width: 120%;
-  height: 120%;
+  width: 116%;
+  height: 116%;
   filter: grayscale(1) contrast(1.4) brightness(1.02);
   mix-blend-mode: multiply;
+  transform: translateY(-6%);
 }
 
 .preview-option__thumb-media--animal-root img {
