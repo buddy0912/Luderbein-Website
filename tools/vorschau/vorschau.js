@@ -2332,13 +2332,27 @@
     const spreadFactor = 1 + spreadRatio * 0.5;
     const verticalOffset = 22 + spreadRatio * 46;
 
-    return layouts.map(function (layout) {
+    const projectedLayouts = layouts.map(function (layout) {
       return {
         x: Number((centerX + (layout.x - centerX) * spreadFactor).toFixed(1)),
         y: Number((centerY + (layout.y - centerY) * spreadFactor + verticalOffset).toFixed(1)),
         scale: layout.scale
       };
     });
+
+    if (count === 5 && projectedLayouts.length === 5) {
+      projectedLayouts[0].y = Number((projectedLayouts[0].y - 8).toFixed(1));
+      projectedLayouts[1].x = Number((projectedLayouts[1].x - 30).toFixed(1));
+      projectedLayouts[2].x = Number((projectedLayouts[2].x + 30).toFixed(1));
+      projectedLayouts[1].y = Number((projectedLayouts[1].y + 18).toFixed(1));
+      projectedLayouts[2].y = Number((projectedLayouts[2].y + 18).toFixed(1));
+      projectedLayouts[3].x = Number((projectedLayouts[3].x - 52).toFixed(1));
+      projectedLayouts[4].x = Number((projectedLayouts[4].x + 52).toFixed(1));
+      projectedLayouts[3].y = Number((projectedLayouts[3].y + 12).toFixed(1));
+      projectedLayouts[4].y = Number((projectedLayouts[4].y + 12).toFixed(1));
+    }
+
+    return projectedLayouts;
   }
 
   function drawSetSelectionPreview() {
