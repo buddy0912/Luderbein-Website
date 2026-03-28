@@ -94,9 +94,9 @@
   <main class="wrap preview-page">
     <section class="hero preview-hero">
       <span class="badge"><i></i> Tool</span>
-      <h1>Motivwirkung auf Edelstahl grob prüfen.</h1>
+      <h1>Konfigurator &amp; Preisvorschau</h1>
       <p class="lead">
-        Material, Anhänger, Größe und Motivwirkung in wenigen Schritten prüfen.
+        Produkte gestalten und Preise direkt prüfen.
       </p>
 
       <div class="preview-hero__grid">
@@ -229,20 +229,29 @@
         </div>
 
         <div class="preview-price-box" id="priceSummaryBox" hidden aria-live="polite">
+          <div class="preview-price-box__head">
+            <span class="preview-price-box__kicker">Kalkulation</span>
+            <strong class="preview-price-box__title">Preisübersicht</strong>
+          </div>
           <div class="preview-price-box__breakdown" id="priceBreakdown"></div>
-          <div class="preview-price-box__row">
-            <span>Zwischensumme</span>
-            <strong id="priceSubtotal">0,00 €</strong>
+          <div class="preview-price-box__summary">
+            <div class="preview-price-box__row">
+              <span>Zwischensumme</span>
+              <strong id="priceSubtotal">0,00 €</strong>
+            </div>
+            <div class="preview-price-box__row" id="priceDiscountRow" hidden>
+              <span id="priceDiscountLabel">Set-Rabatt</span>
+              <strong id="priceDiscount">-0,00 €</strong>
+            </div>
+            <div class="preview-price-box__row preview-price-box__row--total">
+              <span>Gesamtpreis</span>
+              <strong id="priceTotal">0,00 €</strong>
+            </div>
           </div>
-          <div class="preview-price-box__row" id="priceDiscountRow" hidden>
-            <span id="priceDiscountLabel">Set-Rabatt</span>
-            <strong id="priceDiscount">-0,00 €</strong>
+          <div class="preview-price-box__notes">
+            <p class="preview-price-box__hint" id="priceSummaryHint">Preis wird berechnet, sobald die Anhänger vollständig gewählt sind.</p>
+            <p class="preview-price-box__subhint">Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.</p>
           </div>
-          <div class="preview-price-box__row preview-price-box__row--total">
-            <span>Gesamtpreis</span>
-            <strong id="priceTotal">0,00 €</strong>
-          </div>
-          <p class="preview-price-box__hint" id="priceSummaryHint">Preis wird berechnet, sobald die Anhänger vollständig gewählt sind.</p>
         </div>
 
         <p class="preview-caption">
