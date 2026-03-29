@@ -11,6 +11,8 @@
   const materialOptionsEl = document.getElementById("materialOptions");
   const productGroup = document.getElementById("productGroup");
   const productOptionsEl = document.getElementById("productOptions");
+  const finishGroup = document.getElementById("finishGroup");
+  const finishOptionsEl = document.getElementById("finishOptions");
   const setGroup = document.getElementById("setGroup");
   const setOptionsEl = document.getElementById("setOptions");
   const sizeGroup = document.getElementById("sizeGroup");
@@ -89,7 +91,7 @@
   const MAX_QR_LENGTH = 180;
   const WHATSAPP_NUMBER = "491725925858";
   const REQUEST_EMAIL = "luderbein_gravur@icloud.com";
-  const ACTIVE_STEP_SEQUENCE = ["material", "product", "set", "size", "designMode"];
+  const ACTIVE_STEP_SEQUENCE = ["material", "product", "finish", "set", "size", "designMode"];
   const SIDE_IDS = ["front", "back"];
   const PHOTO_SIZE_12_HINT = "Foto bei 12 mm nur unter Vorbehalt: Ergebnis hängt stark von der Vorlage ab (Kontrast/Details).";
   const PHOTO_DISCOUNT_HINT = "Foto wird händisch optimiert (Zufriedenheitsgarantie). Der Rabatt gilt nur bei identischem Foto (keine Neuaufbereitung).";
@@ -181,31 +183,31 @@
   const CATALOG = {
     materials: [
       {
-        id: "stainless-steel",
-        name: "Edelstahl",
-        description: "Klar, langlebig und vielseitig.",
-        pricing: {
-          fromCents: 0,
-          surchargeCents: 0
-        },
+        id: "metal",
+        name: "Metall",
+        description: "Schmuckanhänger und weitere Metallprodukte.",
         productFamilies: [
           {
-            id: "single-pendant",
-            name: "Einzelner Anhänger",
-            description: "Schlichter Anhänger für einen klaren Start.",
-            pricing: {
-              fromCents: 0,
-              surchargeCents: 0
-            },
+            id: "jewelry-pendant",
+            name: "Schmuckanhänger",
+            description: "Edelstahl-Schmuckanhänger mit Gravur in Juwelierstandard.",
+            finishes: [
+              {
+                id: "silver",
+                name: "silberfarbig",
+                description: "Edelstahl-Schmuckanhänger in silberfarbiger Ausführung."
+              },
+              {
+                id: "gold",
+                name: "goldfarbig",
+                description: "Edelstahl-Schmuckanhänger in goldfarbiger Ausführung."
+              }
+            ],
             products: [
               {
                 id: "round-tag",
-                name: "Rundes Edelstahl-Plättchen",
-                description: "Runder Anhänger mit klarer, ruhiger Wirkung.",
-                pricing: {
-                  fromCents: 0,
-                  surchargeCents: 0
-                },
+                name: "Rundes Blättchen",
+                description: "Internes Standardmodell für Schmuckanhänger.",
                 sizes: [
                   {
                     id: "8mm",
@@ -216,11 +218,7 @@
                     ringOuter: 54,
                     ringInner: 26,
                     ringY: 362,
-                    lift: 56,
-                    pricing: {
-                      fromCents: 0,
-                      surchargeCents: 0
-                    }
+                    lift: 56
                   },
                   {
                     id: "10mm",
@@ -231,11 +229,7 @@
                     ringOuter: 58,
                     ringInner: 28,
                     ringY: 334,
-                    lift: 64,
-                    pricing: {
-                      fromCents: 0,
-                      surchargeCents: 0
-                    }
+                    lift: 64
                   },
                   {
                     id: "12mm",
@@ -246,11 +240,7 @@
                     ringOuter: 62,
                     ringInner: 30,
                     ringY: 306,
-                    lift: 72,
-                    pricing: {
-                      fromCents: 0,
-                      surchargeCents: 0
-                    }
+                    lift: 72
                   },
                   {
                     id: "15mm",
@@ -261,11 +251,7 @@
                     ringOuter: 68,
                     ringInner: 32,
                     ringY: 272,
-                    lift: 82,
-                    pricing: {
-                      fromCents: 0,
-                      surchargeCents: 0
-                    }
+                    lift: 82
                   },
                   {
                     id: "20mm",
@@ -276,28 +262,51 @@
                     ringOuter: 78,
                     ringInner: 38,
                     ringY: 214,
-                    lift: 98,
-                    pricing: {
-                      fromCents: 0,
-                      surchargeCents: 0
-                    }
+                    lift: 98
                   }
                 ]
               }
             ]
+          },
+          {
+            id: "bottle-opener",
+            name: "Flaschenöffner",
+            description: "Struktur vorbereitet. Diese Produktwelt folgt als Nächstes.",
+            isComingSoon: true,
+            finishes: [],
+            products: []
           }
         ]
       },
       {
         id: "wood",
         name: "Holz",
-        description: "Folgt später.",
-        isComingSoon: true,
-        pricing: {
-          fromCents: 0,
-          surchargeCents: 0
-        },
-        productFamilies: []
+        description: "Weitere Produktwelten aus Holz werden vorbereitet.",
+        productFamilies: [
+          {
+            id: "wood-coming-soon",
+            name: "Produkte aus Holz",
+            description: "Struktur vorbereitet. Details folgen in einem nächsten Schritt.",
+            isComingSoon: true,
+            finishes: [],
+            products: []
+          }
+        ]
+      },
+      {
+        id: "slate",
+        name: "Schiefer",
+        description: "Weitere Produktwelten aus Schiefer werden vorbereitet.",
+        productFamilies: [
+          {
+            id: "slate-coming-soon",
+            name: "Produkte aus Schiefer",
+            description: "Struktur vorbereitet. Details folgen in einem nächsten Schritt.",
+            isComingSoon: true,
+            finishes: [],
+            products: []
+          }
+        ]
       }
     ]
   };
@@ -571,22 +580,29 @@
       stateKey: "materialId",
       groupEl: materialGroup,
       getNextValue: function (selectedId) {
-        const material = getMaterialById(selectedId);
-        const families = material ? getAvailableProductFamilies(material) : [];
         return {
-          materialId: selectedId,
-          productFamilyId: families.length === 1 ? families[0].id : null
+          materialId: selectedId
         };
       }
     },
-    productFamily: {
-      id: "productFamily",
-      stateKey: "productFamilyId"
-    },
     product: {
       id: "product",
-      stateKey: "productId",
-      groupEl: productGroup
+      stateKey: "productFamilyId",
+      groupEl: productGroup,
+      getNextValue: function (selectedId) {
+        const family = getProductFamilyById(selectedId);
+        const models = family && Array.isArray(family.products) ? family.products : [];
+        return {
+          productFamilyId: family ? family.id : null,
+          productId: models.length === 1 ? models[0].id : null,
+          finishId: family && family.finishes && family.finishes.length === 1 ? family.finishes[0].id : null
+        };
+      }
+    },
+    finish: {
+      id: "finish",
+      stateKey: "finishId",
+      groupEl: finishGroup
     },
     set: {
       id: "set",
@@ -619,6 +635,7 @@
   function init() {
     renderMaterialOptions();
     renderProductOptions();
+    renderFinishOptions();
     renderSetOptions();
     renderSizeOptions();
     renderDesignModeOptions();
@@ -676,6 +693,7 @@
       materialId: null,
       productFamilyId: null,
       productId: null,
+      finishId: null,
       setId: SET_LIBRARY[0].id,
       activePendantIndex: 0,
       activeSide: "front",
@@ -815,6 +833,15 @@
 
   function getPendantCount() {
     return getActiveSetOption().count;
+  }
+
+  function requiresFinishSelection() {
+    const productFamily = getActiveProductFamily();
+    return Boolean(productFamily && Array.isArray(productFamily.finishes) && productFamily.finishes.length > 0);
+  }
+
+  function hasFinishSelection() {
+    return !requiresFinishSelection() || Boolean(state.finishId);
   }
 
   function getPendantIndices() {
@@ -1146,6 +1173,7 @@
     textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
     closeRequestMenu();
     renderProductOptions();
+    renderFinishOptions();
     renderSetOptions();
     renderSizeOptions();
     renderPendantTabs();
@@ -1204,11 +1232,18 @@
 
     if (stepId === "material") {
       renderProductOptions();
+      renderFinishOptions();
       renderSetOptions();
       renderSizeOptions();
     }
 
     if (stepId === "product") {
+      renderFinishOptions();
+      renderSetOptions();
+      renderSizeOptions();
+    }
+
+    if (stepId === "finish") {
       renderSetOptions();
       renderSizeOptions();
     }
@@ -1261,23 +1296,29 @@
 
   function getFlowStepIds() {
     return ACTIVE_STEP_SEQUENCE.filter(function (stepId) {
-      return stepId !== "productFamily";
+      if (stepId === "finish") {
+        return requiresFinishSelection();
+      }
+      return true;
     });
   }
 
   function getStepOrder(stepId) {
-    return ACTIVE_STEP_SEQUENCE.indexOf(stepId);
+    return getFlowStepIds().indexOf(stepId);
   }
 
   function getPreviousStepId(stepId) {
     const currentIndex = getStepOrder(stepId);
     if (currentIndex <= 0) return null;
-    return ACTIVE_STEP_SEQUENCE[currentIndex - 1] || null;
+    return getFlowStepIds()[currentIndex - 1] || null;
   }
 
   function isStepAvailable(stepId) {
     if (stepId === "designMode") {
       return hasSizeSelection();
+    }
+    if (stepId === "finish" && !requiresFinishSelection()) {
+      return false;
     }
     if (getStepOrder(stepId) === 0) return true;
     const previousStepId = getPreviousStepId(stepId);
@@ -1292,6 +1333,9 @@
       return getPendantIndices().every(function (pendantIndex) {
         return hasDesignModeSelection("front", pendantIndex);
       });
+    }
+    if (stepId === "finish") {
+      return hasFinishSelection();
     }
     const definition = STEP_DEFINITIONS[stepId];
     return Boolean(definition && state[definition.stateKey]);
@@ -1324,8 +1368,13 @@
     }
 
     if (stepId === "product") {
-      const product = getActiveProduct();
-      return product ? product.name : "Offen";
+      const productFamily = getActiveProductFamily();
+      return productFamily ? productFamily.name : "Offen";
+    }
+
+    if (stepId === "finish") {
+      const finish = getActiveFinish();
+      return finish ? finish.name : "Offen";
     }
 
     if (stepId === "set") {
@@ -1370,24 +1419,51 @@
   function renderProductOptions() {
     productOptionsEl.innerHTML = "";
 
-    const productFamily = getActiveProductFamily();
-    if (!productFamily) return;
+    const material = getActiveMaterial();
+    if (!material) return;
 
-    productFamily.products.forEach((product) => {
+    getAvailableProductFamilies(material).forEach((productFamily) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "preview-option";
-      button.setAttribute("data-product-id", product.id);
+      button.setAttribute("data-product-id", productFamily.id);
       button.innerHTML =
-        '<span class="preview-option__title">' + escapeHtml(product.name) + "</span>" +
-        '<span class="preview-option__meta">' + escapeHtml(product.description) + "</span>";
+        '<span class="preview-option__title">' + escapeHtml(productFamily.name) + "</span>" +
+        '<span class="preview-option__meta">' + escapeHtml(productFamily.description) + "</span>";
 
       button.addEventListener("click", function () {
-        if (state.productId === product.id) return;
-        applyStepSelection("product", product.id);
+        if (productFamily.isComingSoon) return;
+        if (state.productFamilyId === productFamily.id) return;
+        applyStepSelection("product", productFamily.id);
       });
 
       productOptionsEl.appendChild(button);
+    });
+  }
+
+  function renderFinishOptions() {
+    if (!finishOptionsEl) return;
+    finishOptionsEl.innerHTML = "";
+
+    const productFamily = getActiveProductFamily();
+    const finishes = getAvailableFinishes(productFamily);
+    if (!productFamily || !finishes.length) return;
+
+    finishes.forEach(function (finish) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "preview-option";
+      button.setAttribute("data-finish-id", finish.id);
+      button.innerHTML =
+        '<span class="preview-option__title">' + escapeHtml(finish.name) + "</span>" +
+        '<span class="preview-option__meta">' + escapeHtml(finish.description) + "</span>";
+
+      button.addEventListener("click", function () {
+        if (state.finishId === finish.id) return;
+        applyStepSelection("finish", finish.id);
+      });
+
+      finishOptionsEl.appendChild(button);
     });
   }
 
@@ -2116,6 +2192,9 @@
   function syncUi() {
     const activeMaterial = getActiveMaterial();
     const activeProduct = getActiveProduct();
+    const activeProductFamily = getActiveProductFamily();
+    const activeFinish = getActiveFinish();
+    const activeProductDisplayName = getActiveProductDisplayName() || (activeProductFamily ? activeProductFamily.name : "");
     const activeSize = getActiveSize();
     const activeTemplate = getActiveTemplate();
     const activeSideState = getActiveSideState();
@@ -2130,25 +2209,31 @@
       previewModeChip.textContent = "Start";
     } else if (!hasProductSelection()) {
       previewProductName.textContent = activeMaterial.name;
-      previewProductHint.textContent = "Wähle jetzt den passenden Anhänger.";
+      previewProductHint.textContent = activeMaterial.id === "metal"
+        ? "Wähle jetzt Schmuckanhänger oder Flaschenöffner."
+        : "Die Struktur für diese Materialwelt ist vorbereitet.";
       previewModeChip.textContent = "Schritt 2";
-    } else if (!hasSetSelection()) {
-      previewProductName.textContent = activeProduct.name;
-      previewProductHint.textContent = "Lege jetzt fest, wie viele Anhänger im Set gezeigt werden.";
+    } else if (requiresFinishSelection() && !hasFinishSelection()) {
+      previewProductName.textContent = activeProductFamily.name;
+      previewProductHint.textContent = "Wähle jetzt die Ausführung für deinen Edelstahl-Schmuckanhänger.";
       previewModeChip.textContent = "Schritt 3";
+    } else if (!hasSetSelection()) {
+      previewProductName.textContent = activeProductDisplayName;
+      previewProductHint.textContent = "Lege jetzt fest, wie viele Anhänger im Set gezeigt werden.";
+      previewModeChip.textContent = requiresFinishSelection() ? "Schritt 4" : "Schritt 3";
     } else if (!hasSizeSelection()) {
-      previewProductName.textContent = activeProduct.name + " · " + getActiveSetOption().shortLabel;
+      previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel;
       previewProductHint.textContent = "Wähle jetzt die passende Größe für " + getPendantLabel(state.activePendantIndex) + ".";
-      previewModeChip.textContent = "Schritt 4";
+      previewModeChip.textContent = requiresFinishSelection() ? "Schritt 5" : "Schritt 4";
     } else if (!hasDesignModeSelection()) {
-      previewProductName.textContent = activeProduct.name + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
+      previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
       previewProductHint.textContent = isBackSideEnabled()
         ? "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist zusätzlich verfügbar."
         : "Wähle jetzt Motiv oder Text für " + getPendantLabel(state.activePendantIndex) + ".";
-      previewModeChip.textContent = "Schritt 5";
+      previewModeChip.textContent = requiresFinishSelection() ? "Schritt 6" : "Schritt 5";
     } else {
-      previewProductName.textContent = activeProduct.name + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
-      previewProductHint.textContent = activeMaterial.name + " · " + activeSize.diameterMm + " mm · " + getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide);
+      previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
+      previewProductHint.textContent = "Metall · " + activeSize.diameterMm + " mm · " + getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide);
       previewModeChip.textContent = getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motiv" : "Text");
     }
 
@@ -2279,7 +2364,15 @@
     });
 
     productOptionsEl.querySelectorAll("[data-product-id]").forEach((button) => {
-      button.classList.toggle("is-active", button.getAttribute("data-product-id") === state.productId);
+      const productFamily = getProductFamilyById(button.getAttribute("data-product-id"));
+      const isComingSoon = Boolean(productFamily && productFamily.isComingSoon);
+      button.classList.toggle("is-active", button.getAttribute("data-product-id") === state.productFamilyId);
+      button.classList.toggle("is-disabled", isComingSoon);
+      button.disabled = isComingSoon;
+    });
+
+    finishOptionsEl.querySelectorAll("[data-finish-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-finish-id") === state.finishId);
     });
 
     sizeOptionsEl.querySelectorAll("[data-size-id]").forEach((button) => {
@@ -2667,7 +2760,7 @@
     ctx.fillStyle = "rgba(255,255,255,0.92)";
     ctx.font = "700 26px system-ui, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(product.name + " · " + setOption.shortLabel, 86, 86);
+    ctx.fillText(getActiveProductDisplayName() + " · " + setOption.shortLabel, 86, 86);
 
     ctx.fillStyle = "rgba(210,207,206,0.66)";
     ctx.font = "500 22px system-ui, sans-serif";
@@ -3111,7 +3204,7 @@
     ctx.fillStyle = "rgba(255,255,255,0.92)";
     ctx.font = "700 26px system-ui, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(material.name + " · " + product.name + " · " + getActiveSetOption().shortLabel, 86, 92);
+    ctx.fillText(material.name + " · " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel, 86, 92);
 
     ctx.fillStyle = "rgba(210,207,206,0.64)";
     ctx.font = "500 22px system-ui, sans-serif";
@@ -3268,7 +3361,7 @@
 
     targetCtx.fillStyle = "rgba(210,207,206,0.74)";
     targetCtx.font = "500 22px system-ui, sans-serif";
-    targetCtx.fillText(material.name + " · " + product.name + " · " + getActiveSetOption().shortLabel + " · " + buildSizeSummaryLabel(), 52, 108);
+    targetCtx.fillText(material.name + " · " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + buildSizeSummaryLabel(), 52, 108);
     targetCtx.fillText(
       hasAnyBackSideEnabled()
         ? "Export mit individuellen Vorder- und Rückseiten"
@@ -3368,7 +3461,7 @@
   }
 
   function buildRequestSubject() {
-    return "Anfrage zur Motiv-Vorschau – " + getActiveProduct().name + " · " + getActiveSetOption().shortLabel + " · " + (getPendantCount() > 1 ? "individuelle Größen" : getActiveSize().label);
+    return "Anfrage zur Motiv-Vorschau – " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + (getPendantCount() > 1 ? "individuelle Größen" : getActiveSize().label);
   }
 
   function buildRequestMessage() {
@@ -3379,7 +3472,7 @@
       "ich habe eine Anfrage zur Motiv-Vorschau. Hier sind die ersten Infos:",
       "",
       "Material: " + getActiveMaterial().name,
-      "Produkt: " + getActiveProduct().name,
+      "Produkt: " + getActiveProductDisplayName(),
       "Set: " + getActiveSetOption().name,
       "Größen: " + buildPendantSizeSummaryText(),
       "Vorderseite: " + buildSideSummaryText("front"),
@@ -3421,7 +3514,7 @@
     const parts = [
       "luderbein-vorschau",
       slugify(getActiveMaterial().name),
-      slugify(getActiveProduct().name),
+      slugify(getActiveProductDisplayName()),
       slugify(getActiveSetOption().shortLabel)
     ];
 
@@ -3463,7 +3556,7 @@
   }
 
   function hasProductSelection() {
-    return Boolean(state.productId);
+    return Boolean(state.productFamilyId);
   }
 
   function hasSetSelection() {
@@ -3777,34 +3870,46 @@
   }
 
   function getAvailableProductFamilies(material) {
-    return (material.productFamilies || []).filter(function (family) {
-      return !family.isComingSoon;
-    });
+    return material && Array.isArray(material.productFamilies) ? material.productFamilies : [];
+  }
+
+  function getProductFamilyById(productFamilyId) {
+    const material = getActiveMaterial();
+    const families = getAvailableProductFamilies(material);
+    return families.find((family) => family.id === productFamilyId) || null;
   }
 
   function getActiveProductFamily() {
-    const material = getActiveMaterial();
-    if (!material) return null;
-
-    const families = getAvailableProductFamilies(material);
-    if (!families.length) return null;
-
-    if (state.productFamilyId) {
-      return families.find((family) => family.id === state.productFamilyId) || null;
-    }
-
-    if (families.length === 1) {
-      state.productFamilyId = families[0].id;
-      return families[0];
-    }
-
-    return null;
+    return state.productFamilyId ? getProductFamilyById(state.productFamilyId) : null;
   }
 
   function getActiveProduct() {
     const productFamily = getActiveProductFamily();
     if (!productFamily) return null;
     return productFamily.products.find((product) => product.id === state.productId) || null;
+  }
+
+  function getAvailableFinishes(productFamily) {
+    return productFamily && Array.isArray(productFamily.finishes) ? productFamily.finishes : [];
+  }
+
+  function getActiveFinish() {
+    const productFamily = getActiveProductFamily();
+    return getAvailableFinishes(productFamily).find((finish) => finish.id === state.finishId) || null;
+  }
+
+  function getActiveProductDisplayName() {
+    const productFamily = getActiveProductFamily();
+    if (!productFamily) return "";
+
+    if (productFamily.id === "jewelry-pendant") {
+      const finish = getActiveFinish();
+      return finish
+        ? "Edelstahl-Schmuckanhänger · " + finish.name
+        : "Edelstahl-Schmuckanhänger";
+    }
+
+    return productFamily.name;
   }
 
   function getActiveSize(pendantIndex) {
