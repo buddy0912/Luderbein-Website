@@ -29,7 +29,6 @@
   const motifVariantOverlayTitle = document.getElementById("motifVariantOverlayTitle");
   const motifVariantOverlayHelp = document.getElementById("motifVariantOverlayHelp");
   const motifAdjustGroup = document.getElementById("motifAdjustGroup");
-  const rotationGroup = document.getElementById("rotationGroup");
   const qrCodeGroup = document.getElementById("qrCodeGroup");
   const textGroup = document.getElementById("textGroup");
   const uploadInput = document.getElementById("uploadInput");
@@ -47,15 +46,12 @@
   const requestEmailLink = document.getElementById("requestEmailLink");
   const requestEmailLinkMobile = document.getElementById("requestEmailLinkMobile");
   const scaleSlider = document.getElementById("scaleSlider");
-  const rotationSlider = document.getElementById("rotationSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
   const textFontSelect = document.getElementById("textFontSelect");
   const qrInput = document.getElementById("qrInput");
   const qrCharacterCount = document.getElementById("qrCharacterCount");
   const scaleValueLabel = document.getElementById("scaleValueLabel");
-  const rotationValueLabel = document.getElementById("rotationValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
-  const resetRotationButton = document.getElementById("resetRotationButton");
   const motifSizeHint = document.getElementById("motifSizeHint");
   const photoPricingHint = document.getElementById("photoPricingHint");
   const priceSummaryBox = document.getElementById("priceSummaryBox");
@@ -67,7 +63,6 @@
   const priceTotal = document.getElementById("priceTotal");
   const priceSummaryHint = document.getElementById("priceSummaryHint");
   const previewProductName = document.getElementById("previewProductName");
-  const previewStageTitle = document.getElementById("previewStageTitle");
   const previewProductNameMobile = document.getElementById("previewProductNameMobile");
   const previewProductHint = document.getElementById("previewProductHint");
   const previewModeChip = document.getElementById("previewModeChip");
@@ -649,10 +644,6 @@
     image: null
   };
 
-  const BOTTLE_OPENER_ENGRAVING_FILL = "rgba(210,207,206,0.92)";
-  const BOTTLE_OPENER_ENGRAVING_STROKE = "rgba(210,207,206,0.82)";
-  const bottleOpenerEngravingCache = typeof WeakMap === "function" ? new WeakMap() : null;
-
   const state = createInitialState();
   let renderQueued = false;
 
@@ -701,7 +692,6 @@
       scalePercent: 100,
       offsetX: 0,
       offsetY: 0,
-      rotationDeg: 0,
       textValue: "",
       textScalePercent: 100,
       textFontId: TEXT_FONT_LIBRARY[0].id,
@@ -762,14 +752,6 @@
       queueRender();
     });
 
-    if (rotationSlider) {
-      rotationSlider.addEventListener("input", function () {
-        getActiveSideState().rotationDeg = clamp(Number(rotationSlider.value), -180, 180);
-        syncUi();
-        queueRender();
-      });
-    }
-
     textSizeSlider.addEventListener("input", function () {
       getActiveSideState().textScalePercent = Number(textSizeSlider.value);
       clampTextPlacement();
@@ -827,9 +809,6 @@
     clearTextButton.addEventListener("click", clearText);
     clearQrButton.addEventListener("click", clearQrValue);
     resetPlacementButton.addEventListener("click", resetAllSelections);
-    if (resetRotationButton) {
-      resetRotationButton.addEventListener("click", resetBottleOpenerRotation);
-    }
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
     [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
@@ -1229,9 +1208,6 @@
     uploadInput.value = "";
     textInput.value = "";
     scaleSlider.value = "100";
-    if (rotationSlider) {
-      rotationSlider.value = "0";
-    }
     textSizeSlider.value = "100";
     textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
     closeRequestMenu();
@@ -1867,9 +1843,6 @@
 
     const activeSideState = getActiveSideState();
     activeSideState.emblemVariantId = variant.id;
-    if (isBottleOpenerProduct()) {
-      activeSideState.designMode = variant.isQr ? "qr" : "motif";
-    }
     if (!variant.isQr) {
       activeSideState.qrValue = "";
     }
@@ -2034,16 +2007,6 @@
     queueRender();
   }
 
-  function resetBottleOpenerRotation() {
-    const activeSideState = getActiveSideState();
-    activeSideState.rotationDeg = 0;
-    if (rotationSlider) {
-      rotationSlider.value = "0";
-    }
-    syncUi();
-    queueRender();
-  }
-
   function resetImagePlacement(shouldRender) {
     const activeSideState = getActiveSideState();
     activeSideState.scalePercent = 100;
@@ -2091,7 +2054,7 @@
 
   function nudgePlacement(direction) {
     const canNudgeMotif = isMotifMode() && hasActiveMotifContent();
-    const canNudgeBottleOpenerQr = isBottleOpenerProduct() && isQrMode();
+    const canNudgeBottleOpenerQr = isBottleOpenerProduct() && isQrMode() && hasQrValue();
     if (!canNudgeMotif && !canNudgeBottleOpenerQr) return;
 
     const activeSideState = getActiveSideState();
@@ -2125,7 +2088,7 @@
 
   function onCanvasKeydown(event) {
     const canNudgeMotif = isMotifMode() && hasActiveMotifContent();
-    const canNudgeBottleOpenerQr = isBottleOpenerProduct() && isQrMode();
+    const canNudgeBottleOpenerQr = isBottleOpenerProduct() && isQrMode() && hasQrValue();
     if (!canNudgeMotif && !canNudgeBottleOpenerQr) return;
 
     if (event.key === "ArrowUp") {
@@ -2193,7 +2156,7 @@
     }
 
     const canDragMotif = isMotifMode() && hasActiveMotifContent();
-    const canDragBottleOpenerQr = isBottleOpenerProduct() && isQrMode();
+    const canDragBottleOpenerQr = isBottleOpenerProduct() && isQrMode() && hasQrValue();
     if (!canDragMotif && !canDragBottleOpenerQr) return;
 
     const activeSideState = getActiveSideState();
@@ -2278,9 +2241,18 @@
         const image = getActiveImage();
         if (!image) return;
 
-        const motifLayout = getBottleOpenerMotifLayout(image);
-        contentWidth = motifLayout.width;
-        contentHeight = motifLayout.height;
+        const fitScale = Math.min(box.width / image.width, box.height / image.height);
+        const requestedScaleFactor = activeSideState.scalePercent / 100;
+        const maxScaleFactor = Math.min(1, box.width / (image.width * fitScale), box.height / (image.height * fitScale));
+        const clampedScaleFactor = Math.min(requestedScaleFactor, maxScaleFactor);
+
+        if (clampedScaleFactor !== requestedScaleFactor) {
+          activeSideState.scalePercent = Math.max(1, Math.round(clampedScaleFactor * 100));
+          scaleSlider.value = String(activeSideState.scalePercent);
+        }
+
+        contentWidth = image.width * fitScale * (activeSideState.scalePercent / 100);
+        contentHeight = image.height * fitScale * (activeSideState.scalePercent / 100);
       }
 
       const maxOffsetX = Math.max(0, (box.width - contentWidth) / 2);
@@ -2371,10 +2343,6 @@
 
     syncStepGroups();
 
-    if (previewStageTitle) {
-      previewStageTitle.textContent = isBottleOpenerProduct() ? "Metall-Flaschenöffner" : "Rundes Edelstahl-Plättchen";
-    }
-
     if (!hasMaterialSelection()) {
       previewProductName.textContent = "Noch nichts ausgewählt";
       previewProductHint.textContent = "Wähle zuerst ein Material.";
@@ -2437,14 +2405,8 @@
     previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
 
     scaleSlider.value = String(activeSideState.scalePercent);
-    if (rotationSlider) {
-      rotationSlider.value = String(clamp(activeSideState.rotationDeg || 0, -180, 180));
-    }
     textSizeSlider.value = String(activeSideState.textScalePercent);
     scaleValueLabel.textContent = activeSideState.scalePercent + "%";
-    if (rotationValueLabel) {
-      rotationValueLabel.textContent = String(clamp(activeSideState.rotationDeg || 0, -180, 180)) + "°";
-    }
     textSizeValueLabel.textContent = activeSideState.textScalePercent + "%";
     textCharacterCount.textContent = activeSideState.textValue.length + " / " + MAX_TEXT_LENGTH;
     textInput.value = activeSideState.textValue;
@@ -2503,9 +2465,8 @@
     setSectionVisibility(
       motifAdjustGroup,
       (isMotifMode() && hasActiveMotifContent() && !isQrSelected()) ||
-      (isBottleOpenerProduct() && isQrMode())
+      (isBottleOpenerProduct() && isQrMode() && hasQrValue())
     );
-    setSectionVisibility(rotationGroup, isBottleOpenerProduct() && hasDesignModeSelection());
     setSectionVisibility(qrCodeGroup, isQrMode() || (isMotifMode() && isQrSelected()));
     setSectionVisibility(textGroup, isTextMode());
 
@@ -3072,7 +3033,9 @@
     const box = getBottleOpenerDesignBox();
     const activeSideState = getActiveSideState();
     const fitScale = Math.min(box.width / image.width, box.height / image.height);
-    const scaleFactor = Math.max(0.01, activeSideState.scalePercent / 100);
+    const requestedScaleFactor = activeSideState.scalePercent / 100;
+    const maxScaleFactor = Math.min(1, box.width / (image.width * fitScale), box.height / (image.height * fitScale));
+    const scaleFactor = Math.min(requestedScaleFactor, maxScaleFactor);
 
     return {
       width: image.width * fitScale * scaleFactor,
@@ -3153,60 +3116,6 @@
     };
   }
 
-  function getBottleOpenerRotationRadians() {
-    return clamp(getActiveSideState().rotationDeg || 0, -180, 180) * (Math.PI / 180);
-  }
-
-  function applyBottleOpenerContentRotation(centerX, centerY) {
-    const rotationRadians = getBottleOpenerRotationRadians();
-    if (!rotationRadians) return;
-    ctx.translate(centerX, centerY);
-    ctx.rotate(rotationRadians);
-    ctx.translate(-centerX, -centerY);
-  }
-
-  function getBottleOpenerEngravingImage(image) {
-    if (!image) return null;
-    if (bottleOpenerEngravingCache && bottleOpenerEngravingCache.has(image)) {
-      return bottleOpenerEngravingCache.get(image);
-    }
-
-    const buffer = document.createElement("canvas");
-    buffer.width = image.width;
-    buffer.height = image.height;
-    const bufferCtx = buffer.getContext("2d");
-    bufferCtx.drawImage(image, 0, 0);
-
-    const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
-    const data = imageData.data;
-
-    for (let index = 0; index < data.length; index += 4) {
-      const originalAlpha = data[index + 3] / 255;
-      if (!originalAlpha) continue;
-
-      const luminance = (data[index] + data[index + 1] + data[index + 2]) / 3;
-      const darkness = (1 - (luminance / 255)) * originalAlpha;
-
-      if (darkness <= 0.015) {
-        data[index + 3] = 0;
-        continue;
-      }
-
-      data[index] = 210;
-      data[index + 1] = 207;
-      data[index + 2] = 206;
-      data[index + 3] = Math.round(Math.min(1, darkness * 1.05) * 255);
-    }
-
-    bufferCtx.putImageData(imageData, 0, 0);
-
-    if (bottleOpenerEngravingCache) {
-      bottleOpenerEngravingCache.set(image, buffer);
-    }
-
-    return buffer;
-  }
-
   function drawBottleOpenerMotifContent() {
     const image = getActiveImage();
     if (!image) return;
@@ -3214,7 +3123,6 @@
     const box = getBottleOpenerDesignBox();
     const activeSideState = getActiveSideState();
     const motifLayout = getBottleOpenerMotifLayout(image);
-    const engravingImage = getBottleOpenerEngravingImage(image);
     const drawWidth = motifLayout.width;
     const drawHeight = motifLayout.height;
     const x = box.x + (box.width - drawWidth) / 2 + activeSideState.offsetX;
@@ -3224,8 +3132,7 @@
     ctx.beginPath();
     drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, Math.min(20, box.height / 4));
     ctx.clip();
-    applyBottleOpenerContentRotation(x + drawWidth / 2, y + drawHeight / 2);
-    ctx.drawImage(engravingImage || image, x, y, drawWidth, drawHeight);
+    ctx.drawImage(image, x, y, drawWidth, drawHeight);
     ctx.restore();
   }
 
@@ -3243,11 +3150,10 @@
     ctx.beginPath();
     drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, Math.min(20, box.height / 4));
     ctx.clip();
-    applyBottleOpenerContentRotation(x, y);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = textLayout.font;
-    ctx.fillStyle = BOTTLE_OPENER_ENGRAVING_FILL;
+    ctx.fillStyle = "rgba(245,245,245,0.96)";
     ctx.fillText(activeSideState.textValue, x, y);
     ctx.restore();
   }
@@ -3263,14 +3169,16 @@
     ctx.beginPath();
     drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, Math.min(20, box.height / 4));
     ctx.clip();
-    applyBottleOpenerContentRotation(qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize / 2);
 
     if (!qrModel) {
-      ctx.strokeStyle = BOTTLE_OPENER_ENGRAVING_STROKE;
+      ctx.fillStyle = "rgba(245,245,245,0.98)";
+      ctx.fillRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+
+      ctx.strokeStyle = "#14181c";
       ctx.lineWidth = Math.max(2, qrLayout.outerSize * 0.035);
       ctx.strokeRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
 
-      ctx.fillStyle = BOTTLE_OPENER_ENGRAVING_FILL;
+      ctx.fillStyle = "#14181c";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = "700 " + Math.max(12, qrLayout.outerSize * 0.16) + "px system-ui, sans-serif";
@@ -3282,7 +3190,10 @@
     }
 
     ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = BOTTLE_OPENER_ENGRAVING_FILL;
+    ctx.fillStyle = "rgba(245,245,245,0.98)";
+    ctx.fillRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+
+    ctx.fillStyle = "#14181c";
     for (let row = 0; row < qrLayout.moduleCount; row += 1) {
       for (let column = 0; column < qrLayout.moduleCount; column += 1) {
         if (!qrModel.isDark(row, column)) continue;
@@ -3292,7 +3203,7 @@
       }
     }
 
-    ctx.strokeStyle = "rgba(210,207,206,0.18)";
+    ctx.strokeStyle = "rgba(20,24,28,0.22)";
     ctx.lineWidth = 1;
     ctx.strokeRect(qrLayout.x + 0.5, qrLayout.y + 0.5, qrLayout.outerSize - 1, qrLayout.outerSize - 1);
     ctx.restore();
@@ -3975,32 +3886,11 @@
   }
 
   function buildRequestSubject() {
-    if (isBottleOpenerProduct()) {
-      return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Flaschenöffner") + " · " + (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text"));
-    }
-
     return "Anfrage zur Motiv-Vorschau – " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + (getPendantCount() > 1 ? "individuelle Größen" : getActiveSize().label);
   }
 
   function buildRequestMessage() {
     const priceState = calculatePriceSummary();
-    if (isBottleOpenerProduct()) {
-      const lines = [
-        "Hallo Luderbein,",
-        "",
-        "ich habe eine Anfrage zur Motiv-Vorschau. Hier sind die ersten Infos:",
-        "",
-        "Material: " + getActiveMaterial().name,
-        "Produkt: " + (getActiveProductDisplayName() || "Flaschenöffner"),
-        "Gestaltungsart: " + (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text")),
-        "Inhalt: " + buildSideSummaryText("front"),
-        "",
-        "Viele Grüße"
-      ];
-
-      return lines.join("\n");
-    }
-
     const lines = [
       "Hallo Luderbein,",
       "",
@@ -4046,34 +3936,6 @@
 
   function buildExportFilename() {
     const activeSideState = getActiveSideState();
-    if (isBottleOpenerProduct()) {
-      const parts = [
-        "luderbein-vorschau",
-        slugify(getActiveMaterial().name),
-        slugify(getActiveProductDisplayName() || "flaschenoeffner")
-      ];
-
-      if (isQrMode() && activeSideState.qrValue) {
-        parts.push("qr");
-      } else if (isTextMode() && hasText()) {
-        parts.push("text");
-        parts.push(slugify(activeSideState.textValue).slice(0, 28));
-      } else if (isMotifMode()) {
-        parts.push("motiv");
-        if (activeSideState.uploadedImage) {
-          parts.push("eigene-datei");
-        } else if (getActiveMotifVariant()) {
-          parts.push(slugify(getActiveMotifVariant().name));
-        } else if (getActiveEmblemVariant()) {
-          parts.push(slugify(getActiveEmblemVariant().name));
-        } else if (getActiveTemplate()) {
-          parts.push(slugify(getActiveTemplate().name));
-        }
-      }
-
-      return parts.filter(Boolean).join("-") + ".png";
-    }
-
     const parts = [
       "luderbein-vorschau",
       slugify(getActiveMaterial().name),
@@ -4148,17 +4010,6 @@
   }
 
   function isConfigurationReady() {
-    if (isBottleOpenerProduct()) {
-      return hasMaterialSelection() &&
-        hasProductSelection() &&
-        hasDesignModeSelection() &&
-        (
-          (isMotifMode() && hasActiveMotifContent()) ||
-          (isTextMode() && hasText()) ||
-          (isQrMode() && hasQrValue())
-        );
-    }
-
     const priceState = calculatePriceSummary();
     return hasMaterialSelection() &&
       hasProductSelection() &&

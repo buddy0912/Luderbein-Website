@@ -153,7 +153,7 @@
         <div class="preview-card__head">
           <div>
             <p class="preview-kicker">Vorschau</p>
-            <h2>Rundes Edelstahl-Plättchen</h2>
+            <h2 id="previewStageTitle">Rundes Edelstahl-Plättchen</h2>
           </div>
           <div class="preview-chip" id="previewModeChip">Start</div>
         </div>
@@ -394,6 +394,27 @@
             <button class="preview-nudge__button" type="button" data-nudge="down" aria-label="Nach unten verschieben">↓</button>
           </div>
           <p class="preview-help">Motiv direkt ziehen oder fein verschieben.</p>
+        </div>
+
+        <div class="preview-control-group" id="rotationGroup" aria-labelledby="rotation-heading" hidden>
+          <div class="preview-control-title-row">
+            <h3 id="rotation-heading">Rotation anpassen</h3>
+            <strong id="rotationValueLabel">0°</strong>
+          </div>
+          <input
+            id="rotationSlider"
+            class="preview-range"
+            type="range"
+            min="-180"
+            max="180"
+            step="1"
+            value="0"
+            aria-label="Rotation"
+          />
+          <p class="preview-help">Nur für den Flaschenöffner: Inhalt in beide Richtungen drehen.</p>
+          <div class="preview-inline-actions">
+            <button class="btn" type="button" id="resetRotationButton">Rotation zurücksetzen</button>
+          </div>
         </div>
 
         <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
