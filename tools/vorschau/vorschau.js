@@ -2621,18 +2621,45 @@
   }
 
   function syncStepGroups() {
-    getFlowStepIds().forEach(function (stepId) {
+    const flowStepIds = getFlowStepIds();
+    const stepTitles = {
+      material: "Material wählen",
+      product: "Produkt wählen",
+      finish: "Ausführung wählen",
+      set: "Set wählen",
+      size: "Größe wählen",
+      designMode: "Gestaltungsart wählen"
+    };
+
+    Object.keys(STEP_DEFINITIONS).forEach(function (stepId) {
       const definition = STEP_DEFINITIONS[stepId];
       if (!definition.groupEl) return;
+
+      const isPartOfFlow = flowStepIds.includes(stepId);
+      const titleRow = definition.groupEl.querySelector(".preview-control-title-row");
+      const titleEl = titleRow ? titleRow.querySelector("h3") : null;
+
+      if (!isPartOfFlow) {
+        definition.groupEl.hidden = true;
+        definition.groupEl.setAttribute("data-step-state", "locked");
+        definition.groupEl.setAttribute("data-step-id", stepId);
+        if (titleRow) {
+          titleRow.removeAttribute("data-step-summary");
+        }
+        return;
+      }
 
       const isVisible = stepId === "material" ? true : isStepAvailable(stepId);
       const visualState = getStepVisualState(stepId);
       const summary = getStepSummary(stepId);
-      const titleRow = definition.groupEl.querySelector(".preview-control-title-row");
+      const stepNumber = flowStepIds.indexOf(stepId) + 1;
 
       definition.groupEl.hidden = !isVisible;
       definition.groupEl.setAttribute("data-step-state", visualState);
       definition.groupEl.setAttribute("data-step-id", stepId);
+      if (titleEl && stepTitles[stepId]) {
+        titleEl.textContent = stepNumber + ". " + stepTitles[stepId];
+      }
       if (titleRow) {
         titleRow.setAttribute("data-step-summary", summary);
       }
