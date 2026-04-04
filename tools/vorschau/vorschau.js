@@ -768,7 +768,7 @@
       id: "google-motorsport-motorcycle",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_motorcycle_48px",
+      name: "Motorrad",
       description: "action/svg/production/ic_motorcycle_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_motorcycle_48px.svg"
     },
@@ -776,7 +776,7 @@
       id: "google-motorsport-car",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_car_48px",
+      name: "Auto",
       description: "maps/svg/production/ic_directions_car_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_car_48px.svg"
     },
@@ -784,7 +784,7 @@
       id: "google-motorsport-traffic",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_traffic_48px",
+      name: "Ampel",
       description: "maps/svg/production/ic_traffic_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_traffic_48px.svg"
     },
@@ -792,7 +792,7 @@
       id: "google-motorsport-ev-station",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_ev_station_48px",
+      name: "Ladestation",
       description: "maps/svg/production/ic_ev_station_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_ev_station_48px.svg"
     },
@@ -800,7 +800,7 @@
       id: "google-motorsport-bike",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_bike_48px",
+      name: "Fahrrad",
       description: "maps/svg/production/ic_directions_bike_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_bike_48px.svg"
     },
@@ -808,7 +808,7 @@
       id: "google-motorsport-boat",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_boat_48px",
+      name: "Boot",
       description: "maps/svg/production/ic_directions_boat_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_boat_48px.svg"
     },
@@ -816,7 +816,7 @@
       id: "google-motorsport-bus",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_bus_48px",
+      name: "Bus",
       description: "maps/svg/production/ic_directions_bus_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_bus_48px.svg"
     },
@@ -824,7 +824,7 @@
       id: "google-motorsport-railway",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_railway_48px",
+      name: "Bahn",
       description: "maps/svg/production/ic_directions_railway_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_railway_48px.svg"
     },
@@ -832,23 +832,15 @@
       id: "google-motorsport-subway-directions",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_subway_48px",
+      name: "U-Bahn",
       description: "maps/svg/production/ic_directions_subway_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_subway_48px.svg"
-    },
-    {
-      id: "google-motorsport-transit",
-      kindId: "google-motorsport",
-      parentId: "emblem",
-      name: "ic_directions_transit_48px",
-      description: "maps/svg/production/ic_directions_transit_48px.svg",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_transit_48px.svg"
     },
     {
       id: "google-motorsport-walk",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_directions_walk_48px",
+      name: "Zu Fuß",
       description: "maps/svg/production/ic_directions_walk_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_walk_48px.svg"
     },
@@ -856,7 +848,7 @@
       id: "google-motorsport-taxi",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_local_taxi_48px",
+      name: "Taxi",
       description: "maps/svg/production/ic_local_taxi_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_local_taxi_48px.svg"
     },
@@ -864,7 +856,7 @@
       id: "google-motorsport-train",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_train_48px",
+      name: "Zug",
       description: "maps/svg/production/ic_train_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_train_48px.svg"
     },
@@ -872,7 +864,7 @@
       id: "google-motorsport-tram",
       kindId: "google-motorsport",
       parentId: "emblem",
-      name: "ic_tram_48px",
+      name: "Tram",
       description: "maps/svg/production/ic_tram_48px.svg",
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_tram_48px.svg"
     },
@@ -2217,13 +2209,13 @@
       thumbClass += " preview-option__thumb-media--photo";
     }
     if (template.category === "emblem") {
-      thumbClass += " preview-option__thumb-media--emblem";
+      thumbClass += " preview-option__thumb-media--symbol preview-option__thumb-media--emblem";
     }
     if (template.category === "qr-shortcut") {
-      thumbClass += " preview-option__thumb-media--emblem";
+      thumbClass += " preview-option__thumb-media--symbol preview-option__thumb-media--emblem";
     }
     if (template.category === "animal-symbols") {
-      thumbClass += " preview-option__thumb-media--animal-root";
+      thumbClass += " preview-option__thumb-media--symbol preview-option__thumb-media--animal-root";
     }
 
     return (
@@ -2280,7 +2272,7 @@
   function buildAnimalGroupThumbMarkup(animalGroup) {
     return (
       '<span class="preview-option__thumb">' +
-        '<span class="preview-option__thumb-media preview-option__thumb-media--animal-group">' +
+        '<span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--animal-group">' +
           '<img src="' + animalGroup.imageSrc + '" alt="">' +
         "</span>" +
       "</span>"
@@ -2305,12 +2297,12 @@
         const metaText = isPreparedOnly ? "Kategorie ist vorbereitet." : "Kategorie jetzt öffnen.";
 
         button.type = "button";
-        button.className = "preview-option preview-option--symbol-category";
+        button.className = "preview-option preview-option--symbol-card preview-option--symbol-category";
         button.setAttribute("data-symbol-category-id", category.id);
         button.setAttribute("data-category-status", isPreparedOnly ? "coming-soon" : "active");
         button.innerHTML =
           '<span class="preview-option__status-badge">' + escapeHtml(statusLabel) + "</span>" +
-          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
           '<span class="preview-option__title">' + escapeHtml(category.label) + "</span>" +
           '<span class="preview-option__meta">' + escapeHtml(metaText) + "</span>";
 
@@ -2340,7 +2332,7 @@
       ANIMAL_GROUP_LIBRARY.forEach(function (animalGroup) {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = "preview-option";
+        button.className = "preview-option preview-option--symbol-card";
         button.setAttribute("data-animal-group-id", animalGroup.id);
         button.innerHTML =
           buildAnimalGroupThumbMarkup(animalGroup) +
@@ -2358,7 +2350,7 @@
       variants.forEach(function (variant) {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = "preview-option";
+        button.className = "preview-option preview-option--symbol-card";
         button.setAttribute("data-motif-variant-id", variant.id);
         button.innerHTML =
           '<span class="preview-option__thumb"><img src="' + variant.imageSrc + '" alt=""></span>' +
@@ -2404,10 +2396,10 @@
       ].forEach((option) => {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = "preview-option";
+        button.className = "preview-option preview-option--symbol-card";
         button.setAttribute("data-emblem-source-mode", option.id);
         button.innerHTML =
-          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><strong style="font:700 24px system-ui, sans-serif;color:#16181c;">' + escapeHtml(option.name) + "</strong></span></span>" +
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><strong style="font:700 24px system-ui, sans-serif;color:#16181c;">' + escapeHtml(option.name) + "</strong></span></span>" +
           '<span class="preview-option__title">' + escapeHtml(option.name) + "</span>" +
           '<span class="preview-option__meta">' + escapeHtml(option.description) + "</span>";
 
@@ -2428,10 +2420,10 @@
       EMBLEM_VARIANT_LIBRARY.filter((variant) => !variant.isQr && variant.kindId === getActiveEmblemKindId()).forEach((variant) => {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = "preview-option";
+        button.className = "preview-option preview-option--symbol-card";
         button.setAttribute("data-emblem-variant-id", variant.id);
         button.innerHTML =
-          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><img src="' + variant.imageSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + variant.imageSrc + '" alt=""></span></span>' +
           '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
           '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
 
@@ -2450,7 +2442,7 @@
       ANIMAL_GROUP_LIBRARY.forEach((animalGroup) => {
         const button = document.createElement("button");
         button.type = "button";
-        button.className = "preview-option";
+        button.className = "preview-option preview-option--symbol-card";
         button.setAttribute("data-animal-group-id", animalGroup.id);
         button.innerHTML =
           buildAnimalGroupThumbMarkup(animalGroup) +
