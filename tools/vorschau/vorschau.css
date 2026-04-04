@@ -567,6 +567,7 @@
   flex-direction: column;
   align-items: stretch;
   width: 100%;
+  min-height: 100%;
   border-radius: 18px;
   border: 1px solid rgba(64,62,65,.68);
   background: rgba(42,45,51,.18);
@@ -635,6 +636,56 @@
 .preview-option.is-disabled {
   opacity: .48;
   cursor: not-allowed;
+}
+
+.preview-option--symbol-category {
+  position: relative;
+}
+
+.preview-option--symbol-category .preview-option__status-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(19,24,29,.08);
+  background: rgba(255,255,255,.92);
+  color: #16181c;
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+}
+
+.preview-option--symbol-category[data-category-status="coming-soon"] .preview-option__status-badge {
+  background: rgba(42,45,51,.86);
+  border-color: rgba(255,255,255,.08);
+  color: rgba(232,228,225,.92);
+}
+
+.preview-option--symbol-category[data-category-status="coming-soon"] .preview-option__thumb {
+  border-color: rgba(255,255,255,.12);
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.55), rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 76%),
+    linear-gradient(180deg, rgba(226,219,214,.94), rgba(188,181,176,.96));
+}
+
+.preview-option--symbol-category[data-category-status="coming-soon"] .preview-option__meta {
+  color: rgba(188,184,182,.88);
+}
+
+.preview-option-grid__section-label {
+  grid-column: 1 / -1;
+  margin: 2px 0 -2px;
+  color: rgba(210,207,206,.84);
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 .preview-option__title {
@@ -855,12 +906,137 @@
 .preview-motif-overlay__panel {
   position: relative;
   z-index: 1;
-  width: min(100%, 560px);
+  width: min(100%, 760px);
+  max-height: min(86vh, 820px);
+  overflow: auto;
   padding: 18px;
   border-radius: 22px;
   border: 1px solid rgba(64,62,65,.82);
   background: linear-gradient(180deg, rgba(18,16,20,.98), rgba(11,10,14,.98));
   box-shadow: 0 22px 48px rgba(0,0,0,.42);
+}
+
+#motifOverlayOptions.preview-option-grid--templates .preview-option__thumb {
+  height: 164px;
+  flex-basis: 164px;
+  padding: 12px;
+}
+
+#motifOverlayOptions.preview-option-grid--templates .preview-option__thumb-media--emblem img {
+  width: 92%;
+  height: 92%;
+  transform: none;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemKinds"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemSourceChoice"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"] {
+  grid-template-columns: repeat(2, minmax(240px, 320px));
+  gap: 16px;
+  justify-content: center;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option__thumb {
+  height: 156px;
+  flex-basis: 156px;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemSourceChoice"] .preview-option__thumb {
+  height: 148px;
+  flex-basis: 148px;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option__thumb {
+  height: 214px;
+  flex-basis: 214px;
+  padding: 16px;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option__thumb-media--emblem img {
+  width: 80%;
+  height: 80%;
+  transform: none;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] {
+  grid-template-columns: repeat(2, minmax(220px, 280px));
+  gap: 18px;
+  max-width: 620px;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option {
+  padding: 16px;
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(40,43,49,.20), rgba(24,22,27,.20)),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option:hover,
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option:focus-visible {
+  background:
+    linear-gradient(180deg, rgba(70,32,39,.24), rgba(34,23,27,.28)),
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option.is-active {
+  border-color: rgba(219,16,33,.52);
+  background:
+    linear-gradient(180deg, rgba(86,30,36,.30), rgba(34,22,26,.40)),
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+  box-shadow:
+    0 0 0 2px rgba(219,16,33,.10),
+    0 16px 28px rgba(0,0,0,.18);
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option__thumb {
+  height: 188px;
+  flex-basis: 188px;
+  margin-bottom: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255,255,255,.92), rgba(255,255,255,.48) 44%, rgba(255,255,255,.16) 76%),
+    linear-gradient(180deg, rgba(244,238,232,.99), rgba(226,218,211,.98));
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option__thumb-media--emblem {
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 24%, rgba(255,255,255,.58), rgba(255,255,255,.12) 52%, transparent 78%),
+    linear-gradient(180deg, rgba(255,255,255,.94), rgba(245,240,234,.98));
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option__thumb-media--emblem img {
+  width: 68%;
+  height: 68%;
+  filter: grayscale(1) contrast(1.34) brightness(.92);
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option__title {
+  font-size: 1rem;
+  letter-spacing: .01em;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] .preview-option__meta {
+  margin-top: 6px;
+  font-size: .88rem;
+  line-height: 1.36;
+  color: rgba(214,209,206,.88);
 }
 
 .preview-size-grid {
@@ -961,10 +1137,18 @@
   gap: 10px;
 }
 
+.preview-inline-actions--overlay {
+  margin-top: 14px;
+}
+
 .preview-toggle-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.preview-toggle-grid--compact {
+  margin-top: 2px;
 }
 
 .preview-toggle-button {
@@ -986,6 +1170,12 @@
 }
 
 .preview-toggle-button.is-active {
+  border-color: rgba(219,16,33,.68);
+  background: linear-gradient(180deg, rgba(95,24,31,.52), rgba(33,20,23,.82));
+  box-shadow: 0 0 0 3px rgba(219,16,33,.12);
+}
+
+.preview-toggle-button[aria-pressed="true"] {
   border-color: rgba(219,16,33,.68);
   background: linear-gradient(180deg, rgba(95,24,31,.52), rgba(33,20,23,.82));
   box-shadow: 0 0 0 3px rgba(219,16,33,.12);
@@ -1269,6 +1459,22 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  #motifOverlayOptions[data-overlay-step="emblemKinds"] {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemSourceChoice"] {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"] {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 100%;
+  }
+
   .preview-option {
     padding: 12px;
     border-radius: 16px;
@@ -1363,9 +1569,38 @@
 
   .preview-motif-overlay__panel {
     width: 100%;
-    max-height: min(74vh, 560px);
+    max-height: min(82vh, 680px);
     overflow: auto;
     padding: 14px;
     border-radius: 20px 20px 16px 16px;
   }
+
+  #motifOverlayOptions.preview-option-grid--templates .preview-option__thumb {
+    height: 132px;
+    flex-basis: 132px;
+    padding: 10px;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option__thumb {
+    height: 138px;
+    flex-basis: 138px;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemSourceChoice"] .preview-option__thumb {
+    height: 132px;
+    flex-basis: 132px;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option__thumb {
+    height: 184px;
+    flex-basis: 184px;
+    padding: 12px;
+  }
+
+  #motifOverlayOptions.preview-option-grid--templates .preview-option__thumb-media--emblem img {
+    width: 88%;
+    height: 88%;
+    transform: none;
+  }
+
 }

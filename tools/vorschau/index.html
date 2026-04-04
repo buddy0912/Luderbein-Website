@@ -20,6 +20,9 @@
   <meta name="twitter:description" content="Material, Produkt, Größe, Bildmotiv und kurzen Zusatztext grob platzieren und als Vorschau speichern." />
   <meta name="twitter:image" content="https://luderbein-gravur.pages.dev/assets/og/og-logo-1200x630.jpg" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@600;700&family=Great+Vibes&family=Inter:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
   <link rel="stylesheet" href="/tools/vorschau/vorschau.css" />
@@ -333,7 +336,7 @@
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="template-heading">7. Motivart wählen</h3>
-            <span class="preview-inline-note">Monogramm, Foto, Tiersymbol oder Wappen / Emblem / QR-Code.</span>
+            <span class="preview-inline-note">Monogramm, Foto, Tier oder Wappen.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
           <p class="preview-help preview-help--notice" id="motifSizeHint" hidden></p>
@@ -344,6 +347,52 @@
             type="file"
             accept="image/png,image/jpeg,image/webp,image/svg+xml"
           />
+        </div>
+
+        <div class="preview-control-group" id="monogramGroup" aria-labelledby="monogram-heading" hidden>
+          <div class="preview-control-title-row">
+            <h3 id="monogram-heading">Monogramm</h3>
+            <strong id="monogramCharacterCount">0 / 3</strong>
+          </div>
+          <label class="preview-field">
+            <span class="preview-field__label">Zeichen</span>
+            <input
+              id="monogramInput"
+              class="preview-text-input"
+              type="text"
+              maxlength="3"
+              placeholder="LB"
+              aria-describedby="monogramHint monogramCharacterCount"
+            />
+          </label>
+          <label class="preview-field">
+            <span class="preview-field__label">Schrift</span>
+            <select id="monogramFontSelect" class="preview-select" aria-label="Monogramm-Schrift wählen">
+              <option value="cinzel">Cinzel</option>
+              <option value="great-vibes">Great Vibes</option>
+              <option value="inter">Inter</option>
+              <option value="cormorant">Cormorant Garamond</option>
+            </select>
+          </label>
+          <p class="preview-help" id="monogramHint">1–3 Zeichen. Sonst über Upload.</p>
+        </div>
+
+        <div class="preview-control-group" id="emblemGroup" aria-labelledby="emblem-heading" hidden>
+          <div class="preview-control-title-row">
+            <h3 id="emblem-heading">Wappen / Emblem</h3>
+          </div>
+          <div class="preview-toggle-grid preview-toggle-grid--compact" id="emblemSourceOptions">
+            <button class="preview-toggle-button" type="button" id="emblemSourceTemplateButton" aria-pressed="true">Vorlage</button>
+            <button class="preview-toggle-button" type="button" id="emblemSourceUploadButton" aria-pressed="false">Eigene Datei</button>
+          </div>
+          <div class="preview-inline-actions" id="emblemTemplateActions">
+            <button class="btn" type="button" id="chooseEmblemTemplateButton">Vorlage wählen</button>
+          </div>
+          <div class="preview-inline-actions" id="emblemUploadActions" hidden>
+            <button class="btn" type="button" id="chooseEmblemUploadButton">Datei wählen</button>
+            <button class="btn" type="button" id="clearEmblemUploadButton">Datei entfernen</button>
+          </div>
+          <p class="preview-help" id="emblemUploadHint" hidden>Nur SVG oder PNG transparent · nur Schwarz-Weiß.</p>
         </div>
 
         <div class="preview-control-group" id="qrCodeGroup" aria-labelledby="qr-heading" hidden>
@@ -552,6 +601,11 @@
       </div>
       <p class="preview-help" id="motifVariantOverlayHelp">Tiergruppe oder Variante auswählen.</p>
       <div id="motifOverlayOptions" class="preview-option-grid preview-option-grid--templates"></div>
+      <div class="preview-inline-actions preview-inline-actions--overlay" id="motifOverlayUploadActions" hidden>
+        <button class="btn" type="button" id="motifOverlayUploadButton">Datei wählen</button>
+        <button class="btn" type="button" id="motifOverlayUploadRemoveButton" hidden>Datei entfernen</button>
+      </div>
+      <p class="preview-help" id="motifOverlayUploadHint" hidden>Nur SVG oder PNG transparent · nur Schwarz-Weiß.</p>
     </div>
   </div>
 
@@ -561,6 +615,7 @@
   <script src="/assets/site.js"></script>
   <script src="/assets/nav-dropdown.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script src="/tools/vorschau/vorschau-symbol-sources.js"></script>
   <script src="/tools/vorschau/vorschau.js"></script>
 </body>
 </html>

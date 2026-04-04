@@ -28,7 +28,13 @@
   const motifVariantOverlayBackButton = document.getElementById("motifVariantOverlayBackButton");
   const motifVariantOverlayTitle = document.getElementById("motifVariantOverlayTitle");
   const motifVariantOverlayHelp = document.getElementById("motifVariantOverlayHelp");
+  const motifOverlayUploadActions = document.getElementById("motifOverlayUploadActions");
+  const motifOverlayUploadButton = document.getElementById("motifOverlayUploadButton");
+  const motifOverlayUploadRemoveButton = document.getElementById("motifOverlayUploadRemoveButton");
+  const motifOverlayUploadHint = document.getElementById("motifOverlayUploadHint");
   const motifAdjustGroup = document.getElementById("motifAdjustGroup");
+  const monogramGroup = document.getElementById("monogramGroup");
+  const emblemGroup = document.getElementById("emblemGroup");
   const rotationGroup = document.getElementById("rotationGroup");
   const qrCodeGroup = document.getElementById("qrCodeGroup");
   const textGroup = document.getElementById("textGroup");
@@ -52,12 +58,23 @@
   const textFontSelect = document.getElementById("textFontSelect");
   const qrInput = document.getElementById("qrInput");
   const qrCharacterCount = document.getElementById("qrCharacterCount");
+  const monogramInput = document.getElementById("monogramInput");
+  const monogramCharacterCount = document.getElementById("monogramCharacterCount");
+  const monogramFontSelect = document.getElementById("monogramFontSelect");
   const scaleValueLabel = document.getElementById("scaleValueLabel");
   const rotationValueLabel = document.getElementById("rotationValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const resetRotationButton = document.getElementById("resetRotationButton");
   const motifSizeHint = document.getElementById("motifSizeHint");
   const photoPricingHint = document.getElementById("photoPricingHint");
+  const emblemSourceTemplateButton = document.getElementById("emblemSourceTemplateButton");
+  const emblemSourceUploadButton = document.getElementById("emblemSourceUploadButton");
+  const chooseEmblemTemplateButton = document.getElementById("chooseEmblemTemplateButton");
+  const chooseEmblemUploadButton = document.getElementById("chooseEmblemUploadButton");
+  const clearEmblemUploadButton = document.getElementById("clearEmblemUploadButton");
+  const emblemTemplateActions = document.getElementById("emblemTemplateActions");
+  const emblemUploadActions = document.getElementById("emblemUploadActions");
+  const emblemUploadHint = document.getElementById("emblemUploadHint");
   const priceSummaryBox = document.getElementById("priceSummaryBox");
   const priceBreakdown = document.getElementById("priceBreakdown");
   const priceSubtotal = document.getElementById("priceSubtotal");
@@ -203,6 +220,29 @@
     }
   ];
 
+  const MONOGRAM_FONT_LIBRARY = [
+    {
+      id: "cinzel",
+      label: "Cinzel",
+      family: "\"Cinzel\", Georgia, serif"
+    },
+    {
+      id: "great-vibes",
+      label: "Great Vibes",
+      family: "\"Great Vibes\", \"Brush Script MT\", cursive"
+    },
+    {
+      id: "inter",
+      label: "Inter",
+      family: "\"Inter\", \"Helvetica Neue\", Arial, sans-serif"
+    },
+    {
+      id: "cormorant",
+      label: "Cormorant Garamond",
+      family: "\"Cormorant Garamond\", Georgia, serif"
+    }
+  ];
+
   const CATALOG = {
     materials: [
       {
@@ -336,9 +376,23 @@
 
   const TEMPLATE_LIBRARY = [
     {
+      id: "symbol-template",
+      name: "Symbolvorlage",
+      description: "Wappen und Embleme geführt wählen.",
+      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
+      category: "emblem"
+    },
+    {
+      id: "qr-code",
+      name: "QR-Code",
+      description: "Direkt als eigener Weg.",
+      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
+      category: "qr-shortcut"
+    },
+    {
       id: "monogram",
       name: "Monogramm",
-      description: "Klares Zeichen oder Initial.",
+      description: "1–3 Zeichen direkt setzen.",
       imageSrc: "/assets/tools/vorschau/vorlage-monogramm.png",
       category: "monogram"
     },
@@ -356,21 +410,14 @@
       description: "Hund, Katze, Pferd oder Vogel auswählen.",
       imageSrc: "/assets/tools/vorschau/tiere/hund/hund-01-klassisch.svg",
       category: "animal-symbols",
+      hideFromMainSelection: true,
       hasVariants: true
-    },
-    {
-      id: "emblem",
-      name: "Wappen / Emblem / QR-Code",
-      description: "Variante im Symbolbereich wählen.",
-      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
-      category: "emblem"
     }
   ];
 
-  const EMBLEM_VARIANT_LIBRARY = [
+  const EMBLEM_KIND_LIBRARY = [
     {
       id: "crest",
-      parentId: "emblem",
       name: "Wappen",
       description: "Klarer Schildcharakter mit etwas mehr Detail.",
       imageSrc: buildInlineSvgDataUri(
@@ -384,7 +431,6 @@
     },
     {
       id: "emblem",
-      parentId: "emblem",
       name: "Emblem",
       description: "Reduzierte Symbolwirkung mit ruhiger Form.",
       imageSrc: buildInlineSvgDataUri(
@@ -398,7 +444,6 @@
     },
     {
       id: "qr",
-      parentId: "emblem",
       name: "QR-Code",
       description: "Für Link oder kurze Information.",
       imageSrc: buildInlineSvgDataUri(
@@ -423,6 +468,421 @@
           '<rect x="136" y="144" width="12" height="12" fill="#16181c"/>' +
         '</svg>'
       ),
+      isQr: true
+    }
+  ];
+
+  const EMBLEM_VARIANT_LIBRARY = [
+    {
+      id: "crest-star",
+      kindId: "crest",
+      parentId: "emblem",
+      name: "Schild mit Stern",
+      description: "Klassisches Wappen mit Stern.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M100 24 154 42v50c0 42-22 70-54 88-32-18-54-46-54-88V42Z" fill="#16181c"/>' +
+          '<path d="M100 42 136 54v35c0 29-15 48-36 61-21-13-36-32-36-61V54Z" fill="#f6f2ee"/>' +
+          '<path d="M100 62 109 84h24l-19 14 7 23-21-14-21 14 7-23-19-14h24Z" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "crest-classic",
+      kindId: "crest",
+      parentId: "emblem",
+      name: "Klassischer Schild",
+      description: "Ruhige klassische Wappenform.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M100 28 150 44v52c0 38-21 63-50 80-29-17-50-42-50-80V44Z" fill="#16181c"/>' +
+          '<path d="M100 46 132 56v34c0 24-12 42-32 55-20-13-32-31-32-55V56Z" fill="#f6f2ee"/>' +
+          '<path d="M100 52v93M70 82h60" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "crest-angular",
+      kindId: "crest",
+      parentId: "emblem",
+      name: "Kantiger Schild",
+      description: "Moderner, klarer Schild.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M58 34h84l20 24v48c0 32-21 58-62 78-41-20-62-46-62-78V58Z" fill="#16181c"/>' +
+          '<path d="M75 52h50l17 18v30c0 22-14 40-42 56-28-16-42-34-42-56V70Z" fill="#f6f2ee"/>' +
+          '<path d="M84 78h32M100 62v72" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "crest-badge",
+      kindId: "crest",
+      parentId: "emblem",
+      name: "Badge-Wappen",
+      description: "Runder Badge mit Schildkern.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="68" fill="none" stroke="#16181c" stroke-width="18"/>' +
+          '<path d="M100 50 132 60v32c0 24-13 42-32 54-19-12-32-30-32-54V60Z" fill="#16181c"/>' +
+          '<path d="M100 66 116 72v18c0 14-6 25-16 33-10-8-16-19-16-33V72Z" fill="#f6f2ee"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "crest-laurel",
+      kindId: "crest",
+      parentId: "emblem",
+      name: "Ehrenform",
+      description: "Lorbeer und Schild schlicht.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M62 54c-18 10-28 28-30 52 3 22 13 40 30 54" fill="none" stroke="#16181c" stroke-width="10" stroke-linecap="round"/>' +
+          '<path d="M138 54c18 10 28 28 30 52-3 22-13 40-30 54" fill="none" stroke="#16181c" stroke-width="10" stroke-linecap="round"/>' +
+          '<path d="M100 54 132 64v30c0 24-12 42-32 54-20-12-32-30-32-54V64Z" fill="#16181c"/>' +
+          '<path d="M100 70 116 76v15c0 13-6 23-16 31-10-8-16-18-16-31V76Z" fill="#f6f2ee"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem-focus",
+      kindId: "emblem",
+      parentId: "emblem",
+      name: "Fokus",
+      description: "Zielscheibe klar und ruhig.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="64" fill="none" stroke="#16181c" stroke-width="16"/>' +
+          '<circle cx="100" cy="100" r="34" fill="none" stroke="#16181c" stroke-width="14"/>' +
+          '<circle cx="100" cy="100" r="10" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem-gear",
+      kindId: "emblem",
+      parentId: "emblem",
+      name: "Zahnrad",
+      description: "Technisches Emblem mit Zahnkranz.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M100 34 114 34 118 50 132 56 146 46 156 56 146 70 152 84 168 88 168 102 152 106 146 120 156 134 146 144 132 134 118 140 114 156 100 156 96 140 82 134 68 144 58 134 68 120 62 106 46 102 46 88 62 84 68 70 58 56 68 46 82 56 96 50Z" fill="#16181c"/>' +
+          '<circle cx="100" cy="95" r="24" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="95" r="10" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem-bolt",
+      kindId: "emblem",
+      parentId: "emblem",
+      name: "Blitz",
+      description: "Energiezeichen mit Kreis.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="64" fill="none" stroke="#16181c" stroke-width="16"/>' +
+          '<path d="M108 42 76 104h22l-8 54 34-66h-22Z" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem-tools",
+      kindId: "emblem",
+      parentId: "emblem",
+      name: "Werkzeug",
+      description: "Gekreuzte Werkzeuge reduziert.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="66" fill="none" stroke="#16181c" stroke-width="14"/>' +
+          '<path d="M68 66 132 130M132 66 68 130" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+          '<circle cx="62" cy="62" r="10" fill="#16181c"/>' +
+          '<rect x="122" y="122" width="20" height="20" rx="4" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem-crown",
+      kindId: "emblem",
+      parentId: "emblem",
+      name: "Krone",
+      description: "Schlichte Krone im Badge.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="66" fill="none" stroke="#16181c" stroke-width="14"/>' +
+          '<path d="M58 120h84l-8-44-24 22-20-30-20 30-24-22Z" fill="#16181c"/>' +
+          '<rect x="58" y="120" width="84" height="16" rx="4" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "emblem-modern",
+      kindId: "emblem",
+      parentId: "emblem",
+      name: "Modernes Badge",
+      description: "Klares Badge mit Zentrum.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<circle cx="100" cy="100" r="62" fill="none" stroke="#16181c" stroke-width="18"/>' +
+          '<circle cx="100" cy="100" r="18" fill="#16181c"/>' +
+          '<path d="M100 44v112M44 100h112" stroke="#16181c" stroke-width="14" stroke-linecap="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "ornament-flourish",
+      kindId: "ornament",
+      parentId: "emblem",
+      name: "Schwungornament",
+      description: "Klassische geschwungene Zierform.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M28 104c18 0 24-30 46-30 19 0 24 28 50 28 18 0 26-10 48-30" fill="none" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+          '<path d="M28 96c18 0 24 30 46 30 19 0 24-28 50-28 18 0 26 10 48 30" fill="none" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+          '<circle cx="28" cy="100" r="9" fill="#16181c"/>' +
+          '<circle cx="172" cy="100" r="9" fill="#16181c"/>' +
+          '<circle cx="100" cy="100" r="11" fill="#16181c"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "ornament-laurel",
+      kindId: "ornament",
+      parentId: "emblem",
+      name: "Lorbeerornament",
+      description: "Reduzierte Lorbeerform für Gravur.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M62 44c-20 12-31 32-31 58 0 25 11 45 31 60" fill="none" stroke="#16181c" stroke-width="10" stroke-linecap="round"/>' +
+          '<path d="M138 44c20 12 31 32 31 58 0 25-11 45-31 60" fill="none" stroke="#16181c" stroke-width="10" stroke-linecap="round"/>' +
+          '<path d="M68 66 54 80M70 88 48 100M72 112 54 124M132 66l14 14M130 88l22 12M128 112l18 12" stroke="#16181c" stroke-width="10" stroke-linecap="round"/>' +
+          '<path d="M74 142h52" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "ornament-knot",
+      kindId: "ornament",
+      parentId: "emblem",
+      name: "Knotenornament",
+      description: "Symmetrische Flechtform mit klaren Linien.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M54 72c0-14 10-24 24-24 12 0 19 6 22 18 3-12 10-18 22-18 14 0 24 10 24 24 0 12-6 20-18 24 12 4 18 12 18 24 0 14-10 24-24 24-12 0-19-6-22-18-3 12-10 18-22 18-14 0-24-10-24-24 0-12 6-20 18-24-12-4-18-12-18-24Z" fill="none" stroke="#16181c" stroke-width="12" stroke-linejoin="round"/>' +
+          '<path d="M78 72h44v56H78Z" fill="none" stroke="#16181c" stroke-width="12" stroke-linejoin="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "ornament-corner",
+      kindId: "ornament",
+      parentId: "emblem",
+      name: "Rahmenornament",
+      description: "Vier ruhige Ecken für einen Zierrahmen.",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<path d="M48 74c0-18 8-26 26-26h22M126 48h22c18 0 26 8 26 26v22M152 126v22c0 18-8 26-26 26h-22M74 152H52c-18 0-26-8-26-26v-22" fill="none" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+          '<path d="M62 62 86 86M138 62 114 86M62 138l24-24M138 138l-24-24" stroke="#16181c" stroke-width="12" stroke-linecap="round"/>' +
+        '</svg>'
+      )
+    },
+    {
+      id: "google-outdoor-terrain",
+      kindId: "google-outdoor",
+      parentId: "emblem",
+      name: "Gelände",
+      description: "Google Material · maps · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_terrain_48px.svg"
+    },
+    {
+      id: "google-outdoor-landscape",
+      kindId: "google-outdoor",
+      parentId: "emblem",
+      name: "Landschaft",
+      description: "Google Material · image · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_landscape_48px.svg"
+    },
+    {
+      id: "google-outdoor-sun",
+      kindId: "google-outdoor",
+      parentId: "emblem",
+      name: "Sonne",
+      description: "Google Material · image · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_wb_sunny_48px.svg"
+    },
+    {
+      id: "google-outdoor-bike",
+      kindId: "google-outdoor",
+      parentId: "emblem",
+      name: "Bike",
+      description: "Google Material · maps · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_bike_48px.svg"
+    },
+    {
+      id: "google-rune-triangle",
+      kindId: "google-runes",
+      parentId: "emblem",
+      name: "Rune Dreieck",
+      description: "Google Material · action · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_change_history_48px.svg"
+    },
+    {
+      id: "google-rune-flare",
+      kindId: "google-runes",
+      parentId: "emblem",
+      name: "Rune Strahl",
+      description: "Google Material · image · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_flare_48px.svg"
+    },
+    {
+      id: "google-rune-star",
+      kindId: "google-runes",
+      parentId: "emblem",
+      name: "Rune Stern",
+      description: "Google Material · action · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_stars_48px.svg"
+    },
+    {
+      id: "google-rune-sigil",
+      kindId: "google-runes",
+      parentId: "emblem",
+      name: "Rune Siegel",
+      description: "Google Material · action · production",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_all_out_48px.svg"
+    },
+    {
+      id: "google-motorsport-motorcycle",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_motorcycle_48px",
+      description: "action/svg/production/ic_motorcycle_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_motorcycle_48px.svg"
+    },
+    {
+      id: "google-motorsport-car",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_car_48px",
+      description: "maps/svg/production/ic_directions_car_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_car_48px.svg"
+    },
+    {
+      id: "google-motorsport-traffic",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_traffic_48px",
+      description: "maps/svg/production/ic_traffic_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_traffic_48px.svg"
+    },
+    {
+      id: "google-motorsport-ev-station",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_ev_station_48px",
+      description: "maps/svg/production/ic_ev_station_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_ev_station_48px.svg"
+    },
+    {
+      id: "google-motorsport-bike",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_bike_48px",
+      description: "maps/svg/production/ic_directions_bike_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_bike_48px.svg"
+    },
+    {
+      id: "google-motorsport-boat",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_boat_48px",
+      description: "maps/svg/production/ic_directions_boat_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_boat_48px.svg"
+    },
+    {
+      id: "google-motorsport-bus",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_bus_48px",
+      description: "maps/svg/production/ic_directions_bus_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_bus_48px.svg"
+    },
+    {
+      id: "google-motorsport-railway",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_railway_48px",
+      description: "maps/svg/production/ic_directions_railway_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_railway_48px.svg"
+    },
+    {
+      id: "google-motorsport-subway-directions",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_subway_48px",
+      description: "maps/svg/production/ic_directions_subway_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_subway_48px.svg"
+    },
+    {
+      id: "google-motorsport-transit",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_transit_48px",
+      description: "maps/svg/production/ic_directions_transit_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_transit_48px.svg"
+    },
+    {
+      id: "google-motorsport-walk",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_directions_walk_48px",
+      description: "maps/svg/production/ic_directions_walk_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_walk_48px.svg"
+    },
+    {
+      id: "google-motorsport-taxi",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_local_taxi_48px",
+      description: "maps/svg/production/ic_local_taxi_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_local_taxi_48px.svg"
+    },
+    {
+      id: "google-motorsport-train",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_train_48px",
+      description: "maps/svg/production/ic_train_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_train_48px.svg"
+    },
+    {
+      id: "google-motorsport-tram",
+      kindId: "google-motorsport",
+      parentId: "emblem",
+      name: "ic_tram_48px",
+      description: "maps/svg/production/ic_tram_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_tram_48px.svg"
+    },
+    {
+      id: "qr",
+      kindId: "qr",
+      parentId: "emblem",
+      name: "QR-Code",
+      description: "Für Link oder kurze Information.",
+      imageSrc: EMBLEM_KIND_LIBRARY.find(function (item) { return item.id === "qr"; }).imageSrc,
       isQr: true
     }
   ];
@@ -652,6 +1112,7 @@
   const BOTTLE_OPENER_ENGRAVING_FILL = "rgba(210,207,206,0.92)";
   const BOTTLE_OPENER_ENGRAVING_STROKE = "rgba(210,207,206,0.82)";
   const bottleOpenerEngravingCache = typeof WeakMap === "function" ? new WeakMap() : null;
+  const symbolSourceRegistry = window.PREVIEW_SYMBOL_SOURCE_REGISTRY || null;
 
   const state = createInitialState();
   let renderQueued = false;
@@ -695,9 +1156,14 @@
       uploadedImage: null,
       uploadedImageSrc: "",
       uploadedFileName: "",
+      monogramValue: "",
+      monogramFontId: MONOGRAM_FONT_LIBRARY[0].id,
       qrValue: "",
       qrCodeModel: null,
       qrCodeModelValue: "",
+      emblemKindId: null,
+      symbolTemplateCategoryId: null,
+      emblemSourceMode: "template",
       scalePercent: 100,
       offsetX: 0,
       offsetY: 0,
@@ -808,6 +1274,28 @@
       queueRender();
     });
 
+    if (monogramInput) {
+      monogramInput.addEventListener("input", function () {
+        const activeSideState = getActiveSideState();
+        activeSideState.monogramValue = normalizeMonogramValue(monogramInput.value);
+        if (monogramInput.value !== activeSideState.monogramValue) {
+          monogramInput.value = activeSideState.monogramValue;
+        }
+        clampPlacement();
+        syncUi();
+        queueRender();
+      });
+    }
+
+    if (monogramFontSelect) {
+      monogramFontSelect.addEventListener("change", function () {
+        getActiveSideState().monogramFontId = monogramFontSelect.value;
+        clampPlacement();
+        syncUi();
+        queueRender();
+      });
+    }
+
     document.querySelectorAll("[data-text-style]").forEach((button) => {
       button.addEventListener("click", function () {
         const styleName = button.getAttribute("data-text-style");
@@ -826,6 +1314,39 @@
     motifVariantOverlayBackButton.addEventListener("click", showAnimalGroupOverlay);
     clearTextButton.addEventListener("click", clearText);
     clearQrButton.addEventListener("click", clearQrValue);
+    if (emblemSourceTemplateButton) {
+      emblemSourceTemplateButton.addEventListener("click", function () {
+        setEmblemSourceMode("template");
+      });
+    }
+    if (emblemSourceUploadButton) {
+      emblemSourceUploadButton.addEventListener("click", function () {
+        setEmblemSourceMode("upload");
+      });
+    }
+    if (chooseEmblemTemplateButton) {
+      chooseEmblemTemplateButton.addEventListener("click", function () {
+        openMotifVariantOverlay("emblemVariants");
+      });
+    }
+    if (chooseEmblemUploadButton) {
+      chooseEmblemUploadButton.addEventListener("click", openEmblemUpload);
+    }
+    if (motifOverlayUploadButton) {
+      motifOverlayUploadButton.addEventListener("click", openEmblemUpload);
+    }
+    if (motifOverlayUploadRemoveButton) {
+      motifOverlayUploadRemoveButton.addEventListener("click", function () {
+        if (!isEmblemUploadSelected()) return;
+        clearUploadedImage();
+      });
+    }
+    if (clearEmblemUploadButton) {
+      clearEmblemUploadButton.addEventListener("click", function () {
+        if (!isEmblemUploadSelected()) return;
+        clearUploadedImage();
+      });
+    }
     resetPlacementButton.addEventListener("click", resetAllSelections);
     if (resetRotationButton) {
       resetRotationButton.addEventListener("click", resetBottleOpenerRotation);
@@ -993,6 +1514,10 @@
       return "photo";
     }
 
+    if (template.category === "monogram") {
+      return "motif";
+    }
+
     if (template.category === "emblem" && getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
       return "qr";
     }
@@ -1019,8 +1544,16 @@
       return sideState.uploadedImageSrc ? "photo" : null;
     }
 
+    if (template.category === "monogram") {
+      return hasMonogramValue(sideId, pendantIndex) ? "motif" : null;
+    }
+
     if (template.category === "emblem" && getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
       return getSideState(sideId, pendantIndex).qrValue.trim() ? "qr" : null;
+    }
+
+    if (template.category === "emblem" && isEmblemUploadSelected(sideId, pendantIndex)) {
+      return sideState.uploadedImageSrc ? "motif" : null;
     }
 
     if (template.category === "animal-symbols") {
@@ -1182,11 +1715,18 @@
         return false;
       }
 
+      if (template.category === "monogram") {
+        return hasMonogramValue(sideId, pendantIndex);
+      }
+
       if (template.category === "animal-symbols") {
         return Boolean(getSideState(sideId, pendantIndex).motifVariantId);
       }
 
       if (template.category === "emblem") {
+        if (isEmblemUploadSelected(sideId, pendantIndex)) {
+          return Boolean(getSideState(sideId, pendantIndex).uploadedImage);
+        }
         if (getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
           return getSideState(sideId, pendantIndex).qrValue.trim().length > 0;
         }
@@ -1664,14 +2204,22 @@
   }
 
   function buildTemplateThumbMarkup(template) {
-    let thumbClass = "preview-option__thumb-media";
     if (template.category === "monogram") {
-      thumbClass += " preview-option__thumb-media--monogram";
+      return (
+        '<span class="preview-option__thumb">' +
+          '<span class="preview-option__thumb-media preview-option__thumb-media--monogram" style="font:700 68px \\"Cinzel\\", Georgia, serif;color:#16181c;">LB</span>' +
+        "</span>"
+      );
     }
+
+    let thumbClass = "preview-option__thumb-media";
     if (template.category === "photo") {
       thumbClass += " preview-option__thumb-media--photo";
     }
     if (template.category === "emblem") {
+      thumbClass += " preview-option__thumb-media--emblem";
+    }
+    if (template.category === "qr-shortcut") {
       thumbClass += " preview-option__thumb-media--emblem";
     }
     if (template.category === "animal-symbols") {
@@ -1693,12 +2241,40 @@
 
   function getAvailableTemplates() {
     if (!isBottleOpenerProduct()) {
-      return TEMPLATE_LIBRARY;
+      return TEMPLATE_LIBRARY.filter(function (template) {
+        return template.hideFromMainSelection !== true;
+      });
     }
 
     return TEMPLATE_LIBRARY.filter(function (template) {
-      return template.category !== "photo";
+      return template.category !== "photo" && template.hideFromMainSelection !== true;
     });
+  }
+
+  function getSymbolTemplateCategories() {
+    const customCategories = Array.isArray(symbolSourceRegistry && symbolSourceRegistry.custom && symbolSourceRegistry.custom.categories)
+      ? symbolSourceRegistry.custom.categories
+      : [];
+    const preferredOrder = [
+      "wappen",
+      "embleme",
+      "tiere",
+      "ornamente",
+      "runen",
+      "herzen",
+      "outdoor",
+      "motorsport",
+      "handwerk",
+      "maritim",
+      "fantasy-mystik",
+      "totenkopf-dark-rockig"
+    ];
+
+    return preferredOrder.map(function (categoryId) {
+      return customCategories.find(function (category) {
+        return category.id === categoryId;
+      });
+    }).filter(Boolean);
   }
 
   function buildAnimalGroupThumbMarkup(animalGroup) {
@@ -1711,11 +2287,145 @@
     );
   }
 
+  function buildOverlaySectionLabelMarkup(label) {
+    return '<div class="preview-option-grid__section-label">' + escapeHtml(label) + "</div>";
+  }
+
   function renderMotifOverlayOptions() {
     motifOverlayOptionsEl.innerHTML = "";
+    motifOverlayOptionsEl.setAttribute("data-overlay-step", state.motifOverlayStep || "");
+    motifOverlayOptionsEl.setAttribute("data-overlay-kind", getActiveEmblemKindId() || "");
+
+    if (state.motifOverlayStep === "symbolCategories") {
+      getSymbolTemplateCategories().forEach(function (category) {
+        const button = document.createElement("button");
+        const isPreparedOnly = category.sourceType === "custom-library-placeholder";
+        const previewSrc = category.previewTemplate || "/assets/tools/vorschau/vorlage-emblem.png";
+        const statusLabel = isPreparedOnly ? "Bald verfügbar" : "Nutzbar";
+        const metaText = isPreparedOnly ? "Kategorie ist vorbereitet." : "Kategorie jetzt öffnen.";
+
+        button.type = "button";
+        button.className = "preview-option preview-option--symbol-category";
+        button.setAttribute("data-symbol-category-id", category.id);
+        button.setAttribute("data-category-status", isPreparedOnly ? "coming-soon" : "active");
+        button.innerHTML =
+          '<span class="preview-option__status-badge">' + escapeHtml(statusLabel) + "</span>" +
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__title">' + escapeHtml(category.label) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(metaText) + "</span>";
+
+        if (isPreparedOnly) {
+          button.classList.add("is-disabled");
+          button.disabled = true;
+        } else {
+          button.addEventListener("click", function () {
+            selectSymbolTemplateCategory(category.id);
+          });
+        }
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
+    if (state.motifOverlayStep === "animalLibrary") {
+      const activeAnimalGroup = getActiveAnimalGroup() || ANIMAL_GROUP_LIBRARY[0] || null;
+      const variants = activeAnimalGroup
+        ? MOTIF_VARIANT_LIBRARY.filter(function (variant) {
+          return variant.parentId === activeAnimalGroup.id;
+        })
+        : [];
+
+      motifOverlayOptionsEl.insertAdjacentHTML("beforeend", buildOverlaySectionLabelMarkup("Tiergruppen"));
+      ANIMAL_GROUP_LIBRARY.forEach(function (animalGroup) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option";
+        button.setAttribute("data-animal-group-id", animalGroup.id);
+        button.innerHTML =
+          buildAnimalGroupThumbMarkup(animalGroup) +
+          '<span class="preview-option__title">' + escapeHtml(animalGroup.name) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(animalGroup.description) + "</span>";
+
+        button.addEventListener("click", function () {
+          selectAnimalGroup(animalGroup.id);
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+
+      motifOverlayOptionsEl.insertAdjacentHTML("beforeend", buildOverlaySectionLabelMarkup("Motive"));
+      variants.forEach(function (variant) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option";
+        button.setAttribute("data-motif-variant-id", variant.id);
+        button.innerHTML =
+          '<span class="preview-option__thumb"><img src="' + variant.imageSrc + '" alt=""></span>' +
+          '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
+
+        button.addEventListener("click", function () {
+          if (getActiveSideState().motifVariantId === variant.id) return;
+          selectMotifVariant(variant.id);
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
+    if (state.motifOverlayStep === "emblemKinds") {
+      EMBLEM_KIND_LIBRARY.filter(function (variant) {
+        return !variant.isQr;
+      }).forEach((variant) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option";
+        button.setAttribute("data-emblem-kind-id", variant.id);
+        button.innerHTML =
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><img src="' + variant.imageSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
+
+        button.addEventListener("click", function () {
+          selectEmblemKind(variant.id);
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
+    if (state.motifOverlayStep === "emblemSourceChoice") {
+      [
+        { id: "template", name: "Vorlage", description: "Passende Vorlage wählen." },
+        { id: "upload", name: "Eigene Datei", description: "SVG oder PNG transparent." }
+      ].forEach((option) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option";
+        button.setAttribute("data-emblem-source-mode", option.id);
+        button.innerHTML =
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--emblem"><strong style="font:700 24px system-ui, sans-serif;color:#16181c;">' + escapeHtml(option.name) + "</strong></span></span>" +
+          '<span class="preview-option__title">' + escapeHtml(option.name) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(option.description) + "</span>";
+
+        button.addEventListener("click", function () {
+          selectEmblemSourceChoice(option.id);
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
+    if (state.motifOverlayStep === "emblemUpload") {
+      return;
+    }
 
     if (state.motifOverlayStep === "emblemVariants") {
-      EMBLEM_VARIANT_LIBRARY.forEach((variant) => {
+      EMBLEM_VARIANT_LIBRARY.filter((variant) => !variant.isQr && variant.kindId === getActiveEmblemKindId()).forEach((variant) => {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "preview-option";
@@ -1790,6 +2500,7 @@
     const isPhotoTemplate = template.category === "photo";
     const isAnimalSymbolsTemplate = template.category === "animal-symbols";
     const isEmblemTemplate = template.category === "emblem";
+    const isQrShortcutTemplate = template.category === "qr-shortcut";
     const isSameTemplate = activeSideState.templateId === template.id;
 
     if (isAnimalSymbolsTemplate && isSameTemplate) {
@@ -1799,7 +2510,8 @@
     }
 
     if (isEmblemTemplate && isSameTemplate) {
-      openMotifVariantOverlay("emblemVariants");
+      state.motifOverlayStep = "symbolCategories";
+      openMotifVariantOverlay("symbolCategories");
       return;
     }
 
@@ -1808,10 +2520,13 @@
     }
 
     closeMotifVariantOverlay();
-    activeSideState.templateId = template.id;
+    activeSideState.templateId = isQrShortcutTemplate ? "symbol-template" : template.id;
+    activeSideState.symbolTemplateCategoryId = null;
     activeSideState.animalGroupId = null;
     activeSideState.motifVariantId = null;
     activeSideState.emblemVariantId = null;
+    activeSideState.emblemKindId = null;
+    activeSideState.emblemSourceMode = (isEmblemTemplate || isQrShortcutTemplate) ? "template" : activeSideState.emblemSourceMode;
     activeSideState.qrValue = "";
     state.motifOverlayStep = "groups";
 
@@ -1829,8 +2544,13 @@
     }
 
     if (isEmblemTemplate) {
-      openMotifVariantOverlay("emblemVariants");
+      openMotifVariantOverlay("symbolCategories");
     }
+
+    if (isQrShortcutTemplate) {
+      selectEmblemKind("qr");
+    }
+
   }
 
   function selectAnimalGroup(animalGroupId) {
@@ -1840,13 +2560,121 @@
     const activeSideState = getActiveSideState();
     activeSideState.animalGroupId = animalGroup.id;
     activeSideState.motifVariantId = null;
-    state.motifOverlayStep = "variants";
+    state.motifOverlayStep = activeSideState.symbolTemplateCategoryId === "tiere" ? "animalLibrary" : "variants";
     clearUploadedImage(false);
     resetImagePlacement(false);
     renderMotifOverlayOptions();
     syncUi();
     queueRender();
-    openMotifVariantOverlay("variants");
+    openMotifVariantOverlay(activeSideState.symbolTemplateCategoryId === "tiere" ? "animalLibrary" : "variants");
+  }
+
+  function selectSymbolTemplateCategory(categoryId) {
+    const activeSideState = getActiveSideState();
+    activeSideState.symbolTemplateCategoryId = categoryId;
+
+    if (categoryId === "wappen") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "crest";
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "embleme") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "emblem";
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "ornamente") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "ornament";
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "outdoor") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "google-outdoor";
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "runen") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "google-runes";
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "motorsport") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "google-motorsport";
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "tiere") {
+      activeSideState.templateId = "animal-symbols";
+      activeSideState.animalGroupId = activeSideState.animalGroupId || (ANIMAL_GROUP_LIBRARY[0] ? ANIMAL_GROUP_LIBRARY[0].id : null);
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = null;
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("animalLibrary");
+      syncUi();
+      queueRender();
+    }
   }
 
   function selectMotifVariant(variantId) {
@@ -1859,6 +2687,7 @@
     resetImagePlacement(false);
     syncUi();
     queueRender();
+    closeMotifVariantOverlay();
   }
 
   function selectEmblemVariant(variantId) {
@@ -1881,6 +2710,63 @@
     queueRender();
   }
 
+  function selectEmblemKind(kindId) {
+    const variant = getEmblemKindById(kindId);
+    if (!variant) return;
+
+    const activeSideState = getActiveSideState();
+    activeSideState.emblemKindId = kindId;
+
+    if (variant.isQr) {
+      activeSideState.emblemSourceMode = "template";
+      selectEmblemVariant(kindId);
+      closeMotifVariantOverlay();
+      return;
+    }
+
+    activeSideState.emblemVariantId = null;
+    clearUploadedImage(false);
+    resetImagePlacement(false);
+    openMotifVariantOverlay("emblemSourceChoice");
+    syncUi();
+    queueRender();
+  }
+
+  function selectEmblemSourceChoice(mode) {
+    if (!isEmblemTemplateSelected()) return;
+    if (mode !== "template" && mode !== "upload") return;
+
+    setEmblemSourceMode(mode);
+
+    if (mode === "template") {
+      openMotifVariantOverlay("emblemVariants");
+      return;
+    }
+
+    openMotifVariantOverlay("emblemUpload");
+    setTimeout(function () {
+      openEmblemUpload();
+    }, 0);
+  }
+
+  function setEmblemSourceMode(mode) {
+    if (!isEmblemTemplateSelected()) return;
+    if (mode !== "template" && mode !== "upload") return;
+
+    const activeSideState = getActiveSideState();
+    activeSideState.emblemSourceMode = mode;
+    if (mode === "upload") {
+      activeSideState.emblemVariantId = null;
+      if (isBottleOpenerProduct()) {
+        activeSideState.designMode = "motif";
+      }
+    } else {
+      clearUploadedImage(false);
+    }
+    syncUi();
+    queueRender();
+  }
+
   function setDesignMode(modeId) {
     if (!isStepAvailable("designMode")) return;
     if (!getAvailableDesignModes().some((mode) => mode.id === modeId)) return;
@@ -1890,15 +2776,26 @@
 
   function openPhotoUpload() {
     if (!isMotifMode() || !isPhotoMotifSelected()) return;
+    uploadInput.accept = "image/png,image/jpeg,image/webp,image/svg+xml";
+    uploadInput.click();
+  }
+
+  function openEmblemUpload() {
+    if (!isMotifMode() || !isEmblemUploadSelected()) return;
+    uploadInput.accept = "image/png,image/svg+xml,.png,.svg";
     uploadInput.click();
   }
 
   function openMotifVariantOverlay(step) {
     if (!isMotifMode()) return;
     if (isAnimalSymbolsSelected()) {
-      state.motifOverlayStep = step === "variants" ? "variants" : "groups";
+      if (getActiveSideState().symbolTemplateCategoryId === "tiere") {
+        state.motifOverlayStep = step === "symbolCategories" ? "symbolCategories" : "animalLibrary";
+      } else {
+        state.motifOverlayStep = step === "variants" ? "variants" : "groups";
+      }
     } else if (isEmblemTemplateSelected()) {
-      state.motifOverlayStep = "emblemVariants";
+      state.motifOverlayStep = step || "symbolCategories";
     } else {
       return;
     }
@@ -1919,9 +2816,9 @@
   function showAnimalGroupOverlay() {
     if (!isMotifMode()) return;
     if (isAnimalSymbolsSelected()) {
-      state.motifOverlayStep = "groups";
+      state.motifOverlayStep = getActiveSideState().symbolTemplateCategoryId === "tiere" ? "symbolCategories" : "groups";
     } else if (isEmblemTemplateSelected()) {
-      state.motifOverlayStep = "emblemVariants";
+      state.motifOverlayStep = ["emblemVariants", "emblemUpload"].includes(state.motifOverlayStep) ? "emblemSourceChoice" : "symbolCategories";
     } else {
       return;
     }
@@ -1936,26 +2833,35 @@
     if (!file) return;
 
     const targetSideState = getActiveSideState();
-    const reader = new FileReader();
+    const isEmblemUpload = isEmblemUploadSelected();
+    const loader = isEmblemUpload
+      ? validateAndReadEmblemUpload(file)
+      : readFileAsDataUrl(file);
 
-    reader.onload = function () {
-      loadImage(String(reader.result))
-        .then((image) => {
+    loader
+      .then(function (fileDataUrl) {
+        return loadImage(String(fileDataUrl)).then(function (image) {
           targetSideState.uploadedImage = image;
-          targetSideState.uploadedImageSrc = String(reader.result);
+          targetSideState.uploadedImageSrc = String(fileDataUrl);
           targetSideState.uploadedFileName = file.name;
           targetSideState.scalePercent = 100;
           targetSideState.offsetX = 0;
           targetSideState.offsetY = 0;
           syncUi();
           queueRender();
-        })
-        .catch(function () {
-          closeMotifVariantOverlay();
+          if (state.isMotifVariantOverlayOpen || isEmblemUpload) {
+            closeMotifVariantOverlay();
+          }
         });
-    };
-
-    reader.readAsDataURL(file);
+      })
+      .catch(function () {
+        if (!isEmblemUpload) {
+          closeMotifVariantOverlay();
+        }
+      })
+      .finally(function () {
+        uploadInput.value = "";
+      });
   }
 
   function clearUploadedImage(shouldRender) {
@@ -2275,12 +3181,19 @@
         contentWidth = qrLayout.outerSize;
         contentHeight = qrLayout.outerSize;
       } else {
-        const image = getActiveImage();
-        if (!image) return;
+        if (isMonogramTemplateSelected()) {
+          if (!hasMonogramValue()) return;
+          const monogramLayout = getBottleOpenerMonogramLayout();
+          contentWidth = monogramLayout.width;
+          contentHeight = monogramLayout.height;
+        } else {
+          const image = getActiveImage();
+          if (!image) return;
 
-        const motifLayout = getBottleOpenerMotifLayout(image);
-        contentWidth = motifLayout.width;
-        contentHeight = motifLayout.height;
+          const motifLayout = getBottleOpenerMotifLayout(image);
+          contentWidth = motifLayout.width;
+          contentHeight = motifLayout.height;
+        }
       }
 
       const maxOffsetX = Math.max(0, (box.width - contentWidth) / 2);
@@ -2291,12 +3204,19 @@
       return;
     }
 
-    const image = getActiveImage();
     const motifMask = getMotifMask(state.activePendantIndex);
-    if (!image || !motifMask) return;
+    if (!motifMask) return;
 
     const activeSideState = getActiveSideState();
-    const drawBox = getMotifDrawBox(image);
+    let drawBox;
+    if (isMonogramTemplateSelected()) {
+      if (!hasMonogramValue()) return;
+      drawBox = getMonogramLayout(state.activePendantIndex);
+    } else {
+      const image = getActiveImage();
+      if (!image) return;
+      drawBox = getMotifDrawBox(image);
+    }
     const maxOffsetX = Math.max((drawBox.width - motifMask.width) * 0.52, motifMask.width * 0.2);
     const maxOffsetY = Math.max((drawBox.height - motifMask.height) * 0.52, motifMask.height * 0.2);
 
@@ -2451,6 +3371,15 @@
     textFontSelect.value = activeSideState.textFontId;
     qrCharacterCount.textContent = activeSideState.qrValue.length + " / " + MAX_QR_LENGTH;
     qrInput.value = activeSideState.qrValue;
+    if (monogramCharacterCount) {
+      monogramCharacterCount.textContent = activeSideState.monogramValue.length + " / 3";
+    }
+    if (monogramInput) {
+      monogramInput.value = activeSideState.monogramValue;
+    }
+    if (monogramFontSelect) {
+      monogramFontSelect.value = activeSideState.monogramFontId;
+    }
 
     requestWhatsappLink.href = readyForExport ? buildWhatsappUrl() : "#";
     requestEmailLink.href = readyForExport ? buildMailtoUrl() : "#";
@@ -2505,9 +3434,35 @@
       (isMotifMode() && hasActiveMotifContent() && !isQrSelected()) ||
       (isBottleOpenerProduct() && isQrMode())
     );
+    setSectionVisibility(monogramGroup, isMotifMode() && isMonogramTemplateSelected());
+    setSectionVisibility(emblemGroup, isMotifMode() && isEmblemTemplateSelected() && hasSelectedEmblemKind() && !isQrSelected());
     setSectionVisibility(rotationGroup, isBottleOpenerProduct() && hasDesignModeSelection());
     setSectionVisibility(qrCodeGroup, isQrMode() || (isMotifMode() && isQrSelected()));
     setSectionVisibility(textGroup, isTextMode());
+    if (emblemSourceTemplateButton) {
+      emblemSourceTemplateButton.setAttribute("aria-pressed", isEmblemTemplateSelected() && !isEmblemUploadSelected() ? "true" : "false");
+    }
+    if (emblemSourceUploadButton) {
+      emblemSourceUploadButton.setAttribute("aria-pressed", isEmblemUploadSelected() ? "true" : "false");
+    }
+    if (emblemTemplateActions) {
+      emblemTemplateActions.hidden = !(isMotifMode() && isEmblemTemplateSelected() && !isEmblemUploadSelected());
+    }
+    if (emblemUploadActions) {
+      emblemUploadActions.hidden = !(isMotifMode() && isEmblemUploadSelected());
+    }
+    if (chooseEmblemTemplateButton) {
+      chooseEmblemTemplateButton.hidden = !(isMotifMode() && isEmblemTemplateSelected() && !isEmblemUploadSelected());
+    }
+    if (chooseEmblemUploadButton) {
+      chooseEmblemUploadButton.hidden = !(isMotifMode() && isEmblemUploadSelected());
+    }
+    if (clearEmblemUploadButton) {
+      clearEmblemUploadButton.hidden = !(isMotifMode() && isEmblemUploadSelected() && Boolean(getActiveSideState().uploadedImage));
+    }
+    if (emblemUploadHint) {
+      emblemUploadHint.hidden = !(isMotifMode() && isEmblemUploadSelected());
+    }
 
     const motifHint = getMotifSizeHint();
     motifSizeHint.hidden = !motifHint;
@@ -2549,7 +3504,19 @@
       state.motifOverlayStep = "groups";
     }
     motifVariantOverlay.hidden = !state.isMotifVariantOverlayOpen;
-    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || state.motifOverlayStep !== "variants";
+    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || !["variants", "animalLibrary", "emblemSourceChoice", "emblemVariants", "emblemUpload"].includes(state.motifOverlayStep);
+    if (motifOverlayUploadActions) {
+      motifOverlayUploadActions.hidden = !(state.isMotifVariantOverlayOpen && state.motifOverlayStep === "emblemUpload");
+    }
+    if (motifOverlayUploadButton) {
+      motifOverlayUploadButton.hidden = !(state.isMotifVariantOverlayOpen && state.motifOverlayStep === "emblemUpload");
+    }
+    if (motifOverlayUploadHint) {
+      motifOverlayUploadHint.hidden = !(state.isMotifVariantOverlayOpen && state.motifOverlayStep === "emblemUpload");
+    }
+    if (motifOverlayUploadRemoveButton) {
+      motifOverlayUploadRemoveButton.hidden = !(state.isMotifVariantOverlayOpen && state.motifOverlayStep === "emblemUpload" && Boolean(getActiveSideState().uploadedImage));
+    }
 
     materialOptionsEl.querySelectorAll("[data-material-id]").forEach((button) => {
       const material = getMaterialById(button.getAttribute("data-material-id"));
@@ -2602,6 +3569,10 @@
 
     motifOverlayOptionsEl.querySelectorAll("[data-animal-group-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-animal-group-id") === activeSideState.animalGroupId);
+    });
+
+    motifOverlayOptionsEl.querySelectorAll("[data-symbol-category-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-symbol-category-id") === activeSideState.symbolTemplateCategoryId);
     });
 
     motifOverlayOptionsEl.querySelectorAll("[data-motif-variant-id]").forEach((button) => {
@@ -2679,8 +3650,11 @@
     }
 
     if (isMotifMode()) {
+      if (isMonogramTemplateSelected()) {
+        return hasMonogramValue() ? "Monogramm: " + getActiveSideState().monogramValue : "Monogramm offen";
+      }
       if (getActiveSideState().uploadedImage) {
-        return "Foto: " + getActiveSideState().uploadedFileName;
+        return isEmblemUploadSelected() ? "Datei: " + getActiveSideState().uploadedFileName : "Foto: " + getActiveSideState().uploadedFileName;
       }
       if (isAnimalSymbolsSelected()) {
         const variant = getActiveMotifVariant();
@@ -2695,12 +3669,11 @@
       }
       if (isEmblemTemplateSelected()) {
         const emblemVariant = getActiveEmblemVariant();
-        if (emblemVariant && emblemVariant.isQr) {
-          return hasQrValue() ? "QR-Code" : "QR-Code offen";
-        }
+        if (isEmblemUploadSelected()) return getActiveSideState().uploadedImage ? "Datei: " + getActiveSideState().uploadedFileName : "Eigene Datei offen";
         if (emblemVariant) {
           return "Wappen / Emblem: " + emblemVariant.name;
         }
+        return "Wappen / Emblem";
       }
       if (activeTemplate) {
         return activeTemplate.name;
@@ -2815,32 +3788,44 @@
 
       if (hasDesignModeSelection(state.activeSide, pendantIndex)) {
         if (isMotifMode(state.activeSide, pendantIndex)) {
-          const image = getActiveImage(state.activeSide, pendantIndex);
-          if (image) {
-            drawMotif(size, image, pendantIndex);
-          } else if (isEmblemTemplateSelected(state.activeSide, pendantIndex)) {
-            if (isQrSelected(state.activeSide, pendantIndex)) {
-              if (hasQrValue(state.activeSide, pendantIndex)) {
-                drawQrMotif(size, pendantIndex);
+          if (isMonogramTemplateSelected(state.activeSide, pendantIndex)) {
+            if (hasMonogramValue(state.activeSide, pendantIndex)) {
+              drawMonogramMotif(size, pendantIndex);
+            } else if (pendantIndex === state.activePendantIndex) {
+              drawMotifPrompt("Monogramm", "1–3 Zeichen eingeben.");
+            }
+          } else {
+            const image = getActiveImage(state.activeSide, pendantIndex);
+            if (image) {
+              drawMotif(size, image, pendantIndex);
+            } else if (isEmblemTemplateSelected(state.activeSide, pendantIndex)) {
+              if (isEmblemUploadSelected(state.activeSide, pendantIndex)) {
+                if (pendantIndex === state.activePendantIndex) {
+                  drawMotifPrompt("Eigene Datei", "SVG oder PNG transparent.");
+                }
+              } else if (isQrSelected(state.activeSide, pendantIndex)) {
+                if (hasQrValue(state.activeSide, pendantIndex)) {
+                  drawQrMotif(size, pendantIndex);
+                } else if (pendantIndex === state.activePendantIndex) {
+                  drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
+                }
               } else if (pendantIndex === state.activePendantIndex) {
-                drawMotifPrompt("QR-Inhalt eingeben", "Link oder kurze Information für den QR-Code festlegen.");
+                drawMotifPrompt("Vorlage wählen", "Wappen oder Emblem.");
               }
             } else if (pendantIndex === state.activePendantIndex) {
-              drawMotifPrompt("Variante wählen", "Passende Symbolvariante festlegen.");
+              drawMotifPrompt(
+                isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
+                  ? "Variante wählen"
+                  : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
+                    ? "Tiergruppe wählen"
+                    : "Motivart wählen",
+                isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
+                  ? "Wähle die passende Variante."
+                  : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
+                    ? "Wähle zuerst die Tiergruppe."
+                    : "Wähle die passende Motivart."
+              );
             }
-          } else if (pendantIndex === state.activePendantIndex) {
-            drawMotifPrompt(
-              isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
-                ? "Variante wählen"
-                : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
-                  ? "Tiergruppe wählen"
-                  : "Motivart wählen",
-              isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
-                ? "Wähle die passende Variante."
-                : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
-                  ? "Wähle zuerst die Tiergruppe."
-                  : "Wähle die passende Motivart."
-            );
           }
         }
 
@@ -3045,6 +4030,12 @@
     }
 
     if (isMotifMode()) {
+      if (isMonogramTemplateSelected()) {
+        if (hasMonogramValue()) {
+          drawBottleOpenerMonogramContent();
+        }
+        return;
+      }
       drawBottleOpenerMotifContent();
       return;
     }
@@ -3253,6 +4244,26 @@
     ctx.clip();
     applyBottleOpenerContentRotation(x + drawWidth / 2, y + drawHeight / 2);
     ctx.drawImage(engravingImage || image, x, y, drawWidth, drawHeight);
+    ctx.restore();
+  }
+
+  function drawBottleOpenerMonogramContent() {
+    const box = getBottleOpenerDesignBox();
+    const activeSideState = getActiveSideState();
+    const monogramLayout = getBottleOpenerMonogramLayout();
+    const x = box.x + box.width / 2 + activeSideState.offsetX;
+    const y = box.y + box.height / 2 + activeSideState.offsetY;
+
+    ctx.save();
+    ctx.beginPath();
+    drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, Math.min(20, box.height / 4));
+    ctx.clip();
+    applyBottleOpenerContentRotation(x, y);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = monogramLayout.font;
+    ctx.fillStyle = BOTTLE_OPENER_ENGRAVING_FILL;
+    ctx.fillText(activeSideState.monogramValue, x, y);
     ctx.restore();
   }
 
@@ -3583,6 +4594,25 @@
       ctx.stroke();
     }
 
+    ctx.restore();
+  }
+
+  function drawMonogramMotif(size, pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const activeSideState = getSideState(state.activeSide, pendantIndex);
+    const monogramLayout = getMonogramLayout(pendantIndex);
+    const x = motifMask.x + motifMask.width / 2 + activeSideState.offsetX;
+    const y = motifMask.y + motifMask.height / 2 + activeSideState.offsetY;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = monogramLayout.font;
+    ctx.fillStyle = "rgba(22, 24, 28, 0.88)";
+    ctx.fillText(activeSideState.monogramValue, x, y);
     ctx.restore();
   }
 
@@ -4208,6 +5238,9 @@
     if (sideState.designMode === "qr") {
       return sideState.qrValue.trim().length > 0;
     }
+    if (isMonogramTemplateSelected(sideId)) {
+      return hasMonogramValue(sideId);
+    }
     if (sideState.uploadedImage) {
       return true;
     }
@@ -4226,6 +5259,9 @@
     }
 
     if (activeTemplate.category === "emblem") {
+      if (isEmblemUploadSelected(sideId, state.activePendantIndex)) {
+        return Boolean(sideState.uploadedImage);
+      }
       if (sideState.emblemVariantId === "qr") {
         return sideState.qrValue.trim().length > 0;
       }
@@ -4265,6 +5301,11 @@
     }
 
     if (sideState.designMode === "motif") {
+      if (isMonogramTemplateSelected(sideId, pendantIndex)) {
+        return hasMonogramValue(sideId, pendantIndex)
+          ? "Motiv · Monogramm · " + getSideState(sideId, pendantIndex).monogramValue
+          : "Motiv · Monogramm offen";
+      }
       if (isPhotoMotifSelected(sideId, pendantIndex)) {
         return sideState.uploadedImage ? "Foto · " + sideState.uploadedFileName : "Foto · offen";
       }
@@ -4314,6 +5355,9 @@
     }
 
     if (activeTemplate.category === "emblem") {
+      if (isEmblemUploadSelected(sideId, pendantIndex)) {
+        return sideState.uploadedImage ? "Eigene Datei" : "Eigene Datei · offen";
+      }
       const emblemVariant = getActiveEmblemVariant(sideId, pendantIndex);
       if (!emblemVariant) {
         return "Wappen / Emblem · offen";
@@ -4343,18 +5387,31 @@
     return EMBLEM_VARIANT_LIBRARY.find((variant) => variant.id === variantId) || null;
   }
 
+  function getEmblemKindById(kindId) {
+    return EMBLEM_KIND_LIBRARY.find((variant) => variant.id === kindId) || null;
+  }
+
   function getDefaultMotifVariantId(parentId) {
     const firstVariant = MOTIF_VARIANT_LIBRARY.find((variant) => variant.parentId === parentId);
     return firstVariant ? firstVariant.id : null;
   }
 
   function getActiveTopLevelTemplateId(sideId, pendantIndex) {
-    return getSideState(sideId, pendantIndex).templateId;
+    const sideState = getSideState(sideId, pendantIndex);
+    if (sideState.templateId === "symbol-template" && isQrSelected(sideId, pendantIndex)) {
+      return "qr-code";
+    }
+    if (sideState.templateId === "animal-symbols") {
+      return "symbol-template";
+    }
+    if (sideState.symbolTemplateCategoryId) {
+      return "symbol-template";
+    }
+    return sideState.templateId;
   }
 
   function getActiveTemplate(sideId, pendantIndex) {
-    const topLevelTemplateId = getActiveTopLevelTemplateId(sideId, pendantIndex);
-    return getTemplateById(topLevelTemplateId);
+    return getTemplateById(getSideState(sideId, pendantIndex).templateId);
   }
 
   function getActiveMotifVariant(sideId, pendantIndex) {
@@ -4398,6 +5455,11 @@
     return Boolean(template && template.category === "photo");
   }
 
+  function isMonogramTemplateSelected(sideId, pendantIndex) {
+    const template = getActiveTemplate(sideId, pendantIndex);
+    return Boolean(template && template.category === "monogram");
+  }
+
   function isAnimalPawsSelected(sideId, pendantIndex) {
     const template = getActiveTemplate(sideId, pendantIndex);
     return Boolean(template && template.category === "animal-symbols");
@@ -4412,13 +5474,30 @@
     return Boolean(template && template.category === "emblem");
   }
 
+  function isEmblemUploadSelected(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    return isEmblemTemplateSelected(sideId, pendantIndex) && sideState.emblemSourceMode === "upload";
+  }
+
   function isQrSelected(sideId, pendantIndex) {
     const emblemVariant = getActiveEmblemVariant(sideId, pendantIndex);
     return Boolean(emblemVariant && emblemVariant.isQr);
   }
 
+  function hasMonogramValue(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).monogramValue.trim().length > 0;
+  }
+
   function hasQrValue(sideId, pendantIndex) {
     return getSideState(sideId, pendantIndex).qrValue.trim().length > 0;
+  }
+
+  function getActiveEmblemKindId(sideId, pendantIndex) {
+    return getSideState(sideId, pendantIndex).emblemKindId;
+  }
+
+  function hasSelectedEmblemKind(sideId, pendantIndex) {
+    return Boolean(getActiveEmblemKindId(sideId, pendantIndex));
   }
 
   function updateMotifVariantOverlayCopy() {
@@ -4426,12 +5505,32 @@
     const activeAnimalGroup = getActiveAnimalGroup();
     if (!activeTemplate || activeTemplate.category !== "animal-symbols") {
       if (isEmblemTemplateSelected()) {
-        motifVariantOverlayTitle.textContent = "Wappen / Emblem";
-        motifVariantOverlayHelp.textContent = "Variante wählen.";
+        if (state.motifOverlayStep === "symbolCategories") {
+          motifVariantOverlayTitle.textContent = "Symbolvorlage";
+          motifVariantOverlayHelp.textContent = "Kategorie wählen.";
+        } else if (state.motifOverlayStep === "emblemKinds") {
+          motifVariantOverlayTitle.textContent = "Weg wählen";
+          motifVariantOverlayHelp.textContent = "Wappen, Emblem oder QR-Code.";
+        } else if (state.motifOverlayStep === "emblemSourceChoice") {
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "google-runes" ? "Runen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme"))));
+          motifVariantOverlayHelp.textContent = "Vorlage oder eigene Datei.";
+        } else if (state.motifOverlayStep === "emblemUpload") {
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "google-runes" ? "Runen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme"))));
+          motifVariantOverlayHelp.textContent = "Datei direkt hier wählen.";
+        } else {
+          motifVariantOverlayTitle.textContent = "Vorlage";
+          motifVariantOverlayHelp.textContent = getActiveEmblemKindId() === "crest" ? "Wappen wählen." : (getActiveEmblemKindId() === "ornament" ? "Ornament wählen." : (getActiveEmblemKindId() === "google-outdoor" ? "Symbol wählen." : (getActiveEmblemKindId() === "google-runes" ? "Rune wählen." : (getActiveEmblemKindId() === "google-motorsport" ? "Symbol wählen." : "Emblem wählen."))));
+        }
       } else {
         motifVariantOverlayTitle.textContent = "Tiermotiv";
         motifVariantOverlayHelp.textContent = "Wähle eine Tiergruppe.";
       }
+      return;
+    }
+
+    if (state.motifOverlayStep === "animalLibrary" && getActiveSideState().symbolTemplateCategoryId === "tiere") {
+      motifVariantOverlayTitle.textContent = "Tiere";
+      motifVariantOverlayHelp.textContent = "Tiergruppe und Motiv wählen.";
       return;
     }
 
@@ -4545,6 +5644,114 @@
     return TEXT_FONT_LIBRARY.find((font) => font.id === sideState.textFontId) || TEXT_FONT_LIBRARY[0];
   }
 
+  function getActiveMonogramFont(sideId, pendantIndex) {
+    const sideState = getSideState(sideId, pendantIndex);
+    return MONOGRAM_FONT_LIBRARY.find((font) => font.id === sideState.monogramFontId) || MONOGRAM_FONT_LIBRARY[0];
+  }
+
+  function normalizeMonogramValue(value) {
+    return String(value)
+      .replace(/\s+/g, "")
+      .slice(0, 3)
+      .toUpperCase();
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        resolve(String(reader.result || ""));
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function readFileAsText(file) {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        resolve(String(reader.result || ""));
+      };
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+  }
+
+  function readImageFromDataUrl(dataUrl) {
+    return loadImage(dataUrl);
+  }
+
+  function validateAndReadEmblemUpload(file) {
+    const mimeType = (file.type || "").toLowerCase();
+    const extension = file.name.toLowerCase().split(".").pop();
+    const isSvg = mimeType === "image/svg+xml" || extension === "svg";
+    const isPng = mimeType === "image/png" || extension === "png";
+    const invalidMessage = "Falsches Dateiformat oder unzulässige Datei. Erlaubt sind nur SVG oder PNG transparent, nur Schwarz-Weiß, ohne Grau, Schatten oder Verlauf.";
+
+    if (!isSvg && !isPng) {
+      window.alert(invalidMessage);
+      return Promise.reject(new Error("invalid-emblem-file"));
+    }
+
+    if (isSvg) {
+      return readFileAsText(file).then(function (svgText) {
+        const normalized = svgText.toLowerCase();
+        if (/(lineargradient|radialgradient|filter|fedropshadow|fegaussianblur|pattern|mask)/.test(normalized)) {
+          window.alert(invalidMessage);
+          throw new Error("invalid-emblem-svg");
+        }
+        const invalidColor = /#(?!000(?:000)?\b|fff(?:fff)?\b)[0-9a-f]{3,6}\b|rgba?\(|hsla?\(|\bgray\b|\bgrey\b|\bsilver\b/.test(normalized);
+        if (invalidColor) {
+          window.alert(invalidMessage);
+          throw new Error("invalid-emblem-svg");
+        }
+        return buildInlineSvgDataUri(svgText);
+      });
+    }
+
+    return readFileAsDataUrl(file)
+      .then(function (dataUrl) {
+        return readImageFromDataUrl(dataUrl).then(function (image) {
+          const buffer = document.createElement("canvas");
+          buffer.width = image.width;
+          buffer.height = image.height;
+          const bufferCtx = buffer.getContext("2d");
+          bufferCtx.drawImage(image, 0, 0);
+          const data = bufferCtx.getImageData(0, 0, buffer.width, buffer.height).data;
+          let hasTransparency = false;
+
+          for (let index = 0; index < data.length; index += 4) {
+            const alpha = data[index + 3];
+            if (alpha < 250) {
+              if (alpha > 0) {
+                hasTransparency = true;
+              }
+              continue;
+            }
+
+            const red = data[index];
+            const green = data[index + 1];
+            const blue = data[index + 2];
+            const maxChannelDiff = Math.max(Math.abs(red - green), Math.abs(red - blue), Math.abs(green - blue));
+            const average = (red + green + blue) / 3;
+
+            if (maxChannelDiff > 12 || (average > 24 && average < 231)) {
+              window.alert(invalidMessage);
+              throw new Error("invalid-emblem-png");
+            }
+          }
+
+          if (!hasTransparency) {
+            window.alert(invalidMessage);
+            throw new Error("invalid-emblem-png");
+          }
+
+          return dataUrl;
+        });
+      });
+  }
+
   function getMotifMask(pendantIndex) {
     const size = getActiveSize(pendantIndex);
     if (!size) return null;
@@ -4556,6 +5763,63 @@
       width: radius * 2,
       height: radius * 2,
       radius: radius
+    };
+  }
+
+  function buildMonogramFont(fontSize, sideId, pendantIndex) {
+    const font = getActiveMonogramFont(sideId, pendantIndex);
+    return "700 " + fontSize + "px " + font.family;
+  }
+
+  function measureMonogram(text, fontSize, sideId, pendantIndex) {
+    ctx.save();
+    ctx.font = buildMonogramFont(fontSize, sideId, pendantIndex);
+    const metrics = ctx.measureText(text);
+    ctx.restore();
+    return metrics;
+  }
+
+  function getMonogramLayout(pendantIndex) {
+    const motifMask = getMotifMask(pendantIndex);
+    const sideState = getSideState(state.activeSide, pendantIndex);
+    const text = sideState.monogramValue || "";
+    const length = Math.max(1, text.length);
+    const baseSizeByLength = length === 1 ? motifMask.width * 0.68 : (length === 2 ? motifMask.width * 0.54 : motifMask.width * 0.42);
+    let fontSize = Math.max(44, baseSizeByLength) * (sideState.scalePercent / 100);
+    let metrics = measureMonogram(text, fontSize, state.activeSide, pendantIndex);
+    const maxWidth = motifMask.width * 0.88;
+
+    if (metrics.width > maxWidth) {
+      fontSize *= maxWidth / metrics.width;
+      metrics = measureMonogram(text, fontSize, state.activeSide, pendantIndex);
+    }
+
+    return {
+      font: buildMonogramFont(fontSize, state.activeSide, pendantIndex),
+      width: metrics.width,
+      height: Math.max(fontSize * 0.9, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+    };
+  }
+
+  function getBottleOpenerMonogramLayout() {
+    const box = getBottleOpenerDesignBox();
+    const sideState = getActiveSideState();
+    const text = sideState.monogramValue || "";
+    const length = Math.max(1, text.length);
+    const baseSizeByLength = length === 1 ? box.height * 1.02 : (length === 2 ? box.height * 0.84 : box.height * 0.66);
+    let fontSize = Math.max(34, baseSizeByLength) * (sideState.scalePercent / 100);
+    let metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
+    const maxWidth = box.width * 0.9;
+
+    if (metrics.width > maxWidth) {
+      fontSize *= maxWidth / metrics.width;
+      metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
+    }
+
+    return {
+      font: buildMonogramFont(fontSize, state.activeSide, state.activePendantIndex),
+      width: metrics.width,
+      height: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
     };
   }
 
