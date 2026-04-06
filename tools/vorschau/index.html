@@ -124,27 +124,31 @@
     </section>
 
     <section class="preview-layout" aria-label="Motiv-Vorschau Tool">
-      <article class="preview-card preview-stage-card">
-        <div class="preview-card__head">
-          <div>
-            <p class="preview-kicker">Vorschau</p>
-            <h2 id="previewStageTitle">Vorschau</h2>
-          </div>
-          <div class="preview-chip" id="previewModeChip">Start</div>
-        </div>
-
-        <div class="preview-stage-shell">
-          <div class="preview-stage-frame">
-            <canvas
-              id="previewCanvas"
-              class="preview-stage-canvas"
-              width="1200"
-              height="1200"
-              aria-label="Produktvorschau"
-            ></canvas>
-            <div class="preview-stage-overlay">Unverbindliche Vorschau</div>
+      <div class="preview-stage-column">
+        <article class="preview-card preview-stage-card">
+          <div class="preview-card__head">
+            <div>
+              <p class="preview-kicker">Vorschau</p>
+              <h2 id="previewStageTitle">Vorschau</h2>
+            </div>
+            <div class="preview-chip" id="previewModeChip">Start</div>
           </div>
 
+          <div class="preview-stage-shell">
+            <div class="preview-stage-frame">
+              <canvas
+                id="previewCanvas"
+                class="preview-stage-canvas"
+                width="1200"
+                height="1200"
+                aria-label="Produktvorschau"
+              ></canvas>
+              <div class="preview-stage-overlay">Unverbindliche Vorschau</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="preview-card preview-stage-details">
           <div class="preview-stage-meta">
             <div>
               <strong id="previewProductName">Noch nichts ausgewählt</strong>
@@ -171,127 +175,124 @@
               <strong id="previewSourceLabel">Offen</strong>
             </div>
           </div>
-        </div>
 
-        <div class="preview-actions">
-          <div class="preview-request">
-            <button
-              class="btn primary"
-              type="button"
-              id="downloadPreviewButton"
-              aria-expanded="false"
-              aria-controls="requestMenuPanel"
-              disabled
-            >
-              Vorschau speichern und als Angebot senden
-            </button>
-            <div class="preview-request-menu" id="requestMenuPanel" hidden>
-              <a
-                class="preview-request-menu__item"
-                id="requestWhatsappLink"
-                href="#"
-                target="_blank"
-                rel="noopener noreferrer"
+          <div class="preview-actions">
+            <div class="preview-request" hidden>
+              <button
+                class="btn primary"
+                type="button"
+                id="downloadPreviewButton"
+                aria-expanded="false"
+                aria-controls="requestMenuPanel"
+                disabled
               >
-                WhatsApp
-              </a>
-              <a class="preview-request-menu__item" id="requestEmailLink" href="#">
-                E-Mail
-              </a>
+                Vorschau speichern und als Angebot senden
+              </button>
+              <div class="preview-request-menu" id="requestMenuPanel" hidden>
+                <a
+                  class="preview-request-menu__item"
+                  id="requestWhatsappLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp
+                </a>
+                <a class="preview-request-menu__item" id="requestEmailLink" href="#">
+                  E-Mail
+                </a>
+              </div>
             </div>
           </div>
-          <button class="btn" type="button" id="resetPlacementButton">Zurücksetzen</button>
-        </div>
 
-        <div class="preview-price-box" id="priceSummaryBox" hidden aria-live="polite">
-          <div class="preview-price-box__head">
-            <span class="preview-price-box__kicker">Kalkulation</span>
-            <strong class="preview-price-box__title">Preisübersicht</strong>
-          </div>
-          <div class="preview-price-box__breakdown" id="priceBreakdown"></div>
-            <div class="preview-price-box__summary">
-            <div class="preview-price-box__row">
-              <span id="priceSubtotalLabel">Zwischensumme</span>
-              <strong id="priceSubtotal">0,00 €</strong>
+          <div class="preview-price-box" id="priceSummaryBox" hidden aria-live="polite">
+            <div class="preview-price-box__head">
+              <span class="preview-price-box__kicker">Kalkulation</span>
+              <strong class="preview-price-box__title">Preisübersicht</strong>
             </div>
-            <div class="preview-price-box__row" id="priceDiscountRow" hidden>
-              <span id="priceDiscountLabel">Set-Rabatt</span>
-              <strong id="priceDiscount">-0,00 €</strong>
+            <div class="preview-price-box__breakdown" id="priceBreakdown"></div>
+              <div class="preview-price-box__summary">
+              <div class="preview-price-box__row">
+                <span id="priceSubtotalLabel">Zwischensumme</span>
+                <strong id="priceSubtotal">0,00 €</strong>
+              </div>
+              <div class="preview-price-box__row" id="priceDiscountRow" hidden>
+                <span id="priceDiscountLabel">Set-Rabatt</span>
+                <strong id="priceDiscount">-0,00 €</strong>
+              </div>
+              <div class="preview-price-box__row preview-price-box__row--total">
+                <span id="priceTotalLabel">Gesamtpreis</span>
+                <strong id="priceTotal">0,00 €</strong>
+              </div>
             </div>
-            <div class="preview-price-box__row preview-price-box__row--total">
-              <span id="priceTotalLabel">Gesamtpreis</span>
-              <strong id="priceTotal">0,00 €</strong>
+            <div class="preview-price-box__notes">
+              <p class="preview-price-box__hint" id="priceSummaryHint">Preis wird berechnet, sobald die Anhänger vollständig gewählt sind.</p>
+              <p class="preview-price-box__subhint" id="priceSummarySubhint">Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.</p>
             </div>
           </div>
-          <div class="preview-price-box__notes">
-            <p class="preview-price-box__hint" id="priceSummaryHint">Preis wird berechnet, sobald die Anhänger vollständig gewählt sind.</p>
-            <p class="preview-price-box__subhint" id="priceSummarySubhint">Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.</p>
-          </div>
-        </div>
-
-      </article>
+        </article>
+      </div>
 
       <article class="preview-card preview-control-card">
-        <div class="preview-card__head">
-          <div>
-            <p class="preview-kicker">Auswahl</p>
-            <h2>Auswahl</h2>
-          </div>
+        <div class="selection-header-row">
+          <h2 class="selection-header-row__title">Auswahl</h2>
+          <button class="preview-help-trigger" type="button" id="openFeedbackOverlayButton">Hilfe / Problem melden</button>
         </div>
 
-        <div class="preview-control-group" id="materialGroup" aria-labelledby="material-heading">
-          <div class="preview-control-title-row">
-            <h3 id="material-heading">Material wählen</h3>
-          </div>
-          <div id="materialOptions" class="preview-option-grid preview-option-grid--products"></div>
-        </div>
-
-        <div class="preview-control-group" id="productGroup" aria-labelledby="product-heading" hidden>
-          <div class="preview-control-title-row">
-            <h3 id="product-heading">Produkt wählen</h3>
-          </div>
-          <div id="productOptions" class="preview-option-grid preview-option-grid--products"></div>
-        </div>
-
-        <div class="preview-control-group" id="finishGroup" aria-labelledby="finish-heading" hidden>
-          <div class="preview-control-title-row">
-            <h3 id="finish-heading">Ausführung wählen</h3>
-          </div>
-          <div id="finishOptions" class="preview-option-grid preview-option-grid--products"></div>
-        </div>
-
-        <div class="preview-control-group" id="setGroup" aria-labelledby="set-heading" hidden>
-          <div class="preview-control-title-row">
-            <h3 id="set-heading">Set wählen</h3>
-          </div>
-          <div id="setOptions" class="preview-option-grid preview-option-grid--products"></div>
-        </div>
-
-        <div class="preview-side-switch-group" id="pendantSwitchGroup" hidden>
-          <div class="preview-side-switch__top">
-            <div class="preview-side-switch__copy">
-              <span class="preview-side-switch__label">Set-Bearbeitung</span>
-              <strong id="pendantSwitchStatus">Anhänger 1 wird gerade bearbeitet</strong>
+        <div class="selection-start-stack">
+          <div class="preview-control-group" id="materialGroup" aria-labelledby="material-heading">
+            <div class="preview-control-title-row">
+              <h3 id="material-heading">Material wählen</h3>
             </div>
+            <div id="materialOptions" class="preview-option-grid preview-option-grid--products"></div>
           </div>
-          <p class="preview-help" id="pendantSwitchHint">Wähle den Anhänger, den du gerade gestalten möchtest.</p>
-          <div class="preview-side-switch preview-side-switch--pendants" id="pendantTabs" role="tablist" aria-label="Zwischen Anhängern im Set wechseln"></div>
-        </div>
 
-        <div class="preview-control-group" id="sizeGroup" aria-labelledby="size-heading" hidden>
-          <div class="preview-control-title-row">
-            <h3 id="size-heading">Größe wählen</h3>
+          <div class="preview-control-group" id="productGroup" aria-labelledby="product-heading" hidden>
+            <div class="preview-control-title-row">
+              <h3 id="product-heading">Produkt wählen</h3>
+            </div>
+            <div id="productOptions" class="preview-option-grid preview-option-grid--products"></div>
           </div>
-          <div id="sizeOptions" class="preview-size-grid"></div>
-        </div>
 
-        <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
-          <div class="preview-control-title-row">
-            <h3 id="design-mode-heading">Gestaltungsart wählen</h3>
+          <div class="preview-control-group" id="finishGroup" aria-labelledby="finish-heading" hidden>
+            <div class="preview-control-title-row">
+              <h3 id="finish-heading">Ausführung wählen</h3>
+            </div>
+            <div id="finishOptions" class="preview-option-grid preview-option-grid--products"></div>
           </div>
-          <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
-          <p class="preview-help" id="designModeRuleHint">Pro Seite ein Inhalt.</p>
-        </div>
+
+          <div class="preview-control-group" id="setGroup" aria-labelledby="set-heading" hidden>
+            <div class="preview-control-title-row">
+              <h3 id="set-heading">Set wählen</h3>
+            </div>
+            <div id="setOptions" class="preview-option-grid preview-option-grid--products"></div>
+          </div>
+
+          <div class="preview-side-switch-group" id="pendantSwitchGroup" hidden>
+            <div class="preview-side-switch__top">
+              <div class="preview-side-switch__copy">
+                <span class="preview-side-switch__label">Set-Bearbeitung</span>
+                <strong id="pendantSwitchStatus">Anhänger 1 wird gerade bearbeitet</strong>
+              </div>
+            </div>
+            <p class="preview-help" id="pendantSwitchHint">Wähle den Anhänger, den du gerade gestalten möchtest.</p>
+            <div class="preview-side-switch preview-side-switch--pendants" id="pendantTabs" role="tablist" aria-label="Zwischen Anhängern im Set wechseln"></div>
+          </div>
+
+          <div class="preview-control-group" id="sizeGroup" aria-labelledby="size-heading" hidden>
+            <div class="preview-control-title-row">
+              <h3 id="size-heading">Größe wählen</h3>
+            </div>
+            <div id="sizeOptions" class="preview-size-grid"></div>
+          </div>
+
+          <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
+            <div class="preview-control-title-row">
+              <h3 id="design-mode-heading">Gestaltungsart wählen</h3>
+            </div>
+            <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
+            <p class="preview-help" id="designModeRuleHint">Pro Seite ein Inhalt.</p>
+          </div>
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
@@ -338,20 +339,10 @@
           <p class="preview-help" id="monogramHint">1–3 Zeichen.</p>
         </div>
 
-        <div class="preview-control-group" id="emblemGroup" aria-labelledby="emblem-heading" hidden>
-          <div class="preview-control-title-row">
-            <h3 id="emblem-heading">Wappen / Emblem</h3>
-          </div>
+        <div class="preview-control-group" id="emblemGroup" hidden>
           <div class="preview-toggle-grid preview-toggle-grid--compact" id="emblemSourceOptions">
             <button class="preview-toggle-button" type="button" id="emblemSourceTemplateButton" aria-pressed="true">Vorlage</button>
             <button class="preview-toggle-button" type="button" id="emblemSourceUploadButton" aria-pressed="false">Eigene Datei</button>
-          </div>
-          <div class="preview-inline-actions" id="emblemTemplateActions">
-            <button class="btn" type="button" id="chooseEmblemTemplateButton">Vorlage wählen</button>
-          </div>
-          <div class="preview-inline-actions" id="emblemUploadActions" hidden>
-            <button class="btn" type="button" id="chooseEmblemUploadButton">Datei wählen</button>
-            <button class="btn" type="button" id="clearEmblemUploadButton">Datei entfernen</button>
           </div>
           <p class="preview-help" id="emblemUploadHint" hidden>Nur SVG oder PNG transparent · nur Schwarz-Weiß.</p>
         </div>
@@ -531,8 +522,53 @@
             <button class="preview-side-switch__button" id="sideBackButton" type="button" role="tab" aria-selected="false">Rückseite</button>
           </div>
         </div>
+        </div>
       </article>
     </section>
+
+    <section class="preview-summary-card" id="previewSummarySection" aria-labelledby="preview-summary-title">
+      <button
+        class="preview-summary-toggle preview-summary-toggle--compact"
+        type="button"
+        id="toggleSummaryButton"
+        aria-expanded="false"
+        aria-controls="previewSummaryPanel"
+      >
+        <span id="preview-summary-title">Zusammenfassung</span>
+        <span class="preview-summary-toggle__meta" id="summaryToggleMeta">Anzeigen</span>
+      </button>
+      <div class="preview-summary-panel" id="previewSummaryPanel" hidden>
+        <div class="preview-summary-layout">
+          <div class="preview-summary-preview">
+            <div class="preview-summary-preview__frame">
+              <canvas
+                id="summaryPreviewCanvas"
+                width="900"
+                height="900"
+                aria-label="Zusammenfassung der aktuellen Vorschau"
+              ></canvas>
+              <div class="preview-stage-overlay preview-summary-preview__overlay">Unverbindliche Vorschau</div>
+            </div>
+          </div>
+          <div class="preview-summary-grid">
+            <div class="preview-summary-item preview-summary-item--content">
+              <span class="preview-summary-item__label">Konfiguration</span>
+              <strong id="summaryConfiguration">Noch offen</strong>
+            </div>
+            <div class="preview-summary-item preview-summary-item--content">
+              <span class="preview-summary-item__label">Inhalt</span>
+              <strong id="summaryContent">Noch nichts gewählt</strong>
+            </div>
+            <div class="preview-summary-price">
+              <span class="preview-summary-item__label">Preisstand</span>
+              <strong id="summaryPrice">Wird berechnet</strong>
+              <p id="summaryPriceHint">Sobald die Auswahl vollständig ist, erscheint hier der passende Preisstand.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <div class="preview-mobile-bottom-cta" aria-label="Mobile Angebotsaktion">
@@ -584,6 +620,59 @@
         <button class="btn" type="button" id="motifOverlayUploadRemoveButton" hidden>Datei entfernen</button>
       </div>
       <p class="preview-help" id="motifOverlayUploadHint" hidden>Nur SVG oder PNG transparent · nur Schwarz-Weiß.</p>
+    </div>
+  </div>
+
+  <div class="preview-motif-overlay preview-feedback-overlay" id="feedbackOverlay" hidden>
+    <button class="preview-motif-overlay__backdrop" type="button" id="feedbackOverlayBackdrop" aria-label="Hilfe schließen"></button>
+    <div class="preview-motif-overlay__panel preview-feedback-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="feedbackOverlayTitle">
+      <div class="preview-card__head">
+        <div>
+          <p class="preview-kicker">Hilfe</p>
+          <h2 id="feedbackOverlayTitle">Problem melden</h2>
+        </div>
+        <div class="preview-overlay-actions">
+          <button class="btn" type="button" id="closeFeedbackOverlayButton">Schließen</button>
+        </div>
+      </div>
+      <p class="preview-help">Wähle kurz den Grund. Ein Freitext ist optional.</p>
+      <fieldset class="preview-feedback-reasons" id="feedbackReasonOptions">
+        <legend class="preview-hidden-input">Grund auswählen</legend>
+        <label class="preview-feedback-choice">
+          <input type="radio" name="feedbackReason" value="orientation" checked />
+          <span>Ich finde mich nicht zurecht</span>
+        </label>
+        <label class="preview-feedback-choice">
+          <input type="radio" name="feedbackReason" value="broken" />
+          <span>Die Seite funktioniert nicht richtig</span>
+        </label>
+        <label class="preview-feedback-choice">
+          <input type="radio" name="feedbackReason" value="wrong-look" />
+          <span>Etwas sieht falsch aus</span>
+        </label>
+        <label class="preview-feedback-choice">
+          <input type="radio" name="feedbackReason" value="unexpected" />
+          <span>Nicht das, was ich erwartet habe</span>
+        </label>
+        <label class="preview-feedback-choice">
+          <input type="radio" name="feedbackReason" value="other" />
+          <span>Sonstiges</span>
+        </label>
+      </fieldset>
+      <label class="preview-field">
+        <span class="preview-field__label">Optionaler Hinweis</span>
+        <textarea
+          id="feedbackMessage"
+          class="preview-textarea"
+          rows="4"
+          maxlength="500"
+          placeholder="Optional kurz beschreiben, was passiert ist."
+        ></textarea>
+      </label>
+      <div class="preview-inline-actions preview-inline-actions--overlay">
+        <button class="btn primary" type="button" id="submitFeedbackButton">Senden</button>
+      </div>
+      <p class="preview-feedback-status" id="feedbackStatus" aria-live="polite"></p>
     </div>
   </div>
 
