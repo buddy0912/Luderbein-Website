@@ -98,35 +98,7 @@
     <section class="hero preview-hero">
       <span class="badge"><i></i> Tool</span>
       <h1>Konfigurator &amp; Preisvorschau</h1>
-      <p class="lead">
-        Produkte gestalten und Preise direkt prüfen.
-      </p>
-
-      <div class="preview-hero__grid">
-        <div class="preview-note">
-          <strong>Wichtig:</strong>
-          Diese Vorschau dient zur Orientierung. Die finale Ausarbeitung erfolgt vor der Fertigung.
-        </div>
-
-        <div class="preview-steps" aria-label="Kurzanleitung">
-          <div class="preview-step">
-            <span>1</span>
-            <div>Material, Anhänger und Größe wählen.</div>
-          </div>
-          <div class="preview-step">
-            <span>2</span>
-            <div>Motiv oder Text festlegen.</div>
-          </div>
-          <div class="preview-step">
-            <span>3</span>
-            <div>Auf Wunsch eine Rückseite ergänzen.</div>
-          </div>
-          <div class="preview-step">
-            <span>4</span>
-            <div>Vorschau speichern und Anfrage senden.</div>
-          </div>
-        </div>
-      </div>
+      <p class="lead">Produkte gestalten und Preise direkt prüfen.</p>
     </section>
 
     <section class="preview-mobile-sticky" aria-label="Mobile Live-Vorschau">
@@ -176,7 +148,7 @@
           <div class="preview-stage-meta">
             <div>
               <strong id="previewProductName">Noch nichts ausgewählt</strong>
-              <p id="previewProductHint">Wähle zuerst ein Material. Danach schaltet sich der Ablauf Schritt für Schritt frei.</p>
+              <p id="previewProductHint">Material wählen.</p>
             </div>
             <div class="preview-source">
               <span>Set</span>
@@ -257,23 +229,19 @@
           </div>
         </div>
 
-        <p class="preview-caption">
-          Die Vorderseite ist der Start. Eine Rückseite kannst du bei Bedarf ergänzen.
-        </p>
       </article>
 
       <article class="preview-card preview-control-card">
         <div class="preview-card__head">
           <div>
             <p class="preview-kicker">Auswahl</p>
-            <h2>Schritt für Schritt</h2>
+            <h2>Auswahl</h2>
           </div>
         </div>
 
         <div class="preview-control-group" id="materialGroup" aria-labelledby="material-heading">
           <div class="preview-control-title-row">
             <h3 id="material-heading">1. Material wählen</h3>
-            <span class="preview-inline-note">Metall, Holz oder Schiefer.</span>
           </div>
           <div id="materialOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
@@ -281,7 +249,6 @@
         <div class="preview-control-group" id="productGroup" aria-labelledby="product-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="product-heading">2. Produkt wählen</h3>
-            <span class="preview-inline-note">Je nach Material passende Produktwelt wählen.</span>
           </div>
           <div id="productOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
@@ -289,19 +256,15 @@
         <div class="preview-control-group" id="finishGroup" aria-labelledby="finish-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="finish-heading">3. Ausführung wählen</h3>
-            <span class="preview-inline-note">Für Schmuckanhänger silberfarbig oder goldfarbig.</span>
           </div>
           <div id="finishOptions" class="preview-option-grid preview-option-grid--products"></div>
-          <p class="preview-help">Edelstahl-Schmuckanhänger mit Gravur in Juwelierstandard.</p>
         </div>
 
         <div class="preview-control-group" id="setGroup" aria-labelledby="set-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="set-heading">4. Set wählen</h3>
-            <span class="preview-inline-note">Einzel, 2er-, 3er-, 4er- oder 5er-Set.</span>
           </div>
           <div id="setOptions" class="preview-option-grid preview-option-grid--products"></div>
-          <p class="preview-help">Das Set legt fest, wie viele runde Anhänger gemeinsam gezeigt und bearbeitet werden.</p>
         </div>
 
         <div class="preview-side-switch-group" id="pendantSwitchGroup" hidden>
@@ -321,22 +284,19 @@
             <span class="preview-inline-note">8 / 10 / 12 / 15 / 20 mm</span>
           </div>
           <div id="sizeOptions" class="preview-size-grid"></div>
-          <p class="preview-help">Die Größe aktualisiert die Vorschau direkt.</p>
         </div>
 
         <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="design-mode-heading">6. Gestaltungsart wählen</h3>
-            <span class="preview-inline-note">Pro Seite genau eine Gestaltung.</span>
           </div>
           <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
-          <p class="preview-help" id="designModeRuleHint">Pro Seite ist genau eine Gestaltung möglich: Text ODER Motiv ODER QR ODER Foto.</p>
+          <p class="preview-help" id="designModeRuleHint">Pro Seite ein Inhalt.</p>
         </div>
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="template-heading">7. Motivart wählen</h3>
-            <span class="preview-inline-note">Monogramm, Foto, Tier oder Wappen.</span>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
           <p class="preview-help preview-help--notice" id="motifSizeHint" hidden></p>
@@ -374,7 +334,7 @@
               <option value="cormorant">Cormorant Garamond</option>
             </select>
           </label>
-          <p class="preview-help" id="monogramHint">1–3 Zeichen. Sonst über Upload.</p>
+          <p class="preview-help" id="monogramHint">1–3 Zeichen.</p>
         </div>
 
         <div class="preview-control-group" id="emblemGroup" aria-labelledby="emblem-heading" hidden>
@@ -412,7 +372,7 @@
               aria-describedby="qrInputHint qrCharacterCount"
             />
           </label>
-          <p class="preview-help" id="qrInputHint">Die Vorschau erzeugt aus deiner Eingabe einen echten QR-Code und zeigt seine Wirkung auf dem Anhänger.</p>
+          <p class="preview-help" id="qrInputHint">Link oder kurzer Inhalt.</p>
           <div class="preview-inline-actions">
             <button class="btn" type="button" id="clearQrButton">QR-Inhalt entfernen</button>
           </div>
@@ -516,7 +476,7 @@
             />
           </label>
           <div class="preview-inline-meta">
-            <p class="preview-help" id="textInputHint">Für Namen, Initialen oder kurze Worte.</p>
+            <p class="preview-help" id="textInputHint">Kurz halten.</p>
             <strong class="preview-character-count" id="textCharacterCount">0 / 18</strong>
           </div>
 
@@ -549,8 +509,6 @@
             value="100"
             aria-label="Textgröße"
           />
-          <p class="preview-help">Schriftgröße in der Vorschau anpassen.</p>
-
           <div class="preview-nudge">
             <button class="preview-nudge__button" type="button" data-text-nudge="up" aria-label="Text nach oben verschieben">↑</button>
             <button class="preview-nudge__button" type="button" data-text-nudge="left" aria-label="Text nach links verschieben">←</button>
@@ -561,29 +519,21 @@
           <div class="preview-inline-actions">
             <button class="btn" type="button" id="clearTextButton">Text entfernen</button>
           </div>
-          <p class="preview-help">Im Textmodus wird nur der Text gezeigt.</p>
         </div>
 
         <div class="preview-side-switch-group" id="sideSwitchGroup" hidden>
           <div class="preview-side-switch__top">
             <div class="preview-side-switch__copy">
-              <span class="preview-side-switch__label">Optionale Rückseite</span>
-              <strong id="sideSwitchStatus">Vorderseite zuerst fertig gestalten</strong>
+              <span class="preview-side-switch__label">Rückseite</span>
+              <strong id="sideSwitchStatus">Vorderseite aktiv</strong>
             </div>
-            <button class="btn" type="button" id="enableBackSideButton">Rückseite zusätzlich konfigurieren</button>
+            <button class="btn" type="button" id="enableBackSideButton">Rückseite aktivieren</button>
           </div>
-          <p class="preview-help" id="sideSwitchHint">Nach der Vorderseite kannst du bei Bedarf eine Rückseite ergänzen.</p>
+          <p class="preview-help" id="sideSwitchHint">Bei Bedarf ergänzen.</p>
           <div class="preview-side-switch" id="sideTabs" role="tablist" aria-label="Zwischen Vorderseite und Rückseite wechseln" hidden>
             <button class="preview-side-switch__button" id="sideFrontButton" type="button" role="tab" aria-selected="true">Vorderseite</button>
             <button class="preview-side-switch__button" id="sideBackButton" type="button" role="tab" aria-selected="false">Rückseite</button>
           </div>
-        </div>
-
-        <div class="preview-control-group preview-control-group--notice">
-          <h3>Wichtiger Hinweis</h3>
-          <p>
-            Diese Vorschau zeigt die ungefähre Wirkung. Die finale Ausarbeitung erfolgt vor der Fertigung.
-          </p>
         </div>
       </article>
     </section>
@@ -631,7 +581,7 @@
           <button class="btn" type="button" id="closeMotifVariantOverlayButton">Schließen</button>
         </div>
       </div>
-      <p class="preview-help" id="motifVariantOverlayHelp">Tiergruppe oder Variante auswählen.</p>
+      <p class="preview-help" id="motifVariantOverlayHelp">Wählen.</p>
       <div id="motifOverlayOptions" class="preview-option-grid preview-option-grid--templates"></div>
       <div class="preview-inline-actions preview-inline-actions--overlay" id="motifOverlayUploadActions" hidden>
         <button class="btn" type="button" id="motifOverlayUploadButton">Datei wählen</button>

@@ -2218,6 +2218,7 @@
       button.className = "preview-option";
       button.setAttribute("data-finish-id", finish.id);
       button.innerHTML =
+        buildFinishThumbMarkup(finish) +
         '<span class="preview-option__title">' + escapeHtml(finish.name) + "</span>" +
         '<span class="preview-option__meta">' + escapeHtml(finish.description) + "</span>";
 
@@ -2228,6 +2229,40 @@
 
       finishOptionsEl.appendChild(button);
     });
+  }
+
+  function buildFinishThumbMarkup(finish) {
+    const palette = getPendantFinishPalette(finish && finish.id);
+
+    return (
+      '<span class="preview-option__thumb" aria-hidden="true">' +
+        '<span class="preview-option__thumb-media" style="' + escapeHtml(
+          'background:' + palette.thumbBackground + ';'
+        ) + '">' +
+          '<svg viewBox="0 0 160 160" width="120" height="120" aria-hidden="true">' +
+            '<defs>' +
+              '<linearGradient id="finish-disc-' + escapeHtml(finish.id) + '" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                '<stop offset="0%" stop-color="' + escapeHtml(palette.baseStart) + '"></stop>' +
+                '<stop offset="48%" stop-color="' + escapeHtml(palette.baseMid) + '"></stop>' +
+                '<stop offset="100%" stop-color="' + escapeHtml(palette.baseEnd) + '"></stop>' +
+              '</linearGradient>' +
+              '<linearGradient id="finish-ring-' + escapeHtml(finish.id) + '" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                '<stop offset="0%" stop-color="' + escapeHtml(palette.ringStart) + '"></stop>' +
+                '<stop offset="55%" stop-color="' + escapeHtml(palette.ringMid) + '"></stop>' +
+                '<stop offset="100%" stop-color="' + escapeHtml(palette.ringEnd) + '"></stop>' +
+              '</linearGradient>' +
+            '</defs>' +
+            '<circle cx="80" cy="92" r="44" fill="url(#finish-disc-' + escapeHtml(finish.id) + ')" stroke="' + escapeHtml(palette.edgeColor) + '" stroke-width="2"></circle>' +
+            '<circle cx="80" cy="92" r="36" fill="none" stroke="' + escapeHtml(palette.innerStroke) + '" stroke-width="1.5" opacity="0.7"></circle>' +
+            '<circle cx="80" cy="35" r="14" fill="url(#finish-ring-' + escapeHtml(finish.id) + ')"></circle>' +
+            '<circle cx="80" cy="35" r="7" fill="' + escapeHtml(palette.thumbBackgroundCenter) + '"></circle>' +
+            '<rect x="68" y="46" width="24" height="28" rx="12" fill="url(#finish-ring-' + escapeHtml(finish.id) + ')"></rect>' +
+            '<ellipse cx="63" cy="66" rx="26" ry="12" fill="' + escapeHtml(palette.highlightSoft) + '" opacity="0.28"></ellipse>' +
+            '<ellipse cx="95" cy="78" rx="18" ry="46" fill="' + escapeHtml(palette.highlightStrong) + '" opacity="0.24" transform="rotate(32 95 78)"></ellipse>' +
+          '</svg>' +
+        '</span>' +
+      '</span>'
+    );
   }
 
   function renderSetOptions() {
@@ -3440,7 +3475,7 @@
 
     if (!hasMaterialSelection()) {
       previewProductName.textContent = "Noch nichts ausgewählt";
-      previewProductHint.textContent = "Wähle zuerst ein Material.";
+      previewProductHint.textContent = "Material wählen.";
       previewModeChip.textContent = "Start";
     } else if (!hasProductSelection()) {
       previewProductName.textContent = activeMaterial.name;
@@ -3557,23 +3592,23 @@
     if (canShowPendantSection) {
       pendantSwitchStatus.textContent = getPendantLabel(state.activePendantIndex) + " wird gerade bearbeitet";
       pendantSwitchHint.textContent = hasSizeSelection()
-        ? "Wähle den Anhänger, den du gerade gestalten möchtest. Größe, Seiten und Gestaltung gelten immer nur für diesen Anhänger."
-        : "Wähle zuerst den Anhänger, den du gerade bearbeiten möchtest. Danach legst du die Größe nur für diesen Anhänger fest.";
+        ? "Anhänger wählen."
+        : "Anhänger wählen, dann Größe festlegen.";
     }
     sideSwitchGroup.hidden = !canShowBackSideSection;
     sideSwitchGroup.setAttribute("aria-hidden", canShowBackSideSection ? "false" : "true");
     sideTabs.hidden = !isBackSideEnabled();
     enableBackSideButton.hidden = isBackSideEnabled();
     sideSwitchStatus.textContent = isBackSideEnabled()
-      ? (state.activeSide === "back" ? "Du gestaltest gerade die Rückseite von " + getPendantLabel(state.activePendantIndex) : "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist verfügbar")
-      : "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist optional";
+      ? (state.activeSide === "back" ? "Rückseite von " + getPendantLabel(state.activePendantIndex) : "Rückseite für " + getPendantLabel(state.activePendantIndex) + " aktiv")
+      : "Rückseite optional";
     sideSwitchHint.textContent = isBackSideEnabled()
-      ? "Du kannst jetzt für diesen Anhänger zwischen Vorder- und Rückseite wechseln."
-      : "Wenn du möchtest, kannst du zusätzlich nur für diesen Anhänger eine Rückseite anlegen.";
+      ? "Zwischen Vorder- und Rückseite wechseln."
+      : "Bei Bedarf aktivieren.";
 
     const surchargeHint = getBackSideSurchargeHint();
     if (!isBackSideEnabled()) {
-      sideSwitchHint.textContent = "Wenn du möchtest, kannst du zusätzlich eine Rückseite anlegen." + (surchargeHint ? " " + surchargeHint : "");
+      sideSwitchHint.textContent = "Bei Bedarf Rückseite aktivieren." + (surchargeHint ? " " + surchargeHint : "");
     } else if (surchargeHint) {
       sideSwitchHint.textContent += " " + surchargeHint;
     }
@@ -3918,13 +3953,13 @@
     drawBackdrop();
 
     if (!hasMaterialSelection()) {
-      drawEmptyState("1. Material wählen", "Danach geht es Schritt für Schritt weiter.");
+      drawEmptyState("1. Material wählen", "");
       syncMobilePreviewCanvas();
       return;
     }
 
     if (!hasProductSelection()) {
-      drawEmptyState("2. Produkt wählen", "Wähle jetzt den passenden Anhänger.");
+      drawEmptyState("2. Produkt wählen", "");
       syncMobilePreviewCanvas();
       return;
     }
@@ -3936,7 +3971,7 @@
     }
 
     if (!hasSetSelection()) {
-      drawEmptyState("3. Set wählen", "Lege fest, ob du einen oder mehrere Anhänger gestalten möchtest.");
+      drawEmptyState("3. Set wählen", "");
       syncMobilePreviewCanvas();
       return;
     }
@@ -3995,17 +4030,17 @@
                 drawMotifPrompt("Vorlage wählen", "Wappen oder Emblem.");
               }
             } else if (pendantIndex === state.activePendantIndex) {
-              drawMotifPrompt(
+                drawMotifPrompt(
                 isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
                   ? "Variante wählen"
                   : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
                     ? "Tiergruppe wählen"
                     : "Motivart wählen",
                 isAnimalSymbolsSelected(state.activeSide, pendantIndex) && getActiveAnimalGroup(state.activeSide, pendantIndex)
-                  ? "Wähle die passende Variante."
+                  ? "Variante wählen."
                   : isAnimalSymbolsSelected(state.activeSide, pendantIndex)
-                    ? "Wähle zuerst die Tiergruppe."
-                    : "Wähle die passende Motivart."
+                    ? "Tiergruppe wählen."
+                    : "Motivart wählen."
               );
             }
           }
@@ -4022,8 +4057,8 @@
         drawMotifPrompt(
           state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "5. Gestaltungsart wählen",
           state.activeSide === "back" && isBackSideEnabled()
-            ? "Du kannst die Rückseite dieses Anhängers separat gestalten oder frei lassen."
-            : "Wähle jetzt Motiv oder Text für diesen Anhänger."
+            ? "Rückseite gestalten oder frei lassen."
+            : "Motiv oder Text wählen."
         );
       }
 
@@ -4164,7 +4199,7 @@
 
     ctx.fillStyle = "rgba(210,207,206,0.66)";
     ctx.font = "500 22px system-ui, sans-serif";
-    ctx.fillText("Schematische Set-Vorschau vor der Größenwahl", 86, 122);
+    ctx.fillText("Set-Vorschau", 86, 122);
 
     drawRoundedRect(ctx, 220, 948, 760, 134, 28);
     ctx.fillStyle = "rgba(11, 10, 14, 0.78)";
@@ -4180,7 +4215,7 @@
 
     ctx.fillStyle = "rgba(210,207,206,0.72)";
     ctx.font = "500 22px system-ui, sans-serif";
-    ctx.fillText("Die Set-Anordnung steht. Wähle jetzt die passende Größe für " + getPendantLabel(state.activePendantIndex) + ".", 600, 1046);
+    ctx.fillText("Größe für " + getPendantLabel(state.activePendantIndex) + " wählen.", 600, 1046);
     ctx.restore();
   }
 
@@ -4532,6 +4567,7 @@
     const ringY = centerY - radius - 46 * layout.scale;
     const ringOuter = 20 * layout.scale;
     const ringInner = 10 * layout.scale;
+    const finishPalette = getPendantFinishPalette();
 
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.18)";
@@ -4539,9 +4575,9 @@
     ctx.shadowOffsetY = 9 * layout.scale;
 
     const pendantGradient = ctx.createLinearGradient(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
-    pendantGradient.addColorStop(0, "#fcfaf7");
-    pendantGradient.addColorStop(0.5, "#c4beb8");
-    pendantGradient.addColorStop(1, "#fdfbf9");
+    pendantGradient.addColorStop(0, finishPalette.baseStart);
+    pendantGradient.addColorStop(0.5, finishPalette.baseMid);
+    pendantGradient.addColorStop(1, finishPalette.baseEnd);
 
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
@@ -4550,13 +4586,13 @@
     ctx.restore();
 
     ctx.save();
-    ctx.strokeStyle = "rgba(255,255,255,0.28)";
+    ctx.strokeStyle = finishPalette.edgeHighlight;
     ctx.lineWidth = Math.max(1.2, 1.35 * layout.scale);
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(18,18,22,0.05)";
+    ctx.strokeStyle = finishPalette.surfaceLines;
     ctx.lineWidth = 0.8;
     for (let index = 0; index < 22; index += 1) {
       const y = centerY - radius + index * ((radius * 2) / 22);
@@ -4569,7 +4605,11 @@
     ctx.beginPath();
     ctx.arc(centerX, ringY, ringOuter, 0, Math.PI * 2);
     ctx.arc(centerX, ringY, ringInner, 0, Math.PI * 2, true);
-    ctx.fillStyle = "rgba(240,236,232,0.98)";
+    const ringGradient = ctx.createLinearGradient(centerX - ringOuter, ringY - ringOuter, centerX + ringOuter, ringY + ringOuter);
+    ringGradient.addColorStop(0, finishPalette.ringStart);
+    ringGradient.addColorStop(0.5, finishPalette.ringMid);
+    ringGradient.addColorStop(1, finishPalette.ringEnd);
+    ctx.fillStyle = ringGradient;
     ctx.fill("evenodd");
 
     if (isActive) {
@@ -4645,9 +4685,9 @@
 
     ctx.fillStyle = "rgba(210,207,206,0.72)";
     ctx.font = "500 28px system-ui, sans-serif";
-    ctx.fillText(description, 600, 622);
-    ctx.font = "500 22px system-ui, sans-serif";
-    ctx.fillText("Die nächsten Bereiche bleiben zunächst ruhig ausgeblendet.", 600, 680);
+    if (description) {
+      ctx.fillText(description, 600, 622);
+    }
 
     ctx.restore();
   }
@@ -4658,11 +4698,12 @@
     const radius = size.productRadius;
     const ringX = 600;
     const ringY = size.ringY;
+    const finishPalette = getPendantFinishPalette();
 
     const gradient = ctx.createLinearGradient(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
-    gradient.addColorStop(0, "#f4f0ed");
-    gradient.addColorStop(0.45, "#aaa6a2");
-    gradient.addColorStop(1, "#fcfaf8");
+    gradient.addColorStop(0, finishPalette.baseStart);
+    gradient.addColorStop(0.45, finishPalette.baseMid);
+    gradient.addColorStop(1, finishPalette.baseEnd);
 
     ctx.save();
     ctx.shadowColor = "rgba(0, 0, 0, 0.42)";
@@ -4682,21 +4723,21 @@
     ctx.clip();
 
     const metalSheen = ctx.createLinearGradient(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
-    metalSheen.addColorStop(0, "rgba(255,255,255,0.30)");
-    metalSheen.addColorStop(0.18, "rgba(255,255,255,0.05)");
+    metalSheen.addColorStop(0, finishPalette.highlightStrong);
+    metalSheen.addColorStop(0.18, finishPalette.highlightSoft);
     metalSheen.addColorStop(0.52, "rgba(255,255,255,0)");
-    metalSheen.addColorStop(0.84, "rgba(0,0,0,0.20)");
-    metalSheen.addColorStop(1, "rgba(255,255,255,0.06)");
+    metalSheen.addColorStop(0.84, finishPalette.shadowTone);
+    metalSheen.addColorStop(1, finishPalette.highlightEdge);
     ctx.fillStyle = metalSheen;
     ctx.fillRect(centerX - radius - 30, centerY - radius - 30, radius * 2 + 60, radius * 2 + 60);
 
-    ctx.strokeStyle = "rgba(255,255,255,0.24)";
+    ctx.strokeStyle = finishPalette.edgeHighlight;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(18,18,22,0.08)";
+    ctx.strokeStyle = finishPalette.surfaceLines;
     ctx.lineWidth = 1;
     for (let index = 0; index < 40; index += 1) {
       const y = centerY - radius + index * ((radius * 2) / 40);
@@ -4710,10 +4751,11 @@
   }
 
   function drawRing(x, y, size) {
+    const finishPalette = getPendantFinishPalette();
     const ringGradient = ctx.createLinearGradient(x - 42, y - 50, x + 68, y + 78);
-    ringGradient.addColorStop(0, "#fcfaf8");
-    ringGradient.addColorStop(0.5, "#9e9a96");
-    ringGradient.addColorStop(1, "#e9e5e2");
+    ringGradient.addColorStop(0, finishPalette.ringStart);
+    ringGradient.addColorStop(0.5, finishPalette.ringMid);
+    ringGradient.addColorStop(1, finishPalette.ringEnd);
 
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,0.28)";
@@ -4730,6 +4772,52 @@
     drawRoundedRectPath(ctx, x - 34, y + size.ringInner - 4, 68, size.lift, 34);
     ctx.fill();
     ctx.restore();
+  }
+
+  function getPendantFinishPalette(finishId) {
+    const effectiveFinishId = finishId || (getActiveFinish() ? getActiveFinish().id : "silver");
+
+    if (effectiveFinishId === "gold") {
+      return {
+        effectiveFinishId: "gold",
+        baseStart: "#fff3bf",
+        baseMid: "#c89d3a",
+        baseEnd: "#f6e0a2",
+        ringStart: "#fff8de",
+        ringMid: "#bb8c2f",
+        ringEnd: "#ecd08b",
+        edgeColor: "rgba(115,82,14,0.34)",
+        innerStroke: "rgba(255,248,220,0.72)",
+        edgeHighlight: "rgba(255,248,214,0.38)",
+        highlightStrong: "rgba(255,246,200,0.42)",
+        highlightSoft: "rgba(255,239,184,0.14)",
+        highlightEdge: "rgba(255,244,205,0.12)",
+        shadowTone: "rgba(86,58,10,0.18)",
+        surfaceLines: "rgba(105,78,22,0.08)",
+        thumbBackground: "radial-gradient(circle at top, rgba(255,248,224,.92), rgba(255,236,180,.34) 42%, rgba(255,232,168,.10) 76%), linear-gradient(180deg, rgba(255,248,232,.99), rgba(239,221,176,.98))",
+        thumbBackgroundCenter: "#fff5d3"
+      };
+    }
+
+    return {
+      effectiveFinishId: "silver",
+      baseStart: "#f4f0ed",
+      baseMid: "#aaa6a2",
+      baseEnd: "#fcfaf8",
+      ringStart: "#fcfaf8",
+      ringMid: "#9e9a96",
+      ringEnd: "#e9e5e2",
+      edgeColor: "rgba(120,120,126,0.22)",
+      innerStroke: "rgba(255,255,255,0.7)",
+      edgeHighlight: "rgba(255,255,255,0.24)",
+      highlightStrong: "rgba(255,255,255,0.30)",
+      highlightSoft: "rgba(255,255,255,0.05)",
+      highlightEdge: "rgba(255,255,255,0.06)",
+      shadowTone: "rgba(0,0,0,0.20)",
+      surfaceLines: "rgba(18,18,22,0.08)",
+      thumbBackground: "radial-gradient(circle at top, rgba(255,255,255,.82), rgba(255,255,255,.28) 42%, rgba(255,255,255,.08) 76%), linear-gradient(180deg, rgba(248,244,240,.99), rgba(231,224,218,.98))",
+      thumbBackgroundCenter: "#f5f1ed"
+    };
   }
 
   function drawMotifMask(size, pendantIndex) {
@@ -5717,7 +5805,7 @@
           motifVariantOverlayHelp.textContent = "Vorlage oder eigene Datei.";
         } else if (state.motifOverlayStep === "emblemUpload") {
           motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "google-runes" ? "Runen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme"))));
-          motifVariantOverlayHelp.textContent = "Datei direkt hier wählen.";
+          motifVariantOverlayHelp.textContent = "Datei wählen.";
         } else {
           motifVariantOverlayTitle.textContent = "Vorlage";
           motifVariantOverlayHelp.textContent = getActiveEmblemKindId() === "crest" ? "Wappen wählen." : (getActiveEmblemKindId() === "ornament" ? "Ornament wählen." : (getActiveEmblemKindId() === "google-outdoor" ? "Symbol wählen." : (getActiveEmblemKindId() === "google-runes" ? "Rune wählen." : (getActiveEmblemKindId() === "google-motorsport" ? "Symbol wählen." : "Emblem wählen."))));
@@ -5731,12 +5819,12 @@
 
     if (state.motifOverlayStep === "groups" || !activeAnimalGroup) {
       motifVariantOverlayTitle.textContent = "Tiergruppe wählen";
-      motifVariantOverlayHelp.textContent = "Hund, Katze, Pferd oder Vogel auswählen.";
+      motifVariantOverlayHelp.textContent = "Tiergruppe wählen.";
       return;
     }
 
     motifVariantOverlayTitle.textContent = activeAnimalGroup.name + " wählen";
-    motifVariantOverlayHelp.textContent = "Passende Variante auswählen.";
+    motifVariantOverlayHelp.textContent = "Variante wählen.";
   }
 
   function isAnimalSymbolsSelected(sideId, pendantIndex) {
@@ -6212,6 +6300,7 @@
   }
 
   function buildSetThumbSvg(count) {
+    const palette = getPendantFinishPalette();
     const layouts = getPendantLayouts(count).map(function (layout) {
       return {
         x: Number((100 + (layout.x - 600) * 0.188).toFixed(1)),
@@ -6237,14 +6326,15 @@
       const shadowY = Number((layout.y + radius * 0.78).toFixed(1));
       const shadowRx = Number((radius * 0.78).toFixed(1));
       const shadowRy = Number((radius * 0.22).toFixed(1));
+      const innerStrokeOpacity = palette.effectiveFinishId === "gold" ? ".26" : ".16";
 
       return (
         '<g>' +
           '<ellipse cx="' + layout.x + '" cy="' + shadowY + '" rx="' + shadowRx + '" ry="' + shadowRy + '" fill="#000000" opacity=".22"/>' +
-          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + radius + '" fill="url(#setPendantFill)" stroke="#191b20" stroke-width="1.6"/>' +
-          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + (radius - 2.1) + '" fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width="1"/>' +
-          '<circle cx="' + layout.x + '" cy="' + ringY + '" r="' + ringOuter + '" fill="none" stroke="#171a1f" stroke-width="1.05"/>' +
-          '<circle cx="' + layout.x + '" cy="' + ringY + '" r="' + ringInner + '" fill="none" stroke="#ffffff" stroke-opacity=".16" stroke-width=".7"/>' +
+          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + radius + '" fill="url(#setPendantFill)" stroke="' + palette.edgeColor + '" stroke-width="1.6"/>' +
+          '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + (radius - 2.1) + '" fill="none" stroke="' + palette.innerStroke + '" stroke-opacity="' + innerStrokeOpacity + '" stroke-width="1"/>' +
+          '<circle cx="' + layout.x + '" cy="' + ringY + '" r="' + ringOuter + '" fill="none" stroke="' + palette.edgeColor + '" stroke-width="1.05"/>' +
+          '<circle cx="' + layout.x + '" cy="' + ringY + '" r="' + ringInner + '" fill="none" stroke="' + palette.innerStroke + '" stroke-opacity="' + innerStrokeOpacity + '" stroke-width=".7"/>' +
           '<circle cx="' + layout.x + '" cy="' + layout.y + '" r="' + (radius + 3.8) + '"' + activeStroke + ' fill="none"/>' +
         '</g>'
       );
@@ -6254,9 +6344,9 @@
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 112" role="img" aria-hidden="true">' +
         '<defs>' +
           '<linearGradient id="setPendantFill" x1="0%" y1="0%" x2="100%" y2="100%">' +
-            '<stop offset="0%" stop-color="#fbf7f2"/>' +
-            '<stop offset="42%" stop-color="#c9c0b8"/>' +
-            '<stop offset="100%" stop-color="#f3eee9"/>' +
+            '<stop offset="0%" stop-color="' + palette.baseStart + '"/>' +
+            '<stop offset="42%" stop-color="' + palette.baseMid + '"/>' +
+            '<stop offset="100%" stop-color="' + palette.baseEnd + '"/>' +
           '</linearGradient>' +
         '</defs>' +
         circles +
