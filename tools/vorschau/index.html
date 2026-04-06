@@ -236,7 +236,10 @@
       <article class="preview-card preview-control-card">
         <div class="selection-header-row">
           <h2 class="selection-header-row__title">Auswahl</h2>
-          <button class="preview-help-trigger" type="button" id="openFeedbackOverlayButton">Hilfe / Problem melden</button>
+          <div class="selection-header-row__actions">
+            <button class="preview-summary-launch preview-summary-launch--mobile" type="button" id="openSummaryMobileButton" aria-haspopup="dialog" aria-controls="previewSummaryPanel">Zusammenfassung</button>
+            <button class="preview-help-trigger" type="button" id="openFeedbackOverlayButton">Hilfe / Problem melden</button>
+          </div>
         </div>
 
         <div class="selection-start-stack">
@@ -527,6 +530,7 @@
     </section>
 
     <section class="preview-summary-card" id="previewSummarySection" aria-labelledby="preview-summary-title">
+      <button class="preview-summary-modal__backdrop" type="button" id="previewSummaryBackdrop" aria-label="Zusammenfassung schließen"></button>
       <button
         class="preview-summary-toggle preview-summary-toggle--compact"
         type="button"
@@ -537,7 +541,11 @@
         <span id="preview-summary-title">Zusammenfassung</span>
         <span class="preview-summary-toggle__meta" id="summaryToggleMeta">Anzeigen</span>
       </button>
-      <div class="preview-summary-panel" id="previewSummaryPanel" hidden>
+      <div class="preview-summary-panel" id="previewSummaryPanel" hidden role="dialog" aria-modal="true" aria-labelledby="preview-summary-title">
+        <div class="preview-summary-panel__top">
+          <strong class="preview-summary-panel__title">Zusammenfassung</strong>
+          <button class="preview-summary-panel__close" type="button" id="closeSummaryButton" aria-label="Zusammenfassung schließen">Schließen</button>
+        </div>
         <div class="preview-summary-layout">
           <div class="preview-summary-preview">
             <div class="preview-summary-preview__frame">

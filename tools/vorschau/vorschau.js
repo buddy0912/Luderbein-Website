@@ -14,6 +14,7 @@
   const finishGroup = document.getElementById("finishGroup");
   const finishOptionsEl = document.getElementById("finishOptions");
   const setGroup = document.getElementById("setGroup");
+  const controlCard = document.querySelector(".preview-control-card");
   const setOptionsEl = document.getElementById("setOptions");
   const sizeGroup = document.getElementById("sizeGroup");
   const sizeOptionsEl = document.getElementById("sizeOptions");
@@ -111,7 +112,11 @@
   const previewModeLabel = document.getElementById("previewModeLabel");
   const previewSourceLabel = document.getElementById("previewSourceLabel");
   const toggleSummaryButton = document.getElementById("toggleSummaryButton");
+  const openSummaryMobileButton = document.getElementById("openSummaryMobileButton");
+  const previewSummarySection = document.getElementById("previewSummarySection");
   const previewSummaryPanel = document.getElementById("previewSummaryPanel");
+  const previewSummaryBackdrop = document.getElementById("previewSummaryBackdrop");
+  const closeSummaryButton = document.getElementById("closeSummaryButton");
   const summaryToggleMeta = document.getElementById("summaryToggleMeta");
   const summaryPreviewCanvas = document.getElementById("summaryPreviewCanvas");
   const summaryPreviewCtx = summaryPreviewCanvas ? summaryPreviewCanvas.getContext("2d") : null;
@@ -1345,6 +1350,7 @@
 
   const state = createInitialState();
   let renderQueued = false;
+  let pendingAfterRenderAction = null;
 
   Promise.all(
     TEMPLATE_LIBRARY.concat(MOTIF_VARIANT_LIBRARY, EMBLEM_VARIANT_LIBRARY)
@@ -1918,6 +1924,19 @@
     }
     if (toggleSummaryButton) {
       toggleSummaryButton.addEventListener("click", toggleSummaryPanel);
+    }
+    if (openSummaryMobileButton) {
+      openSummaryMobileButton.addEventListener("click", toggleSummaryPanel);
+    }
+    if (previewSummaryBackdrop) {
+      previewSummaryBackdrop.addEventListener("click", function () {
+        setSummaryOpen(false);
+      });
+    }
+    if (closeSummaryButton) {
+      closeSummaryButton.addEventListener("click", function () {
+        setSummaryOpen(false);
+      });
     }
     clearTextButton.addEventListener("click", clearText);
     clearQrButton.addEventListener("click", clearQrValue);
@@ -2891,6 +2910,7 @@
       button.addEventListener("click", function () {
         if (state.finishId === finish.id) return;
         applyStepSelection("finish", finish.id);
+        focusNextSectionAfterFinishSelection();
       });
 
       finishOptionsEl.appendChild(button);
@@ -4123,9 +4143,17 @@
   }
 
   function setSummaryOpen(isOpen) {
-    if (!previewSummaryPanel || !toggleSummaryButton) return;
+    if (!previewSummaryPanel) return;
     previewSummaryPanel.hidden = !isOpen;
-    toggleSummaryButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    if (toggleSummaryButton) {
+      toggleSummaryButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+    if (openSummaryMobileButton) {
+      openSummaryMobileButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+    if (previewSummarySection) {
+      previewSummarySection.classList.toggle("is-mobile-open", isOpen);
+    }
     if (summaryToggleMeta) {
       summaryToggleMeta.textContent = isOpen ? "Ausblenden" : "Anzeigen";
     }
@@ -4900,6 +4928,46 @@
     return designModeGroup;
   }
 
+  function getNextFinishFocusTarget() {
+    const candidates = [setGroup, pendantSwitchGroup, sizeGroup, designModeGroup];
+    return candidates.find(function (section) {
+      return section && !section.hidden;
+    }) || null;
+  }
+
+  function focusNextSectionAfterFinishSelection() {
+    if (!controlCard) return;
+
+    pendingAfterRenderAction = function () {
+      const targetSection = getNextFinishFocusTarget();
+      if (!targetSection || targetSection.hidden) return;
+
+      const cardRect = controlCard.getBoundingClientRect();
+      const targetRect = targetSection.getBoundingClientRect();
+      const currentScrollTop = controlCard.scrollTop;
+      const targetTop = targetSection.offsetTop;
+      const targetBottom = targetTop + targetSection.offsetHeight;
+      const visibleTop = currentScrollTop;
+      const visibleBottom = currentScrollTop + controlCard.clientHeight;
+      const titleOffset = 22;
+      const desiredTop = Math.max(0, targetTop - titleOffset);
+      const maxScrollTop = Math.max(0, controlCard.scrollHeight - controlCard.clientHeight);
+      const nextScrollTop = Math.min(desiredTop, maxScrollTop);
+      const isAlreadyWellVisible =
+        targetTop >= visibleTop + 8 &&
+        targetBottom <= visibleBottom - 24 &&
+        targetRect.top >= cardRect.top + 8 &&
+        targetRect.top <= cardRect.top + Math.round(controlCard.clientHeight * 0.45);
+
+      if (isAlreadyWellVisible || Math.abs(nextScrollTop - currentScrollTop) < 10) return;
+
+      controlCard.scrollTo({
+        top: nextScrollTop,
+        behavior: "smooth"
+      });
+    };
+  }
+
   function queueRender() {
     if (renderQueued) return;
     renderQueued = true;
@@ -4907,6 +4975,11 @@
     requestAnimationFrame(function () {
       renderQueued = false;
       renderPreview();
+      if (pendingAfterRenderAction) {
+        const afterRenderAction = pendingAfterRenderAction;
+        pendingAfterRenderAction = null;
+        afterRenderAction();
+      }
     });
   }
 
@@ -5079,29 +5152,29 @@
 
     if (count === 2) {
       layouts = [
-        { x: 470, y: 664, scale: 0.84 },
-        { x: 730, y: 664, scale: 0.84 }
+        { x: 448, y: 664, scale: 0.84 },
+        { x: 752, y: 664, scale: 0.84 }
       ];
     } else if (count === 3) {
       layouts = [
-        { x: 600, y: 488, scale: 0.69 },
-        { x: 438, y: 770, scale: 0.69 },
-        { x: 762, y: 770, scale: 0.69 }
+        { x: 600, y: 470, scale: 0.69 },
+        { x: 412, y: 786, scale: 0.69 },
+        { x: 788, y: 786, scale: 0.69 }
       ];
     } else if (count === 4) {
       layouts = [
-        { x: 446, y: 510, scale: 0.62 },
-        { x: 754, y: 510, scale: 0.62 },
-        { x: 446, y: 808, scale: 0.62 },
-        { x: 754, y: 808, scale: 0.62 }
+        { x: 420, y: 492, scale: 0.62 },
+        { x: 780, y: 492, scale: 0.62 },
+        { x: 420, y: 826, scale: 0.62 },
+        { x: 780, y: 826, scale: 0.62 }
       ];
     } else if (count === 5) {
       layouts = [
-        { x: 600, y: 414, scale: 0.56 },
-        { x: 456, y: 612, scale: 0.56 },
-        { x: 744, y: 612, scale: 0.56 },
-        { x: 510, y: 820, scale: 0.56 },
-        { x: 690, y: 820, scale: 0.56 }
+        { x: 600, y: 390, scale: 0.56 },
+        { x: 420, y: 604, scale: 0.56 },
+        { x: 780, y: 604, scale: 0.56 },
+        { x: 476, y: 836, scale: 0.56 },
+        { x: 724, y: 836, scale: 0.56 }
       ];
     } else {
       layouts = [
