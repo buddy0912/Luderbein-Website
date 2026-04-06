@@ -92,6 +92,7 @@ window.LUDERBEIN_PRICING = {
           label: "Flaschenöffner Schlüsselanhänger",
           note: "Mindestmenge 10 · 1 Motiv pro Auftrag · fertiges Logo (SVG/PDF/PNG/JPG) 1-farbig",
           minQty: 10,
+          singlePrice: 3.95,
 
           // Muss existieren, weil der Kalkulator ein Format verlangt
           formats: [
@@ -99,10 +100,10 @@ window.LUDERBEIN_PRICING = {
           ],
 
           tiers: [
-            { min: 10,  max: 24,  price: 3.95 },
-            { min: 25,  max: 49,  price: 3.49 },
-            { min: 50,  max: 99,  price: 2.95 },
-            { min: 100, max: 249, price: 2.29 },
+            { min: 10,  max: 24,  price: 3.45 },
+            { min: 25,  max: 49,  price: 2.99 },
+            { min: 50,  max: 99,  price: 2.45 },
+            { min: 100, max: 249, price: 1.79 },
             { min: 250, max: null, price: null, note: "Auf Anfrage" }
           ],
 

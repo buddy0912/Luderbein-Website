@@ -53,6 +53,8 @@
   const requestEmailLink = document.getElementById("requestEmailLink");
   const requestEmailLinkMobile = document.getElementById("requestEmailLinkMobile");
   const scaleSlider = document.getElementById("scaleSlider");
+  const stretchXSlider = document.getElementById("stretchXSlider");
+  const stretchYSlider = document.getElementById("stretchYSlider");
   const rotationSlider = document.getElementById("rotationSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
   const textFontSelect = document.getElementById("textFontSelect");
@@ -62,9 +64,12 @@
   const monogramCharacterCount = document.getElementById("monogramCharacterCount");
   const monogramFontSelect = document.getElementById("monogramFontSelect");
   const scaleValueLabel = document.getElementById("scaleValueLabel");
+  const stretchXValueLabel = document.getElementById("stretchXValueLabel");
+  const stretchYValueLabel = document.getElementById("stretchYValueLabel");
   const rotationValueLabel = document.getElementById("rotationValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const resetRotationButton = document.getElementById("resetRotationButton");
+  const resetStretchButton = document.getElementById("resetStretchButton");
   const motifSizeHint = document.getElementById("motifSizeHint");
   const photoPricingHint = document.getElementById("photoPricingHint");
   const emblemSourceTemplateButton = document.getElementById("emblemSourceTemplateButton");
@@ -77,12 +82,15 @@
   const emblemUploadHint = document.getElementById("emblemUploadHint");
   const priceSummaryBox = document.getElementById("priceSummaryBox");
   const priceBreakdown = document.getElementById("priceBreakdown");
+  const priceSubtotalLabel = document.getElementById("priceSubtotalLabel");
   const priceSubtotal = document.getElementById("priceSubtotal");
   const priceDiscountRow = document.getElementById("priceDiscountRow");
   const priceDiscountLabel = document.getElementById("priceDiscountLabel");
   const priceDiscount = document.getElementById("priceDiscount");
+  const priceTotalLabel = document.getElementById("priceTotalLabel");
   const priceTotal = document.getElementById("priceTotal");
   const priceSummaryHint = document.getElementById("priceSummaryHint");
+  const priceSummarySubhint = document.getElementById("priceSummarySubhint");
   const previewProductName = document.getElementById("previewProductName");
   const previewStageTitle = document.getElementById("previewStageTitle");
   const previewProductNameMobile = document.getElementById("previewProductNameMobile");
@@ -126,12 +134,14 @@
   const PHOTO_NEW_PREP_CENTS = 3495;
   const PHOTO_REPEAT_FRONT_CENTS = 2495;
   const PHOTO_REPEAT_BACK_CENTS = 995;
+  const BOTTLE_OPENER_FALLBACK_START_CENTS = 299;
   const SET_DISCOUNT_RATES = {
     2: 0.10,
     3: 0.12,
     4: 0.14,
     5: 0.15
   };
+  const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
 
   const MODE_LIBRARY = [
     {
@@ -334,7 +344,7 @@
           {
             id: "bottle-opener",
             name: "Flaschenöffner",
-            description: "Produktzweig aktiv. Details folgen in einem nächsten Schritt.",
+            description: "Metall-Flaschenöffner mit Gravur für Text, Motiv oder QR.",
             isComingSoon: false,
             finishes: [],
             products: []
@@ -1157,6 +1167,8 @@
       symbolTemplateCategoryId: null,
       emblemSourceMode: "template",
       scalePercent: 100,
+      stretchXPercent: 100,
+      stretchYPercent: 100,
       offsetX: 0,
       offsetY: 0,
       rotationDeg: 0,
@@ -1219,6 +1231,24 @@
       syncUi();
       queueRender();
     });
+
+    if (stretchXSlider) {
+      stretchXSlider.addEventListener("input", function () {
+        getActiveSideState().stretchXPercent = clamp(Number(stretchXSlider.value), 70, 140);
+        clampPlacement();
+        syncUi();
+        queueRender();
+      });
+    }
+
+    if (stretchYSlider) {
+      stretchYSlider.addEventListener("input", function () {
+        getActiveSideState().stretchYPercent = clamp(Number(stretchYSlider.value), 70, 140);
+        clampPlacement();
+        syncUi();
+        queueRender();
+      });
+    }
 
     if (rotationSlider) {
       rotationSlider.addEventListener("input", function () {
@@ -1342,6 +1372,9 @@
     resetPlacementButton.addEventListener("click", resetAllSelections);
     if (resetRotationButton) {
       resetRotationButton.addEventListener("click", resetBottleOpenerRotation);
+    }
+    if (resetStretchButton) {
+      resetStretchButton.addEventListener("click", resetStretch);
     }
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
@@ -1585,6 +1618,99 @@
     });
   }
 
+  function priceEuroToCents(value) {
+    if (value == null || value === "") return null;
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return null;
+    return Math.round(numeric * 100);
+  }
+
+  function getBottleOpenerPricingVariant() {
+    const pricingProducts = EXTERNAL_PRICING && EXTERNAL_PRICING.products;
+    const metalPricing = pricingProducts && pricingProducts.metall;
+    const variants = metalPricing && metalPricing.variants;
+    return variants && variants.flaschenoeffner ? variants.flaschenoeffner : null;
+  }
+
+  function getBottleOpenerSinglePriceCents() {
+    const pricingVariant = getBottleOpenerPricingVariant();
+    return pricingVariant ? priceEuroToCents(pricingVariant.singlePrice) : null;
+  }
+
+  function getBottleOpenerLowestTierPriceCents() {
+    const pricingVariant = getBottleOpenerPricingVariant();
+    if (!pricingVariant || !Array.isArray(pricingVariant.tiers)) return null;
+
+    const tierPrices = pricingVariant.tiers.map(function (tier) {
+      return priceEuroToCents(tier.price);
+    }).filter(function (priceCents) {
+      return priceCents != null;
+    });
+
+    if (!tierPrices.length) return null;
+    return Math.min.apply(Math, tierPrices);
+  }
+
+  function formatBottleOpenerTierLabel(tier) {
+    if (!tier) return "Staffel";
+    const min = Number.isFinite(Number(tier.min)) ? Number(tier.min) : null;
+    const max = Number.isFinite(Number(tier.max)) ? Number(tier.max) : null;
+
+    if (min != null && max != null) {
+      return min + "–" + max + " Stk.";
+    }
+    if (min != null) {
+      return "ab " + min + " Stk.";
+    }
+    if (max != null) {
+      return "bis " + max + " Stk.";
+    }
+    return "Staffel";
+  }
+
+  function getBottleOpenerPriceItems() {
+    const pricingVariant = getBottleOpenerPricingVariant();
+    const singlePriceCents = getBottleOpenerSinglePriceCents();
+    const items = [];
+
+    if (singlePriceCents != null) {
+      items.push({
+        label: "Einzelstück",
+        sizeLabel: "",
+        totalCents: singlePriceCents,
+        displayPrice: formatEuro(singlePriceCents) + " / Stk.",
+        metaParts: ["Privatkundenpreis"],
+        isOnRequest: false,
+        isSinglePrice: true
+      });
+    }
+
+    if (pricingVariant && Array.isArray(pricingVariant.tiers) && pricingVariant.tiers.length) {
+      return items.concat(pricingVariant.tiers.map(function (tier) {
+        const cents = priceEuroToCents(tier.price);
+        return {
+          label: formatBottleOpenerTierLabel(tier),
+          sizeLabel: "",
+          totalCents: cents || 0,
+          displayPrice: cents != null ? formatEuro(cents) + " / Stk." : (tier.note || "Auf Anfrage"),
+          metaParts: cents != null ? ["Basispreis pro Stück"] : [tier.note || "Preis auf Anfrage"],
+          isOnRequest: cents == null
+        };
+      }));
+    }
+
+    return items.length ? items : [
+      {
+        label: "Startpreis",
+        sizeLabel: "",
+        totalCents: BOTTLE_OPENER_FALLBACK_START_CENTS,
+        displayPrice: formatEuro(BOTTLE_OPENER_FALLBACK_START_CENTS) + " / Stk.",
+        metaParts: ["Aktuell nur oberste Gravurfläche berücksichtigt."],
+        isOnRequest: false
+      }
+    ];
+  }
+
   function calculatePriceSummary() {
     const result = {
       isReady: false,
@@ -1598,6 +1724,27 @@
       invalidReason: "",
       items: []
     };
+
+    if (isBottleOpenerProduct()) {
+      const pricingVariant = getBottleOpenerPricingVariant();
+      const priceItems = getBottleOpenerPriceItems();
+      const firstPricedItem = priceItems.find(function (item) {
+        return !item.isOnRequest && item.totalCents > 0;
+      }) || null;
+
+      result.pricingMode = "bottle-opener";
+      result.discountRate = 0;
+      result.minQty = pricingVariant && pricingVariant.minQty ? pricingVariant.minQty : 1;
+      result.items = priceItems;
+      result.subtotalCents = firstPricedItem ? firstPricedItem.totalCents : 0;
+      result.totalCents = result.subtotalCents;
+      result.discountCents = 0;
+      result.isReady = true;
+      result.invalidReason = pricingVariant && Array.isArray(pricingVariant.tiers) && pricingVariant.tiers.length
+        ? "Preis pro Stück laut bestehender Staffel im Kalkulator. Aktuell berücksichtigt ist die oberste Gravurfläche."
+        : "Startpreis für die aktuell programmierte Gravurfläche.";
+      return result;
+    }
 
     if (!hasMaterialSelection() || !hasProductSelection() || !hasSetSelection()) {
       result.invalidReason = "Preis wird berechnet, sobald Material, Produkt und Set gewählt sind.";
@@ -1761,6 +1908,12 @@
     uploadInput.value = "";
     textInput.value = "";
     scaleSlider.value = "100";
+    if (stretchXSlider) {
+      stretchXSlider.value = "100";
+    }
+    if (stretchYSlider) {
+      stretchYSlider.value = "100";
+    }
     if (rotationSlider) {
       rotationSlider.value = "0";
     }
@@ -2033,8 +2186,12 @@
       button.type = "button";
       button.className = "preview-option";
       button.setAttribute("data-product-id", productFamily.id);
+      const startingPriceCents = getProductFamilyStartingPriceCents(productFamily);
       button.innerHTML =
         '<span class="preview-option__title">' + escapeHtml(productFamily.name) + "</span>" +
+        (startingPriceCents != null
+          ? '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
+          : "") +
         '<span class="preview-option__meta">' + escapeHtml(productFamily.description) + "</span>";
 
       button.addEventListener("click", function () {
@@ -2122,6 +2279,20 @@
     const subtotalCents = PRICE_BY_SIZE_GROUP_CENTS.S * count;
     const discountedCents = Math.round(subtotalCents * (1 - getSetDiscountRate(count)));
     return roundCentsToFive(discountedCents);
+  }
+
+  function getProductFamilyStartingPriceCents(productFamily) {
+    if (!productFamily) return null;
+
+    if (productFamily.id === "jewelry-pendant") {
+      return PRICE_BY_SIZE_GROUP_CENTS.S;
+    }
+
+    if (productFamily.id === "bottle-opener") {
+      return getBottleOpenerLowestTierPriceCents();
+    }
+
+    return null;
   }
 
   function renderSizeOptions() {
@@ -2320,53 +2491,6 @@
       return;
     }
 
-    if (state.motifOverlayStep === "animalLibrary") {
-      const activeAnimalGroup = getActiveAnimalGroup() || ANIMAL_GROUP_LIBRARY[0] || null;
-      const variants = activeAnimalGroup
-        ? MOTIF_VARIANT_LIBRARY.filter(function (variant) {
-          return variant.parentId === activeAnimalGroup.id;
-        })
-        : [];
-
-      motifOverlayOptionsEl.insertAdjacentHTML("beforeend", buildOverlaySectionLabelMarkup("Tiergruppen"));
-      ANIMAL_GROUP_LIBRARY.forEach(function (animalGroup) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "preview-option preview-option--symbol-card";
-        button.setAttribute("data-animal-group-id", animalGroup.id);
-        button.innerHTML =
-          buildAnimalGroupThumbMarkup(animalGroup) +
-          '<span class="preview-option__title">' + escapeHtml(animalGroup.name) + "</span>" +
-          '<span class="preview-option__meta">' + escapeHtml(animalGroup.description) + "</span>";
-
-        button.addEventListener("click", function () {
-          selectAnimalGroup(animalGroup.id);
-        });
-
-        motifOverlayOptionsEl.appendChild(button);
-      });
-
-      motifOverlayOptionsEl.insertAdjacentHTML("beforeend", buildOverlaySectionLabelMarkup("Motive"));
-      variants.forEach(function (variant) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "preview-option preview-option--symbol-card";
-        button.setAttribute("data-motif-variant-id", variant.id);
-        button.innerHTML =
-          '<span class="preview-option__thumb"><img src="' + variant.imageSrc + '" alt=""></span>' +
-          '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
-          '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
-
-        button.addEventListener("click", function () {
-          if (getActiveSideState().motifVariantId === variant.id) return;
-          selectMotifVariant(variant.id);
-        });
-
-        motifOverlayOptionsEl.appendChild(button);
-      });
-      return;
-    }
-
     if (state.motifOverlayStep === "emblemKinds") {
       EMBLEM_KIND_LIBRARY.filter(function (variant) {
         return !variant.isQr;
@@ -2552,13 +2676,13 @@
     const activeSideState = getActiveSideState();
     activeSideState.animalGroupId = animalGroup.id;
     activeSideState.motifVariantId = null;
-    state.motifOverlayStep = activeSideState.symbolTemplateCategoryId === "tiere" ? "animalLibrary" : "variants";
+    state.motifOverlayStep = "variants";
     clearUploadedImage(false);
     resetImagePlacement(false);
     renderMotifOverlayOptions();
     syncUi();
     queueRender();
-    openMotifVariantOverlay(activeSideState.symbolTemplateCategoryId === "tiere" ? "animalLibrary" : "variants");
+    openMotifVariantOverlay("variants");
   }
 
   function selectSymbolTemplateCategory(categoryId) {
@@ -2657,13 +2781,13 @@
 
     if (categoryId === "tiere") {
       activeSideState.templateId = "animal-symbols";
-      activeSideState.animalGroupId = activeSideState.animalGroupId || (ANIMAL_GROUP_LIBRARY[0] ? ANIMAL_GROUP_LIBRARY[0].id : null);
+      activeSideState.animalGroupId = null;
       activeSideState.motifVariantId = null;
       activeSideState.emblemVariantId = null;
       activeSideState.emblemKindId = null;
       clearUploadedImage(false);
       resetImagePlacement(false);
-      openMotifVariantOverlay("animalLibrary");
+      openMotifVariantOverlay("groups");
       syncUi();
       queueRender();
     }
@@ -2781,11 +2905,7 @@
   function openMotifVariantOverlay(step) {
     if (!isMotifMode()) return;
     if (isAnimalSymbolsSelected()) {
-      if (getActiveSideState().symbolTemplateCategoryId === "tiere") {
-        state.motifOverlayStep = step === "symbolCategories" ? "symbolCategories" : "animalLibrary";
-      } else {
-        state.motifOverlayStep = step === "variants" ? "variants" : "groups";
-      }
+      state.motifOverlayStep = step === "variants" ? "variants" : "groups";
     } else if (isEmblemTemplateSelected()) {
       state.motifOverlayStep = step || "symbolCategories";
     } else {
@@ -2808,7 +2928,7 @@
   function showAnimalGroupOverlay() {
     if (!isMotifMode()) return;
     if (isAnimalSymbolsSelected()) {
-      state.motifOverlayStep = getActiveSideState().symbolTemplateCategoryId === "tiere" ? "symbolCategories" : "groups";
+      state.motifOverlayStep = "groups";
     } else if (isEmblemTemplateSelected()) {
       state.motifOverlayStep = ["emblemVariants", "emblemUpload"].includes(state.motifOverlayStep) ? "emblemSourceChoice" : "symbolCategories";
     } else {
@@ -2837,6 +2957,8 @@
           targetSideState.uploadedImageSrc = String(fileDataUrl);
           targetSideState.uploadedFileName = file.name;
           targetSideState.scalePercent = 100;
+          targetSideState.stretchXPercent = 100;
+          targetSideState.stretchYPercent = 100;
           targetSideState.offsetX = 0;
           targetSideState.offsetY = 0;
           syncUi();
@@ -2883,6 +3005,8 @@
     sideState.qrCodeModel = null;
     sideState.qrCodeModelValue = "";
     sideState.scalePercent = 100;
+    sideState.stretchXPercent = 100;
+    sideState.stretchYPercent = 100;
     sideState.offsetX = 0;
     sideState.offsetY = 0;
 
@@ -2945,9 +3069,17 @@
   function resetImagePlacement(shouldRender) {
     const activeSideState = getActiveSideState();
     activeSideState.scalePercent = 100;
+    activeSideState.stretchXPercent = 100;
+    activeSideState.stretchYPercent = 100;
     activeSideState.offsetX = 0;
     activeSideState.offsetY = 0;
     scaleSlider.value = "100";
+    if (stretchXSlider) {
+      stretchXSlider.value = "100";
+    }
+    if (stretchYSlider) {
+      stretchYSlider.value = "100";
+    }
     clampPlacement();
 
     if (shouldRender !== false) {
@@ -2974,6 +3106,21 @@
     const activeSideState = getActiveSideState();
     activeSideState.offsetX = 0;
     activeSideState.offsetY = 0;
+    syncUi();
+    queueRender();
+  }
+
+  function resetStretch() {
+    const activeSideState = getActiveSideState();
+    activeSideState.stretchXPercent = 100;
+    activeSideState.stretchYPercent = 100;
+    if (stretchXSlider) {
+      stretchXSlider.value = "100";
+    }
+    if (stretchYSlider) {
+      stretchYSlider.value = "100";
+    }
+    clampPlacement();
     syncUi();
     queueRender();
   }
@@ -3176,8 +3323,8 @@
         if (isMonogramTemplateSelected()) {
           if (!hasMonogramValue()) return;
           const monogramLayout = getBottleOpenerMonogramLayout();
-          contentWidth = monogramLayout.width;
-          contentHeight = monogramLayout.height;
+          contentWidth = monogramLayout.drawWidth;
+          contentHeight = monogramLayout.drawHeight;
         } else {
           const image = getActiveImage();
           if (!image) return;
@@ -3204,6 +3351,10 @@
     if (isMonogramTemplateSelected()) {
       if (!hasMonogramValue()) return;
       drawBox = getMonogramLayout(state.activePendantIndex);
+      drawBox = {
+        width: drawBox.drawWidth,
+        height: drawBox.drawHeight
+      };
     } else {
       const image = getActiveImage();
       if (!image) return;
@@ -3349,11 +3500,23 @@
     previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
 
     scaleSlider.value = String(activeSideState.scalePercent);
+    if (stretchXSlider) {
+      stretchXSlider.value = String(clamp(activeSideState.stretchXPercent || 100, 70, 140));
+    }
+    if (stretchYSlider) {
+      stretchYSlider.value = String(clamp(activeSideState.stretchYPercent || 100, 70, 140));
+    }
     if (rotationSlider) {
       rotationSlider.value = String(clamp(activeSideState.rotationDeg || 0, -180, 180));
     }
     textSizeSlider.value = String(activeSideState.textScalePercent);
     scaleValueLabel.textContent = activeSideState.scalePercent + "%";
+    if (stretchXValueLabel) {
+      stretchXValueLabel.textContent = String(clamp(activeSideState.stretchXPercent || 100, 70, 140)) + "%";
+    }
+    if (stretchYValueLabel) {
+      stretchYValueLabel.textContent = String(clamp(activeSideState.stretchYPercent || 100, 70, 140)) + "%";
+    }
     if (rotationValueLabel) {
       rotationValueLabel.textContent = String(clamp(activeSideState.rotationDeg || 0, -180, 180)) + "°";
     }
@@ -3462,18 +3625,21 @@
     photoPricingHint.hidden = !(priceState.hasPhoto || hasAnyPhotoSelection());
     photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_DISCOUNT_HINT;
 
-    const shouldShowPriceBox = !isBottleOpenerProduct() && hasMaterialSelection() && hasProductSelection() && hasSetSelection();
+    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || hasSetSelection());
     priceSummaryBox.hidden = !shouldShowPriceBox;
     if (shouldShowPriceBox) {
       if (priceState.items.length) {
         priceBreakdown.innerHTML = priceState.items.map(function (item) {
+          const itemHeadline = item.sizeLabel ? item.label + " · " + item.sizeLabel : item.label;
+          const itemPriceText = item.displayPrice || formatEuro(item.totalCents);
+          const itemMetaText = item.metaParts && item.metaParts.length ? escapeHtml(item.metaParts.join(" · ")) : "";
           return (
             '<div class="preview-price-box__item">' +
               '<div class="preview-price-box__item-head">' +
-                '<span>' + escapeHtml(item.label + " · " + item.sizeLabel) + '</span>' +
-                '<strong>' + escapeHtml(formatEuro(item.totalCents)) + "</strong>" +
+                '<span>' + escapeHtml(itemHeadline) + '</span>' +
+                '<strong>' + escapeHtml(itemPriceText) + "</strong>" +
               "</div>" +
-              '<div class="preview-price-box__item-meta">' + escapeHtml(item.metaParts.join(" · ")) + "</div>" +
+              '<div class="preview-price-box__item-meta">' + itemMetaText + "</div>" +
             "</div>"
           );
         }).join("");
@@ -3481,14 +3647,38 @@
         priceBreakdown.innerHTML = "";
       }
 
-      priceSubtotal.textContent = priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
-      priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
-      priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
-      priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
-      priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
-      priceSummaryHint.textContent = priceState.items.length
-        ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
-        : priceState.invalidReason;
+      if (isBottleOpenerProduct()) {
+        const singlePriceCents = getBottleOpenerSinglePriceCents();
+        if (priceSubtotalLabel) priceSubtotalLabel.textContent = "";
+        priceSubtotal.textContent = "";
+        priceDiscountRow.hidden = true;
+        if (priceTotalLabel) priceTotalLabel.textContent = "Einzelpreis";
+        priceTotal.textContent = singlePriceCents != null
+          ? formatEuro(singlePriceCents) + " / Stk."
+          : "—";
+        priceSummaryHint.textContent = priceState.minQty
+          ? "Staffelpreise gelten ab " + priceState.minQty + " Stück."
+          : "";
+        if (priceSummarySubhint) {
+          priceSummarySubhint.textContent = "";
+          priceSummarySubhint.hidden = true;
+        }
+      } else {
+        if (priceSubtotalLabel) priceSubtotalLabel.textContent = "Zwischensumme";
+        priceSubtotal.textContent = priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
+        priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
+        priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
+        priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
+        if (priceTotalLabel) priceTotalLabel.textContent = "Gesamtpreis";
+        priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
+        priceSummaryHint.textContent = priceState.items.length
+          ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
+          : priceState.invalidReason;
+        if (priceSummarySubhint) {
+          priceSummarySubhint.textContent = "Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.";
+          priceSummarySubhint.hidden = false;
+        }
+      }
     }
 
     if (!isMotifMode() || (!isAnimalSymbolsSelected() && !isEmblemTemplateSelected())) {
@@ -3496,7 +3686,7 @@
       state.motifOverlayStep = "groups";
     }
     motifVariantOverlay.hidden = !state.isMotifVariantOverlayOpen;
-    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || !["variants", "animalLibrary", "emblemSourceChoice", "emblemVariants", "emblemUpload"].includes(state.motifOverlayStep);
+    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || !["variants", "emblemSourceChoice", "emblemVariants", "emblemUpload"].includes(state.motifOverlayStep);
     if (motifOverlayUploadActions) {
       motifOverlayUploadActions.hidden = !(state.isMotifVariantOverlayOpen && state.motifOverlayStep === "emblemUpload");
     }
@@ -4083,10 +4273,12 @@
     const activeSideState = getActiveSideState();
     const fitScale = Math.min(box.width / image.width, box.height / image.height);
     const scaleFactor = Math.max(0.01, activeSideState.scalePercent / 100);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
     return {
-      width: image.width * fitScale * scaleFactor,
-      height: image.height * fitScale * scaleFactor
+      width: image.width * fitScale * scaleFactor * stretchXFactor,
+      height: image.height * fitScale * scaleFactor * stretchYFactor
     };
   }
 
@@ -4245,12 +4437,17 @@
     const monogramLayout = getBottleOpenerMonogramLayout();
     const x = box.x + box.width / 2 + activeSideState.offsetX;
     const y = box.y + box.height / 2 + activeSideState.offsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
     ctx.save();
     ctx.beginPath();
     drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, Math.min(20, box.height / 4));
     ctx.clip();
     applyBottleOpenerContentRotation(x, y);
+    ctx.translate(x, y);
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.translate(-x, -y);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = monogramLayout.font;
@@ -4388,7 +4585,14 @@
   function syncMobilePreviewCanvas() {
     if (!mobileCtx || !mobileCanvas) return;
     mobileCtx.clearRect(0, 0, mobileCanvas.width, mobileCanvas.height);
-    mobileCtx.drawImage(canvas, 0, 0, mobileCanvas.width, mobileCanvas.height);
+    const targetAspect = mobileCanvas.width / mobileCanvas.height;
+    const sourceWidth = canvas.width;
+    const sourceHeight = Math.round(sourceWidth / targetAspect);
+    const centerX = canvas.width / 2;
+    const centerY = isBottleOpenerProduct() ? 560 : 650;
+    const sx = clamp(Math.round(centerX - sourceWidth / 2), 0, Math.max(0, canvas.width - sourceWidth));
+    const sy = clamp(Math.round(centerY - sourceHeight / 2), 0, Math.max(0, canvas.height - sourceHeight));
+    mobileCtx.drawImage(canvas, sx, sy, sourceWidth, sourceHeight, 0, 0, mobileCanvas.width, mobileCanvas.height);
   }
 
   function drawBackdrop() {
@@ -4595,11 +4799,16 @@
     const monogramLayout = getMonogramLayout(pendantIndex);
     const x = motifMask.x + motifMask.width / 2 + activeSideState.offsetX;
     const y = motifMask.y + motifMask.height / 2 + activeSideState.offsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
     ctx.save();
     ctx.beginPath();
     ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.clip();
+    ctx.translate(x, y);
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.translate(-x, -y);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = monogramLayout.font;
@@ -5520,12 +5729,6 @@
       return;
     }
 
-    if (state.motifOverlayStep === "animalLibrary" && getActiveSideState().symbolTemplateCategoryId === "tiere") {
-      motifVariantOverlayTitle.textContent = "Tiere";
-      motifVariantOverlayHelp.textContent = "Tiergruppe und Motiv wählen.";
-      return;
-    }
-
     if (state.motifOverlayStep === "groups" || !activeAnimalGroup) {
       motifVariantOverlayTitle.textContent = "Tiergruppe wählen";
       motifVariantOverlayHelp.textContent = "Hund, Katze, Pferd oder Vogel auswählen.";
@@ -5789,7 +5992,9 @@
     return {
       font: buildMonogramFont(fontSize, state.activeSide, pendantIndex),
       width: metrics.width,
-      height: Math.max(fontSize * 0.9, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+      height: Math.max(fontSize * 0.9, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
+      drawWidth: metrics.width * getStretchFactor(sideState.stretchXPercent),
+      drawHeight: Math.max(fontSize * 0.9, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * getStretchFactor(sideState.stretchYPercent)
     };
   }
 
@@ -5811,7 +6016,9 @@
     return {
       font: buildMonogramFont(fontSize, state.activeSide, state.activePendantIndex),
       width: metrics.width,
-      height: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+      height: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
+      drawWidth: metrics.width * getStretchFactor(sideState.stretchXPercent),
+      drawHeight: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * getStretchFactor(sideState.stretchYPercent)
     };
   }
 
@@ -5820,10 +6027,16 @@
     const activeSideState = getSideState(state.activeSide, pendantIndex);
     const fitScale = Math.max(motifMask.width / image.width, motifMask.height / image.height);
     const scaleFactor = activeSideState.scalePercent / 100;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
     return {
-      width: image.width * fitScale * scaleFactor,
-      height: image.height * fitScale * scaleFactor
+      width: image.width * fitScale * scaleFactor * stretchXFactor,
+      height: image.height * fitScale * scaleFactor * stretchYFactor
     };
+  }
+
+  function getStretchFactor(percentValue) {
+    return clamp(Number(percentValue) || 100, 70, 140) / 100;
   }
 
   function getTextLayout(text, pendantIndex) {
