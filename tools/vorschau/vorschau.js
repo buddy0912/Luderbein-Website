@@ -735,44 +735,20 @@
       imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_wb_sunny_48px.svg"
     },
     {
-      id: "google-outdoor-bike",
-      kindId: "google-outdoor",
+      id: "google-heart-filled",
+      kindId: "google-hearts",
       parentId: "emblem",
-      name: "Bike",
-      description: "Google Material · maps · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_directions_bike_48px.svg"
+      name: "Herz",
+      description: "action/svg/production/ic_favorite_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_favorite_48px.svg"
     },
     {
-      id: "google-rune-triangle",
-      kindId: "google-runes",
+      id: "google-heart-outline",
+      kindId: "google-hearts",
       parentId: "emblem",
-      name: "Rune Dreieck",
-      description: "Google Material · action · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_change_history_48px.svg"
-    },
-    {
-      id: "google-rune-flare",
-      kindId: "google-runes",
-      parentId: "emblem",
-      name: "Rune Strahl",
-      description: "Google Material · image · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_flare_48px.svg"
-    },
-    {
-      id: "google-rune-star",
-      kindId: "google-runes",
-      parentId: "emblem",
-      name: "Rune Stern",
-      description: "Google Material · action · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_stars_48px.svg"
-    },
-    {
-      id: "google-rune-sigil",
-      kindId: "google-runes",
-      parentId: "emblem",
-      name: "Rune Siegel",
-      description: "Google Material · action · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_all_out_48px.svg"
+      name: "Herz Kontur",
+      description: "action/svg/production/ic_favorite_border_48px.svg",
+      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_favorite_border_48px.svg"
     },
     {
       id: "google-motorsport-motorcycle",
@@ -1115,6 +1091,209 @@
   const BOTTLE_OPENER_ENGRAVING_STROKE = "rgba(210,207,206,0.82)";
   const bottleOpenerEngravingCache = typeof WeakMap === "function" ? new WeakMap() : null;
   const symbolSourceRegistry = window.PREVIEW_SYMBOL_SOURCE_REGISTRY || null;
+  const GOOGLE_BROWSER_GROUP_FILES = {
+    action: [
+      "ic_3d_rotation_48px.svg",
+      "ic_account_balance_48px.svg",
+      "ic_account_circle_48px.svg",
+      "ic_add_shopping_cart_48px.svg",
+      "ic_alarm_48px.svg",
+      "ic_android_48px.svg",
+      "ic_announcement_48px.svg",
+      "ic_assignment_turned_in_48px.svg",
+      "ic_autorenew_48px.svg",
+      "ic_bookmark_48px.svg",
+      "ic_build_48px.svg",
+      "ic_card_giftcard_48px.svg",
+      "ic_check_circle_48px.svg",
+      "ic_code_48px.svg",
+      "ic_credit_card_48px.svg",
+      "ic_date_range_48px.svg",
+      "ic_done_all_48px.svg",
+      "ic_euro_symbol_48px.svg",
+      "ic_explore_48px.svg",
+      "ic_face_48px.svg",
+      "ic_favorite_48px.svg",
+      "ic_favorite_border_48px.svg",
+      "ic_gavel_48px.svg",
+      "ic_grade_48px.svg"
+    ],
+    alert: [
+      "ic_add_alert_48px.svg",
+      "ic_error_48px.svg",
+      "ic_error_outline_48px.svg",
+      "ic_warning_48px.svg"
+    ],
+    communication: [
+      "ic_business_48px.svg",
+      "ic_call_48px.svg",
+      "ic_chat_48px.svg",
+      "ic_chat_bubble_48px.svg",
+      "ic_chat_bubble_outline_48px.svg",
+      "ic_comment_48px.svg",
+      "ic_contact_mail_48px.svg",
+      "ic_contact_phone_48px.svg",
+      "ic_contacts_48px.svg",
+      "ic_email_48px.svg",
+      "ic_forum_48px.svg",
+      "ic_live_help_48px.svg",
+      "ic_location_on_48px.svg",
+      "ic_mail_outline_48px.svg",
+      "ic_message_48px.svg",
+      "ic_phone_48px.svg",
+      "ic_ring_volume_48px.svg",
+      "ic_rss_feed_48px.svg",
+      "ic_screen_share_48px.svg",
+      "ic_speaker_phone_48px.svg"
+    ],
+    file: [
+      "ic_attachment_48px.svg",
+      "ic_cloud_48px.svg",
+      "ic_cloud_circle_48px.svg",
+      "ic_cloud_done_48px.svg",
+      "ic_cloud_download_48px.svg",
+      "ic_cloud_off_48px.svg",
+      "ic_cloud_queue_48px.svg",
+      "ic_cloud_upload_48px.svg",
+      "ic_create_new_folder_48px.svg",
+      "ic_file_download_48px.svg",
+      "ic_file_upload_48px.svg",
+      "ic_folder_48px.svg",
+      "ic_folder_open_48px.svg",
+      "ic_folder_shared_48px.svg"
+    ],
+    hardware: [
+      "ic_cast_48px.svg",
+      "ic_computer_48px.svg",
+      "ic_desktop_mac_48px.svg",
+      "ic_desktop_windows_48px.svg",
+      "ic_devices_other_48px.svg",
+      "ic_gamepad_48px.svg",
+      "ic_headset_48px.svg",
+      "ic_headset_mic_48px.svg",
+      "ic_keyboard_48px.svg",
+      "ic_keyboard_voice_48px.svg",
+      "ic_laptop_48px.svg",
+      "ic_laptop_mac_48px.svg",
+      "ic_laptop_windows_48px.svg",
+      "ic_memory_48px.svg",
+      "ic_mouse_48px.svg",
+      "ic_phone_android_48px.svg",
+      "ic_phone_iphone_48px.svg",
+      "ic_router_48px.svg",
+      "ic_scanner_48px.svg",
+      "ic_smartphone_48px.svg"
+    ],
+    image: [
+      "ic_add_a_photo_48px.svg",
+      "ic_adjust_48px.svg",
+      "ic_assistant_photo_48px.svg",
+      "ic_brightness_7_48px.svg",
+      "ic_brush_48px.svg",
+      "ic_burst_mode_48px.svg",
+      "ic_camera_48px.svg",
+      "ic_camera_alt_48px.svg",
+      "ic_camera_front_48px.svg",
+      "ic_camera_rear_48px.svg",
+      "ic_collections_48px.svg",
+      "ic_color_lens_48px.svg",
+      "ic_colorize_48px.svg",
+      "ic_crop_landscape_48px.svg",
+      "ic_crop_portrait_48px.svg",
+      "ic_dehaze_48px.svg",
+      "ic_details_48px.svg",
+      "ic_edit_48px.svg",
+      "ic_filter_drama_48px.svg",
+      "ic_filter_vintage_48px.svg",
+      "ic_flare_48px.svg",
+      "ic_flash_off_48px.svg",
+      "ic_flash_on_48px.svg",
+      "ic_gradient_48px.svg"
+    ],
+    maps: [
+      "ic_add_location_48px.svg",
+      "ic_beenhere_48px.svg",
+      "ic_directions_48px.svg",
+      "ic_directions_bike_48px.svg",
+      "ic_directions_boat_48px.svg",
+      "ic_directions_bus_48px.svg",
+      "ic_directions_car_48px.svg",
+      "ic_directions_railway_48px.svg",
+      "ic_directions_run_48px.svg",
+      "ic_directions_subway_48px.svg",
+      "ic_directions_transit_48px.svg",
+      "ic_directions_walk_48px.svg",
+      "ic_edit_location_48px.svg",
+      "ic_ev_station_48px.svg",
+      "ic_flight_48px.svg",
+      "ic_local_gas_station_48px.svg",
+      "ic_local_shipping_48px.svg",
+      "ic_local_taxi_48px.svg",
+      "ic_map_48px.svg",
+      "ic_my_location_48px.svg",
+      "ic_navigation_48px.svg",
+      "ic_pin_drop_48px.svg",
+      "ic_place_48px.svg",
+      "ic_terrain_48px.svg"
+    ],
+    places: [
+      "ic_ac_unit_48px.svg",
+      "ic_airport_shuttle_48px.svg",
+      "ic_all_inclusive_48px.svg",
+      "ic_beach_access_48px.svg",
+      "ic_business_center_48px.svg",
+      "ic_casino_48px.svg",
+      "ic_child_care_48px.svg",
+      "ic_child_friendly_48px.svg",
+      "ic_fitness_center_48px.svg",
+      "ic_free_breakfast_48px.svg",
+      "ic_golf_course_48px.svg",
+      "ic_hot_tub_48px.svg",
+      "ic_kitchen_48px.svg",
+      "ic_pool_48px.svg",
+      "ic_room_service_48px.svg",
+      "ic_rv_hookup_48px.svg",
+      "ic_smoke_free_48px.svg",
+      "ic_smoking_rooms_48px.svg",
+      "ic_spa_48px.svg"
+    ],
+    social: [
+      "ic_cake_48px.svg",
+      "ic_domain_48px.svg",
+      "ic_group_48px.svg",
+      "ic_group_add_48px.svg",
+      "ic_location_city_48px.svg",
+      "ic_mood_48px.svg",
+      "ic_mood_bad_48px.svg",
+      "ic_notifications_active_48px.svg",
+      "ic_notifications_none_48px.svg",
+      "ic_notifications_off_48px.svg",
+      "ic_pages_48px.svg",
+      "ic_party_mode_48px.svg",
+      "ic_people_48px.svg",
+      "ic_people_outline_48px.svg",
+      "ic_person_48px.svg",
+      "ic_person_add_48px.svg",
+      "ic_person_outline_48px.svg",
+      "ic_plus_one_48px.svg",
+      "ic_poll_48px.svg",
+      "ic_public_48px.svg",
+      "ic_school_48px.svg",
+      "ic_sentiment_neutral_48px.svg",
+      "ic_share_48px.svg",
+      "ic_whatshot_48px.svg"
+    ],
+    toggle: [
+      "ic_check_box_48px.svg",
+      "ic_check_box_outline_blank_48px.svg",
+      "ic_radio_button_checked_48px.svg",
+      "ic_radio_button_unchecked_48px.svg",
+      "ic_star_half_48px.svg"
+    ]
+  };
+  const GOOGLE_BROWSER_GROUP_IDS = ["action", "alert", "communication", "file", "hardware", "image", "maps", "places", "social", "toggle"];
+  EMBLEM_VARIANT_LIBRARY.push.apply(EMBLEM_VARIANT_LIBRARY, buildGoogleBrowserVariants());
+  EMBLEM_VARIANT_LIBRARY.push.apply(EMBLEM_VARIANT_LIBRARY, buildFilesystemSvgVariantsForCategory("runen"));
 
   const state = createInitialState();
   let renderQueued = false;
@@ -1148,6 +1327,104 @@
     queueRender();
   }
 
+  function toTitleCase(value) {
+    return String(value).replace(/\b[a-z]/g, function (match) {
+      return match.toUpperCase();
+    });
+  }
+
+  function formatGoogleIconLabel(fileName) {
+    return toTitleCase(
+      String(fileName)
+        .replace(/^ic_/, "")
+        .replace(/_48px\.svg$/, "")
+        .replace(/_/g, " ")
+    );
+  }
+
+  function getCustomFilesystemSymbolCategoryById(categoryId) {
+    const categories = Array.isArray(symbolSourceRegistry && symbolSourceRegistry.custom && symbolSourceRegistry.custom.categories)
+      ? symbolSourceRegistry.custom.categories
+      : [];
+
+    return categories.find(function (category) {
+      return category.id === categoryId && category.sourceType === "filesystem-svg" && Array.isArray(category.files);
+    }) || null;
+  }
+
+  function buildFilesystemSvgVariantsForCategory(categoryId) {
+    const category = getCustomFilesystemSymbolCategoryById(categoryId);
+    if (!category || !category.sourcePath) return [];
+
+    const kindId = "custom-filesystem-" + categoryId;
+    return category.files.map(function (fileName) {
+      return {
+        id: kindId + "-" + fileName.replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").toLowerCase(),
+        kindId: kindId,
+        parentId: "emblem",
+        name: formatGoogleIconLabel(fileName),
+        description: "",
+        imageSrc: category.sourcePath.replace(/\/$/, "") + "/" + fileName
+      };
+    });
+  }
+
+  function getVariantMetaText(variant) {
+    const description = variant && typeof variant.description === "string" ? variant.description.trim() : "";
+    if (!description) return "";
+    if (/^[a-z0-9-]+\/svg\/production\/.+\.svg$/i.test(description)) {
+      return "";
+    }
+    return description;
+  }
+
+  function getGoogleRegistryCategoryById(categoryId) {
+    const categories = Array.isArray(symbolSourceRegistry && symbolSourceRegistry.google && symbolSourceRegistry.google.categories)
+      ? symbolSourceRegistry.google.categories
+      : [];
+
+    return categories.find(function (category) {
+      return category.id === categoryId;
+    }) || null;
+  }
+
+  function getGoogleBrowserGroups() {
+    return GOOGLE_BROWSER_GROUP_IDS.map(function (groupId) {
+      const registryCategory = getGoogleRegistryCategoryById(groupId);
+      const files = GOOGLE_BROWSER_GROUP_FILES[groupId] || [];
+      const previewFile = files[0] || "";
+
+      return {
+        id: groupId,
+        kindId: "google-group-" + groupId,
+        label: groupId,
+        registryLabel: registryCategory ? registryCategory.label : groupId,
+        previewSrc: previewFile
+          ? "/assets/tools/vorschau/google/material-design-icons-3.0.0/" + groupId + "/svg/production/" + previewFile
+          : "",
+        visibleCount: files.length
+      };
+    }).filter(function (group) {
+      return Boolean(group.previewSrc);
+    });
+  }
+
+  function buildGoogleBrowserVariants() {
+    return GOOGLE_BROWSER_GROUP_IDS.reduce(function (allVariants, groupId) {
+      const kindId = "google-group-" + groupId;
+      return allVariants.concat((GOOGLE_BROWSER_GROUP_FILES[groupId] || []).map(function (fileName) {
+        return {
+          id: "google-group-" + groupId + "-" + fileName.replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").toLowerCase(),
+          kindId: kindId,
+          parentId: "emblem",
+          name: formatGoogleIconLabel(fileName),
+          description: groupId + "/svg/production/" + fileName,
+          imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/" + groupId + "/svg/production/" + fileName
+        };
+      }));
+    }, []);
+  }
+
   function createSideState() {
     return {
       designMode: null,
@@ -1165,6 +1442,7 @@
       qrCodeModelValue: "",
       emblemKindId: null,
       symbolTemplateCategoryId: null,
+      googleSymbolGroupId: null,
       emblemSourceMode: "template",
       scalePercent: 100,
       stretchXPercent: 100,
@@ -2457,11 +2735,11 @@
       "wappen",
       "embleme",
       "tiere",
+      "google-symbole",
       "ornamente",
       "runen",
       "herzen",
       "outdoor",
-      "motorsport",
       "handwerk",
       "maritim",
       "fantasy-mystik",
@@ -2495,31 +2773,77 @@
     motifOverlayOptionsEl.setAttribute("data-overlay-kind", getActiveEmblemKindId() || "");
 
     if (state.motifOverlayStep === "symbolCategories") {
-      getSymbolTemplateCategories().forEach(function (category) {
+      const allCategories = getSymbolTemplateCategories();
+      const availableCategories = allCategories.filter(function (category) {
+        return category.sourceType !== "custom-library-placeholder";
+      });
+      const upcomingCategories = allCategories.filter(function (category) {
+        return category.sourceType === "custom-library-placeholder";
+      });
+
+      if (availableCategories.length) {
+        motifOverlayOptionsEl.insertAdjacentHTML("beforeend", buildOverlaySectionLabelMarkup("Verfügbar"));
+      }
+
+      availableCategories.forEach(function (category) {
         const button = document.createElement("button");
-        const isPreparedOnly = category.sourceType === "custom-library-placeholder";
         const previewSrc = category.previewTemplate || "/assets/tools/vorschau/vorlage-emblem.png";
-        const statusLabel = isPreparedOnly ? "Bald verfügbar" : "Nutzbar";
-        const metaText = isPreparedOnly ? "Kategorie ist vorbereitet." : "Kategorie jetzt öffnen.";
+        const metaText = "Kategorie jetzt öffnen.";
 
         button.type = "button";
         button.className = "preview-option preview-option--symbol-card preview-option--symbol-category";
         button.setAttribute("data-symbol-category-id", category.id);
-        button.setAttribute("data-category-status", isPreparedOnly ? "coming-soon" : "active");
+        button.setAttribute("data-category-status", "active");
         button.innerHTML =
-          '<span class="preview-option__status-badge">' + escapeHtml(statusLabel) + "</span>" +
           '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
           '<span class="preview-option__title">' + escapeHtml(category.label) + "</span>" +
           '<span class="preview-option__meta">' + escapeHtml(metaText) + "</span>";
 
-        if (isPreparedOnly) {
-          button.classList.add("is-disabled");
-          button.disabled = true;
-        } else {
-          button.addEventListener("click", function () {
-            selectSymbolTemplateCategory(category.id);
-          });
-        }
+        button.addEventListener("click", function () {
+          selectSymbolTemplateCategory(category.id);
+        });
+
+        motifOverlayOptionsEl.appendChild(button);
+      });
+
+      if (upcomingCategories.length) {
+        motifOverlayOptionsEl.insertAdjacentHTML("beforeend", buildOverlaySectionLabelMarkup("Bald verfügbar"));
+      }
+
+      upcomingCategories.forEach(function (category) {
+        const button = document.createElement("button");
+        const previewSrc = category.previewTemplate || "/assets/tools/vorschau/vorlage-emblem.png";
+
+        button.type = "button";
+        button.className = "preview-option preview-option--symbol-card preview-option--symbol-category is-disabled";
+        button.setAttribute("data-symbol-category-id", category.id);
+        button.setAttribute("data-category-status", "coming-soon");
+        button.innerHTML =
+          '<span class="preview-option__status-badge">Bald verfügbar</span>' +
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__title">' + escapeHtml(category.label) + "</span>" +
+          '<span class="preview-option__meta">Kategorie ist vorbereitet.</span>';
+
+        button.disabled = true;
+        motifOverlayOptionsEl.appendChild(button);
+      });
+      return;
+    }
+
+    if (state.motifOverlayStep === "googleGroups") {
+      getGoogleBrowserGroups().forEach(function (group) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "preview-option preview-option--symbol-card";
+        button.setAttribute("data-google-browser-group-id", group.id);
+        button.innerHTML =
+          '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + group.previewSrc + '" alt=""></span></span>' +
+          '<span class="preview-option__title">' + escapeHtml(group.label) + "</span>" +
+          '<span class="preview-option__meta">' + escapeHtml(group.registryLabel + " · " + group.visibleCount + " Symbole") + "</span>";
+
+        button.addEventListener("click", function () {
+          selectGoogleBrowserGroup(group.id);
+        });
 
         motifOverlayOptionsEl.appendChild(button);
       });
@@ -2578,13 +2902,14 @@
     if (state.motifOverlayStep === "emblemVariants") {
       EMBLEM_VARIANT_LIBRARY.filter((variant) => !variant.isQr && variant.kindId === getActiveEmblemKindId()).forEach((variant) => {
         const button = document.createElement("button");
+        const metaText = getVariantMetaText(variant);
         button.type = "button";
         button.className = "preview-option preview-option--symbol-card";
         button.setAttribute("data-emblem-variant-id", variant.id);
         button.innerHTML =
           '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + variant.imageSrc + '" alt=""></span></span>' +
           '<span class="preview-option__title">' + escapeHtml(variant.name) + "</span>" +
-          '<span class="preview-option__meta">' + escapeHtml(variant.description) + "</span>";
+          (metaText ? '<span class="preview-option__meta">' + escapeHtml(metaText) + "</span>" : "");
 
         button.addEventListener("click", function () {
           if (getActiveSideState().emblemVariantId === variant.id) return;
@@ -2673,6 +2998,7 @@
     closeMotifVariantOverlay();
     activeSideState.templateId = isQrShortcutTemplate ? "symbol-template" : template.id;
     activeSideState.symbolTemplateCategoryId = null;
+    activeSideState.googleSymbolGroupId = null;
     activeSideState.animalGroupId = null;
     activeSideState.motifVariantId = null;
     activeSideState.emblemVariantId = null;
@@ -2789,7 +3115,24 @@
       activeSideState.animalGroupId = null;
       activeSideState.motifVariantId = null;
       activeSideState.emblemVariantId = null;
-      activeSideState.emblemKindId = "google-runes";
+      activeSideState.emblemKindId = "custom-filesystem-runen";
+      activeSideState.googleSymbolGroupId = null;
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("emblemVariants");
+      syncUi();
+      queueRender();
+      return;
+    }
+
+    if (categoryId === "herzen") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = "google-hearts";
+      activeSideState.googleSymbolGroupId = null;
       activeSideState.emblemSourceMode = "template";
       clearUploadedImage(false);
       resetImagePlacement(false);
@@ -2805,6 +3148,7 @@
       activeSideState.motifVariantId = null;
       activeSideState.emblemVariantId = null;
       activeSideState.emblemKindId = "google-motorsport";
+      activeSideState.googleSymbolGroupId = null;
       activeSideState.emblemSourceMode = "template";
       clearUploadedImage(false);
       resetImagePlacement(false);
@@ -2820,12 +3164,50 @@
       activeSideState.motifVariantId = null;
       activeSideState.emblemVariantId = null;
       activeSideState.emblemKindId = null;
+      activeSideState.googleSymbolGroupId = null;
       clearUploadedImage(false);
       resetImagePlacement(false);
       openMotifVariantOverlay("groups");
       syncUi();
       queueRender();
+      return;
     }
+
+    if (categoryId === "google-symbole") {
+      activeSideState.templateId = "symbol-template";
+      activeSideState.animalGroupId = null;
+      activeSideState.motifVariantId = null;
+      activeSideState.emblemVariantId = null;
+      activeSideState.emblemKindId = null;
+      activeSideState.googleSymbolGroupId = null;
+      activeSideState.emblemSourceMode = "template";
+      clearUploadedImage(false);
+      resetImagePlacement(false);
+      openMotifVariantOverlay("googleGroups");
+      syncUi();
+      queueRender();
+    }
+  }
+
+  function selectGoogleBrowserGroup(groupId) {
+    const group = getGoogleBrowserGroups().find(function (entry) {
+      return entry.id === groupId;
+    });
+    if (!group) return;
+
+    const activeSideState = getActiveSideState();
+    activeSideState.templateId = "symbol-template";
+    activeSideState.animalGroupId = null;
+    activeSideState.motifVariantId = null;
+    activeSideState.emblemVariantId = null;
+    activeSideState.googleSymbolGroupId = group.id;
+    activeSideState.emblemKindId = group.kindId;
+    activeSideState.emblemSourceMode = "template";
+    clearUploadedImage(false);
+    resetImagePlacement(false);
+    openMotifVariantOverlay("emblemVariants");
+    syncUi();
+    queueRender();
   }
 
   function selectMotifVariant(variantId) {
@@ -2867,6 +3249,7 @@
 
     const activeSideState = getActiveSideState();
     activeSideState.emblemKindId = kindId;
+    activeSideState.googleSymbolGroupId = null;
 
     if (variant.isQr) {
       activeSideState.emblemSourceMode = "template";
@@ -2965,7 +3348,11 @@
     if (isAnimalSymbolsSelected()) {
       state.motifOverlayStep = "groups";
     } else if (isEmblemTemplateSelected()) {
-      state.motifOverlayStep = ["emblemVariants", "emblemUpload"].includes(state.motifOverlayStep) ? "emblemSourceChoice" : "symbolCategories";
+      if (state.motifOverlayStep === "emblemVariants" && getActiveSideState().symbolTemplateCategoryId === "google-symbole") {
+        state.motifOverlayStep = "googleGroups";
+      } else {
+        state.motifOverlayStep = ["emblemVariants", "emblemUpload"].includes(state.motifOverlayStep) ? "emblemSourceChoice" : "symbolCategories";
+      }
     } else {
       return;
     }
@@ -3470,7 +3857,9 @@
     syncStepGroups();
 
     if (previewStageTitle) {
-      previewStageTitle.textContent = isBottleOpenerProduct() ? "Metall-Flaschenöffner" : "Rundes Edelstahl-Plättchen";
+      previewStageTitle.textContent = hasProductSelection()
+        ? (isBottleOpenerProduct() ? "Metall-Flaschenöffner" : "Rundes Edelstahl-Plättchen")
+        : "Vorschau";
     }
 
     if (!hasMaterialSelection()) {
@@ -3721,7 +4110,7 @@
       state.motifOverlayStep = "groups";
     }
     motifVariantOverlay.hidden = !state.isMotifVariantOverlayOpen;
-    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || !["variants", "emblemSourceChoice", "emblemVariants", "emblemUpload"].includes(state.motifOverlayStep);
+    motifVariantOverlayBackButton.hidden = !state.isMotifVariantOverlayOpen || !["variants", "googleGroups", "emblemSourceChoice", "emblemVariants", "emblemUpload"].includes(state.motifOverlayStep);
     if (motifOverlayUploadActions) {
       motifOverlayUploadActions.hidden = !(state.isMotifVariantOverlayOpen && state.motifOverlayStep === "emblemUpload");
     }
@@ -3790,6 +4179,10 @@
 
     motifOverlayOptionsEl.querySelectorAll("[data-symbol-category-id]").forEach((button) => {
       button.classList.toggle("is-active", button.getAttribute("data-symbol-category-id") === activeSideState.symbolTemplateCategoryId);
+    });
+
+    motifOverlayOptionsEl.querySelectorAll("[data-google-browser-group-id]").forEach((button) => {
+      button.classList.toggle("is-active", button.getAttribute("data-google-browser-group-id") === activeSideState.googleSymbolGroupId);
     });
 
     motifOverlayOptionsEl.querySelectorAll("[data-motif-variant-id]").forEach((button) => {
@@ -5797,18 +6190,23 @@
         if (state.motifOverlayStep === "symbolCategories") {
           motifVariantOverlayTitle.textContent = "Symbolvorlage";
           motifVariantOverlayHelp.textContent = "Kategorie wählen.";
+        } else if (state.motifOverlayStep === "googleGroups") {
+          motifVariantOverlayTitle.textContent = "Google-Symbole";
+          motifVariantOverlayHelp.textContent = "Google-Hauptgruppe wählen.";
         } else if (state.motifOverlayStep === "emblemKinds") {
           motifVariantOverlayTitle.textContent = "Weg wählen";
           motifVariantOverlayHelp.textContent = "Wappen, Emblem oder QR-Code.";
         } else if (state.motifOverlayStep === "emblemSourceChoice") {
-          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "google-runes" ? "Runen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme"))));
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
           motifVariantOverlayHelp.textContent = "Vorlage oder eigene Datei.";
         } else if (state.motifOverlayStep === "emblemUpload") {
-          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "google-runes" ? "Runen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme"))));
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
           motifVariantOverlayHelp.textContent = "Datei wählen.";
         } else {
-          motifVariantOverlayTitle.textContent = "Vorlage";
-          motifVariantOverlayHelp.textContent = getActiveEmblemKindId() === "crest" ? "Wappen wählen." : (getActiveEmblemKindId() === "ornament" ? "Ornament wählen." : (getActiveEmblemKindId() === "google-outdoor" ? "Symbol wählen." : (getActiveEmblemKindId() === "google-runes" ? "Rune wählen." : (getActiveEmblemKindId() === "google-motorsport" ? "Symbol wählen." : "Emblem wählen."))));
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() && getActiveEmblemKindId().indexOf("google-group-") === 0
+            ? getActiveEmblemKindId().replace("google-group-", "")
+            : "Vorlage";
+          motifVariantOverlayHelp.textContent = getActiveEmblemKindId() === "crest" ? "Wappen wählen." : (getActiveEmblemKindId() === "ornament" ? "Ornament wählen." : (getActiveEmblemKindId() === "google-outdoor" ? "Symbol wählen." : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Rune wählen." : (getActiveEmblemKindId() === "google-hearts" ? "Herz wählen." : (getActiveEmblemKindId() === "google-motorsport" ? "Symbol wählen." : (getActiveEmblemKindId() && getActiveEmblemKindId().indexOf("google-group-") === 0 ? "Google-Symbol wählen." : "Emblem wählen."))))));
         }
       } else {
         motifVariantOverlayTitle.textContent = "Tiermotiv";

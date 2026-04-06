@@ -124,21 +124,13 @@
     {
       id: "wappen",
       label: "Wappen",
-      sourceType: "embedded-js-library",
-      sourceLibrary: "EMBLEM_VARIANT_LIBRARY",
-      sourceFilter: {
-        kindId: "crest"
-      },
+      sourceType: "custom-library-placeholder",
       previewTemplate: "/assets/tools/vorschau/vorlage-emblem.png"
     },
     {
       id: "embleme",
       label: "Embleme",
-      sourceType: "embedded-js-library",
-      sourceLibrary: "EMBLEM_VARIANT_LIBRARY",
-      sourceFilter: {
-        kindId: "emblem"
-      },
+      sourceType: "custom-library-placeholder",
       previewTemplate: "/assets/tools/vorschau/vorlage-emblem.png"
     },
     {
@@ -170,50 +162,59 @@
       previewTemplate: "/assets/tools/vorschau/vorlage-pfote.png"
     },
     {
+      id: "google-symbole",
+      label: "Google-Symbole",
+      sourceType: "google-library-browser",
+      previewTemplate: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_map_48px.svg"
+    },
+    {
       id: "ornamente",
       label: "Ornamente",
-      sourceType: "embedded-js-library",
-      sourceLibrary: "EMBLEM_VARIANT_LIBRARY",
-      sourceFilter: {
-        kindId: "ornament"
-      },
+      sourceType: "custom-library-placeholder",
       previewTemplate: "/assets/tools/vorschau/vorlage-emblem.png"
     },
     {
       id: "runen",
       label: "Runen",
-      sourceType: "embedded-js-library",
-      sourceLibrary: "EMBLEM_VARIANT_LIBRARY",
-      sourceFilter: {
-        kindId: "google-runes"
-      },
-      previewTemplate: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_change_history_48px.svg"
+      sourceType: "filesystem-svg",
+      sourcePath: "/assets/tools/vorschau/custom/runen/svg",
+      files: [
+        "algiz.svg",
+        "ansuz.svg",
+        "berkana.svg",
+        "dagaz.svg",
+        "ehwaz.svg",
+        "fehu.svg",
+        "gebo.svg",
+        "ingwaz.svg",
+        "isaz.svg",
+        "iwaz.svg",
+        "jera.svg",
+        "kenaz.svg",
+        "laguz.svg",
+        "mannaz.svg",
+        "naudhiz.svg",
+        "othala.svg",
+        "perthro.svg",
+        "raidho.svg",
+        "thurisaz.svg",
+        "tiwaz.svg",
+        "uruz.svg",
+        "wunjo.svg"
+      ],
+      previewTemplate: "/assets/tools/vorschau/custom/runen/svg/ansuz.svg"
     },
     {
       id: "herzen",
       label: "Herzen",
       sourceType: "custom-library-placeholder",
-      previewTemplate: "/assets/tools/vorschau/vorlage-emblem.png"
+      previewTemplate: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_favorite_48px.svg"
     },
     {
       id: "outdoor",
       label: "Outdoor",
-      sourceType: "embedded-js-library",
-      sourceLibrary: "EMBLEM_VARIANT_LIBRARY",
-      sourceFilter: {
-        kindId: "google-outdoor"
-      },
+      sourceType: "custom-library-placeholder",
       previewTemplate: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_terrain_48px.svg"
-    },
-    {
-      id: "motorsport",
-      label: "Mobilität",
-      sourceType: "embedded-js-library",
-      sourceLibrary: "EMBLEM_VARIANT_LIBRARY",
-      sourceFilter: {
-        kindId: "google-motorsport"
-      },
-      previewTemplate: "/assets/tools/vorschau/google/material-design-icons-3.0.0/action/svg/production/ic_motorcycle_48px.svg"
     },
     {
       id: "handwerk",

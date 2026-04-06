@@ -557,6 +557,7 @@
 .preview-option-grid {
   display: grid;
   gap: 10px;
+  align-items: start;
 }
 
 .preview-option-grid--products {
@@ -581,8 +582,12 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  align-self: start;
   width: 100%;
-  min-height: 100%;
+  min-height: 0;
+  height: auto;
+  box-sizing: border-box;
+  margin: 0;
   border-radius: 18px;
   border: 1px solid rgba(64,62,65,.68);
   background: rgba(42,45,51,.18);
@@ -590,20 +595,24 @@
   text-align: left;
   padding: 14px;
   cursor: pointer;
-  transition: border-color .18s ease, transform .18s ease, background .18s ease, box-shadow .18s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  transform: none;
+  box-shadow: none;
+  transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
 }
 
 .preview-option:hover,
 .preview-option:focus-visible {
   border-color: rgba(219,16,33,.46);
   background: rgba(58,26,31,.24);
-  transform: translateY(-1px);
+  box-shadow: inset 0 0 0 1px rgba(219,16,33,.08);
 }
 
 .preview-option.is-active {
   border-color: rgba(219,16,33,.68);
   background: linear-gradient(180deg, rgba(95,24,31,.52), rgba(33,20,23,.82));
-  box-shadow: 0 0 0 3px rgba(219,16,33,.12);
+  box-shadow: inset 0 0 0 2px rgba(219,16,33,.16);
 }
 
 .preview-option--set {
@@ -951,7 +960,7 @@
 .preview-motif-overlay__panel {
   position: relative;
   z-index: 1;
-  width: min(100%, 760px);
+  width: min(100%, 1080px);
   max-height: min(86vh, 820px);
   overflow: auto;
   padding: 18px;
@@ -975,12 +984,17 @@
   margin: 0 auto;
 }
 
+#motifOverlayOptions[data-overlay-step="googleGroups"] {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  max-width: 100%;
+}
+
 #motifOverlayOptions[data-overlay-step="emblemVariants"] {
-  grid-template-columns: repeat(2, minmax(240px, 320px));
-  gap: 16px;
-  justify-content: center;
-  max-width: 680px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  max-width: 100%;
+  margin: 0;
 }
 
 #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option--symbol-card {
@@ -992,7 +1006,7 @@
 }
 
 #motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option--symbol-card {
-  --symbol-thumb-height: 214px;
+  --symbol-thumb-height: 188px;
   --symbol-thumb-padding: 16px;
   --symbol-media-padding: 18px;
 }
