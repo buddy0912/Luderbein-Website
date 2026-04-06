@@ -213,8 +213,30 @@
     {
       id: "outdoor",
       label: "Outdoor",
-      sourceType: "custom-library-placeholder",
-      previewTemplate: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_terrain_48px.svg"
+      sourceType: "filesystem-svg",
+      sourcePath: "/assets/tools/vorschau/custom/wandern-trail-startpack/source/raw",
+      files: [
+        "berg-waldlinie-01.png",
+        "bergkette-fein-01.png",
+        "kompassring-berg-wald.png",
+        "zelt-berge-kreis.png",
+        "wanderer-trail-kompakt-01.png",
+        "wanderer-trail-kompakt-02.png",
+        "mountainbike-kompakt.png",
+        "lagerfeuer-berge-kreis.png",
+        "lagerfeuer-berge-offen.png",
+        "gipfelkreuz-berge-kompakt.png",
+        "berg-panorama-tal-wasser.png",
+        "bergpanorama-wald-vorne.png",
+        "einzelberg-schraffur.png",
+        "kompass-berg-wald-weg.png",
+        "topo-berg-konturlinien-01.png",
+        "trailrunnerin-berglandschaft-kreis.png",
+        "wanderer-grat-kreis.png",
+        "mountainbike-berglandschaft-detail.png",
+        "gipfelkreuz-landschaft-detail.png"
+      ],
+      previewTemplate: "/assets/tools/vorschau/custom/wandern-trail-startpack/source/raw/berg-waldlinie-01.png"
     },
     {
       id: "handwerk",

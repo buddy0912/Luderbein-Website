@@ -711,30 +711,6 @@
       )
     },
     {
-      id: "google-outdoor-terrain",
-      kindId: "google-outdoor",
-      parentId: "emblem",
-      name: "Gelände",
-      description: "Google Material · maps · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/maps/svg/production/ic_terrain_48px.svg"
-    },
-    {
-      id: "google-outdoor-landscape",
-      kindId: "google-outdoor",
-      parentId: "emblem",
-      name: "Landschaft",
-      description: "Google Material · image · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_landscape_48px.svg"
-    },
-    {
-      id: "google-outdoor-sun",
-      kindId: "google-outdoor",
-      parentId: "emblem",
-      name: "Sonne",
-      description: "Google Material · image · production",
-      imageSrc: "/assets/tools/vorschau/google/material-design-icons-3.0.0/image/svg/production/ic_wb_sunny_48px.svg"
-    },
-    {
       id: "google-heart-filled",
       kindId: "google-hearts",
       parentId: "emblem",
@@ -1294,6 +1270,7 @@
   const GOOGLE_BROWSER_GROUP_IDS = ["action", "alert", "communication", "file", "hardware", "image", "maps", "places", "social", "toggle"];
   EMBLEM_VARIANT_LIBRARY.push.apply(EMBLEM_VARIANT_LIBRARY, buildGoogleBrowserVariants());
   EMBLEM_VARIANT_LIBRARY.push.apply(EMBLEM_VARIANT_LIBRARY, buildFilesystemSvgVariantsForCategory("runen"));
+  EMBLEM_VARIANT_LIBRARY.push.apply(EMBLEM_VARIANT_LIBRARY, buildFilesystemSvgVariantsForCategory("outdoor"));
 
   const state = createInitialState();
   let renderQueued = false;
@@ -1342,6 +1319,160 @@
     );
   }
 
+  function getFilesystemLabelBase(fileName) {
+    return String(fileName)
+      .replace(/\.[a-z0-9]+$/i, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function formatFilesystemVariantLabel(fileName, allFiles) {
+    const stem = getFilesystemLabelBase(fileName);
+    const match = stem.match(/^(.*?)(?:\s+0*([0-9]+))$/);
+    const candidateBase = match ? match[1].trim() : stem;
+    const variantNumber = match ? String(parseInt(match[2], 10)) : "";
+    const normalizedBase = candidateBase || stem;
+
+    const duplicateCount = (allFiles || []).filter(function (otherFileName) {
+      const otherStem = getFilesystemLabelBase(otherFileName);
+      const otherMatch = otherStem.match(/^(.*?)(?:\s+0*([0-9]+))$/);
+      const otherBase = otherMatch ? otherMatch[1].trim() : otherStem;
+      return otherBase === normalizedBase;
+    }).length;
+
+    return toTitleCase(
+      duplicateCount > 1 && variantNumber
+        ? normalizedBase + " " + variantNumber
+        : normalizedBase
+    );
+  }
+
+  function applyPreviewCardConfig(button, config) {
+    if (!button || !config) return;
+    if (config.profile) {
+      button.classList.add("preview-option--preview-profile-" + config.profile);
+      button.setAttribute("data-preview-profile", config.profile);
+    }
+    if (config.scale != null) {
+      button.style.setProperty("--preview-scale", String(config.scale));
+    }
+    if (config.offsetX != null) {
+      button.style.setProperty("--preview-offset-x", config.offsetX);
+    }
+    if (config.offsetY != null) {
+      button.style.setProperty("--preview-offset-y", config.offsetY);
+    }
+    if (config.maxWidth != null) {
+      button.style.setProperty("--preview-asset-max-width", config.maxWidth);
+    }
+    if (config.maxHeight != null) {
+      button.style.setProperty("--preview-asset-max-height", config.maxHeight);
+    }
+    if (config.thumbHeight != null) {
+      button.style.setProperty("--symbol-thumb-height", config.thumbHeight);
+    }
+    if (config.thumbPadding != null) {
+      button.style.setProperty("--symbol-thumb-padding", config.thumbPadding);
+    }
+    if (config.mediaPadding != null) {
+      button.style.setProperty("--symbol-media-padding", config.mediaPadding);
+    }
+  }
+
+  function getActiveCategoryPreviewConfig(categoryId) {
+    const normalized = String(categoryId || "").toLowerCase();
+    const categoryConfigMap = {
+      "tiere": {
+        profile: "category-symbol",
+        scale: 1.36,
+        offsetX: "0%",
+        offsetY: "3%",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        thumbHeight: "192px",
+        thumbPadding: "8px",
+        mediaPadding: "6px"
+      },
+      "google-symbole": {
+        profile: "category-symbol",
+        scale: 1.56,
+        offsetX: "0%",
+        offsetY: "1%",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        thumbHeight: "192px",
+        thumbPadding: "8px",
+        mediaPadding: "6px"
+      },
+      "runen": {
+        profile: "category-rune",
+        scale: 1.8,
+        offsetX: "0%",
+        offsetY: "0%",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        thumbHeight: "196px",
+        thumbPadding: "8px",
+        mediaPadding: "8px"
+      },
+      "outdoor": {
+        profile: "category-wide",
+        scale: 2.18,
+        offsetX: "0%",
+        offsetY: "12%",
+        maxWidth: "100%",
+        maxHeight: "100%",
+        thumbHeight: "196px",
+        thumbPadding: "6px",
+        mediaPadding: "4px"
+      }
+    };
+
+    return categoryConfigMap[normalized] || {
+      profile: "category-symbol",
+      scale: 1.24,
+      offsetX: "0%",
+      offsetY: "0%",
+      maxWidth: "100%",
+      maxHeight: "100%"
+    };
+  }
+
+  function getOutdoorVariantPreviewConfig(fileName) {
+    const normalized = String(fileName || "").toLowerCase();
+    const outdoorConfigMap = {
+      "berg-waldlinie-01.png": { profile: "motif-wide", scale: 2.02, offsetX: "0%", offsetY: "16%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "224px", thumbPadding: "4px", mediaPadding: "2px" },
+      "bergkette-fein-01.png": { profile: "motif-wide", scale: 1.94, offsetX: "0%", offsetY: "12%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "224px", thumbPadding: "4px", mediaPadding: "2px" },
+      "berg-panorama-tal-wasser.png": { profile: "motif-wide", scale: 1.84, offsetX: "0%", offsetY: "10%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "226px", thumbPadding: "4px", mediaPadding: "2px" },
+      "bergpanorama-wald-vorne.png": { profile: "motif-wide", scale: 1.76, offsetX: "0%", offsetY: "8%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "230px", thumbPadding: "4px", mediaPadding: "2px" },
+      "einzelberg-schraffur.png": { profile: "motif-compact", scale: 1.86, offsetX: "0%", offsetY: "8%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "236px", thumbPadding: "4px", mediaPadding: "2px" },
+      "kompass-berg-wald-weg.png": { profile: "motif-round", scale: 1.74, offsetX: "0%", offsetY: "4%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "242px", thumbPadding: "4px", mediaPadding: "2px" },
+      "kompassring-berg-wald.png": { profile: "motif-round", scale: 1.92, offsetX: "0%", offsetY: "2%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "242px", thumbPadding: "4px", mediaPadding: "2px" },
+      "topo-berg-konturlinien-01.png": { profile: "motif-wide", scale: 1.8, offsetX: "0%", offsetY: "8%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "228px", thumbPadding: "4px", mediaPadding: "2px" },
+      "trailrunnerin-berglandschaft-kreis.png": { profile: "motif-round", scale: 1.72, offsetX: "0%", offsetY: "5%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "242px", thumbPadding: "4px", mediaPadding: "2px" },
+      "wanderer-grat-kreis.png": { profile: "motif-round", scale: 1.74, offsetX: "0%", offsetY: "5%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "242px", thumbPadding: "4px", mediaPadding: "2px" },
+      "zelt-berge-kreis.png": { profile: "motif-round", scale: 1.86, offsetX: "0%", offsetY: "4%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "242px", thumbPadding: "4px", mediaPadding: "2px" },
+      "wanderer-trail-kompakt-01.png": { profile: "motif-compact", scale: 1.9, offsetX: "0%", offsetY: "10%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "236px", thumbPadding: "4px", mediaPadding: "2px" },
+      "wanderer-trail-kompakt-02.png": { profile: "motif-compact", scale: 1.96, offsetX: "0%", offsetY: "10%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "236px", thumbPadding: "4px", mediaPadding: "2px" },
+      "mountainbike-berglandschaft-detail.png": { profile: "motif-compact", scale: 1.82, offsetX: "0%", offsetY: "8%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "236px", thumbPadding: "4px", mediaPadding: "2px" },
+      "mountainbike-kompakt.png": { profile: "motif-compact", scale: 2.08, offsetX: "1%", offsetY: "8%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "238px", thumbPadding: "4px", mediaPadding: "2px" },
+      "lagerfeuer-berge-kreis.png": { profile: "motif-round", scale: 1.92, offsetX: "0%", offsetY: "6%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "242px", thumbPadding: "4px", mediaPadding: "2px" },
+      "lagerfeuer-berge-offen.png": { profile: "motif-compact", scale: 2.0, offsetX: "0%", offsetY: "12%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "238px", thumbPadding: "4px", mediaPadding: "2px" },
+      "gipfelkreuz-landschaft-detail.png": { profile: "motif-compact", scale: 1.78, offsetX: "0%", offsetY: "7%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "236px", thumbPadding: "4px", mediaPadding: "2px" },
+      "gipfelkreuz-berge-kompakt.png": { profile: "motif-compact", scale: 2.08, offsetX: "0%", offsetY: "8%", maxWidth: "100%", maxHeight: "100%", thumbHeight: "238px", thumbPadding: "4px", mediaPadding: "2px" }
+    };
+
+    return outdoorConfigMap[normalized] || {
+      profile: "motif-compact",
+      scale: 1.45,
+      offsetX: "0%",
+      offsetY: "0%",
+      maxWidth: "100%",
+      maxHeight: "100%"
+    };
+  }
+
   function getCustomFilesystemSymbolCategoryById(categoryId) {
     const categories = Array.isArray(symbolSourceRegistry && symbolSourceRegistry.custom && symbolSourceRegistry.custom.categories)
       ? symbolSourceRegistry.custom.categories
@@ -1362,7 +1493,7 @@
         id: kindId + "-" + fileName.replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").toLowerCase(),
         kindId: kindId,
         parentId: "emblem",
-        name: formatGoogleIconLabel(fileName),
+        name: formatFilesystemVariantLabel(fileName, category.files),
         description: "",
         imageSrc: category.sourcePath.replace(/\/$/, "") + "/" + fileName
       };
@@ -2789,11 +2920,13 @@
         const button = document.createElement("button");
         const previewSrc = category.previewTemplate || "/assets/tools/vorschau/vorlage-emblem.png";
         const metaText = "Kategorie jetzt öffnen.";
+        const previewConfig = getActiveCategoryPreviewConfig(category.id);
 
         button.type = "button";
         button.className = "preview-option preview-option--symbol-card preview-option--symbol-category";
         button.setAttribute("data-symbol-category-id", category.id);
         button.setAttribute("data-category-status", "active");
+        applyPreviewCardConfig(button, previewConfig);
         button.innerHTML =
           '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
           '<span class="preview-option__title">' + escapeHtml(category.label) + "</span>" +
@@ -2903,8 +3036,14 @@
       EMBLEM_VARIANT_LIBRARY.filter((variant) => !variant.isQr && variant.kindId === getActiveEmblemKindId()).forEach((variant) => {
         const button = document.createElement("button");
         const metaText = getVariantMetaText(variant);
+        const outdoorPreviewConfig = getActiveEmblemKindId() === "custom-filesystem-outdoor"
+          ? getOutdoorVariantPreviewConfig(variant.imageSrc.split("/").pop() || "")
+          : null;
         button.type = "button";
         button.className = "preview-option preview-option--symbol-card";
+        if (outdoorPreviewConfig) {
+          applyPreviewCardConfig(button, outdoorPreviewConfig);
+        }
         button.setAttribute("data-emblem-variant-id", variant.id);
         button.innerHTML =
           '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + variant.imageSrc + '" alt=""></span></span>' +
@@ -3100,7 +3239,7 @@
       activeSideState.animalGroupId = null;
       activeSideState.motifVariantId = null;
       activeSideState.emblemVariantId = null;
-      activeSideState.emblemKindId = "google-outdoor";
+      activeSideState.emblemKindId = "custom-filesystem-outdoor";
       activeSideState.emblemSourceMode = "template";
       clearUploadedImage(false);
       resetImagePlacement(false);
@@ -6197,16 +6336,16 @@
           motifVariantOverlayTitle.textContent = "Weg wählen";
           motifVariantOverlayHelp.textContent = "Wappen, Emblem oder QR-Code.";
         } else if (state.motifOverlayStep === "emblemSourceChoice") {
-          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "custom-filesystem-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
           motifVariantOverlayHelp.textContent = "Vorlage oder eigene Datei.";
         } else if (state.motifOverlayStep === "emblemUpload") {
-          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "google-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
+          motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "custom-filesystem-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
           motifVariantOverlayHelp.textContent = "Datei wählen.";
         } else {
           motifVariantOverlayTitle.textContent = getActiveEmblemKindId() && getActiveEmblemKindId().indexOf("google-group-") === 0
             ? getActiveEmblemKindId().replace("google-group-", "")
             : "Vorlage";
-          motifVariantOverlayHelp.textContent = getActiveEmblemKindId() === "crest" ? "Wappen wählen." : (getActiveEmblemKindId() === "ornament" ? "Ornament wählen." : (getActiveEmblemKindId() === "google-outdoor" ? "Symbol wählen." : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Rune wählen." : (getActiveEmblemKindId() === "google-hearts" ? "Herz wählen." : (getActiveEmblemKindId() === "google-motorsport" ? "Symbol wählen." : (getActiveEmblemKindId() && getActiveEmblemKindId().indexOf("google-group-") === 0 ? "Google-Symbol wählen." : "Emblem wählen."))))));
+          motifVariantOverlayHelp.textContent = getActiveEmblemKindId() === "crest" ? "Wappen wählen." : (getActiveEmblemKindId() === "ornament" ? "Ornament wählen." : (getActiveEmblemKindId() === "custom-filesystem-outdoor" ? "Motiv wählen." : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Rune wählen." : (getActiveEmblemKindId() === "google-hearts" ? "Herz wählen." : (getActiveEmblemKindId() === "google-motorsport" ? "Symbol wählen." : (getActiveEmblemKindId() && getActiveEmblemKindId().indexOf("google-group-") === 0 ? "Google-Symbol wählen." : "Emblem wählen."))))));
         }
       } else {
         motifVariantOverlayTitle.textContent = "Tiermotiv";

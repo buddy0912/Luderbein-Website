@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wandern Trail Startpack – Review</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f1e8;
+      --card: #fffdfa;
+      --line: #d8d0c2;
+      --text: #2a241d;
+      --muted: #6f675d;
+      --ok-bg: #e8f3ea;
+      --ok-text: #1f5a31;
+      --warn-bg: #fff2df;
+      --warn-text: #8a5518;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    main {
+      max-width: 1480px;
+      margin: 0 auto;
+    }
+
+    h1,
+    h2 {
+      margin: 0 0 12px;
+      line-height: 1.2;
+    }
+
+    p,
+    ul {
+      margin: 0 0 14px;
+    }
+
+    .intro,
+    .summary,
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(40, 32, 20, 0.06);
+    }
+
+    .summary {
+      margin-top: 16px;
+    }
+
+    .table-wrap {
+      margin-top: 16px;
+      overflow-x: auto;
+    }
+
+    .counts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .count-card {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fcfaf6;
+    }
+
+    .count-card strong {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1180px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .thumb {
+      width: 180px;
+      max-width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      display: block;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .status-ok {
+      color: var(--ok-text);
+      background: var(--ok-bg);
+    }
+
+    .status-warn {
+      color: var(--warn-text);
+      background: var(--warn-bg);
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.92em;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="intro">
+      <h1>Wandern Trail Startpack – Review</h1>
+      <p>Diese Uebersicht dokumentiert die visuell gegengepruefte Uebernahme der nummerierten Bilddateien aus <code>tmp/</code> in das erste dateibasierte Motivpack. Es wurde bewusst nicht blind nur nach Nummer umbenannt.</p>
+      <p>Regel in diesem Schritt: inhaltlich passende Motive wurden nach <code>source/raw/</code> kopiert und final benannt. Abweichungen, Zusatzmotive und der ausgefallene Dublettenfall wurden in <code>source/review/</code> belassen.</p>
+    </section>
+
+    <section class="summary">
+      <h2>Kurzstatus</h2>
+      <div class="counts">
+        <div class="count-card">
+          <strong>19</strong>
+          <span>uebernommene Bilder in <code>raw/</code></span>
+        </div>
+        <div class="count-card">
+          <strong>2</strong>
+          <span>Review-Faelle in <code>review/</code></span>
+        </div>
+        <div class="count-card">
+          <strong>0</strong>
+          <span>echte Dubletten in <code>rejected/</code></span>
+        </div>
+        <div class="count-card">
+          <strong>1</strong>
+          <span>noch fehlender Soll-Eintrag: <code>topo-berg-konturlinien-02.png</code></span>
+        </div>
+      </div>
+      <ul>
+        <li><code>pic - 2.png</code> ist keine Dublette von <code>pic - 1.png</code>. Die Dateien haben unterschiedliche Inhalte und unterschiedliche Hashes.</li>
+        <li><code>pic - 11.png</code> zeigt keine zweite Topo-Konturlinien-Variante, sondern ein weiteres Zeltmotiv.</li>
+        <li>Mehrere Bilder waren inhaltlich vorhanden, aber gegenueber der Soll-Nummerierung verschoben. Diese wurden nach Bildinhalt statt nach Nummer zugeordnet.</li>
+      </ul>
+    </section>
+
+    <section class="table-wrap">
+      <h2>Manifest</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Originaldatei</th>
+            <th>Vorschau</th>
+            <th>Soll-Zuordnung</th>
+            <th>Finaler Dateiname</th>
+            <th>Status</th>
+            <th>Hinweis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>tmp/pic - 1.png</code></td>
+            <td><img class="thumb" src="../raw/berg-panorama-tal-wasser.png" alt="pic 1"></td>
+            <td><code>berg-panorama-tal-wasser.png</code></td>
+            <td><code>berg-panorama-tal-wasser.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Passt inhaltlich sauber zur Soll-Zuordnung.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 2.png</code></td>
+            <td><img class="thumb" src="pic-2__expected-duplicate-berg-panorama-tal-wasser__review.png" alt="pic 2 review"></td>
+            <td><code>DUPLIKAT von berg-panorama-tal-wasser.png</code></td>
+            <td><code>-</code></td>
+            <td><span class="status status-warn">unklar / pruefen</span></td>
+            <td>Keine echte Dublette. Eigenstaendiges Bergpanorama ohne Wasser; deshalb nicht falsch als Dublette abgelegt.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 3.png</code></td>
+            <td><img class="thumb" src="../raw/bergpanorama-wald-vorne.png" alt="pic 3"></td>
+            <td><code>zelt-berge-kreis.png</code></td>
+            <td><code>bergpanorama-wald-vorne.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Motiv zeigt kein Zelt im Kreis, sondern Bergpanorama mit Wald im Vordergrund.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 4.png</code></td>
+            <td><img class="thumb" src="../raw/berg-waldlinie-01.png" alt="pic 4"></td>
+            <td><code>einzelberg-schraffur.png</code></td>
+            <td><code>berg-waldlinie-01.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Motiv passt inhaltlich klarer zu Berglinie mit Waldsaum als zu Einzelberg.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 5.png</code></td>
+            <td><img class="thumb" src="../raw/kompass-berg-wald-weg.png" alt="pic 5"></td>
+            <td><code>kompass-berg-wald-weg.png</code></td>
+            <td><code>kompass-berg-wald-weg.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Passt inhaltlich sauber zur Soll-Zuordnung.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 6.png</code></td>
+            <td><img class="thumb" src="../raw/kompassring-berg-wald.png" alt="pic 6"></td>
+            <td><code>topo-berg-konturlinien-01.png</code></td>
+            <td><code>kompassring-berg-wald.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Bild zeigt einen klaren Kompassring mit Berg und Wald, keine Topo-Konturlinien.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 7.png</code></td>
+            <td><img class="thumb" src="../raw/topo-berg-konturlinien-01.png" alt="pic 7"></td>
+            <td><code>bergkette-fein-01.png</code></td>
+            <td><code>topo-berg-konturlinien-01.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Die Konturlinien machen dieses Motiv klar zum ersten Topo-Bild.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 8.png</code></td>
+            <td><img class="thumb" src="../raw/einzelberg-schraffur.png" alt="pic 8"></td>
+            <td><code>berg-waldlinie-01.png</code></td>
+            <td><code>einzelberg-schraffur.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Motiv ist ein einzelner schraffierter Berg ohne Waldlinie.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 9.png</code></td>
+            <td><img class="thumb" src="../raw/bergkette-fein-01.png" alt="pic 9"></td>
+            <td><code>bergpanorama-wald-vorne.png</code></td>
+            <td><code>bergkette-fein-01.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Feine reduzierte Bergkette ohne Vorderwald; passt besser zur Bergketten-Variante.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 10.png</code></td>
+            <td><img class="thumb" src="../raw/zelt-berge-kreis.png" alt="pic 10"></td>
+            <td><code>kompassring-berg-wald.png</code></td>
+            <td><code>zelt-berge-kreis.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Motiv ist klar das Kreis-Zeltmotiv.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 11.png</code></td>
+            <td><img class="thumb" src="pic-11__unmapped-extra-zelt-variante__review.png" alt="pic 11 review"></td>
+            <td><code>topo-berg-konturlinien-02.png</code></td>
+            <td><code>-</code></td>
+            <td><span class="status status-warn">unklar / pruefen</span></td>
+            <td>Zeigt eine weitere Zeltvariante, keine zweite Topo-Konturlinien-Datei. Deshalb vorerst im Review.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 12.png</code></td>
+            <td><img class="thumb" src="../raw/wanderer-grat-kreis.png" alt="pic 12"></td>
+            <td><code>wanderer-grat-kreis.png</code></td>
+            <td><code>wanderer-grat-kreis.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Passt inhaltlich sauber zur Soll-Zuordnung.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 13.png</code></td>
+            <td><img class="thumb" src="../raw/wanderer-trail-kompakt-01.png" alt="pic 13"></td>
+            <td><code>lagerfeuer-berge-offen.png</code></td>
+            <td><code>wanderer-trail-kompakt-01.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Zeigt einen kompakten Wanderer auf Grat statt Lagerfeuer.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 14.png</code></td>
+            <td><img class="thumb" src="../raw/trailrunnerin-berglandschaft-kreis.png" alt="pic 14"></td>
+            <td><code>gipfelkreuz-landschaft-detail.png</code></td>
+            <td><code>trailrunnerin-berglandschaft-kreis.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Bild zeigt klar die Trailrunnerin im Kreis, nicht das Gipfelkreuzmotiv.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 15.png</code></td>
+            <td><img class="thumb" src="../raw/wanderer-trail-kompakt-02.png" alt="pic 15"></td>
+            <td><code>lagerfeuer-berge-kreis.png</code></td>
+            <td><code>wanderer-trail-kompakt-02.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Zeigt die zweite kompakte Wanderer-Variante statt Lagerfeuer im Kreis.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 16.png</code></td>
+            <td><img class="thumb" src="../raw/mountainbike-berglandschaft-detail.png" alt="pic 16"></td>
+            <td><code>wanderer-trail-kompakt-01.png</code></td>
+            <td><code>mountainbike-berglandschaft-detail.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Bild zeigt das detailreiche Mountainbike-Motiv.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 17.png</code></td>
+            <td><img class="thumb" src="../raw/gipfelkreuz-landschaft-detail.png" alt="pic 17"></td>
+            <td><code>trailrunnerin-berglandschaft-kreis.png</code></td>
+            <td><code>gipfelkreuz-landschaft-detail.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Zeigt das detailreiche Gipfelkreuzmotiv, nicht die Trailrunnerin.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 18.png</code></td>
+            <td><img class="thumb" src="../raw/mountainbike-kompakt.png" alt="pic 18"></td>
+            <td><code>wanderer-trail-kompakt-02.png</code></td>
+            <td><code>mountainbike-kompakt.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Kompaktes Bike-Motiv statt Wanderer.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 19.png</code></td>
+            <td><img class="thumb" src="../raw/gipfelkreuz-berge-kompakt.png" alt="pic 19"></td>
+            <td><code>mountainbike-berglandschaft-detail.png</code></td>
+            <td><code>gipfelkreuz-berge-kompakt.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Kompaktes Gipfelkreuzmotiv statt Mountainbike-Detailmotiv.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 20.png</code></td>
+            <td><img class="thumb" src="../raw/lagerfeuer-berge-kreis.png" alt="pic 20"></td>
+            <td><code>mountainbike-kompakt.png</code></td>
+            <td><code>lagerfeuer-berge-kreis.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Motiv ist das Kreis-Lagerfeuer, nicht das kompakte Bike.</td>
+          </tr>
+          <tr>
+            <td><code>tmp/pic - 21.png</code></td>
+            <td><img class="thumb" src="../raw/lagerfeuer-berge-offen.png" alt="pic 21"></td>
+            <td><code>gipfelkreuz-berge-kompakt.png</code></td>
+            <td><code>lagerfeuer-berge-offen.png</code></td>
+            <td><span class="status status-ok">uebernommen</span></td>
+            <td>Offenes Lagerfeuermotiv statt kompaktes Gipfelkreuz.</td>
+          </tr>
+          <tr>
+            <td><code>-</code></td>
+            <td><span class="muted">keine passende Datei gefunden</span></td>
+            <td><code>topo-berg-konturlinien-02.png</code></td>
+            <td><code>-</code></td>
+            <td><span class="status status-warn">unklar / pruefen</span></td>
+            <td>Im aktuellen Nummernset wurde keine zweite Topo-Konturlinien-Variante gefunden.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

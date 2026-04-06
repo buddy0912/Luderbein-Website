@@ -668,10 +668,46 @@
   --symbol-media-padding: 14px;
   --symbol-media-radius: 14px;
   --symbol-asset-scale: 76%;
+  --preview-scale: 1;
+  --preview-offset-x: 0%;
+  --preview-offset-y: 0%;
+  --preview-asset-max-width: var(--symbol-asset-scale);
+  --preview-asset-max-height: var(--symbol-asset-scale);
 }
 
 .preview-option--symbol-category {
   position: relative;
+}
+
+.preview-option--preview-profile-category-symbol {
+  --preview-scale: 1.32;
+  --preview-offset-x: 0%;
+  --preview-offset-y: 2%;
+  --preview-asset-max-width: 100%;
+  --preview-asset-max-height: 100%;
+}
+
+.preview-option--preview-profile-category-wide {
+  --preview-scale: 1.78;
+  --preview-offset-x: 0%;
+  --preview-offset-y: 10%;
+  --preview-asset-max-width: 100%;
+  --preview-asset-max-height: 100%;
+}
+
+.preview-option--preview-profile-category-rune {
+  --preview-scale: 1.62;
+  --preview-offset-x: 0%;
+  --preview-offset-y: 0%;
+  --preview-asset-max-width: 100%;
+  --preview-asset-max-height: 100%;
+}
+
+.preview-option--preview-profile-motif-wide,
+.preview-option--preview-profile-motif-compact,
+.preview-option--preview-profile-motif-round {
+  --preview-asset-max-width: 100%;
+  --preview-asset-max-height: 100%;
 }
 
 .preview-option--symbol-category .preview-option__status-badge {
@@ -813,9 +849,12 @@
   display: block;
   width: auto;
   height: auto;
-  max-width: var(--symbol-asset-scale);
-  max-height: var(--symbol-asset-scale);
-  transform: none;
+  max-width: var(--preview-asset-max-width);
+  max-height: var(--preview-asset-max-height);
+  transform:
+    translate(var(--preview-offset-x), var(--preview-offset-y))
+    scale(var(--preview-scale));
+  transform-origin: center;
 }
 
 .preview-option__thumb-media img {
@@ -998,7 +1037,10 @@
 }
 
 #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option--symbol-card {
-  --symbol-thumb-height: 156px;
+  --symbol-thumb-height: 168px;
+  --symbol-thumb-padding: 10px;
+  --symbol-media-padding: 8px;
+  --symbol-asset-scale: 100%;
 }
 
 #motifOverlayOptions[data-overlay-step="emblemSourceChoice"] .preview-option--symbol-card {
@@ -1009,6 +1051,13 @@
   --symbol-thumb-height: 188px;
   --symbol-thumb-padding: 16px;
   --symbol-media-padding: 18px;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--symbol-card {
+  --symbol-thumb-height: 232px;
+  --symbol-thumb-padding: 4px;
+  --symbol-media-padding: 2px;
+  --symbol-asset-scale: 100%;
 }
 
 #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] {
@@ -1462,6 +1511,18 @@
     --symbol-asset-scale: 72%;
     padding: 10px;
     border-radius: 14px;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--symbol-card {
+    --symbol-thumb-height: 176px;
+    --symbol-thumb-padding: 4px;
+    --symbol-media-padding: 2px;
+    --symbol-asset-scale: 100%;
+    --preview-scale: 1.22;
+    --preview-offset-x: 0%;
+    --preview-offset-y: 0%;
+    --preview-asset-max-width: 100%;
+    --preview-asset-max-height: 100%;
   }
 
   #motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option__thumb {

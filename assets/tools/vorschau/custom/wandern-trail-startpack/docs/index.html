@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wandern Trail Startpack – Produktionsübersicht</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4efe6;
+      --card: #fffdfa;
+      --line: #d9d0c2;
+      --text: #28221c;
+      --muted: #6d655b;
+      --ok-bg: #e7f3ea;
+      --ok-text: #225736;
+      --compact-bg: #eef2fb;
+      --compact-text: #314d89;
+      --detail-bg: #fdf0e6;
+      --detail-text: #8b5420;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    main {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    h1,
+    h2 {
+      margin: 0 0 12px;
+      line-height: 1.2;
+    }
+
+    p,
+    ul {
+      margin: 0 0 14px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(40, 32, 20, 0.05);
+    }
+
+    .panel + .panel {
+      margin-top: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      padding: 14px;
+      border-radius: 12px;
+      background: #fbf8f2;
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1220px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .thumb {
+      width: 180px;
+      max-width: 100%;
+      display: block;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-ok {
+      color: var(--ok-text);
+      background: var(--ok-bg);
+    }
+
+    .badge-compact {
+      color: var(--compact-text);
+      background: var(--compact-bg);
+    }
+
+    .badge-detail {
+      color: var(--detail-text);
+      background: var(--detail-bg);
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.92em;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>Wandern Trail Startpack – Produktionsübersicht</h1>
+      <p>Diese Übersicht fasst die bestätigten Rohmotive des Packs <code>wandern-trail-startpack</code> für den nächsten Produktionsschritt zusammen. In diesem Schritt wurde bewusst nur die Produktionsgrundlage vorbereitet, noch keine Tool-Integration und noch keine automatische SVG-Massenproduktion.</p>
+      <div class="stats">
+        <div class="stat">
+          <strong>19</strong>
+          <span>bestätigte Rohmotive</span>
+        </div>
+        <div class="stat">
+          <strong>7</strong>
+          <span>inhaltliche Untergruppen</span>
+        </div>
+        <div class="stat">
+          <strong>8</strong>
+          <span>kompaktere Motive</span>
+        </div>
+        <div class="stat">
+          <strong>11</strong>
+          <span>detailreichere Motive</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Abdeckung und Lücken</h2>
+      <ul>
+        <li><strong>Gut abgedeckt:</strong> Berge, Wandern, Bike, Lagerfeuer und Gipfelkreuz.</li>
+        <li><strong>Brauchbar abgedeckt:</strong> Kompass mit zwei klar unterschiedlichen Richtungen.</li>
+        <li><strong>Schwächer abgedeckt:</strong> Camping aktuell nur mit einem bestätigten Hauptmotiv.</li>
+        <li><strong>Fehlend:</strong> Eine zweite bestätigte Topo-Variante ist im aktuellen Rohbestand noch nicht vorhanden.</li>
+      </ul>
+    </section>
+
+    <section class="panel table-wrap">
+      <h2>Produktionsmanifest</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Motiv</th>
+            <th>Vorschau</th>
+            <th>Gruppe</th>
+            <th>Status</th>
+            <th>Zieltyp</th>
+            <th>Stilnotiz</th>
+            <th>Flaechentyp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>berg-panorama-tal-wasser.png</code></td>
+            <td><img class="thumb" src="../source/raw/berg-panorama-tal-wasser.png" alt="berg-panorama-tal-wasser"></td>
+            <td>berge</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>breit, landschaftlich, detailreich</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>berg-waldlinie-01.png</code></td>
+            <td><img class="thumb" src="../source/raw/berg-waldlinie-01.png" alt="berg-waldlinie-01"></td>
+            <td>berge</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>kompakt, reduzierte Waldkante</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>bergkette-fein-01.png</code></td>
+            <td><img class="thumb" src="../source/raw/bergkette-fein-01.png" alt="bergkette-fein-01"></td>
+            <td>berge</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>fein, ruhig, breit</td>
+            <td><span class="badge badge-compact">kompakt / kleine bis mittlere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>bergpanorama-wald-vorne.png</code></td>
+            <td><img class="thumb" src="../source/raw/bergpanorama-wald-vorne.png" alt="bergpanorama-wald-vorne"></td>
+            <td>berge</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>emblematisch, mittlere Dichte</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>einzelberg-schraffur.png</code></td>
+            <td><img class="thumb" src="../source/raw/einzelberg-schraffur.png" alt="einzelberg-schraffur"></td>
+            <td>berge</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>einzelmotiv, fokussiert, schraffiert</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>gipfelkreuz-berge-kompakt.png</code></td>
+            <td><img class="thumb" src="../source/raw/gipfelkreuz-berge-kompakt.png" alt="gipfelkreuz-berge-kompakt"></td>
+            <td>gipfelkreuz</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>kompakt, klar, reduzierte Szene</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>gipfelkreuz-landschaft-detail.png</code></td>
+            <td><img class="thumb" src="../source/raw/gipfelkreuz-landschaft-detail.png" alt="gipfelkreuz-landschaft-detail"></td>
+            <td>gipfelkreuz</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>detailreich, szenisch, heroisch</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>kompass-berg-wald-weg.png</code></td>
+            <td><img class="thumb" src="../source/raw/kompass-berg-wald-weg.png" alt="kompass-berg-wald-weg"></td>
+            <td>kompass</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>emblematisch, detailreich, zentriert</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>kompassring-berg-wald.png</code></td>
+            <td><img class="thumb" src="../source/raw/kompassring-berg-wald.png" alt="kompassring-berg-wald"></td>
+            <td>kompass</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>kompakter Kompassrahmen, ruhig</td>
+            <td><span class="badge badge-compact">kompakt / kleine bis mittlere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>lagerfeuer-berge-kreis.png</code></td>
+            <td><img class="thumb" src="../source/raw/lagerfeuer-berge-kreis.png" alt="lagerfeuer-berge-kreis"></td>
+            <td>lagerfeuer</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>emblematisch, klarer Kreisaufbau</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>lagerfeuer-berge-offen.png</code></td>
+            <td><img class="thumb" src="../source/raw/lagerfeuer-berge-offen.png" alt="lagerfeuer-berge-offen"></td>
+            <td>lagerfeuer</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>offen, reduziert, ruhig</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>mountainbike-berglandschaft-detail.png</code></td>
+            <td><img class="thumb" src="../source/raw/mountainbike-berglandschaft-detail.png" alt="mountainbike-berglandschaft-detail"></td>
+            <td>bike</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>detailreich, dynamisch, szenisch</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>mountainbike-kompakt.png</code></td>
+            <td><img class="thumb" src="../source/raw/mountainbike-kompakt.png" alt="mountainbike-kompakt"></td>
+            <td>bike</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>kompakt, reduzierte Fahrszene</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>topo-berg-konturlinien-01.png</code></td>
+            <td><img class="thumb" src="../source/raw/topo-berg-konturlinien-01.png" alt="topo-berg-konturlinien-01"></td>
+            <td>berge</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>topoartig, grafisch, flaechenbetont</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>trailrunnerin-berglandschaft-kreis.png</code></td>
+            <td><img class="thumb" src="../source/raw/trailrunnerin-berglandschaft-kreis.png" alt="trailrunnerin-berglandschaft-kreis"></td>
+            <td>wandern</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>figurbetont, detailreich, kreisfoermig</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>wanderer-grat-kreis.png</code></td>
+            <td><img class="thumb" src="../source/raw/wanderer-grat-kreis.png" alt="wanderer-grat-kreis"></td>
+            <td>wandern</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>emblematisch, szenisch, klar</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>wanderer-trail-kompakt-01.png</code></td>
+            <td><img class="thumb" src="../source/raw/wanderer-trail-kompakt-01.png" alt="wanderer-trail-kompakt-01"></td>
+            <td>wandern</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>kompakt, ruhige Figur, reduziert</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>wanderer-trail-kompakt-02.png</code></td>
+            <td><img class="thumb" src="../source/raw/wanderer-trail-kompakt-02.png" alt="wanderer-trail-kompakt-02"></td>
+            <td>wandern</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>kompakt, bewegter als Variante 01</td>
+            <td><span class="badge badge-compact">kompakt / kleine Flaeche</span></td>
+          </tr>
+          <tr>
+            <td><code>zelt-berge-kreis.png</code></td>
+            <td><img class="thumb" src="../source/raw/zelt-berge-kreis.png" alt="zelt-berge-kreis"></td>
+            <td>camping</td>
+            <td><span class="badge badge-ok">rohbild vorhanden</span></td>
+            <td>svg</td>
+            <td>emblematisch, detailreich, kreisfoermig</td>
+            <td><span class="badge badge-detail">detailreicher / groessere Flaeche</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
