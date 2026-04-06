@@ -22,7 +22,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@600;700&family=Great+Vibes&family=Inter:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@600;700&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Inter:wght@500;700&family=Marcellus&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
   <link rel="stylesheet" href="/tools/vorschau/vorschau.css" />
@@ -150,11 +150,11 @@
               <strong id="previewProductName">Noch nichts ausgewählt</strong>
               <p id="previewProductHint">Material wählen.</p>
             </div>
-            <div class="preview-source">
+            <div class="preview-source preview-source--internal" hidden>
               <span>Set</span>
               <strong id="previewSetLabel">Einzel</strong>
             </div>
-            <div class="preview-source">
+            <div class="preview-source preview-source--internal" hidden>
               <span>Aktiver Anhänger</span>
               <strong id="previewPendantLabel">Anhänger 1</strong>
             </div>
@@ -166,7 +166,7 @@
               <span>Gestaltungsart</span>
               <strong id="previewModeLabel">Offen</strong>
             </div>
-            <div class="preview-source">
+            <div class="preview-source preview-source--internal" hidden>
               <span>Aktiver Inhalt</span>
               <strong id="previewSourceLabel">Offen</strong>
             </div>
@@ -241,28 +241,28 @@
 
         <div class="preview-control-group" id="materialGroup" aria-labelledby="material-heading">
           <div class="preview-control-title-row">
-            <h3 id="material-heading">1. Material wählen</h3>
+            <h3 id="material-heading">Material wählen</h3>
           </div>
           <div id="materialOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
 
         <div class="preview-control-group" id="productGroup" aria-labelledby="product-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="product-heading">2. Produkt wählen</h3>
+            <h3 id="product-heading">Produkt wählen</h3>
           </div>
           <div id="productOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
 
         <div class="preview-control-group" id="finishGroup" aria-labelledby="finish-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="finish-heading">3. Ausführung wählen</h3>
+            <h3 id="finish-heading">Ausführung wählen</h3>
           </div>
           <div id="finishOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
 
         <div class="preview-control-group" id="setGroup" aria-labelledby="set-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="set-heading">4. Set wählen</h3>
+            <h3 id="set-heading">Set wählen</h3>
           </div>
           <div id="setOptions" class="preview-option-grid preview-option-grid--products"></div>
         </div>
@@ -280,15 +280,14 @@
 
         <div class="preview-control-group" id="sizeGroup" aria-labelledby="size-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="size-heading">5. Größe wählen</h3>
-            <span class="preview-inline-note">8 / 10 / 12 / 15 / 20 mm</span>
+            <h3 id="size-heading">Größe wählen</h3>
           </div>
           <div id="sizeOptions" class="preview-size-grid"></div>
         </div>
 
         <div class="preview-control-group" id="designModeGroup" aria-labelledby="design-mode-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="design-mode-heading">6. Gestaltungsart wählen</h3>
+            <h3 id="design-mode-heading">Gestaltungsart wählen</h3>
           </div>
           <div id="designModeOptions" class="preview-option-grid preview-option-grid--modes"></div>
           <p class="preview-help" id="designModeRuleHint">Pro Seite ein Inhalt.</p>
@@ -296,7 +295,7 @@
 
         <div class="preview-control-group" id="motifTemplateGroup" aria-labelledby="template-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="template-heading">7. Motivart wählen</h3>
+            <h3 id="template-heading">Motivart wählen</h3>
           </div>
           <div id="templateOptions" class="preview-option-grid preview-option-grid--templates"></div>
           <p class="preview-help preview-help--notice" id="motifSizeHint" hidden></p>
@@ -332,6 +331,8 @@
               <option value="great-vibes">Great Vibes</option>
               <option value="inter">Inter</option>
               <option value="cormorant">Cormorant Garamond</option>
+              <option value="playfair">Playfair Display</option>
+              <option value="marcellus">Marcellus</option>
             </select>
           </label>
           <p class="preview-help" id="monogramHint">1–3 Zeichen.</p>
@@ -393,7 +394,6 @@
             value="100"
             aria-label="Motivgröße"
           />
-          <p class="preview-help">Größe</p>
 
           <div class="preview-control-title-row preview-control-title-row--compact">
             <h3>Breite</h3>
@@ -440,9 +440,6 @@
               value="0"
               aria-label="Rotation"
             />
-            <div class="preview-inline-actions">
-              <button class="btn" type="button" id="resetRotationButton">Rotation zurücksetzen</button>
-            </div>
           </div>
 
           <div class="preview-nudge">
@@ -452,15 +449,11 @@
             <button class="preview-nudge__button" type="button" data-nudge="right" aria-label="Nach rechts verschieben">→</button>
             <button class="preview-nudge__button" type="button" data-nudge="down" aria-label="Nach unten verschieben">↓</button>
           </div>
-          <div class="preview-inline-actions">
-            <button class="btn" type="button" id="resetStretchButton">Breite/Höhe zurücksetzen</button>
-          </div>
-          <p class="preview-help">Position</p>
         </div>
 
         <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="text-heading">6. Text eingeben und positionieren</h3>
+            <h3 id="text-heading">Text eingeben und positionieren</h3>
             <strong id="textSizeValueLabel">100%</strong>
           </div>
 
@@ -483,9 +476,12 @@
           <label class="preview-field">
             <span class="preview-field__label">Schriftart</span>
             <select id="textFontSelect" class="preview-select" aria-label="Schriftart wählen">
-              <option value="sans">Sans / modern</option>
-              <option value="serif">Serif / klassisch</option>
-              <option value="script">Script / elegant</option>
+              <option value="sans">Inter / klar</option>
+              <option value="serif">Playfair Display / klassisch</option>
+              <option value="script">Great Vibes / elegant</option>
+              <option value="marcellus">Marcellus / ruhig</option>
+              <option value="cinzel">Cinzel / markant</option>
+              <option value="dancing-script">Dancing Script / weich</option>
             </select>
           </label>
 

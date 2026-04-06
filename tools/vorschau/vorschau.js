@@ -24,6 +24,7 @@
   const motifOverlayOptionsEl = document.getElementById("motifOverlayOptions");
   const motifVariantOverlay = document.getElementById("motifVariantOverlay");
   const motifVariantOverlayBackdrop = document.getElementById("motifVariantOverlayBackdrop");
+  const motifVariantOverlayPanel = motifVariantOverlay ? motifVariantOverlay.querySelector(".preview-motif-overlay__panel") : null;
   const closeMotifVariantOverlayButton = document.getElementById("closeMotifVariantOverlayButton");
   const motifVariantOverlayBackButton = document.getElementById("motifVariantOverlayBackButton");
   const motifVariantOverlayTitle = document.getElementById("motifVariantOverlayTitle");
@@ -58,6 +59,7 @@
   const rotationSlider = document.getElementById("rotationSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
   const textFontSelect = document.getElementById("textFontSelect");
+  let lastMotifOverlayTrigger = null;
   const qrInput = document.getElementById("qrInput");
   const qrCharacterCount = document.getElementById("qrCharacterCount");
   const monogramInput = document.getElementById("monogramInput");
@@ -68,8 +70,6 @@
   const stretchYValueLabel = document.getElementById("stretchYValueLabel");
   const rotationValueLabel = document.getElementById("rotationValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
-  const resetRotationButton = document.getElementById("resetRotationButton");
-  const resetStretchButton = document.getElementById("resetStretchButton");
   const motifSizeHint = document.getElementById("motifSizeHint");
   const photoPricingHint = document.getElementById("photoPricingHint");
   const emblemSourceTemplateButton = document.getElementById("emblemSourceTemplateButton");
@@ -129,6 +129,13 @@
     S: 995,
     M: 1195,
     L: 1395
+  };
+  const JEWELRY_SET_BASE_PRICES_CENTS = {
+    1: 995,
+    2: 1795,
+    3: 2595,
+    4: 3295,
+    5: 3795
   };
   const BACK_SIDE_STANDARD_CENTS = 495;
   const PHOTO_NEW_PREP_CENTS = 3495;
@@ -215,18 +222,33 @@
   const TEXT_FONT_LIBRARY = [
     {
       id: "sans",
-      label: "Sans / modern",
-      family: "\"Helvetica Neue\", Arial, sans-serif"
+      label: "Inter / klar",
+      family: "\"Inter\", \"Helvetica Neue\", Arial, sans-serif"
     },
     {
       id: "serif",
-      label: "Serif / klassisch",
-      family: "Georgia, \"Times New Roman\", serif"
+      label: "Playfair Display / klassisch",
+      family: "\"Playfair Display\", Georgia, \"Times New Roman\", serif"
     },
     {
       id: "script",
-      label: "Script / elegant",
-      family: "\"Brush Script MT\", \"Segoe Script\", cursive"
+      label: "Great Vibes / elegant",
+      family: "\"Great Vibes\", \"Brush Script MT\", \"Segoe Script\", cursive"
+    },
+    {
+      id: "marcellus",
+      label: "Marcellus / ruhig",
+      family: "\"Marcellus\", Georgia, serif"
+    },
+    {
+      id: "cinzel",
+      label: "Cinzel / markant",
+      family: "\"Cinzel\", Georgia, serif"
+    },
+    {
+      id: "dancing-script",
+      label: "Dancing Script / weich",
+      family: "\"Dancing Script\", \"Segoe Script\", cursive"
     }
   ];
 
@@ -250,6 +272,16 @@
       id: "cormorant",
       label: "Cormorant Garamond",
       family: "\"Cormorant Garamond\", Georgia, serif"
+    },
+    {
+      id: "playfair",
+      label: "Playfair Display",
+      family: "\"Playfair Display\", Georgia, serif"
+    },
+    {
+      id: "marcellus",
+      label: "Marcellus",
+      family: "\"Marcellus\", Georgia, serif"
     }
   ];
 
@@ -354,7 +386,8 @@
       {
         id: "wood",
         name: "Holz",
-        description: "Weitere Produktwelten aus Holz werden vorbereitet.",
+        description: "Wird vorbereitet.",
+        isComingSoon: true,
         productFamilies: [
           {
             id: "wood-coming-soon",
@@ -369,7 +402,8 @@
       {
         id: "slate",
         name: "Schiefer",
-        description: "Weitere Produktwelten aus Schiefer werden vorbereitet.",
+        description: "Wird vorbereitet.",
+        isComingSoon: true,
         productFamilies: [
           {
             id: "slate-coming-soon",
@@ -388,15 +422,26 @@
     {
       id: "symbol-template",
       name: "Symbolvorlage",
-      description: "Wappen und Embleme geführt wählen.",
+      description: "",
       imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
       category: "emblem"
     },
     {
       id: "qr-code",
       name: "QR-Code",
-      description: "Direkt als eigener Weg.",
-      imageSrc: "/assets/tools/vorschau/vorlage-emblem.png",
+      description: "",
+      imageSrc: buildInlineSvgDataUri(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
+          '<rect width="200" height="200" fill="#f6f2ee"/>' +
+          '<rect x="24" y="24" width="54" height="54" fill="#000"/>' +
+          '<rect x="36" y="36" width="30" height="30" fill="#f6f2ee"/>' +
+          '<rect x="122" y="24" width="54" height="54" fill="#000"/>' +
+          '<rect x="134" y="36" width="30" height="30" fill="#f6f2ee"/>' +
+          '<rect x="24" y="122" width="54" height="54" fill="#000"/>' +
+          '<rect x="36" y="134" width="30" height="30" fill="#f6f2ee"/>' +
+          '<path d="M98 24h16v16H98zM98 56h16v16H98zM82 72h16v16H82zM114 72h16v16H114zM130 88h16v16h-16zM98 104h16v16H98zM82 120h16v16H82zM114 120h16v16H114zM146 120h16v16h-16zM82 152h16v16H82zM114 152h16v16H114zM146 152h16v16h-16z" fill="#000"/>' +
+        '</svg>'
+      ),
       category: "qr-shortcut"
     },
     {
@@ -1687,6 +1732,7 @@
 
     textFontSelect.addEventListener("change", function () {
       getActiveSideState().textFontId = textFontSelect.value;
+      syncFontSelectPreview(textFontSelect, TEXT_FONT_LIBRARY);
       clampTextPlacement();
       syncUi();
       queueRender();
@@ -1721,6 +1767,7 @@
     if (monogramFontSelect) {
       monogramFontSelect.addEventListener("change", function () {
         getActiveSideState().monogramFontId = monogramFontSelect.value;
+        syncFontSelectPreview(monogramFontSelect, MONOGRAM_FONT_LIBRARY);
         clampPlacement();
         syncUi();
         queueRender();
@@ -1750,6 +1797,8 @@
         setEmblemSourceMode("template");
       });
     }
+
+    initializeFontSelectPreviews();
     if (emblemSourceUploadButton) {
       emblemSourceUploadButton.addEventListener("click", function () {
         setEmblemSourceMode("upload");
@@ -1779,12 +1828,6 @@
       });
     }
     resetPlacementButton.addEventListener("click", resetAllSelections);
-    if (resetRotationButton) {
-      resetRotationButton.addEventListener("click", resetBottleOpenerRotation);
-    }
-    if (resetStretchButton) {
-      resetStretchButton.addEventListener("click", resetStretch);
-    }
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
     [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
@@ -1923,6 +1966,10 @@
 
   function getSetDiscountRate(pendantCount) {
     return SET_DISCOUNT_RATES[pendantCount] || 0;
+  }
+
+  function getJewelrySetBasePriceCents(count) {
+    return JEWELRY_SET_BASE_PRICES_CENTS[count] || JEWELRY_SET_BASE_PRICES_CENTS[1];
   }
 
   function roundCentsToFive(cents) {
@@ -2160,6 +2207,60 @@
       return result;
     }
 
+    const hasAnyPhotoInPendantSet = getPendantIndices().some(function (pendantIndex) {
+      return SIDE_IDS.some(function (sideId) {
+        if (sideId === "back" && !isBackSideEnabled(pendantIndex)) {
+          return false;
+        }
+        return getSelectedSideType(sideId, pendantIndex) === "photo";
+      });
+    });
+
+    if (!hasAnyPhotoInPendantSet) {
+      const baseSetPriceCents = getJewelrySetBasePriceCents(getPendantCount());
+      result.discountRate = 0;
+      result.subtotalCents = baseSetPriceCents;
+      result.items.push({
+        label: getActiveSetOption().name,
+        sizeLabel: "",
+        baseCents: baseSetPriceCents,
+        backCents: 0,
+        totalCents: baseSetPriceCents,
+        displayPrice: formatEuro(baseSetPriceCents),
+        metaParts: ["Basispreis"]
+      });
+
+      for (let pendantIndex = 0; pendantIndex < getPendantCount(); pendantIndex += 1) {
+        const size = getActiveSize(pendantIndex);
+        if (!size) {
+          result.invalidReason = "Preis wird berechnet, sobald alle Anhänger eine Größe haben.";
+          return result;
+        }
+
+        if (!isBackSideEnabled(pendantIndex)) {
+          continue;
+        }
+
+        result.subtotalCents += BACK_SIDE_STANDARD_CENTS;
+        result.items.push({
+          pendantIndex: pendantIndex,
+          label: getPendantLabel(pendantIndex),
+          sizeLabel: getSideLabel("back"),
+          baseCents: 0,
+          backCents: BACK_SIDE_STANDARD_CENTS,
+          totalCents: BACK_SIDE_STANDARD_CENTS,
+          displayPrice: formatEuro(BACK_SIDE_STANDARD_CENTS),
+          metaParts: ["Rückseite +" + formatEuro(BACK_SIDE_STANDARD_CENTS)]
+        });
+      }
+
+      result.totalCents = result.subtotalCents;
+      result.discountCents = 0;
+      result.isReady = true;
+      result.invalidReason = "Preis basiert auf dem Setpreis und optional aktivierten Rückseiten.";
+      return result;
+    }
+
     const preparedPhotoKeys = new Set();
 
     function getChargeForPhotoSide(sideId, pendantIndex) {
@@ -2328,6 +2429,8 @@
     }
     textSizeSlider.value = "100";
     textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
+    syncFontSelectPreview(textFontSelect, TEXT_FONT_LIBRARY);
+    syncFontSelectPreview(monogramFontSelect, MONOGRAM_FONT_LIBRARY);
     closeRequestMenu();
     renderProductOptions();
     renderFinishOptions();
@@ -2449,6 +2552,8 @@
     resetImagePlacement(false);
     resetTextPlacement(false);
     textFontSelect.value = TEXT_FONT_LIBRARY[0].id;
+    syncFontSelectPreview(textFontSelect, TEXT_FONT_LIBRARY);
+    syncFontSelectPreview(monogramFontSelect, MONOGRAM_FONT_LIBRARY);
   }
 
   function getFlowStepIds() {
@@ -2567,12 +2672,16 @@
 
     CATALOG.materials.forEach((material) => {
       const button = document.createElement("button");
+      const metaText = material.isComingSoon ? "Wird vorbereitet" : material.description;
       button.type = "button";
       button.className = "preview-option";
+      if (material.isComingSoon) {
+        button.classList.add("preview-option--coming-soon-minor");
+      }
       button.setAttribute("data-material-id", material.id);
       button.innerHTML =
         '<span class="preview-option__title">' + escapeHtml(material.name) + "</span>" +
-        '<span class="preview-option__meta">' + escapeHtml(material.description) + "</span>";
+        '<span class="preview-option__meta">' + escapeHtml(metaText) + "</span>";
 
       button.addEventListener("click", function () {
         if (material.isComingSoon) return;
@@ -2582,6 +2691,24 @@
 
       materialOptionsEl.appendChild(button);
     });
+  }
+
+  function resetMotifOverlayViewport() {
+    if (motifVariantOverlayPanel) {
+      motifVariantOverlayPanel.scrollTop = 0;
+    }
+    if (motifOverlayOptionsEl) {
+      motifOverlayOptionsEl.scrollTop = 0;
+    }
+  }
+
+  function focusMotifOverlayPrimaryControl() {
+    const focusTarget = !motifVariantOverlayBackButton.hidden
+      ? motifVariantOverlayBackButton
+      : closeMotifVariantOverlayButton;
+    if (focusTarget && typeof focusTarget.focus === "function") {
+      focusTarget.focus({ preventScroll: true });
+    }
   }
 
   function renderProductOptions() {
@@ -2720,16 +2847,14 @@
   }
 
   function getSetStartingPriceCents(count) {
-    const subtotalCents = PRICE_BY_SIZE_GROUP_CENTS.S * count;
-    const discountedCents = Math.round(subtotalCents * (1 - getSetDiscountRate(count)));
-    return roundCentsToFive(discountedCents);
+    return getJewelrySetBasePriceCents(count);
   }
 
   function getProductFamilyStartingPriceCents(productFamily) {
     if (!productFamily) return null;
 
     if (productFamily.id === "jewelry-pendant") {
-      return PRICE_BY_SIZE_GROUP_CENTS.S;
+      return getJewelrySetBasePriceCents(1);
     }
 
     if (productFamily.id === "bottle-opener") {
@@ -2794,13 +2919,19 @@
 
     getAvailableTemplates().forEach((template) => {
       const button = document.createElement("button");
+      const metaMarkup = template.description
+        ? '<span class="preview-option__meta">' + escapeHtml(template.description) + "</span>"
+        : "";
       button.type = "button";
       button.className = "preview-option";
+      if (template.id === "symbol-template") {
+        button.classList.add("preview-option--template-symbol-template");
+      }
       button.setAttribute("data-template-id", template.id);
       button.innerHTML =
         buildTemplateThumbMarkup(template) +
         '<span class="preview-option__title">' + escapeHtml(template.name) + "</span>" +
-        '<span class="preview-option__meta">' + escapeHtml(template.description) + "</span>";
+        metaMarkup;
 
       button.addEventListener("click", function () {
         selectMotifTemplate(template.id);
@@ -2814,7 +2945,7 @@
     if (template.category === "monogram") {
       return (
         '<span class="preview-option__thumb">' +
-          '<span class="preview-option__thumb-media preview-option__thumb-media--monogram" style="font:700 68px \\"Cinzel\\", Georgia, serif;color:#16181c;">LB</span>' +
+          '<span class="preview-option__thumb-media preview-option__thumb-media--monogram" style="font:700 68px \\"Cinzel\\", Georgia, serif;color:#000;-webkit-text-fill-color:#000;opacity:1;filter:none;mix-blend-mode:normal;text-shadow:none;">LB</span>' +
         "</span>"
       );
     }
@@ -2882,6 +3013,35 @@
         return category.id === categoryId;
       });
     }).filter(Boolean);
+  }
+
+  function applyFontSelectOptionStyles(selectElement, fontLibrary) {
+    if (!selectElement) return;
+    Array.from(selectElement.options).forEach(function (option) {
+      const font = fontLibrary.find(function (entry) {
+        return entry.id === option.value;
+      });
+      if (!font) return;
+      option.style.fontFamily = font.family;
+      option.style.fontWeight = "600";
+    });
+  }
+
+  function syncFontSelectPreview(selectElement, fontLibrary) {
+    if (!selectElement) return;
+    const font = fontLibrary.find(function (entry) {
+      return entry.id === selectElement.value;
+    }) || fontLibrary[0];
+    if (!font) return;
+    selectElement.style.fontFamily = font.family;
+    selectElement.style.fontWeight = "600";
+  }
+
+  function initializeFontSelectPreviews() {
+    applyFontSelectOptionStyles(textFontSelect, TEXT_FONT_LIBRARY);
+    applyFontSelectOptionStyles(monogramFontSelect, MONOGRAM_FONT_LIBRARY);
+    syncFontSelectPreview(textFontSelect, TEXT_FONT_LIBRARY);
+    syncFontSelectPreview(monogramFontSelect, MONOGRAM_FONT_LIBRARY);
   }
 
   function buildAnimalGroupThumbMarkup(animalGroup) {
@@ -3461,6 +3621,9 @@
 
   function openMotifVariantOverlay(step) {
     if (!isMotifMode()) return;
+    if (!state.isMotifVariantOverlayOpen) {
+      lastMotifOverlayTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    }
     if (isAnimalSymbolsSelected()) {
       state.motifOverlayStep = step === "variants" ? "variants" : "groups";
     } else if (isEmblemTemplateSelected()) {
@@ -3472,6 +3635,10 @@
     renderMotifOverlayOptions();
     updateMotifVariantOverlayCopy();
     syncUi();
+    requestAnimationFrame(function () {
+      resetMotifOverlayViewport();
+      focusMotifOverlayPrimaryControl();
+    });
   }
 
   function closeMotifVariantOverlay() {
@@ -3480,6 +3647,10 @@
     state.motifOverlayStep = "groups";
     renderMotifOverlayOptions();
     syncUi();
+    if (lastMotifOverlayTrigger && document.contains(lastMotifOverlayTrigger)) {
+      lastMotifOverlayTrigger.focus({ preventScroll: true });
+    }
+    lastMotifOverlayTrigger = null;
   }
 
   function showAnimalGroupOverlay() {
@@ -3499,6 +3670,10 @@
     renderMotifOverlayOptions();
     updateMotifVariantOverlayCopy();
     syncUi();
+    requestAnimationFrame(function () {
+      resetMotifOverlayViewport();
+      focusMotifOverlayPrimaryControl();
+    });
   }
 
   function onUploadChange(event) {
@@ -4010,12 +4185,12 @@
       previewProductHint.textContent = activeMaterial.id === "metal"
         ? "Wähle jetzt Schmuckanhänger oder Flaschenöffner."
         : "Die Struktur für diese Materialwelt ist vorbereitet.";
-      previewModeChip.textContent = "Schritt 2";
+      previewModeChip.textContent = "Produkt wählen";
     } else if (isBottleOpenerProduct()) {
       if (!hasDesignModeSelection()) {
         previewProductName.textContent = "Flaschenöffner";
         previewProductHint.textContent = "Die große Hauptfläche ist aktiv. Wähle jetzt Motiv, Text oder QR.";
-        previewModeChip.textContent = "Schritt 3";
+        previewModeChip.textContent = "Gestaltungsart wählen";
       } else {
         previewProductName.textContent = "Flaschenöffner";
         previewProductHint.textContent = "Große äußere Hauptfläche · Vorderseite";
@@ -4024,21 +4199,21 @@
     } else if (requiresFinishSelection() && !hasFinishSelection()) {
       previewProductName.textContent = activeProductFamily.name;
       previewProductHint.textContent = "Wähle jetzt die Ausführung für deinen Edelstahl-Schmuckanhänger.";
-      previewModeChip.textContent = "Schritt 3";
+      previewModeChip.textContent = "Ausführung wählen";
     } else if (!hasSetSelection()) {
       previewProductName.textContent = activeProductDisplayName;
       previewProductHint.textContent = "Lege jetzt fest, wie viele Anhänger im Set gezeigt werden.";
-      previewModeChip.textContent = requiresFinishSelection() ? "Schritt 4" : "Schritt 3";
+      previewModeChip.textContent = "Set wählen";
     } else if (!hasSizeSelection()) {
       previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel;
       previewProductHint.textContent = "Wähle jetzt die passende Größe für " + getPendantLabel(state.activePendantIndex) + ".";
-      previewModeChip.textContent = requiresFinishSelection() ? "Schritt 5" : "Schritt 4";
+      previewModeChip.textContent = "Größe wählen";
     } else if (!hasDesignModeSelection()) {
       previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
       previewProductHint.textContent = isBackSideEnabled()
         ? "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist zusätzlich verfügbar."
         : "Wähle jetzt Motiv oder Text für " + getPendantLabel(state.activePendantIndex) + ".";
-      previewModeChip.textContent = requiresFinishSelection() ? "Schritt 6" : "Schritt 5";
+      previewModeChip.textContent = "Gestaltungsart wählen";
     } else {
       previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
       previewProductHint.textContent = "Metall · " + activeSize.diameterMm + " mm · " + getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide);
@@ -4154,7 +4329,7 @@
     );
     setSectionVisibility(monogramGroup, isMotifMode() && isMonogramTemplateSelected());
     setSectionVisibility(emblemGroup, isMotifMode() && isEmblemTemplateSelected() && hasSelectedEmblemKind() && !isQrSelected());
-    setSectionVisibility(rotationGroup, isBottleOpenerProduct() && hasDesignModeSelection());
+    setSectionVisibility(rotationGroup, hasDesignModeSelection());
     setSectionVisibility(qrCodeGroup, isQrMode() || (isMotifMode() && isQrSelected()));
     setSectionVisibility(textGroup, isTextMode());
     if (emblemSourceTemplateButton) {
@@ -4372,18 +4547,24 @@
       const isVisible = stepId === "material" ? true : isStepAvailable(stepId);
       const visualState = getStepVisualState(stepId);
       const summary = getStepSummary(stepId);
-      const stepNumber = flowStepIds.indexOf(stepId) + 1;
 
       definition.groupEl.hidden = !isVisible;
       definition.groupEl.setAttribute("data-step-state", visualState);
       definition.groupEl.setAttribute("data-step-id", stepId);
       if (titleEl && stepTitles[stepId]) {
-        titleEl.textContent = stepNumber + ". " + stepTitles[stepId];
+        titleEl.textContent = stepTitles[stepId];
       }
       if (titleRow) {
         titleRow.setAttribute("data-step-summary", summary);
       }
     });
+
+    if (motifTemplateGroup) {
+      const motifTemplateTitle = motifTemplateGroup.querySelector(".preview-control-title-row h3");
+      if (motifTemplateTitle) {
+        motifTemplateTitle.textContent = "Motivart wählen";
+      }
+    }
   }
 
   function getActiveSourceLabel(activeTemplate) {
@@ -4485,13 +4666,13 @@
     drawBackdrop();
 
     if (!hasMaterialSelection()) {
-      drawEmptyState("1. Material wählen", "");
+      drawEmptyState("Material wählen", "");
       syncMobilePreviewCanvas();
       return;
     }
 
     if (!hasProductSelection()) {
-      drawEmptyState("2. Produkt wählen", "");
+      drawEmptyState("Produkt wählen", "");
       syncMobilePreviewCanvas();
       return;
     }
@@ -4503,7 +4684,7 @@
     }
 
     if (!hasSetSelection()) {
-      drawEmptyState("3. Set wählen", "");
+      drawEmptyState("Set wählen", "");
       syncMobilePreviewCanvas();
       return;
     }
@@ -4587,7 +4768,7 @@
         }
       } else if (pendantIndex === state.activePendantIndex) {
         drawMotifPrompt(
-          state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "5. Gestaltungsart wählen",
+          state.activeSide === "back" && isBackSideEnabled() ? "Rückseite gestalten" : "Gestaltungsart wählen",
           state.activeSide === "back" && isBackSideEnabled()
             ? "Rückseite gestalten oder frei lassen."
             : "Motiv oder Text wählen."
@@ -4743,7 +4924,7 @@
     ctx.fillStyle = "rgba(255,255,255,0.94)";
     ctx.font = "700 34px system-ui, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("4. Größe wählen", 600, 1002);
+    ctx.fillText("Größe wählen", 600, 1002);
 
     ctx.fillStyle = "rgba(210,207,206,0.72)";
     ctx.font = "500 22px system-ui, sans-serif";
@@ -4924,6 +5105,18 @@
 
   function getBottleOpenerRotationRadians() {
     return clamp(getActiveSideState().rotationDeg || 0, -180, 180) * (Math.PI / 180);
+  }
+
+  function getPendantRotationRadians(pendantIndex) {
+    return clamp(getSideState(state.activeSide, pendantIndex).rotationDeg || 0, -180, 180) * (Math.PI / 180);
+  }
+
+  function applyPendantContentRotation(centerX, centerY, pendantIndex) {
+    const rotationRadians = getPendantRotationRadians(pendantIndex);
+    if (!rotationRadians) return;
+    ctx.translate(centerX, centerY);
+    ctx.rotate(rotationRadians);
+    ctx.translate(-centerX, -centerY);
   }
 
   function applyBottleOpenerContentRotation(centerX, centerY) {
@@ -5380,6 +5573,7 @@
     ctx.beginPath();
     ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.clip();
+    applyPendantContentRotation(x + drawBox.width / 2, y + drawBox.height / 2, pendantIndex);
 
     ctx.filter = "grayscale(1) contrast(1.15) brightness(0.82)";
     ctx.globalAlpha = 0.62;
@@ -5426,6 +5620,7 @@
     ctx.beginPath();
     ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.clip();
+    applyPendantContentRotation(x, y, pendantIndex);
     ctx.translate(x, y);
     ctx.scale(stretchXFactor, stretchYFactor);
     ctx.translate(-x, -y);
@@ -5457,6 +5652,7 @@
     ctx.beginPath();
     ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.clip();
+    applyPendantContentRotation(squareX + outerSize / 2, squareY + outerSize / 2, pendantIndex);
 
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = "#f7f4f0";
@@ -5491,6 +5687,7 @@
     ctx.beginPath();
     ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.clip();
+    applyPendantContentRotation(x, y, pendantIndex);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
