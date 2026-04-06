@@ -185,6 +185,10 @@
   display: none;
 }
 
+.preview-mobile-summary-cta {
+  display: none;
+}
+
 .selection-start-stack {
   display: flex;
   flex-direction: column;
@@ -1895,6 +1899,19 @@
   .preview-summary-launch--mobile {
     display: inline-flex;
     align-items: center;
+  }
+
+  .preview-mobile-summary-cta {
+    display: block;
+    margin-top: 14px;
+  }
+
+  .preview-summary-launch--footer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 44px;
   }
 
   .preview-control-card {

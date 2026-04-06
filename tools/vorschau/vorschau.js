@@ -113,6 +113,7 @@
   const previewSourceLabel = document.getElementById("previewSourceLabel");
   const toggleSummaryButton = document.getElementById("toggleSummaryButton");
   const openSummaryMobileButton = document.getElementById("openSummaryMobileButton");
+  const openSummaryMobileFooterButton = document.getElementById("openSummaryMobileFooterButton");
   const previewSummarySection = document.getElementById("previewSummarySection");
   const previewSummaryPanel = document.getElementById("previewSummaryPanel");
   const previewSummaryBackdrop = document.getElementById("previewSummaryBackdrop");
@@ -1927,6 +1928,9 @@
     }
     if (openSummaryMobileButton) {
       openSummaryMobileButton.addEventListener("click", toggleSummaryPanel);
+    }
+    if (openSummaryMobileFooterButton) {
+      openSummaryMobileFooterButton.addEventListener("click", toggleSummaryPanel);
     }
     if (previewSummaryBackdrop) {
       previewSummaryBackdrop.addEventListener("click", function () {
@@ -4150,6 +4154,9 @@
     }
     if (openSummaryMobileButton) {
       openSummaryMobileButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    }
+    if (openSummaryMobileFooterButton) {
+      openSummaryMobileFooterButton.setAttribute("aria-expanded", isOpen ? "true" : "false");
     }
     if (previewSummarySection) {
       previewSummarySection.classList.toggle("is-mobile-open", isOpen);
