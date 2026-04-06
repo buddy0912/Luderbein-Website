@@ -181,6 +181,11 @@
   const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
   const mobileThumbCropCache = new Map();
   let mobileThumbCropFrame = 0;
+  let mobilePreviewPanX = 0;
+  let mobilePreviewPanY = 0;
+  let mobilePreviewDragOrigin = null;
+  let mobilePreviewGeometryKey = "";
+  const MOBILE_PREVIEW_TAP_SLOP = 8;
 
   const MODE_LIBRARY = [
     {
@@ -2302,6 +2307,14 @@
     canvas.addEventListener("pointerup", onPointerUp);
     canvas.addEventListener("pointercancel", onPointerUp);
     canvas.addEventListener("pointerleave", onPointerUp);
+    if (mobileCanvas) {
+      mobileCanvas.style.touchAction = "none";
+      mobileCanvas.addEventListener("pointerdown", onMobilePreviewPointerDown);
+      mobileCanvas.addEventListener("pointermove", onMobilePreviewPointerMove);
+      mobileCanvas.addEventListener("pointerup", onMobilePreviewPointerUp);
+      mobileCanvas.addEventListener("pointercancel", onMobilePreviewPointerUp);
+      mobileCanvas.addEventListener("pointerleave", onMobilePreviewPointerUp);
+    }
     canvas.addEventListener("keydown", onCanvasKeydown);
     document.addEventListener("click", onDocumentClick);
     document.addEventListener("keydown", onDocumentKeydown);
@@ -4597,6 +4610,77 @@
     }
   }
 
+  function onMobilePreviewPointerDown(event) {
+    if (!mobileCanvas || !hasAnyPendantSizeSelection() || isBottleOpenerProduct()) return;
+
+    const viewport = getMobilePreviewViewport(
+      mobileCanvas.width / mobileCanvas.height,
+      true
+    );
+    if (!viewport) return;
+
+    mobileCanvas.setPointerCapture(event.pointerId);
+    mobilePreviewDragOrigin = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      panX: mobilePreviewPanX,
+      panY: mobilePreviewPanY,
+      moved: false
+    };
+  }
+
+  function onMobilePreviewPointerMove(event) {
+    if (!mobileCanvas || !mobilePreviewDragOrigin) return;
+
+    const viewport = getMobilePreviewViewport(
+      mobileCanvas.width / mobileCanvas.height,
+      true
+    );
+    if (!viewport) return;
+
+    const rect = mobileCanvas.getBoundingClientRect();
+    const ratioX = viewport.sourceWidth / rect.width;
+    const ratioY = viewport.sourceHeight / rect.height;
+    const movementX = event.clientX - mobilePreviewDragOrigin.x;
+    const movementY = event.clientY - mobilePreviewDragOrigin.y;
+    if (!mobilePreviewDragOrigin.moved) {
+      const movementDistance = Math.sqrt(movementX * movementX + movementY * movementY);
+      if (movementDistance >= MOBILE_PREVIEW_TAP_SLOP) {
+        mobilePreviewDragOrigin.moved = true;
+      } else {
+        return;
+      }
+    }
+
+    const deltaX = (event.clientX - mobilePreviewDragOrigin.x) * ratioX;
+    const deltaY = (event.clientY - mobilePreviewDragOrigin.y) * ratioY;
+
+    mobilePreviewPanX = clamp(mobilePreviewDragOrigin.panX - deltaX, -viewport.maxPanX, viewport.maxPanX);
+    mobilePreviewPanY = clamp(mobilePreviewDragOrigin.panY - deltaY, -viewport.maxPanY, viewport.maxPanY);
+    syncMobilePreviewCanvas();
+  }
+
+  function onMobilePreviewPointerUp(event) {
+    if (!mobilePreviewDragOrigin || !mobileCanvas) return;
+    const wasTap = !mobilePreviewDragOrigin.moved;
+
+    if (wasTap) {
+      const tappedPendantIndex = getPendantIndexAtMobileClientPoint(event.clientX, event.clientY);
+      if (tappedPendantIndex !== -1) {
+        setActivePendant(tappedPendantIndex);
+      }
+    }
+
+    mobilePreviewDragOrigin = null;
+
+    try {
+      mobileCanvas.releasePointerCapture(event.pointerId);
+    } catch (_) {
+      // noop
+    }
+  }
+
   function getPendantIndexAtClientPoint(clientX, clientY) {
     if (!hasAnyPendantSizeSelection()) return -1;
 
@@ -4610,6 +4694,39 @@
       const radius = (size ? size.productRadius : 116) * layout.scale;
       return Math.sqrt(dx * dx + dy * dy) <= radius;
     });
+  }
+
+  function getPendantIndexAtMobileClientPoint(clientX, clientY) {
+    if (!mobileCanvas || !hasAnyPendantSizeSelection()) return -1;
+
+    const viewport = getMobilePreviewViewport(
+      mobileCanvas.width / mobileCanvas.height,
+      true
+    );
+    if (!viewport) return -1;
+
+    const rect = mobileCanvas.getBoundingClientRect();
+    const localX = (clientX - rect.left) * (mobileCanvas.width / rect.width);
+    const localY = (clientY - rect.top) * (mobileCanvas.height / rect.height);
+    const sourceX = (localX / mobileCanvas.width) * viewport.sourceWidth + (viewport.centerX - viewport.sourceWidth / 2);
+    const sourceY = (localY / mobileCanvas.height) * viewport.sourceHeight + (viewport.centerY - viewport.sourceHeight / 2);
+
+    let bestPendantIndex = -1;
+    let bestDistanceRatio = Infinity;
+
+    getPendantLayouts().forEach(function (layout, pendantIndex) {
+      const size = getActiveSize(pendantIndex);
+      const dx = sourceX - layout.x;
+      const dy = sourceY - layout.y;
+      const radius = (size ? size.productRadius : 116) * layout.scale;
+      const distanceRatio = Math.sqrt(dx * dx + dy * dy) / Math.max(radius, 1);
+      if (distanceRatio <= 1 && distanceRatio < bestDistanceRatio) {
+        bestDistanceRatio = distanceRatio;
+        bestPendantIndex = pendantIndex;
+      }
+    });
+
+    return bestPendantIndex;
   }
 
   function getPlacementClampDistance(areaSize, contentSize, axis) {
@@ -5990,28 +6107,150 @@
       return 650;
     }
 
-    const layouts = getPendantLayouts();
-    const activeLayout = layouts[state.activePendantIndex] || layouts[0];
-    const activeSize = getActiveSize(state.activePendantIndex) || getActiveSize(0);
-    if (!activeLayout || !activeSize) {
+    const compositionBounds = getMobilePendantCompositionBounds();
+    if (!compositionBounds) {
       return 650;
     }
 
-    const scale = activeLayout.scale || 1;
-    const radius = activeSize.productRadius * scale;
-    const topAttachment = (650 - (activeSize.ringY - activeSize.ringOuter)) * scale;
-    const safeTop = 26;
-    const safeBottom = 18;
-    const activeTop = activeLayout.y - topAttachment;
-    const activeBottom = activeLayout.y + radius + 18 * scale;
-    const minSourceTop = Math.max(0, activeBottom + safeBottom - sourceHeight);
-    const maxSourceTop = Math.max(0, activeTop - safeTop);
-    const preferredSourceTop = Math.max(0, activeTop - safeTop);
+    const minSourceTop = Math.max(0, compositionBounds.bottom - sourceHeight);
+    const maxSourceTop = Math.max(0, compositionBounds.top);
+    const preferredSourceTop = Math.max(0, compositionBounds.centerY - sourceHeight / 2);
     const sourceTop = minSourceTop <= maxSourceTop
       ? clamp(preferredSourceTop, minSourceTop, maxSourceTop)
-      : minSourceTop;
+      : preferredSourceTop;
 
     return sourceTop + sourceHeight / 2;
+  }
+
+  function getMobilePendantCompositionBounds() {
+    if (isBottleOpenerProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
+      return null;
+    }
+
+    const layouts = getPendantLayouts();
+    if (!layouts.length) return null;
+
+    let minLeft = Infinity;
+    let minTop = Infinity;
+    let maxRight = -Infinity;
+    let maxBottom = -Infinity;
+
+    layouts.forEach(function (layout, pendantIndex) {
+      const size = getActiveSize(pendantIndex) || getActiveSize(0);
+      if (!size) return;
+
+      const scale = layout.scale || 1;
+      const radius = size.productRadius * scale;
+      const horizontalPadding = 24 * scale;
+      const topAttachment = (650 - (size.ringY - size.ringOuter)) * scale;
+      const left = layout.x - radius - horizontalPadding;
+      const top = layout.y - topAttachment;
+      const right = layout.x + radius + horizontalPadding;
+      const bottom = layout.y + radius + 24 * scale;
+
+      if (left < minLeft) minLeft = left;
+      if (top < minTop) minTop = top;
+      if (right > maxRight) maxRight = right;
+      if (bottom > maxBottom) maxBottom = bottom;
+    });
+
+    if (!Number.isFinite(minLeft) || !Number.isFinite(minTop) || !Number.isFinite(maxRight) || !Number.isFinite(maxBottom)) {
+      return null;
+    }
+
+    const safeLeft = 36;
+    const safeTop = 34;
+    const safeRight = 36;
+    const safeBottom = 30;
+    return {
+      left: Math.max(0, minLeft - safeLeft),
+      top: Math.max(0, minTop - safeTop),
+      right: Math.min(canvas.width, maxRight + safeRight),
+      bottom: Math.min(canvas.height, maxBottom + safeBottom),
+      centerX: (minLeft + maxRight) / 2,
+      centerY: (minTop + maxBottom) / 2
+    };
+  }
+
+  function getMobilePreviewGeometryKey() {
+    if (isBottleOpenerProduct()) {
+      return "bottle-opener";
+    }
+
+    if (!hasAnyPendantSizeSelection()) {
+      return "empty";
+    }
+
+    return [
+      state.productFamilyId || "",
+      state.setId || "",
+      getPendantIndices().map(function (pendantIndex) {
+        const size = getActiveSize(pendantIndex);
+        return size ? size.id : "none";
+      }).join("|")
+    ].join("::");
+  }
+
+  function getMobilePreviewViewport(targetAspect, keepPan) {
+    const sourceWidthFallback = canvas.width;
+    const sourceHeightFallback = Math.round(sourceWidthFallback / targetAspect);
+
+    if (isBottleOpenerProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
+      return {
+        sourceWidth: sourceWidthFallback,
+        sourceHeight: sourceHeightFallback,
+        centerX: canvas.width / 2,
+        centerY: isBottleOpenerProduct() ? 560 : 650,
+        maxPanX: 0,
+        maxPanY: Math.max(0, (canvas.height - sourceHeightFallback) / 2)
+      };
+    }
+
+    const geometryKey = getMobilePreviewGeometryKey();
+    if (!keepPan && mobilePreviewGeometryKey !== geometryKey) {
+      mobilePreviewPanX = 0;
+      mobilePreviewPanY = 0;
+      mobilePreviewGeometryKey = geometryKey;
+    }
+
+    const bounds = getMobilePendantCompositionBounds();
+    if (!bounds) {
+      return {
+        sourceWidth: sourceWidthFallback,
+        sourceHeight: sourceHeightFallback,
+        centerX: canvas.width / 2,
+        centerY: 650,
+        maxPanX: 0,
+        maxPanY: Math.max(0, (canvas.height - sourceHeightFallback) / 2)
+      };
+    }
+
+    let sourceWidth = Math.max(bounds.right - bounds.left, (bounds.bottom - bounds.top) * targetAspect);
+    sourceWidth = clamp(sourceWidth, Math.min(860, canvas.width), canvas.width);
+    const sourceHeight = Math.round(sourceWidth / targetAspect);
+
+    const minCenterX = sourceWidth / 2;
+    const maxCenterX = canvas.width - sourceWidth / 2;
+    const minCenterY = sourceHeight / 2;
+    const maxCenterY = canvas.height - sourceHeight / 2;
+    const baseCenterX = clamp(bounds.centerX, minCenterX, maxCenterX);
+    const baseCenterY = clamp(bounds.centerY, minCenterY, maxCenterY);
+    const maxPanX = Math.max(0, Math.min(baseCenterX - minCenterX, maxCenterX - baseCenterX));
+    const maxPanY = Math.max(0, Math.min(baseCenterY - minCenterY, maxCenterY - baseCenterY));
+
+    if (!keepPan) {
+      mobilePreviewPanX = clamp(mobilePreviewPanX, -maxPanX, maxPanX);
+      mobilePreviewPanY = clamp(mobilePreviewPanY, -maxPanY, maxPanY);
+    }
+
+    return {
+      sourceWidth: sourceWidth,
+      sourceHeight: sourceHeight,
+      centerX: baseCenterX + clamp(mobilePreviewPanX, -maxPanX, maxPanX),
+      centerY: baseCenterY + clamp(mobilePreviewPanY, -maxPanY, maxPanY),
+      maxPanX: maxPanX,
+      maxPanY: maxPanY
+    };
   }
 
   function syncMobilePreviewCanvas() {
@@ -6021,16 +6260,11 @@
     const targetAspect = mobileCtx && mobileCanvas
       ? mobileCanvas.width / mobileCanvas.height
       : (summaryPreviewCanvas ? summaryPreviewCanvas.width / summaryPreviewCanvas.height : 1);
-    const sourceWidth = canvas.width;
-    const sourceHeight = Math.round(sourceWidth / targetAspect);
-    const centerX = canvas.width / 2;
-    const centerY = isBottleOpenerProduct()
-      ? 560
-      : getMobilePendantPreviewCenterY(sourceHeight);
-    const sx = clamp(Math.round(centerX - sourceWidth / 2), 0, Math.max(0, canvas.width - sourceWidth));
-    const sy = clamp(Math.round(centerY - sourceHeight / 2), 0, Math.max(0, canvas.height - sourceHeight));
+    const viewport = getMobilePreviewViewport(targetAspect, false);
+    const sx = clamp(Math.round(viewport.centerX - viewport.sourceWidth / 2), 0, Math.max(0, canvas.width - viewport.sourceWidth));
+    const sy = clamp(Math.round(viewport.centerY - viewport.sourceHeight / 2), 0, Math.max(0, canvas.height - viewport.sourceHeight));
     if (mobileCtx && mobileCanvas) {
-      mobileCtx.drawImage(canvas, sx, sy, sourceWidth, sourceHeight, 0, 0, mobileCanvas.width, mobileCanvas.height);
+      mobileCtx.drawImage(canvas, sx, sy, viewport.sourceWidth, viewport.sourceHeight, 0, 0, mobileCanvas.width, mobileCanvas.height);
     }
     syncSummaryPreviewCanvas();
   }
