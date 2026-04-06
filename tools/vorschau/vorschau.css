@@ -2171,15 +2171,25 @@
 
   #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option--symbol-card,
   #motifOverlayOptions[data-overlay-step="googleGroups"] .preview-option--symbol-card {
-    --symbol-thumb-height: 164px;
-    --symbol-thumb-padding: 8px;
-    --symbol-media-padding: 6px;
-    --symbol-asset-scale: 88%;
+    --symbol-thumb-height: 182px;
+    --symbol-thumb-padding: 4px;
+    --symbol-media-padding: 2px;
+    --symbol-asset-scale: 100%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option--preview-profile-category-symbol {
+    --preview-scale: 1.92;
+    --preview-offset-y: 3%;
   }
 
   #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option--preview-profile-category-wide {
-    --preview-scale: 2.08;
-    --preview-offset-y: 12%;
+    --preview-scale: 2.74;
+    --preview-offset-y: 14%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemKinds"] .preview-option--preview-profile-category-rune {
+    --preview-scale: 2.16;
+    --preview-offset-y: 1%;
   }
 
   #motifOverlayOptions[data-overlay-step="emblemKinds"] {
@@ -2199,24 +2209,39 @@
   }
 
   #motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option--symbol-card {
-    --symbol-thumb-height: 162px;
-    --symbol-thumb-padding: 8px;
-    --symbol-media-padding: 8px;
-    --symbol-asset-scale: 84%;
+    --symbol-thumb-height: 188px;
+    --symbol-thumb-padding: 4px;
+    --symbol-media-padding: 4px;
+    --symbol-asset-scale: 100%;
     padding: 10px;
     border-radius: 14px;
   }
 
   #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--symbol-card {
-    --symbol-thumb-height: 210px;
-    --symbol-thumb-padding: 2px;
+    --symbol-thumb-height: 236px;
+    --symbol-thumb-padding: 0px;
     --symbol-media-padding: 0px;
     --symbol-asset-scale: 100%;
-    --preview-scale: 1.42;
+    --preview-scale: 1.9;
     --preview-offset-x: 0%;
-    --preview-offset-y: 2%;
+    --preview-offset-y: 4%;
     --preview-asset-max-width: 100%;
     --preview-asset-max-height: 100%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--preview-profile-motif-wide {
+    --preview-scale: 2.08;
+    --preview-offset-y: 9%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--preview-profile-motif-compact {
+    --preview-scale: 1.96;
+    --preview-offset-y: 6%;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--preview-profile-motif-round {
+    --preview-scale: 1.9;
+    --preview-offset-y: 5%;
   }
 
   #motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option__thumb {

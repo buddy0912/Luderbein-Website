@@ -179,6 +179,8 @@
     5: 0.15
   };
   const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
+  const mobileThumbCropCache = new Map();
+  let mobileThumbCropFrame = 0;
 
   const MODE_LIBRARY = [
     {
@@ -1389,6 +1391,296 @@
     });
   }
 
+  function isMobileThumbnailCropViewport() {
+    return window.matchMedia("(max-width: 640px)").matches;
+  }
+
+  function getMobileThumbnailCropTargets(root) {
+    const scope = root || document;
+    const selectors = [
+      '#motifOverlayOptions[data-overlay-step="symbolCategories"] .preview-option--symbol-category[data-category-status="active"] .preview-option__thumb-media--symbol img',
+      '#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option__thumb-media--symbol img'
+    ];
+    return Array.from(scope.querySelectorAll(selectors.join(", ")));
+  }
+
+  function classifyMobileThumbnailCropTarget(img) {
+    const categoryButton = img.closest('.preview-option--symbol-category[data-category-status="active"]');
+    if (categoryButton) {
+      const categoryId = String(categoryButton.getAttribute("data-symbol-category-id") || "").toLowerCase();
+      const categoryOverrides = {
+        "tiere": {
+          cacheKey: "category-tiere",
+          fillRatio: 0.78,
+          paddingRatio: 0.03
+        },
+        "runen": {
+          cacheKey: "category-runen",
+          fillRatio: 0.8,
+          paddingRatio: 0.03
+        },
+        "outdoor": {
+          cacheKey: "category-outdoor",
+          fillRatio: 0.86,
+          paddingRatio: 0.02
+        }
+      };
+      if (categoryOverrides[categoryId]) {
+        return categoryOverrides[categoryId];
+      }
+
+      return {
+        cacheKey: "category",
+        fillRatio: 0.76,
+        paddingRatio: 0.04
+      };
+    }
+
+    const overlayCard = img.closest(".preview-option--symbol-card");
+    if (overlayCard && motifOverlayOptionsEl && motifOverlayOptionsEl.getAttribute("data-overlay-kind") === "custom-filesystem-outdoor") {
+      const sourceName = String((img.dataset.originalSrc || img.getAttribute("src") || "").split("/").pop() || "").toLowerCase();
+      const outdoorOverrides = {
+        "berg-waldlinie-01.png": {
+          cacheKey: "outdoor-berg-waldlinie-01",
+          fillRatio: 0.9,
+          paddingRatio: 0.015
+        },
+        "bergkette-fein-01.png": {
+          cacheKey: "outdoor-bergkette-fein-01",
+          fillRatio: 0.88,
+          paddingRatio: 0.015
+        },
+        "kompassring-berg-wald.png": {
+          cacheKey: "outdoor-kompassring-berg-wald",
+          fillRatio: 0.84,
+          paddingRatio: 0.025
+        },
+        "zelt-berge-kreis.png": {
+          cacheKey: "outdoor-zelt-berge-kreis",
+          fillRatio: 0.84,
+          paddingRatio: 0.025
+        }
+      };
+      if (outdoorOverrides[sourceName]) {
+        return outdoorOverrides[sourceName];
+      }
+
+      return {
+        cacheKey: "outdoor-motif",
+        fillRatio: 0.84,
+        paddingRatio: 0.025
+      };
+    }
+
+    return null;
+  }
+
+  function clampCropBounds(bounds, width, height) {
+    return {
+      left: clamp(bounds.left, 0, width),
+      top: clamp(bounds.top, 0, height),
+      right: clamp(bounds.right, 0, width),
+      bottom: clamp(bounds.bottom, 0, height)
+    };
+  }
+
+  function getDarkContentBoundsFromImage(image) {
+    const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
+    const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
+    const maxScanSide = 320;
+    const scanScale = Math.min(1, maxScanSide / Math.max(naturalWidth, naturalHeight));
+    const scanWidth = Math.max(1, Math.round(naturalWidth * scanScale));
+    const scanHeight = Math.max(1, Math.round(naturalHeight * scanScale));
+    const scanCanvas = document.createElement("canvas");
+    scanCanvas.width = scanWidth;
+    scanCanvas.height = scanHeight;
+    const scanCtx = scanCanvas.getContext("2d", { willReadFrequently: true });
+    if (!scanCtx) return null;
+
+    scanCtx.clearRect(0, 0, scanWidth, scanHeight);
+    scanCtx.drawImage(image, 0, 0, scanWidth, scanHeight);
+
+    const imageData = scanCtx.getImageData(0, 0, scanWidth, scanHeight).data;
+    let minX = scanWidth;
+    let minY = scanHeight;
+    let maxX = -1;
+    let maxY = -1;
+
+    for (let y = 0; y < scanHeight; y += 1) {
+      for (let x = 0; x < scanWidth; x += 1) {
+        const offset = (y * scanWidth + x) * 4;
+        const alpha = imageData[offset + 3];
+        if (alpha < 20) continue;
+
+        const red = imageData[offset];
+        const green = imageData[offset + 1];
+        const blue = imageData[offset + 2];
+        const luminance = (0.2126 * red) + (0.7152 * green) + (0.0722 * blue);
+        if (luminance > 242) continue;
+
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+
+    if (maxX < minX || maxY < minY) {
+      return null;
+    }
+
+    return {
+      left: (minX / scanWidth) * naturalWidth,
+      top: (minY / scanHeight) * naturalHeight,
+      right: ((maxX + 1) / scanWidth) * naturalWidth,
+      bottom: ((maxY + 1) / scanHeight) * naturalHeight
+    };
+  }
+
+  function loadImageForMobileThumbnailCrop(src) {
+    return new Promise(function (resolve, reject) {
+      const image = new Image();
+      image.decoding = "async";
+      image.onload = function () {
+        resolve(image);
+      };
+      image.onerror = reject;
+      image.src = src;
+    });
+  }
+
+  async function buildMobileThumbnailCropDataUrl(src, targetWidth, targetHeight, config) {
+    const roundedWidth = Math.max(64, Math.round(targetWidth));
+    const roundedHeight = Math.max(64, Math.round(targetHeight));
+    const cacheKey = [src, config.cacheKey, roundedWidth, roundedHeight].join("|");
+    if (mobileThumbCropCache.has(cacheKey)) {
+      return mobileThumbCropCache.get(cacheKey);
+    }
+
+    const buildPromise = loadImageForMobileThumbnailCrop(src).then(function (image) {
+      const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
+      const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
+      const rawBounds = getDarkContentBoundsFromImage(image) || {
+        left: 0,
+        top: 0,
+        right: naturalWidth,
+        bottom: naturalHeight
+      };
+
+      const contentWidth = Math.max(1, rawBounds.right - rawBounds.left);
+      const contentHeight = Math.max(1, rawBounds.bottom - rawBounds.top);
+      const padX = contentWidth * config.paddingRatio;
+      const padY = contentHeight * config.paddingRatio;
+      const croppedBounds = clampCropBounds({
+        left: rawBounds.left - padX,
+        top: rawBounds.top - padY,
+        right: rawBounds.right + padX,
+        bottom: rawBounds.bottom + padY
+      }, naturalWidth, naturalHeight);
+
+      const cropWidth = Math.max(1, croppedBounds.right - croppedBounds.left);
+      const cropHeight = Math.max(1, croppedBounds.bottom - croppedBounds.top);
+      const renderCanvas = document.createElement("canvas");
+      renderCanvas.width = roundedWidth * 2;
+      renderCanvas.height = roundedHeight * 2;
+      const renderCtx = renderCanvas.getContext("2d");
+      if (!renderCtx) {
+        return src;
+      }
+
+      renderCtx.clearRect(0, 0, renderCanvas.width, renderCanvas.height);
+
+      const targetBoxWidth = renderCanvas.width * config.fillRatio;
+      const targetBoxHeight = renderCanvas.height * config.fillRatio;
+      const fitScale = Math.min(targetBoxWidth / cropWidth, targetBoxHeight / cropHeight);
+      const drawWidth = cropWidth * fitScale;
+      const drawHeight = cropHeight * fitScale;
+      const drawX = (renderCanvas.width - drawWidth) / 2;
+      const drawY = (renderCanvas.height - drawHeight) / 2;
+
+      renderCtx.drawImage(
+        image,
+        croppedBounds.left,
+        croppedBounds.top,
+        cropWidth,
+        cropHeight,
+        drawX,
+        drawY,
+        drawWidth,
+        drawHeight
+      );
+
+      return renderCanvas.toDataURL("image/png");
+    }).catch(function () {
+      return src;
+    });
+
+    mobileThumbCropCache.set(cacheKey, buildPromise);
+    return buildPromise;
+  }
+
+  async function applyMobileThumbnailCropToImage(img) {
+    if (!img || !img.isConnected) return;
+
+    if (!img.dataset.originalSrc) {
+      img.dataset.originalSrc = img.getAttribute("src") || "";
+    }
+
+    const originalSrc = img.dataset.originalSrc;
+    if (!originalSrc) return;
+
+    if (!isMobileThumbnailCropViewport()) {
+      if (img.getAttribute("src") !== originalSrc) {
+        img.setAttribute("src", originalSrc);
+      }
+      img.style.removeProperty("width");
+      img.style.removeProperty("height");
+      img.style.removeProperty("max-width");
+      img.style.removeProperty("max-height");
+      img.style.removeProperty("transform");
+      img.style.removeProperty("object-fit");
+      img.removeAttribute("data-mobile-thumb-crop-key");
+      return;
+    }
+
+    const config = classifyMobileThumbnailCropTarget(img);
+    if (!config) return;
+
+    const media = img.closest(".preview-option__thumb-media--symbol");
+    if (!media) return;
+
+    const mediaRect = media.getBoundingClientRect();
+    if (mediaRect.width < 20 || mediaRect.height < 20) return;
+
+    const cropKey = [originalSrc, config.cacheKey, Math.round(mediaRect.width), Math.round(mediaRect.height)].join("|");
+    if (img.dataset.mobileThumbCropKey === cropKey) return;
+
+    const croppedSrc = await buildMobileThumbnailCropDataUrl(originalSrc, mediaRect.width, mediaRect.height, config);
+    if (!img.isConnected || img.dataset.originalSrc !== originalSrc) return;
+
+    img.setAttribute("src", croppedSrc);
+    img.dataset.mobileThumbCropKey = cropKey;
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.maxWidth = "100%";
+    img.style.maxHeight = "100%";
+    img.style.objectFit = "contain";
+    img.style.transform = "none";
+  }
+
+  function scheduleMobileThumbnailAutoCrop() {
+    if (mobileThumbCropFrame) {
+      cancelAnimationFrame(mobileThumbCropFrame);
+    }
+
+    mobileThumbCropFrame = requestAnimationFrame(function () {
+      mobileThumbCropFrame = 0;
+      getMobileThumbnailCropTargets(document).forEach(function (img) {
+        applyMobileThumbnailCropToImage(img);
+      });
+    });
+  }
+
   function formatGoogleIconLabel(fileName) {
     return toTitleCase(
       String(fileName)
@@ -1790,6 +2082,7 @@
   }
 
   function bindEvents() {
+    window.addEventListener("resize", scheduleMobileThumbnailAutoCrop);
     enableBackSideButton.addEventListener("click", enableBackSide);
 
     sideFrontButton.addEventListener("click", function () {
@@ -4796,6 +5089,7 @@
       button.setAttribute("aria-pressed", isActive ? "true" : "false");
     });
 
+    scheduleMobileThumbnailAutoCrop();
     syncSummaryCard();
   }
 
@@ -5691,6 +5985,35 @@
     }, Number(product.sizes[0] && product.sizes[0].productRadius) || 116);
   }
 
+  function getMobilePendantPreviewCenterY(sourceHeight) {
+    if (isBottleOpenerProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
+      return 650;
+    }
+
+    const layouts = getPendantLayouts();
+    const activeLayout = layouts[state.activePendantIndex] || layouts[0];
+    const activeSize = getActiveSize(state.activePendantIndex) || getActiveSize(0);
+    if (!activeLayout || !activeSize) {
+      return 650;
+    }
+
+    const scale = activeLayout.scale || 1;
+    const radius = activeSize.productRadius * scale;
+    const topAttachment = (650 - (activeSize.ringY - activeSize.ringOuter)) * scale;
+    const safeTop = 26;
+    const safeBottom = 18;
+    const activeTop = activeLayout.y - topAttachment;
+    const activeBottom = activeLayout.y + radius + 18 * scale;
+    const minSourceTop = Math.max(0, activeBottom + safeBottom - sourceHeight);
+    const maxSourceTop = Math.max(0, activeTop - safeTop);
+    const preferredSourceTop = Math.max(0, activeTop - safeTop);
+    const sourceTop = minSourceTop <= maxSourceTop
+      ? clamp(preferredSourceTop, minSourceTop, maxSourceTop)
+      : minSourceTop;
+
+    return sourceTop + sourceHeight / 2;
+  }
+
   function syncMobilePreviewCanvas() {
     if (mobileCtx && mobileCanvas) {
       mobileCtx.clearRect(0, 0, mobileCanvas.width, mobileCanvas.height);
@@ -5701,7 +6024,9 @@
     const sourceWidth = canvas.width;
     const sourceHeight = Math.round(sourceWidth / targetAspect);
     const centerX = canvas.width / 2;
-    const centerY = isBottleOpenerProduct() ? 560 : 650;
+    const centerY = isBottleOpenerProduct()
+      ? 560
+      : getMobilePendantPreviewCenterY(sourceHeight);
     const sx = clamp(Math.round(centerX - sourceWidth / 2), 0, Math.max(0, canvas.width - sourceWidth));
     const sy = clamp(Math.round(centerY - sourceHeight / 2), 0, Math.max(0, canvas.height - sourceHeight));
     if (mobileCtx && mobileCanvas) {
