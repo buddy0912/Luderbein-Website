@@ -180,6 +180,7 @@
     5: 3795
   };
   const BACK_SIDE_STANDARD_CENTS = 495;
+  const DOGTAG_BACK_SIDE_CENTS = 300;
   const PHOTO_NEW_PREP_CENTS = 3495;
   const PHOTO_REPEAT_FRONT_CENTS = 2495;
   const PHOTO_REPEAT_BACK_CENTS = 995;
@@ -1781,6 +1782,12 @@
 
   function getSummaryContentLabel() {
     if (!hasDesignModeSelection()) return "Noch nichts gewählt";
+    if (isDogtagProduct()) {
+      const frontSummary = "Vorderseite: " + getSideSummary("front", 0);
+      return isBackSideEnabled(0)
+        ? frontSummary + " · Rückseite: " + getSideSummary("back", 0)
+        : frontSummary;
+    }
     const content = getSideSummary(state.activeSide, state.activePendantIndex);
     if (!content) return "Noch nichts gewählt";
     return getPendantCount() > 1 && !isSingleSurfaceProduct()
@@ -2787,11 +2794,12 @@
     }
 
     if (isDogtagProduct()) {
+      const dogtagBackCents = isBackSideEnabled(0) ? DOGTAG_BACK_SIDE_CENTS : 0;
       result.pricingMode = "dogtag";
       result.discountRate = 0;
       result.pendantCount = 1;
       result.subtotalCents = DOGTAG_START_PRICE_CENTS;
-      result.totalCents = DOGTAG_START_PRICE_CENTS;
+      result.totalCents = DOGTAG_START_PRICE_CENTS + dogtagBackCents;
       result.discountCents = 0;
       result.isReady = true;
       result.invalidReason = "Vorläufiger Startpreis für die Dogtag-Vorschau.";
@@ -2804,6 +2812,18 @@
         displayPrice: formatEuro(DOGTAG_START_PRICE_CENTS),
         metaParts: ["Vorläufiger Startpreis"]
       });
+      if (dogtagBackCents) {
+        result.subtotalCents += dogtagBackCents;
+        result.items.push({
+          label: "Dogtag",
+          sizeLabel: getSideLabel("back"),
+          baseCents: 0,
+          backCents: dogtagBackCents,
+          totalCents: dogtagBackCents,
+          displayPrice: formatEuro(dogtagBackCents),
+          metaParts: ["Rückseite +" + formatEuro(dogtagBackCents)]
+        });
+      }
       return result;
     }
 
@@ -2994,6 +3014,10 @@
       return sideState.textValue.trim().length > 0;
     }
 
+    if (sideState.designMode === "qr") {
+      return sideState.qrValue.trim().length > 0;
+    }
+
     return false;
   }
 
@@ -3003,7 +3027,7 @@
 
   function enableBackSide() {
     const activePendantState = getActivePendantState();
-    if (!hasSizeSelection() || isBackSideEnabled() || !isFrontConfigured()) return;
+    if (!canEnableBackSide()) return;
     activePendantState.backSideEnabled = true;
     activePendantState.sides.back = createSideState();
     state.isMotifVariantOverlayOpen = false;
@@ -3011,6 +3035,15 @@
     syncUi();
     queueRender();
     requestAnimationFrame(scrollToBackSideConfiguration);
+  }
+
+  function canUseBackSideFlow() {
+    return !isSingleSurfaceProduct() || isDogtagProduct();
+  }
+
+  function canEnableBackSide() {
+    if (!canUseBackSideFlow() || isBackSideEnabled() || !isFrontConfigured()) return false;
+    return isDogtagProduct() ? hasFinishSelection() : hasSizeSelection();
   }
 
   function resetAllSelections() {
@@ -5354,8 +5387,8 @@
         previewModeChip.textContent = "Gestaltungsart wählen";
       } else {
         previewProductName.textContent = "Dogtag · " + getActiveFinish().name;
-        previewProductHint.textContent = "Dogtag · Vorderseite";
-        previewModeChip.textContent = isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text");
+        previewProductHint.textContent = "Dogtag · " + getSideLabel(state.activeSide);
+        previewModeChip.textContent = getSideLabel(state.activeSide) + " · " + (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text"));
       }
     } else if (isBottleOpenerProduct()) {
       if (!hasDesignModeSelection()) {
@@ -5515,7 +5548,7 @@
       closeRequestMenu();
     }
 
-    const canShowBackSideSection = !isSingleSurfaceProduct() && hasSizeSelection() && (isFrontConfigured() || isBackSideEnabled());
+    const canShowBackSideSection = canUseBackSideFlow() && (isDogtagProduct() ? hasFinishSelection() : hasSizeSelection()) && (isFrontConfigured() || isBackSideEnabled());
     const canShowPendantSection = !isSingleSurfaceProduct() && hasSetSelection() && getPendantCount() > 1;
     pendantSwitchGroup.hidden = !canShowPendantSection;
     if (canShowPendantSection) {
@@ -5529,7 +5562,9 @@
     sideTabs.hidden = !isBackSideEnabled();
     enableBackSideButton.hidden = isBackSideEnabled();
     sideSwitchStatus.textContent = isBackSideEnabled()
-      ? (state.activeSide === "back" ? "Rückseite von " + getPendantLabel(state.activePendantIndex) : "Rückseite für " + getPendantLabel(state.activePendantIndex) + " aktiv")
+      ? (isDogtagProduct()
+        ? (state.activeSide === "back" ? "Dogtag-Rückseite aktiv" : "Dogtag-Rückseite verfügbar")
+        : (state.activeSide === "back" ? "Rückseite von " + getPendantLabel(state.activePendantIndex) : "Rückseite für " + getPendantLabel(state.activePendantIndex) + " aktiv"))
       : "Rückseite optional";
     sideSwitchHint.textContent = isBackSideEnabled()
       ? "Zwischen Vorder- und Rückseite wechseln."
@@ -8724,9 +8759,13 @@
         "Material: " + getActiveMaterial().name,
         "Produkt: " + (getActiveProductDisplayName() || "Dogtag"),
         "Ausführung: " + (getActiveFinish() ? getActiveFinish().name : "offen"),
-        "Gestaltungsart: " + getSummaryModeLabel(),
-        "Inhalt: " + buildSideSummaryText("front")
+        "Vorderseite: " + buildSideSummaryText("front")
       ];
+
+      if (isBackSideEnabled(0)) {
+        lines.push("Rückseite: " + buildSideSummaryText("back"));
+        lines.push("Aufpreis Rückseite: +" + formatEuro(DOGTAG_BACK_SIDE_CENTS));
+      }
 
       if (priceState.isReady) {
         lines.push("Vorläufiger Startpreis: " + formatEuro(priceState.totalCents));
@@ -8873,7 +8912,9 @@
   }
 
   function getBackSideSurchargeHint() {
-    return "Rückseite je Anhänger: +" + formatEuro(BACK_SIDE_STANDARD_CENTS) + ".";
+    return isDogtagProduct()
+      ? "Rückseite: +" + formatEuro(DOGTAG_BACK_SIDE_CENTS) + "."
+      : "Rückseite je Anhänger: +" + formatEuro(BACK_SIDE_STANDARD_CENTS) + ".";
   }
 
   function hasMaterialSelection() {
@@ -8936,12 +8977,8 @@
       return hasMaterialSelection() &&
         hasProductSelection() &&
         hasFinishSelection() &&
-        hasDesignModeSelection() &&
-        (
-          (isMotifMode() && hasActiveMotifContent()) ||
-          (isTextMode() && hasText()) ||
-          (isQrMode() && hasQrValue())
-        );
+        isSideConfigured("front", 0) &&
+        (!isBackSideEnabled(0) || isSideConfigured("back", 0));
     }
 
     const priceState = calculatePriceSummary();
