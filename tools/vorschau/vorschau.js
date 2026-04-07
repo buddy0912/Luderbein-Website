@@ -191,6 +191,7 @@
     5: 0.15
   };
   const WOOD_BOARD_START_PRICE_CENTS = 795;
+  const DOGTAG_START_PRICE_CENTS = 695;
   const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
   const mobileThumbCropCache = new Map();
   let mobileThumbCropFrame = 0;
@@ -432,6 +433,30 @@
             isComingSoon: false,
             finishes: [],
             products: []
+          },
+          {
+            id: "dogtag",
+            name: "Dogtag",
+            description: "Dogtag mit Gravur für Motiv, Text oder QR.",
+            finishes: [
+              {
+                id: "silver",
+                name: "silberfarbig",
+                description: "Dogtag in silberfarbiger Ausführung."
+              },
+              {
+                id: "black",
+                name: "schwarz",
+                description: "Dogtag in schwarzer Ausführung."
+              }
+            ],
+            products: [
+              {
+                id: "dogtag-model",
+                name: "Dogtag",
+                description: "Hochkante Dogtag-Form mit Loch."
+              }
+            ]
           }
         ]
       },
@@ -1793,6 +1818,18 @@
         priceLabel = formatEuro(priceState.totalCents);
         priceHint = priceState.invalidReason || "Vorläufiger Startpreis für die aktuelle Holzbrett-Auswahl.";
       }
+    } else if (isDogtagProduct()) {
+      configurationParts.push(productName);
+      if (finish) {
+        configurationParts.push(finish.name);
+      }
+      if (hasDesignModeSelection()) {
+        configurationParts.push(getSummaryModeLabel());
+      }
+      if (priceState.isReady) {
+        priceLabel = formatEuro(priceState.totalCents);
+        priceHint = priceState.invalidReason || "Vorläufiger Startpreis für die aktuelle Dogtag-Auswahl.";
+      }
     } else {
       configurationParts.push(productName === "Noch offen" ? "Schmuckanhänger" : productName);
       if (finish) {
@@ -2749,6 +2786,27 @@
       return result;
     }
 
+    if (isDogtagProduct()) {
+      result.pricingMode = "dogtag";
+      result.discountRate = 0;
+      result.pendantCount = 1;
+      result.subtotalCents = DOGTAG_START_PRICE_CENTS;
+      result.totalCents = DOGTAG_START_PRICE_CENTS;
+      result.discountCents = 0;
+      result.isReady = true;
+      result.invalidReason = "Vorläufiger Startpreis für die Dogtag-Vorschau.";
+      result.items.push({
+        label: getActiveProductDisplayName() || "Dogtag",
+        sizeLabel: getActiveFinish() ? getActiveFinish().name : "",
+        baseCents: DOGTAG_START_PRICE_CENTS,
+        backCents: 0,
+        totalCents: DOGTAG_START_PRICE_CENTS,
+        displayPrice: formatEuro(DOGTAG_START_PRICE_CENTS),
+        metaParts: ["Vorläufiger Startpreis"]
+      });
+      return result;
+    }
+
     if (!hasMaterialSelection() || !hasProductSelection() || !hasSetSelection()) {
       result.invalidReason = "Preis wird berechnet, sobald Material, Produkt und Set gewählt sind.";
       return result;
@@ -3042,17 +3100,20 @@
       renderFinishOptions();
       renderSetOptions();
       renderSizeOptions();
+      renderDesignModeOptions();
     }
 
     if (stepId === "product") {
       renderFinishOptions();
       renderSetOptions();
       renderSizeOptions();
+      renderDesignModeOptions();
     }
 
     if (stepId === "finish") {
       renderSetOptions();
       renderSizeOptions();
+      renderDesignModeOptions();
     }
 
     if (stepId === "set") {
@@ -3068,6 +3129,7 @@
 
     closeRequestMenu();
     syncUi();
+    scheduleGuidedScrollAfterStep(stepId);
     queueRender();
   }
 
@@ -3104,6 +3166,10 @@
   }
 
   function getFlowStepIds() {
+    if (isDogtagProduct()) {
+      return ["material", "product", "finish", "designMode"];
+    }
+
     if (isSingleSurfaceProduct()) {
       return ["material", "product", "designMode"];
     }
@@ -3129,7 +3195,7 @@
   function isStepAvailable(stepId) {
     if (stepId === "designMode") {
       if (isSingleSurfaceProduct()) {
-        return hasProductSelection();
+        return hasProductSelection() && (!requiresFinishSelection() || hasFinishSelection());
       }
       return hasSizeSelection();
     }
@@ -3308,9 +3374,11 @@
     state.activePendantIndex = 0;
     state.activeSide = "front";
     state.isMotifVariantOverlayOpen = false;
+    renderDesignModeOptions();
     closeRequestMenu();
     syncUi();
-    renderPreview();
+    scheduleGuidedScrollAfterStep("product");
+    queueRender();
   }
 
   function renderFinishOptions() {
@@ -3323,18 +3391,22 @@
 
     finishes.forEach(function (finish) {
       const button = document.createElement("button");
+      const isDogtagFinish = productFamily.id === "dogtag";
+      const startingPriceCents = isDogtagFinish ? DOGTAG_START_PRICE_CENTS : null;
       button.type = "button";
-      button.className = "preview-option";
+      button.className = "preview-option" + (isDogtagFinish ? " preview-option--dogtag-finish" : "");
       button.setAttribute("data-finish-id", finish.id);
       button.innerHTML =
-        buildFinishThumbMarkup(finish) +
+        (isDogtagFinish ? buildDogtagFinishThumbMarkup(finish) : buildFinishThumbMarkup(finish)) +
         '<span class="preview-option__title">' + escapeHtml(finish.name) + "</span>" +
+        (startingPriceCents != null
+          ? '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
+          : "") +
         '<span class="preview-option__meta">' + escapeHtml(finish.description) + "</span>";
 
       button.addEventListener("click", function () {
         if (state.finishId === finish.id) return;
         applyStepSelection("finish", finish.id);
-        focusNextSectionAfterFinishSelection();
       });
 
       finishOptionsEl.appendChild(button);
@@ -3369,6 +3441,32 @@
             '<rect x="68" y="46" width="24" height="28" rx="12" fill="url(#finish-ring-' + escapeHtml(finish.id) + ')"></rect>' +
             '<ellipse cx="63" cy="66" rx="26" ry="12" fill="' + escapeHtml(palette.highlightSoft) + '" opacity="0.28"></ellipse>' +
             '<ellipse cx="95" cy="78" rx="18" ry="46" fill="' + escapeHtml(palette.highlightStrong) + '" opacity="0.24" transform="rotate(32 95 78)"></ellipse>' +
+          '</svg>' +
+        '</span>' +
+      '</span>'
+    );
+  }
+
+  function buildDogtagFinishThumbMarkup(finish) {
+    const palette = getDogtagPalette(finish && finish.id);
+    const gradientId = "dogtag-card-" + escapeHtml(finish && finish.id ? finish.id : "silver");
+    return (
+      '<span class="preview-option__thumb preview-option__thumb--dogtag" aria-hidden="true">' +
+        '<span class="preview-option__thumb-media" style="' + escapeHtml('background:' + palette.thumbBackground + ';') + '">' +
+          '<svg viewBox="0 0 160 160" width="120" height="120" aria-hidden="true" focusable="false">' +
+            '<defs>' +
+              '<linearGradient id="' + gradientId + '" x1="8%" y1="18%" x2="96%" y2="88%">' +
+                '<stop offset="0%" stop-color="' + escapeHtml(palette.baseStart) + '"></stop>' +
+                '<stop offset="52%" stop-color="' + escapeHtml(palette.baseMid) + '"></stop>' +
+                '<stop offset="100%" stop-color="' + escapeHtml(palette.baseEnd) + '"></stop>' +
+              '</linearGradient>' +
+            '</defs>' +
+            '<path d="M31 43H130c18 0 29 14 29 35s-11 35-29 35H31C14 113 5 99 5 78s9-35 26-35Z" fill="rgba(0,0,0,0.18)" transform="translate(0 6)"></path>' +
+            '<path d="M31 41H130c18 0 30 14 30 37s-12 37-30 37H31C14 115 4 101 4 78s10-37 27-37Z" fill="url(#' + gradientId + ')" stroke="' + escapeHtml(palette.edgeColor) + '" stroke-width="2.35"></path>' +
+            '<circle cx="26" cy="74" r="10.4" fill="' + escapeHtml(palette.holeShadow) + '"></circle>' +
+            '<circle cx="26" cy="74" r="5.4" fill="' + escapeHtml(palette.holeFill) + '"></circle>' +
+            '<path d="M49 61h76M47 78h84M53 95h72" stroke="' + escapeHtml(palette.surfaceLines) + '" stroke-width="1.55" stroke-linecap="round"></path>' +
+            '<path d="M20 45c-13 12-15 51 2 66M128 42c26 10 31 59 6 72" fill="none" stroke="' + escapeHtml(palette.highlightSoft) + '" stroke-width="4.2" stroke-linecap="round"></path>' +
           '</svg>' +
         '</span>' +
       '</span>'
@@ -3435,6 +3533,10 @@
       return getBottleOpenerLowestTierPriceCents();
     }
 
+    if (productFamily.id === "dogtag") {
+      return DOGTAG_START_PRICE_CENTS;
+    }
+
     if (/^wood-board-/.test(productFamily.id)) {
       return WOOD_BOARD_START_PRICE_CENTS;
     }
@@ -3491,6 +3593,7 @@
 
     const product = getActiveProduct();
     if (!product) return;
+    if (!Array.isArray(product.sizes) || !product.sizes.length) return;
 
     product.sizes.forEach((size) => {
       const button = document.createElement("button");
@@ -3600,6 +3703,12 @@
   }
 
   function getAvailableTemplates() {
+    if (isDogtagProduct()) {
+      return TEMPLATE_LIBRARY.filter(function (template) {
+        return template.hideFromMainSelection !== true;
+      });
+    }
+
     if (!isSingleSurfaceProduct()) {
       return TEMPLATE_LIBRARY.filter(function (template) {
         return template.hideFromMainSelection !== true;
@@ -3931,6 +4040,7 @@
     resetImagePlacement(false);
     renderMotifOverlayOptions();
     syncUi();
+    scheduleGuidedScrollAfterTemplateSelection();
     queueRender();
 
     if (isPhotoTemplate) {
@@ -4645,7 +4755,13 @@
 
   function toggleSummaryPanel() {
     if (!previewSummaryPanel) return;
-    setSummaryOpen(previewSummaryPanel.hidden);
+    const shouldOpen = previewSummaryPanel.hidden;
+    setSummaryOpen(shouldOpen);
+    if (shouldOpen) {
+      requestAnimationFrame(function () {
+        scrollGuidedToSection(previewSummarySection || previewSummaryPanel);
+      });
+    }
   }
 
   function syncSummaryCard() {
@@ -4663,10 +4779,10 @@
     if (!summaryPreviewCtx || !summaryPreviewCanvas) return;
     summaryPreviewCtx.clearRect(0, 0, summaryPreviewCanvas.width, summaryPreviewCanvas.height);
     const targetAspect = summaryPreviewCanvas.width / summaryPreviewCanvas.height;
-    const sourceWidth = isBottleOpenerProduct() ? 980 : (isWoodBoardProduct() ? 980 : 1040);
+    const sourceWidth = isBottleOpenerProduct() ? 980 : ((isWoodBoardProduct() || isDogtagProduct()) ? 980 : 1040);
     const sourceHeight = Math.round(sourceWidth / targetAspect);
     const centerX = canvas.width / 2;
-    const centerY = isBottleOpenerProduct() ? 560 : (isWoodBoardProduct() ? 632 : 650);
+    const centerY = isBottleOpenerProduct() ? 560 : ((isWoodBoardProduct() || isDogtagProduct()) ? 632 : 650);
     const sx = clamp(Math.round(centerX - sourceWidth / 2), 0, Math.max(0, canvas.width - sourceWidth));
     const sy = clamp(Math.round(centerY - sourceHeight / 2), 0, Math.max(0, canvas.height - sourceHeight));
     summaryPreviewCtx.drawImage(
@@ -5207,6 +5323,8 @@
       previewStageTitle.textContent = hasProductSelection()
         ? (isBottleOpenerProduct()
           ? "Metall-Flaschenöffner"
+          : isDogtagProduct()
+            ? "Dogtag"
           : isWoodBoardProduct()
             ? getActiveProductDisplayName()
             : "Rundes Edelstahl-Plättchen")
@@ -5220,11 +5338,25 @@
     } else if (!hasProductSelection()) {
       previewProductName.textContent = activeMaterial.name;
       previewProductHint.textContent = activeMaterial.id === "metal"
-        ? "Wähle jetzt Schmuckanhänger oder Flaschenöffner."
+        ? "Wähle jetzt dein Metallprodukt."
         : activeMaterial.id === "wood"
           ? "Wähle jetzt die Brettform."
           : "Die Struktur für diese Materialwelt ist vorbereitet.";
       previewModeChip.textContent = "Produkt wählen";
+    } else if (isDogtagProduct()) {
+      if (!hasFinishSelection()) {
+        previewProductName.textContent = "Dogtag";
+        previewProductHint.textContent = "Wähle jetzt silberfarbig oder schwarz.";
+        previewModeChip.textContent = "Ausführung wählen";
+      } else if (!hasDesignModeSelection()) {
+        previewProductName.textContent = "Dogtag · " + getActiveFinish().name;
+        previewProductHint.textContent = "Die vordere Hauptfläche ist aktiv. Wähle jetzt Motiv, Text oder QR.";
+        previewModeChip.textContent = "Gestaltungsart wählen";
+      } else {
+        previewProductName.textContent = "Dogtag · " + getActiveFinish().name;
+        previewProductHint.textContent = "Dogtag · Vorderseite";
+        previewModeChip.textContent = isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text");
+      }
     } else if (isBottleOpenerProduct()) {
       if (!hasDesignModeSelection()) {
         previewProductName.textContent = "Flaschenöffner";
@@ -5377,7 +5509,7 @@
       requestBoxMobile.hidden = !readyForExport;
     }
     if (requestBoxSummary) {
-      requestBoxSummary.hidden = !(readyForExport && isWoodBoardProduct());
+      requestBoxSummary.hidden = !(readyForExport && (isWoodBoardProduct() || isDogtagProduct()));
     }
     if (!readyForExport) {
       closeRequestMenu();
@@ -5445,7 +5577,7 @@
     photoPricingHint.hidden = !(priceState.hasPhoto || hasAnyPhotoSelection());
     photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_DISCOUNT_HINT;
 
-    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || hasSetSelection());
+    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || isDogtagProduct() || hasSetSelection());
     priceSummaryBox.hidden = !shouldShowPriceBox;
     if (shouldShowPriceBox) {
       if (priceState.items.length) {
@@ -5484,18 +5616,18 @@
           priceSummarySubhint.hidden = true;
         }
       } else {
-        if (priceSubtotalLabel) priceSubtotalLabel.textContent = isWoodBoardProduct() ? "Startpreis" : "Zwischensumme";
+        if (priceSubtotalLabel) priceSubtotalLabel.textContent = (isWoodBoardProduct() || isDogtagProduct()) ? "Startpreis" : "Zwischensumme";
         priceSubtotal.textContent = priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
         priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
         priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
         priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
-        if (priceTotalLabel) priceTotalLabel.textContent = isWoodBoardProduct() ? "Vorläufig" : "Gesamtpreis";
+        if (priceTotalLabel) priceTotalLabel.textContent = (isWoodBoardProduct() || isDogtagProduct()) ? "Vorläufig" : "Gesamtpreis";
         priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
         priceSummaryHint.textContent = priceState.items.length
           ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
           : priceState.invalidReason;
         if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = isWoodBoardProduct()
+          priceSummarySubhint.textContent = (isWoodBoardProduct() || isDogtagProduct())
             ? "Vorläufiger Startpreis. Finale Kalkulation erfolgt nach Prüfung."
             : "Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.";
           priceSummarySubhint.hidden = false;
@@ -5747,12 +5879,72 @@
   }
 
   function focusNextSectionAfterFinishSelection() {
-    if (!controlCard) return;
+    scheduleGuidedScrollAfterStep("finish");
+  }
 
+  function scheduleGuidedScrollAfterStep(stepId) {
     pendingAfterRenderAction = function () {
-      const targetSection = getNextFinishFocusTarget();
-      if (!targetSection || targetSection.hidden) return;
+      scrollGuidedToSection(getGuidedScrollTargetAfterStep(stepId));
+    };
+  }
 
+  function scheduleGuidedScrollAfterTemplateSelection() {
+    pendingAfterRenderAction = function () {
+      scrollGuidedToSection(getGuidedTemplateDetailTarget());
+    };
+  }
+
+  function getGuidedScrollTargetAfterStep(stepId) {
+    if (stepId === "designMode") {
+      return getGuidedDesignModeDetailTarget();
+    }
+
+    const flowStepIds = getFlowStepIds();
+    const currentIndex = flowStepIds.indexOf(stepId);
+    if (currentIndex === -1) return null;
+
+    for (let index = currentIndex + 1; index < flowStepIds.length; index += 1) {
+      const nextStepId = flowStepIds[index];
+      const definition = STEP_DEFINITIONS[nextStepId];
+      if (definition && definition.groupEl && isStepAvailable(nextStepId) && !definition.groupEl.hidden) {
+        if (nextStepId === "size" && pendantSwitchGroup && !pendantSwitchGroup.hidden) {
+          return pendantSwitchGroup;
+        }
+        return definition.groupEl;
+      }
+    }
+
+    return getGuidedDesignModeDetailTarget();
+  }
+
+  function getGuidedDesignModeDetailTarget() {
+    if (isMotifMode()) {
+      return motifTemplateGroup && !motifTemplateGroup.hidden ? motifTemplateGroup : designModeGroup;
+    }
+    if (isTextMode()) {
+      return textGroup && !textGroup.hidden ? textGroup : designModeGroup;
+    }
+    if (isQrMode()) {
+      return qrCodeGroup && !qrCodeGroup.hidden ? qrCodeGroup : designModeGroup;
+    }
+    return designModeGroup;
+  }
+
+  function getGuidedTemplateDetailTarget() {
+    if (isMotifMode()) {
+      if (isMonogramTemplateSelected() && monogramGroup && !monogramGroup.hidden) return monogramGroup;
+      if (isEmblemTemplateSelected() && emblemGroup && !emblemGroup.hidden) return emblemGroup;
+      if (isQrSelected() && qrCodeGroup && !qrCodeGroup.hidden) return qrCodeGroup;
+      if (motifAdjustGroup && !motifAdjustGroup.hidden) return motifAdjustGroup;
+      return motifTemplateGroup;
+    }
+    return getGuidedDesignModeDetailTarget();
+  }
+
+  function scrollGuidedToSection(targetSection) {
+    if (!targetSection || targetSection.hidden) return;
+
+    if (controlCard && controlCard.contains(targetSection) && controlCard.scrollHeight > controlCard.clientHeight + 12) {
       const cardRect = controlCard.getBoundingClientRect();
       const targetRect = targetSection.getBoundingClientRect();
       const currentScrollTop = controlCard.scrollTop;
@@ -5760,15 +5952,15 @@
       const targetBottom = targetTop + targetSection.offsetHeight;
       const visibleTop = currentScrollTop;
       const visibleBottom = currentScrollTop + controlCard.clientHeight;
-      const titleOffset = 22;
+      const titleOffset = 18;
       const desiredTop = Math.max(0, targetTop - titleOffset);
       const maxScrollTop = Math.max(0, controlCard.scrollHeight - controlCard.clientHeight);
       const nextScrollTop = Math.min(desiredTop, maxScrollTop);
       const isAlreadyWellVisible =
-        targetTop >= visibleTop + 8 &&
-        targetBottom <= visibleBottom - 24 &&
+        targetTop >= visibleTop + 6 &&
+        targetBottom <= visibleBottom - 22 &&
         targetRect.top >= cardRect.top + 8 &&
-        targetRect.top <= cardRect.top + Math.round(controlCard.clientHeight * 0.45);
+        targetRect.top <= cardRect.top + Math.round(controlCard.clientHeight * 0.5);
 
       if (isAlreadyWellVisible || Math.abs(nextScrollTop - currentScrollTop) < 10) return;
 
@@ -5776,7 +5968,13 @@
         top: nextScrollTop,
         behavior: "smooth"
       });
-    };
+      return;
+    }
+
+    targetSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   }
 
   function queueRender() {
@@ -5812,6 +6010,12 @@
 
     if (isBottleOpenerProduct()) {
       drawBottleOpenerPreview();
+      syncMobilePreviewCanvas();
+      return;
+    }
+
+    if (isDogtagProduct()) {
+      drawDogtagPreview();
       syncMobilePreviewCanvas();
       return;
     }
@@ -6117,6 +6321,323 @@
     if (isQrMode()) {
       drawBottleOpenerQrContent();
     }
+  }
+
+  function drawDogtagPreview() {
+    const spec = getDogtagRenderSpec();
+    const box = getDogtagDesignBox();
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.32)";
+    ctx.shadowBlur = 34;
+    ctx.shadowOffsetY = 18;
+    drawDogtagBase(spec);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = getDogtagPalette().effectiveFinishId === "black"
+      ? "rgba(255,255,255,0.12)"
+      : "rgba(24,28,32,0.12)";
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([12, 12]);
+    drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    if (!hasDesignModeSelection()) {
+      return;
+    }
+
+    if (isMotifMode()) {
+      if (isMonogramTemplateSelected()) {
+        if (hasMonogramValue()) {
+          drawDogtagMonogramContent();
+        }
+        return;
+      }
+      drawDogtagMotifContent();
+      return;
+    }
+
+    if (isTextMode()) {
+      drawDogtagTextContent();
+      return;
+    }
+
+    if (isQrMode()) {
+      drawDogtagQrContent();
+    }
+  }
+
+  function drawDogtagBase(spec) {
+    const palette = getDogtagPalette();
+    const gradient = ctx.createLinearGradient(spec.x, spec.y, spec.x + spec.width, spec.y + spec.height);
+    gradient.addColorStop(0, palette.baseStart);
+    gradient.addColorStop(0.48, palette.baseMid);
+    gradient.addColorStop(1, palette.baseEnd);
+
+    ctx.save();
+    drawDogtagPath(spec);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.strokeStyle = palette.edgeColor;
+    ctx.lineWidth = 3.4;
+    ctx.stroke();
+    ctx.clip();
+
+    const sheen = ctx.createLinearGradient(spec.x, spec.y, spec.x + spec.width, spec.y + spec.height);
+    sheen.addColorStop(0, palette.highlightStrong);
+    sheen.addColorStop(0.22, palette.highlightSoft);
+    sheen.addColorStop(0.58, "rgba(255,255,255,0)");
+    sheen.addColorStop(1, palette.shadowTone);
+    ctx.fillStyle = sheen;
+    ctx.fillRect(spec.x - 20, spec.y - 20, spec.width + 40, spec.height + 40);
+
+    ctx.strokeStyle = palette.surfaceLines;
+    ctx.lineWidth = 1;
+    for (let index = 0; index < 36; index += 1) {
+      const y = spec.y + 32 + index * ((spec.height - 64) / 35);
+      ctx.beginPath();
+      ctx.moveTo(spec.x - 18, y);
+      ctx.lineTo(spec.x + spec.width + 18, y - 16);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(spec.holeX, spec.holeY, spec.holeOuterRadius, 0, Math.PI * 2);
+    ctx.fillStyle = palette.holeShadow;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(spec.holeX, spec.holeY, spec.holeInnerRadius, 0, Math.PI * 2);
+    ctx.fillStyle = palette.holeFill;
+    ctx.fill();
+    ctx.strokeStyle = palette.innerStroke;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawDogtagPath(spec) {
+    const x = spec.x;
+    const y = spec.y;
+    const w = spec.width;
+    const h = spec.height;
+    const leftInset = 18;
+    const rightInset = 24;
+    const topInset = 7;
+    const bottomInset = 7;
+    const leftShoulder = x + 146;
+    const rightShoulder = x + w - 146;
+    const topY = y + topInset;
+    const bottomY = y + h - bottomInset;
+    const midY = y + h / 2;
+
+    ctx.beginPath();
+    ctx.moveTo(leftShoulder, topY);
+    ctx.lineTo(rightShoulder, topY);
+    ctx.bezierCurveTo(x + w - 72, topY, x + w - rightInset, y + 86, x + w - rightInset, midY);
+    ctx.bezierCurveTo(x + w - rightInset, y + h - 86, x + w - 72, bottomY, rightShoulder, bottomY);
+    ctx.lineTo(leftShoulder, bottomY);
+    ctx.bezierCurveTo(x + 58, bottomY, x + leftInset, y + h - 86, x + leftInset, midY);
+    ctx.bezierCurveTo(x + leftInset, y + 86, x + 58, topY, leftShoulder, topY);
+    ctx.closePath();
+  }
+
+  function clipDogtagDesignArea() {
+    const spec = getDogtagRenderSpec();
+    const box = getDogtagDesignBox();
+    ctx.beginPath();
+    drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    ctx.moveTo(spec.holeX + spec.holeOuterRadius + 28, spec.holeY);
+    ctx.arc(spec.holeX, spec.holeY, spec.holeOuterRadius + 28, 0, Math.PI * 2, true);
+    ctx.clip("evenodd");
+  }
+
+  function applyDogtagContentRotation(centerX, centerY) {
+    applyBottleOpenerContentRotation(centerX, centerY);
+  }
+
+  function getDogtagEngravingImage(image) {
+    if (!image) return null;
+
+    const palette = getDogtagPalette();
+    const buffer = document.createElement("canvas");
+    buffer.width = image.width;
+    buffer.height = image.height;
+    const bufferCtx = buffer.getContext("2d");
+    bufferCtx.drawImage(image, 0, 0);
+
+    const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
+    const data = imageData.data;
+    const targetColor = parseRgbaColor(palette.engravingFill);
+
+    for (let index = 0; index < data.length; index += 4) {
+      const originalAlpha = data[index + 3] / 255;
+      if (!originalAlpha) continue;
+
+      const luminance = (data[index] + data[index + 1] + data[index + 2]) / 3;
+      const darkness = (1 - (luminance / 255)) * originalAlpha;
+
+      if (darkness <= 0.035) {
+        data[index + 3] = 0;
+        continue;
+      }
+
+      data[index] = targetColor.r;
+      data[index + 1] = targetColor.g;
+      data[index + 2] = targetColor.b;
+      data[index + 3] = Math.round(Math.min(targetColor.a, darkness * 1.14) * 255);
+    }
+
+    bufferCtx.putImageData(imageData, 0, 0);
+    return buffer;
+  }
+
+  function drawDogtagMotifContent() {
+    const image = getActiveImage();
+    if (!image) return;
+
+    const box = getDogtagDesignBox();
+    const activeSideState = getActiveSideState();
+    const motifLayout = getSingleSurfaceMotifLayout(image);
+    const engravingImage = getDogtagEngravingImage(image);
+    const drawWidth = motifLayout.width;
+    const drawHeight = motifLayout.height;
+    const x = box.x + (box.width - drawWidth) / 2 + activeSideState.offsetX;
+    const y = box.y + (box.height - drawHeight) / 2 + activeSideState.offsetY;
+
+    ctx.save();
+    clipDogtagDesignArea();
+    applyDogtagContentRotation(x + drawWidth / 2, y + drawHeight / 2);
+    ctx.drawImage(engravingImage || image, x, y, drawWidth, drawHeight);
+    ctx.restore();
+  }
+
+  function drawDogtagMonogramContent() {
+    const box = getDogtagDesignBox();
+    const activeSideState = getActiveSideState();
+    const monogramLayout = getDogtagMonogramLayout();
+    const palette = getDogtagPalette();
+    const x = box.x + box.width / 2 + activeSideState.offsetX;
+    const y = box.y + box.height / 2 + activeSideState.offsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    ctx.save();
+    clipDogtagDesignArea();
+    applyDogtagContentRotation(x, y);
+    ctx.translate(x, y);
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.translate(-x, -y);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = monogramLayout.font;
+    ctx.fillStyle = palette.engravingFill;
+    ctx.fillText(activeSideState.monogramValue, x, y);
+    ctx.restore();
+  }
+
+  function drawDogtagTextContent() {
+    const activeSideState = getActiveSideState();
+    if (!activeSideState.textValue) return;
+
+    const box = getDogtagDesignBox();
+    const textLayout = getDogtagTextLayout(activeSideState.textValue);
+    const palette = getDogtagPalette();
+    const x = box.x + box.width / 2 + activeSideState.textOffsetX;
+    const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    ctx.save();
+    clipDogtagDesignArea();
+    ctx.translate(x, y);
+    ctx.rotate(getBottleOpenerRotationRadians());
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = textLayout.font;
+    ctx.fillStyle = palette.engravingFill;
+    ctx.strokeStyle = palette.engravingFill;
+    textLayout.lines.forEach(function (line, index) {
+      const lineY = textLayout.startY + (index * textLayout.lineHeight);
+      const lineWidth = textLayout.lineWidths[index] || 0;
+
+      if (activeSideState.textStyles.bold) {
+        ctx.lineWidth = Math.max(1.1, textLayout.fontSize * 0.025);
+        ctx.strokeText(line, 0, lineY);
+      }
+      ctx.fillText(line, 0, lineY);
+
+      if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
+        ctx.lineWidth = Math.max(1.8, textLayout.fontSize * 0.055);
+        ctx.lineCap = "round";
+
+        if (activeSideState.textStyles.underline) {
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, lineY + textLayout.fontSize * 0.42);
+          ctx.lineTo(lineWidth / 2, lineY + textLayout.fontSize * 0.42);
+          ctx.stroke();
+        }
+
+        if (activeSideState.textStyles.strikethrough) {
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, lineY - textLayout.fontSize * 0.06);
+          ctx.lineTo(lineWidth / 2, lineY - textLayout.fontSize * 0.06);
+          ctx.stroke();
+        }
+      }
+    });
+    ctx.restore();
+  }
+
+  function drawDogtagQrContent() {
+    const box = getDogtagDesignBox();
+    const qrLayout = getDogtagQrLayout();
+    if (!box || !qrLayout) return;
+
+    const palette = getDogtagPalette();
+    const qrModel = getQrCodeModel(state.activeSide, state.activePendantIndex);
+
+    ctx.save();
+    clipDogtagDesignArea();
+    applyDogtagContentRotation(qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize / 2);
+
+    if (!qrModel) {
+      ctx.strokeStyle = palette.engravingStroke;
+      ctx.lineWidth = Math.max(2, qrLayout.outerSize * 0.035);
+      ctx.strokeRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+      ctx.fillStyle = palette.engravingFill;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "700 " + Math.max(12, qrLayout.outerSize * 0.16) + "px system-ui, sans-serif";
+      ctx.fillText("QR", qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize * 0.42);
+      ctx.font = "700 " + Math.max(9, qrLayout.outerSize * 0.11) + "px system-ui, sans-serif";
+      ctx.fillText("FEHLT", qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize * 0.62);
+      ctx.restore();
+      return;
+    }
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = palette.qrBackground;
+    ctx.fillRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+    ctx.fillStyle = palette.engravingFill;
+    for (let row = 0; row < qrLayout.moduleCount; row += 1) {
+      for (let column = 0; column < qrLayout.moduleCount; column += 1) {
+        if (!qrModel.isDark(row, column)) continue;
+        const x = qrLayout.x + (column + qrLayout.quietZone) * qrLayout.moduleSize;
+        const y = qrLayout.y + (row + qrLayout.quietZone) * qrLayout.moduleSize;
+        ctx.fillRect(x, y, qrLayout.moduleSize, qrLayout.moduleSize);
+      }
+    }
+
+    ctx.strokeStyle = palette.engravingStroke;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(qrLayout.x + 0.5, qrLayout.y + 0.5, qrLayout.outerSize - 1, qrLayout.outerSize - 1);
+    ctx.restore();
   }
 
   function drawWoodBoardPreview() {
@@ -6535,6 +7056,34 @@
     };
   }
 
+  function getDogtagRenderSpec() {
+    return {
+      x: 174,
+      y: 390,
+      width: 852,
+      height: 438,
+      holeX: 286,
+      holeY: 578,
+      holeOuterRadius: 34,
+      holeInnerRadius: 18,
+      designInsetLeft: 56,
+      designInsetRight: 32,
+      designInsetY: 30,
+      designRadius: 34
+    };
+  }
+
+  function getDogtagDesignBox() {
+    const spec = getDogtagRenderSpec();
+    return {
+      x: spec.x + spec.designInsetLeft,
+      y: spec.y + spec.designInsetY,
+      width: spec.width - spec.designInsetLeft - spec.designInsetRight,
+      height: spec.height - spec.designInsetY * 2,
+      radius: spec.designRadius
+    };
+  }
+
   function getWoodBoardRenderSpec() {
     const product = getActiveProduct();
     const shape = product && product.shape === "round" ? "round" : "rect";
@@ -6586,6 +7135,9 @@
   }
 
   function getSingleSurfaceDesignBox() {
+    if (isDogtagProduct()) {
+      return getDogtagDesignBox();
+    }
     return isWoodBoardProduct() ? getWoodBoardDesignBox() : getBottleOpenerDesignBox();
   }
 
@@ -6631,7 +7183,51 @@
   }
 
   function getSingleSurfaceTextLayout(text) {
+    if (isDogtagProduct()) {
+      return getDogtagTextLayout(text);
+    }
     return isWoodBoardProduct() ? getWoodBoardTextLayout(text) : getBottleOpenerTextLayout(text);
+  }
+
+  function getDogtagTextLayout(text) {
+    const box = getDogtagDesignBox();
+    const activeSideState = getActiveSideState();
+    const baseFontSize = Math.max(32, Math.min(box.width * 0.20, box.height * 0.13));
+    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const lines = getTextLines(text);
+    const metrics = lines.map(function (line) {
+      return measureBottleOpenerText(line, fontSize);
+    });
+    const textHeight = Math.max.apply(null, metrics.map(function (metric) {
+      return Math.max(fontSize * 0.92, metric.actualBoundingBoxAscent + metric.actualBoundingBoxDescent);
+    }));
+    const lineHeight = Math.max(fontSize * 1.08, textHeight);
+    const width = Math.max.apply(null, metrics.map(function (metric) {
+      return metric.width;
+    }));
+    const height = lineHeight * Math.max(1, lines.length);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+    const stretchedWidth = width * stretchXFactor;
+    const stretchedHeight = height * stretchYFactor;
+    const rotationRadians = Math.abs(getBottleOpenerRotationRadians());
+    const rotationCos = Math.abs(Math.cos(rotationRadians));
+    const rotationSin = Math.abs(Math.sin(rotationRadians));
+
+    return {
+      fontSize: fontSize,
+      font: buildBottleOpenerTextFont(fontSize),
+      lines: lines,
+      lineWidths: metrics.map(function (metric) {
+        return metric.width;
+      }),
+      lineHeight: lineHeight,
+      startY: -((lines.length - 1) * lineHeight) / 2,
+      width: width,
+      height: height,
+      drawWidth: stretchedWidth * rotationCos + stretchedHeight * rotationSin,
+      drawHeight: stretchedWidth * rotationSin + stretchedHeight * rotationCos
+    };
   }
 
   function getWoodBoardTextLayout(text) {
@@ -6692,7 +7288,48 @@
   }
 
   function getSingleSurfaceQrLayout() {
+    if (isDogtagProduct()) {
+      return getDogtagQrLayout();
+    }
     return isWoodBoardProduct() ? getWoodBoardQrLayout() : getBottleOpenerQrLayout();
+  }
+
+  function getDogtagQrLayout() {
+    const box = getDogtagDesignBox();
+    const activeSideState = getActiveSideState();
+    if (!box) return null;
+
+    const quietZone = 4;
+    const fallbackModuleCount = 21;
+    const qrModel = getQrCodeModel(state.activeSide, state.activePendantIndex);
+    const moduleCount = qrModel ? qrModel.getModuleCount() : fallbackModuleCount;
+
+    const baseSize = Math.min(box.width, box.height) * 0.82;
+    const minSize = Math.min(box.width, box.height) * 0.58;
+    const maxOuterSize = Math.min(box.width, box.height) * 0.96;
+    const maxScalePercent = Math.max(1, Math.round((maxOuterSize / baseSize) * 100));
+    const requestedOuterSize = Math.max(minSize, baseSize * (activeSideState.scalePercent / 100));
+    const outerSize = Math.min(maxOuterSize, requestedOuterSize);
+
+    const totalModules = moduleCount + quietZone * 2;
+    const moduleSize = outerSize / totalModules;
+    const normalizedOuterSize = moduleSize * totalModules;
+
+    const maxOffsetX = Math.max(0, (box.width - normalizedOuterSize) / 2);
+    const maxOffsetY = Math.max(0, (box.height - normalizedOuterSize) / 2);
+
+    const clampedOffsetX = clamp(activeSideState.offsetX, -maxOffsetX, maxOffsetX);
+    const clampedOffsetY = clamp(activeSideState.offsetY, -maxOffsetY, maxOffsetY);
+
+    return {
+      moduleCount: moduleCount,
+      quietZone: quietZone,
+      moduleSize: moduleSize,
+      outerSize: normalizedOuterSize,
+      maxScalePercent: maxScalePercent,
+      x: box.x + (box.width - normalizedOuterSize) / 2 + clampedOffsetX,
+      y: box.y + (box.height - normalizedOuterSize) / 2 + clampedOffsetY
+    };
   }
 
   function getWoodBoardQrLayout() {
@@ -6776,7 +7413,31 @@
   }
 
   function getSingleSurfaceMonogramLayout() {
+    if (isDogtagProduct()) {
+      return getDogtagMonogramLayout();
+    }
     return isWoodBoardProduct() ? getWoodBoardMonogramLayout() : getBottleOpenerMonogramLayout();
+  }
+
+  function getDogtagMonogramLayout() {
+    const box = getDogtagDesignBox();
+    const sideState = getActiveSideState();
+    const text = sideState.monogramValue || "";
+    const length = Math.max(1, text.length);
+    const baseSizeByLength = length === 1
+      ? Math.min(box.width, box.height) * 0.56
+      : (length === 2 ? Math.min(box.width, box.height) * 0.44 : Math.min(box.width, box.height) * 0.34);
+    const fontSize = Math.max(34, baseSizeByLength) * (sideState.scalePercent / 100);
+    const metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
+    const height = Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+
+    return {
+      font: buildMonogramFont(fontSize, state.activeSide, state.activePendantIndex),
+      width: metrics.width,
+      height: height,
+      drawWidth: metrics.width * getStretchFactor(sideState.stretchXPercent),
+      drawHeight: height * getStretchFactor(sideState.stretchYPercent)
+    };
   }
 
   function getWoodBoardMonogramLayout() {
@@ -7147,12 +7808,12 @@
     const sourceWidthFallback = canvas.width;
     const sourceHeightFallback = Math.round(sourceWidthFallback / targetAspect);
 
-    if (isBottleOpenerProduct() || isWoodBoardProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
+    if (isBottleOpenerProduct() || isWoodBoardProduct() || isDogtagProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
       return {
         sourceWidth: sourceWidthFallback,
         sourceHeight: sourceHeightFallback,
         centerX: canvas.width / 2,
-        centerY: isBottleOpenerProduct() ? 560 : (isWoodBoardProduct() ? 632 : 650),
+        centerY: isBottleOpenerProduct() ? 560 : ((isWoodBoardProduct() || isDogtagProduct()) ? 632 : 650),
         maxPanX: 0,
         maxPanY: Math.max(0, (canvas.height - sourceHeightFallback) / 2)
       };
@@ -7222,6 +7883,11 @@
   }
 
   function drawBackdrop() {
+    if (isDogtagProduct()) {
+      drawDogtagBackdrop();
+      return;
+    }
+
     const gradient = ctx.createRadialGradient(220, 180, 20, 600, 600, 980);
     gradient.addColorStop(0, "rgba(219, 16, 33, 0.20)");
     gradient.addColorStop(0.4, "rgba(88, 26, 34, 0.10)");
@@ -7237,6 +7903,36 @@
       ctx.beginPath();
       ctx.moveTo(40, y);
       ctx.lineTo(1160, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawDogtagBackdrop() {
+    const gradient = ctx.createRadialGradient(600, 520, 80, 600, 620, 960);
+    gradient.addColorStop(0, "rgba(232, 228, 220, 0.86)");
+    gradient.addColorStop(0.48, "rgba(156, 151, 145, 0.46)");
+    gradient.addColorStop(1, "rgba(36, 32, 34, 0.96)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.10)";
+    ctx.lineWidth = 1;
+    for (let index = 0; index < 18; index += 1) {
+      const y = 86 + index * 58;
+      ctx.beginPath();
+      ctx.moveTo(40, y);
+      ctx.lineTo(1160, y - 8);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(20,18,18,0.08)";
+    for (let index = 0; index < 10; index += 1) {
+      const x = 86 + index * 118;
+      ctx.beginPath();
+      ctx.moveTo(x, 74);
+      ctx.lineTo(x + 44, 1090);
       ctx.stroke();
     }
     ctx.restore();
@@ -7403,6 +8099,50 @@
       surfaceLines: "rgba(18,18,22,0.08)",
       thumbBackground: "radial-gradient(circle at top, rgba(255,255,255,.82), rgba(255,255,255,.28) 42%, rgba(255,255,255,.08) 76%), linear-gradient(180deg, rgba(248,244,240,.99), rgba(231,224,218,.98))",
       thumbBackgroundCenter: "#f5f1ed"
+    };
+  }
+
+  function getDogtagPalette(finishId) {
+    const effectiveFinishId = finishId || (getActiveFinish() ? getActiveFinish().id : "silver");
+
+    if (effectiveFinishId === "black") {
+      return {
+        effectiveFinishId: "black",
+        baseStart: "#2c2f31",
+        baseMid: "#111315",
+        baseEnd: "#07080a",
+        edgeColor: "rgba(0,0,0,0.72)",
+        innerStroke: "rgba(255,255,255,0.09)",
+        highlightStrong: "rgba(255,255,255,0.11)",
+        highlightSoft: "rgba(255,255,255,0.06)",
+        shadowTone: "rgba(0,0,0,0.34)",
+        surfaceLines: "rgba(255,255,255,0.055)",
+        holeShadow: "rgba(255,255,255,0.32)",
+        holeFill: "#f2f0ec",
+        engravingFill: "rgba(228,225,220,0.90)",
+        engravingStroke: "rgba(228,225,220,0.72)",
+        qrBackground: "rgba(242,239,234,0.92)",
+        thumbBackground: "radial-gradient(circle at top, rgba(255,255,255,.86), rgba(255,255,255,.30) 44%, rgba(255,255,255,.09) 76%), linear-gradient(180deg, rgba(248,244,240,.99), rgba(229,224,218,.98))"
+      };
+    }
+
+    return {
+      effectiveFinishId: "silver",
+      baseStart: "#fbfaf8",
+      baseMid: "#bab7b2",
+      baseEnd: "#eeece8",
+      edgeColor: "rgba(112,112,118,0.30)",
+      innerStroke: "rgba(255,255,255,0.52)",
+      highlightStrong: "rgba(255,255,255,0.42)",
+      highlightSoft: "rgba(255,255,255,0.26)",
+      shadowTone: "rgba(0,0,0,0.16)",
+      surfaceLines: "rgba(20,22,26,0.10)",
+      holeShadow: "rgba(50,52,56,0.42)",
+      holeFill: "#f2f0ec",
+      engravingFill: "rgba(34,36,40,0.72)",
+      engravingStroke: "rgba(34,36,40,0.58)",
+      qrBackground: "rgba(248,246,242,0.94)",
+      thumbBackground: "radial-gradient(circle at top, rgba(255,255,255,.86), rgba(255,255,255,.30) 44%, rgba(255,255,255,.09) 76%), linear-gradient(180deg, rgba(248,244,240,.99), rgba(229,224,218,.98))"
     };
   }
 
@@ -7925,6 +8665,10 @@
       return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Holzbrett") + " · " + getSummaryModeLabel();
     }
 
+    if (isDogtagProduct()) {
+      return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Dogtag") + " · " + (getActiveFinish() ? getActiveFinish().name + " · " : "") + getSummaryModeLabel();
+    }
+
     return "Anfrage zur Motiv-Vorschau – " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + (getPendantCount() > 1 ? "individuelle Größen" : getActiveSize().label);
   }
 
@@ -7955,6 +8699,31 @@
         "",
         "Material: " + getActiveMaterial().name,
         "Produkt: " + (getActiveProductDisplayName() || "Holzbrett"),
+        "Gestaltungsart: " + getSummaryModeLabel(),
+        "Inhalt: " + buildSideSummaryText("front")
+      ];
+
+      if (priceState.isReady) {
+        lines.push("Vorläufiger Startpreis: " + formatEuro(priceState.totalCents));
+      } else if (priceState.invalidReason) {
+        lines.push("Preisstatus: " + priceState.invalidReason);
+      }
+
+      lines.push("");
+      lines.push("Viele Grüße");
+
+      return lines.join("\n");
+    }
+
+    if (isDogtagProduct()) {
+      const lines = [
+        "Hallo Luderbein,",
+        "",
+        "ich habe eine Anfrage zur Motiv-Vorschau. Hier sind die ersten Infos:",
+        "",
+        "Material: " + getActiveMaterial().name,
+        "Produkt: " + (getActiveProductDisplayName() || "Dogtag"),
+        "Ausführung: " + (getActiveFinish() ? getActiveFinish().name : "offen"),
         "Gestaltungsart: " + getSummaryModeLabel(),
         "Inhalt: " + buildSideSummaryText("front")
       ];
@@ -8055,6 +8824,18 @@
       return parts.filter(Boolean).join("-") + ".png";
     }
 
+    if (isDogtagProduct()) {
+      const parts = [
+        "luderbein-vorschau",
+        slugify(getActiveMaterial().name),
+        slugify(getActiveProductDisplayName() || "dogtag"),
+        slugify(getActiveFinish() ? getActiveFinish().name : "ausfuehrung"),
+        slugify(getSummaryModeLabel())
+      ];
+
+      return parts.filter(Boolean).join("-") + ".png";
+    }
+
     const parts = [
       "luderbein-vorschau",
       slugify(getActiveMaterial().name),
@@ -8143,6 +8924,18 @@
     if (isWoodBoardProduct()) {
       return hasMaterialSelection() &&
         hasProductSelection() &&
+        hasDesignModeSelection() &&
+        (
+          (isMotifMode() && hasActiveMotifContent()) ||
+          (isTextMode() && hasText()) ||
+          (isQrMode() && hasQrValue())
+        );
+    }
+
+    if (isDogtagProduct()) {
+      return hasMaterialSelection() &&
+        hasProductSelection() &&
+        hasFinishSelection() &&
         hasDesignModeSelection() &&
         (
           (isMotifMode() && hasActiveMotifContent()) ||
@@ -8537,6 +9330,11 @@
     return Boolean(productFamily && productFamily.id === "bottle-opener");
   }
 
+  function isDogtagProduct() {
+    const productFamily = getActiveProductFamily();
+    return Boolean(productFamily && productFamily.id === "dogtag");
+  }
+
   function isWoodBoardProduct() {
     const material = getActiveMaterial();
     return Boolean(
@@ -8547,7 +9345,7 @@
   }
 
   function isSingleSurfaceProduct() {
-    return isBottleOpenerProduct() || isWoodBoardProduct();
+    return isBottleOpenerProduct() || isWoodBoardProduct() || isDogtagProduct();
   }
 
   function getActiveProduct() {
@@ -9035,6 +9833,20 @@
       style: "currency",
       currency: "EUR"
     });
+  }
+
+  function parseRgbaColor(value) {
+    const match = String(value).match(/rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)(?:\s*,\s*([0-9.]+))?\s*\)/i);
+    if (!match) {
+      return { r: 0, g: 0, b: 0, a: 1 };
+    }
+
+    return {
+      r: clamp(Math.round(Number(match[1])), 0, 255),
+      g: clamp(Math.round(Number(match[2])), 0, 255),
+      b: clamp(Math.round(Number(match[3])), 0, 255),
+      a: match[4] == null ? 1 : clamp(Number(match[4]), 0, 1)
+    };
   }
 
   function slugify(value) {

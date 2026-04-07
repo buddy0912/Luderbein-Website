@@ -248,30 +248,31 @@ window.LUDERBEIN_PRICING = {
         },
 
         /* --------------------------------------------------------------------------
-         * METALL – DogTags (Eloxiertes Alu, 29×50 mm, schwarz) (Gravur)
+         * METALL – DogTags (Alu, 29×50 mm, silberfarbig/schwarz) (Gravur)
          * Regeln:
          * - Mindestmenge: 1 Stück
          * - Basis: 1-seitig graviert (Standard)
-         * - 2-seitig = Upgrade (Aufpreis pro Stück nach Staffel)
-         * - Schwarz (aktuell only)
+         * - 2-seitig = Upgrade (+3,00 € pro Stück)
+         * - Silberfarbig/Schwarz
          * - 1 Motiv pro Auftrag (alle Tags gleich)
          * -------------------------------------------------------------------------- */
         dogtags_alu_elox_schwarz_29x50: {
-          label: "DogTag – Alu eloxiert (29×50 mm, schwarz)",
-          note: "Basis: 1-seitig graviert. Schwarz. 1 Motiv pro Auftrag. 2-seitig als Upgrade.",
+          label: "DogTag – Alu (29×50 mm)",
+          note: "Basis: 1-seitig graviert. Silberfarbig oder Schwarz. 1 Motiv pro Auftrag. 2-seitig als Upgrade.",
           minQty: 1,
 
           // Muss existieren, weil der Kalkulator ein Format verlangt
           formats: [
-            { id: "29x50", label: "29×50 mm (schwarz, eloxiert)" }
+            { id: "29x50-silver", label: "29×50 mm (silberfarbig)" },
+            { id: "29x50-black", label: "29×50 mm (schwarz)" }
           ],
 
           tiers: [
-            { min: 1,  max: 1,    price: 9.95 },
-            { min: 2,  max: 4,    price: 7.95 },
+            { min: 1,  max: 1,    price: 6.95 },
+            { min: 2,  max: 4,    price: 6.95 },
             { min: 5,  max: 9,    price: 6.95 },
-            { min: 10, max: 24,   price: 5.95 },
-            { min: 25, max: 49,   price: 4.49 },
+            { min: 10, max: 24,   price: 6.95 },
+            { min: 25, max: 49,   price: 6.95 },
             { min: 50, max: null, price: null, note: "Auf Anfrage" }
           ],
 
@@ -279,23 +280,16 @@ window.LUDERBEIN_PRICING = {
             // Key bewusst gleich wie beim Flaschenöffner:
             engrave_inside_and_outside: {
               label: "2-seitig graviert",
-              type: "per_unit_tiered",
-              description: "Aufpreis pro Stück für Rückseite (zusätzlicher Durchlauf/Handling).",
-              tiers: [
-                { min: 1,  max: 1,    price: 6.95 },
-                { min: 2,  max: 4,    price: 5.95 },
-                { min: 5,  max: 9,    price: 4.95 },
-                { min: 10, max: 24,   price: 3.95 },
-                { min: 25, max: 49,   price: 2.49 },
-                { min: 50, max: null, price: null, note: "Auf Anfrage" }
-              ]
+              type: "per_unit",
+              description: "Aufpreis pro Stück für Rückseite.",
+              unit: 3.00
             },
 
             logo_rework: {
               label: "Logo-Aufbereitung (wenn nicht druckfertig 1-farbig)",
               type: "one_time",
               description: "Einmalige Aufbereitung/Vektorisierung/Optimierung für saubere Gravur.",
-              once: 14.95
+              once: 9.95
             }
           }
         }

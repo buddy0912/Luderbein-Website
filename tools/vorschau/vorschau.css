@@ -866,6 +866,15 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+#productOptions.preview-option-grid--products {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+#productOptions.preview-option-grid--products .preview-option {
+  align-self: stretch;
+}
+
 #productOptions[data-material-id="wood"].preview-option-grid--products {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
@@ -2292,6 +2301,10 @@
   }
 
   .preview-option-grid--products {
+    grid-template-columns: 1fr;
+  }
+
+  #productOptions.preview-option-grid--products {
     grid-template-columns: 1fr;
   }
 
