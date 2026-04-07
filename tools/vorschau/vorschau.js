@@ -56,12 +56,19 @@
   const centerTextButton = document.getElementById("centerTextButton");
   const downloadPreviewButton = document.getElementById("downloadPreviewButton");
   const downloadPreviewButtonMobile = document.getElementById("downloadPreviewButtonMobile");
+  const downloadPreviewSummaryButton = document.getElementById("downloadPreviewSummaryButton");
+  const requestBox = downloadPreviewButton ? downloadPreviewButton.closest(".preview-request") : null;
+  const requestBoxMobile = downloadPreviewButtonMobile ? downloadPreviewButtonMobile.closest(".preview-mobile-bottom-cta") : null;
+  const requestBoxSummary = document.getElementById("summaryRequestBox");
   const requestMenuPanel = document.getElementById("requestMenuPanel");
   const requestMenuPanelMobile = document.getElementById("requestMenuPanelMobile");
+  const requestMenuPanelSummary = document.getElementById("requestMenuPanelSummary");
   const requestWhatsappLink = document.getElementById("requestWhatsappLink");
   const requestWhatsappLinkMobile = document.getElementById("requestWhatsappLinkMobile");
+  const requestWhatsappLinkSummary = document.getElementById("requestWhatsappLinkSummary");
   const requestEmailLink = document.getElementById("requestEmailLink");
   const requestEmailLinkMobile = document.getElementById("requestEmailLinkMobile");
+  const requestEmailLinkSummary = document.getElementById("requestEmailLinkSummary");
   const scaleSlider = document.getElementById("scaleSlider");
   const stretchXSlider = document.getElementById("stretchXSlider");
   const stretchYSlider = document.getElementById("stretchYSlider");
@@ -183,6 +190,7 @@
     4: 0.14,
     5: 0.15
   };
+  const WOOD_BOARD_START_PRICE_CENTS = 795;
   const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
   const mobileThumbCropCache = new Map();
   let mobileThumbCropFrame = 0;
@@ -1781,7 +1789,10 @@
       if (hasDesignModeSelection()) {
         configurationParts.push(getSummaryModeLabel());
       }
-      priceHint = priceState.invalidReason || priceHint;
+      if (priceState.isReady) {
+        priceLabel = formatEuro(priceState.totalCents);
+        priceHint = priceState.invalidReason || "Vorläufiger Startpreis für die aktuelle Holzbrett-Auswahl.";
+      }
     } else {
       configurationParts.push(productName === "Noch offen" ? "Schmuckanhänger" : productName);
       if (finish) {
@@ -2331,7 +2342,7 @@
     }
     centerPlacementButton.addEventListener("click", centerPlacement);
     centerTextButton.addEventListener("click", centerTextPlacement);
-    [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
+    [downloadPreviewButton, downloadPreviewButtonMobile, downloadPreviewSummaryButton].filter(Boolean).forEach((button) => {
       button.addEventListener("click", downloadPreview);
     });
     requestWhatsappLink.addEventListener("click", closeRequestMenu);
@@ -2341,6 +2352,12 @@
     }
     if (requestEmailLinkMobile) {
       requestEmailLinkMobile.addEventListener("click", closeRequestMenu);
+    }
+    if (requestWhatsappLinkSummary) {
+      requestWhatsappLinkSummary.addEventListener("click", closeRequestMenu);
+    }
+    if (requestEmailLinkSummary) {
+      requestEmailLinkSummary.addEventListener("click", closeRequestMenu);
     }
 
     document.querySelectorAll("[data-nudge]").forEach((button) => {
@@ -2715,7 +2732,20 @@
       result.pricingMode = "wood-board";
       result.discountRate = 0;
       result.pendantCount = 1;
-      result.invalidReason = "Preis für Holzbrett-Vorschauen wird nach Prüfung berechnet.";
+      result.subtotalCents = WOOD_BOARD_START_PRICE_CENTS;
+      result.totalCents = WOOD_BOARD_START_PRICE_CENTS;
+      result.discountCents = 0;
+      result.isReady = true;
+      result.invalidReason = "Vorläufiger Startpreis für die Holzbrett-Vorschau.";
+      result.items.push({
+        label: getActiveProductDisplayName() || "Holzbrett",
+        sizeLabel: "",
+        baseCents: WOOD_BOARD_START_PRICE_CENTS,
+        backCents: 0,
+        totalCents: WOOD_BOARD_START_PRICE_CENTS,
+        displayPrice: formatEuro(WOOD_BOARD_START_PRICE_CENTS),
+        metaParts: ["Vorläufiger Startpreis"]
+      });
       return result;
     }
 
@@ -3239,12 +3269,14 @@
     productOptionsEl.setAttribute("data-material-id", material.id);
 
     getAvailableProductFamilies(material).forEach((productFamily) => {
+      const isWoodBoardFamily = material.id === "wood" && /^wood-board-/.test(productFamily.id);
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "preview-option";
+      button.className = "preview-option" + (isWoodBoardFamily ? " preview-option--wood-board" : "");
       button.setAttribute("data-product-id", productFamily.id);
       const startingPriceCents = getProductFamilyStartingPriceCents(productFamily);
       button.innerHTML =
+        (isWoodBoardFamily ? buildWoodBoardProductThumbMarkup(productFamily) : "") +
         '<span class="preview-option__title">' + escapeHtml(productFamily.name) + "</span>" +
         (startingPriceCents != null
           ? '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
@@ -3403,7 +3435,55 @@
       return getBottleOpenerLowestTierPriceCents();
     }
 
+    if (/^wood-board-/.test(productFamily.id)) {
+      return WOOD_BOARD_START_PRICE_CENTS;
+    }
+
     return null;
+  }
+
+  function buildWoodBoardProductThumbMarkup(productFamily) {
+    const isRound = productFamily && productFamily.id === "wood-board-round";
+    const gradientId = "wood-board-card-" + (isRound ? "round" : "rect");
+    const grainId = gradientId + "-grain";
+
+    if (isRound) {
+      return (
+        '<span class="preview-option__thumb preview-option__thumb--wood-board preview-option__thumb--wood-board-round" aria-hidden="true">' +
+          '<svg viewBox="0 0 180 120" width="180" height="120" aria-hidden="true" focusable="false">' +
+            '<defs>' +
+              '<linearGradient id="' + grainId + '" x1="20%" y1="12%" x2="84%" y2="92%">' +
+                '<stop offset="0%" stop-color="#d79a4f"></stop>' +
+                '<stop offset="48%" stop-color="#e6b66f"></stop>' +
+                '<stop offset="100%" stop-color="#ba7738"></stop>' +
+              '</linearGradient>' +
+            '</defs>' +
+            '<circle cx="90" cy="60" r="42" fill="rgba(61,34,18,0.18)"></circle>' +
+            '<circle cx="90" cy="57" r="40" fill="url(#' + grainId + ')" stroke="rgba(76,43,21,0.45)" stroke-width="2"></circle>' +
+            '<circle cx="90" cy="57" r="31" fill="none" stroke="rgba(88,49,21,0.42)" stroke-width="2"></circle>' +
+            '<path d="M58 47c17-13 41-13 63-2M58 63c20-8 45-7 66 3M70 78c14-6 34-5 49 1" fill="none" stroke="rgba(117,67,28,0.22)" stroke-width="2" stroke-linecap="round"></path>' +
+          '</svg>' +
+        '</span>'
+      );
+    }
+
+    return (
+      '<span class="preview-option__thumb preview-option__thumb--wood-board preview-option__thumb--wood-board-rect" aria-hidden="true">' +
+        '<svg viewBox="0 0 180 120" width="180" height="120" aria-hidden="true" focusable="false">' +
+          '<defs>' +
+            '<linearGradient id="' + grainId + '" x1="0%" y1="20%" x2="100%" y2="82%">' +
+              '<stop offset="0%" stop-color="#e8c987"></stop>' +
+              '<stop offset="48%" stop-color="#f1d99a"></stop>' +
+              '<stop offset="100%" stop-color="#d7ac61"></stop>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<rect x="24" y="35" width="132" height="54" rx="7" fill="rgba(58,34,18,0.16)"></rect>' +
+          '<rect x="22" y="31" width="136" height="54" rx="7" fill="url(#' + grainId + ')" stroke="rgba(105,64,27,0.34)" stroke-width="2"></rect>' +
+          '<path d="M34 43c28-7 56-5 113 0M35 55c34-6 71-5 111 2M34 70c28-5 69-5 113 1" fill="none" stroke="rgba(126,80,34,0.18)" stroke-width="2" stroke-linecap="round"></path>' +
+          '<path d="M83 46c7-5 16-5 22 0M63 73c6-4 14-4 20 0" fill="none" stroke="rgba(126,80,34,0.20)" stroke-width="1.7" stroke-linecap="round"></path>' +
+        '</svg>' +
+      '</span>'
+    );
   }
 
   function renderSizeOptions() {
@@ -4471,7 +4551,13 @@
 
   function onDocumentClick(event) {
     if (isMenuInteraction(event.target)) return;
-    if (requestMenuPanel.hidden && (!requestMenuPanelMobile || requestMenuPanelMobile.hidden)) return;
+    if (
+      requestMenuPanel.hidden &&
+      (!requestMenuPanelMobile || requestMenuPanelMobile.hidden) &&
+      (!requestMenuPanelSummary || requestMenuPanelSummary.hidden)
+    ) {
+      return;
+    }
     closeRequestMenu();
   }
 
@@ -4492,13 +4578,16 @@
     if (requestMenuPanelMobile) {
       requestMenuPanelMobile.hidden = !isOpen;
     }
-    [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
+    if (requestMenuPanelSummary) {
+      requestMenuPanelSummary.hidden = !isOpen;
+    }
+    [downloadPreviewButton, downloadPreviewButtonMobile, downloadPreviewSummaryButton].filter(Boolean).forEach((button) => {
       button.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
   }
 
   function isMenuInteraction(target) {
-    return [downloadPreviewButton, downloadPreviewButtonMobile, requestMenuPanel, requestMenuPanelMobile]
+    return [downloadPreviewButton, downloadPreviewButtonMobile, downloadPreviewSummaryButton, requestMenuPanel, requestMenuPanelMobile, requestMenuPanelSummary]
       .filter(Boolean)
       .some(function (element) {
         return element === target || element.contains(target);
@@ -5269,12 +5358,27 @@
     if (requestWhatsappLinkMobile) {
       requestWhatsappLinkMobile.href = requestWhatsappLink.href;
     }
+    if (requestWhatsappLinkSummary) {
+      requestWhatsappLinkSummary.href = requestWhatsappLink.href;
+    }
     if (requestEmailLinkMobile) {
       requestEmailLinkMobile.href = requestEmailLink.href;
     }
-    [downloadPreviewButton, downloadPreviewButtonMobile].filter(Boolean).forEach((button) => {
+    if (requestEmailLinkSummary) {
+      requestEmailLinkSummary.href = requestEmailLink.href;
+    }
+    [downloadPreviewButton, downloadPreviewButtonMobile, downloadPreviewSummaryButton].filter(Boolean).forEach((button) => {
       button.disabled = !readyForExport;
     });
+    if (requestBox) {
+      requestBox.hidden = !readyForExport;
+    }
+    if (requestBoxMobile) {
+      requestBoxMobile.hidden = !readyForExport;
+    }
+    if (requestBoxSummary) {
+      requestBoxSummary.hidden = !(readyForExport && isWoodBoardProduct());
+    }
     if (!readyForExport) {
       closeRequestMenu();
     }
@@ -5341,7 +5445,7 @@
     photoPricingHint.hidden = !(priceState.hasPhoto || hasAnyPhotoSelection());
     photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_DISCOUNT_HINT;
 
-    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || hasSetSelection());
+    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || hasSetSelection());
     priceSummaryBox.hidden = !shouldShowPriceBox;
     if (shouldShowPriceBox) {
       if (priceState.items.length) {
@@ -5380,18 +5484,20 @@
           priceSummarySubhint.hidden = true;
         }
       } else {
-        if (priceSubtotalLabel) priceSubtotalLabel.textContent = "Zwischensumme";
+        if (priceSubtotalLabel) priceSubtotalLabel.textContent = isWoodBoardProduct() ? "Startpreis" : "Zwischensumme";
         priceSubtotal.textContent = priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
         priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
         priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
         priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
-        if (priceTotalLabel) priceTotalLabel.textContent = "Gesamtpreis";
+        if (priceTotalLabel) priceTotalLabel.textContent = isWoodBoardProduct() ? "Vorläufig" : "Gesamtpreis";
         priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
         priceSummaryHint.textContent = priceState.items.length
           ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
           : priceState.invalidReason;
         if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = "Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.";
+          priceSummarySubhint.textContent = isWoodBoardProduct()
+            ? "Vorläufiger Startpreis. Finale Kalkulation erfolgt nach Prüfung."
+            : "Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.";
           priceSummarySubhint.hidden = false;
         }
       }
@@ -7705,7 +7811,13 @@
 
     targetCtx.fillStyle = "rgba(210,207,206,0.74)";
     targetCtx.font = "500 22px system-ui, sans-serif";
-    targetCtx.fillText(material.name + " · " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + buildSizeSummaryLabel(), 52, 108);
+    targetCtx.fillText(
+      isSingleSurfaceProduct()
+        ? material.name + " · " + getActiveProductDisplayName() + " · " + getSummaryModeLabel()
+        : material.name + " · " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + buildSizeSummaryLabel(),
+      52,
+      108
+    );
     targetCtx.fillText(
       hasAnyBackSideEnabled()
         ? "Export mit individuellen Vorder- und Rückseiten"
@@ -7722,7 +7834,7 @@
     const previewX = config.x + config.cardPadding;
     const previewY = config.y + config.cardPadding + 58;
     const summaryY = previewY + config.previewSize + 36;
-    const modeLabel = getActiveSetOption().name;
+    const modeLabel = isSingleSurfaceProduct() ? getSummaryModeLabel() : getActiveSetOption().name;
 
     targetCtx.save();
     drawRoundedRect(targetCtx, config.x, config.y, config.width, config.height, cardRadius);
@@ -7809,6 +7921,10 @@
       return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Flaschenöffner") + " · " + (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text"));
     }
 
+    if (isWoodBoardProduct()) {
+      return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Holzbrett") + " · " + getSummaryModeLabel();
+    }
+
     return "Anfrage zur Motiv-Vorschau – " + getActiveProductDisplayName() + " · " + getActiveSetOption().shortLabel + " · " + (getPendantCount() > 1 ? "individuelle Größen" : getActiveSize().label);
   }
 
@@ -7827,6 +7943,30 @@
         "",
         "Viele Grüße"
       ];
+
+      return lines.join("\n");
+    }
+
+    if (isWoodBoardProduct()) {
+      const lines = [
+        "Hallo Luderbein,",
+        "",
+        "ich habe eine Anfrage zur Motiv-Vorschau. Hier sind die ersten Infos:",
+        "",
+        "Material: " + getActiveMaterial().name,
+        "Produkt: " + (getActiveProductDisplayName() || "Holzbrett"),
+        "Gestaltungsart: " + getSummaryModeLabel(),
+        "Inhalt: " + buildSideSummaryText("front")
+      ];
+
+      if (priceState.isReady) {
+        lines.push("Vorläufiger Startpreis: " + formatEuro(priceState.totalCents));
+      } else if (priceState.invalidReason) {
+        lines.push("Preisstatus: " + priceState.invalidReason);
+      }
+
+      lines.push("");
+      lines.push("Viele Grüße");
 
       return lines.join("\n");
     }
@@ -7900,6 +8040,17 @@
           parts.push(slugify(getActiveTemplate().name));
         }
       }
+
+      return parts.filter(Boolean).join("-") + ".png";
+    }
+
+    if (isWoodBoardProduct()) {
+      const parts = [
+        "luderbein-vorschau",
+        slugify(getActiveMaterial().name),
+        slugify(getActiveProductDisplayName() || "holzbrett"),
+        slugify(getSummaryModeLabel())
+      ];
 
       return parts.filter(Boolean).join("-") + ".png";
     }
@@ -7979,6 +8130,17 @@
 
   function isConfigurationReady() {
     if (isBottleOpenerProduct()) {
+      return hasMaterialSelection() &&
+        hasProductSelection() &&
+        hasDesignModeSelection() &&
+        (
+          (isMotifMode() && hasActiveMotifContent()) ||
+          (isTextMode() && hasText()) ||
+          (isQrMode() && hasQrValue())
+        );
+    }
+
+    if (isWoodBoardProduct()) {
       return hasMaterialSelection() &&
         hasProductSelection() &&
         hasDesignModeSelection() &&
@@ -8103,6 +8265,10 @@
   }
 
   function buildSideSummaryText(sideId) {
+    if (isSingleSurfaceProduct()) {
+      return getSideSummary(sideId, 0);
+    }
+
     return getPendantIndices().map(function (pendantIndex) {
       return getPendantLabel(pendantIndex) + ": " + getSideSummary(sideId, pendantIndex);
     }).join(" · ");

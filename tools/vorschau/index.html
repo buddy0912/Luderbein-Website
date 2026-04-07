@@ -186,7 +186,7 @@
                 aria-controls="requestMenuPanel"
                 disabled
               >
-                Vorschau speichern und als Angebot senden
+                Vorschau speichern und Anfrage senden
               </button>
               <div class="preview-request-menu" id="requestMenuPanel" hidden>
                 <a
@@ -581,6 +581,32 @@
               <strong id="summaryPrice">Wird berechnet</strong>
               <p id="summaryPriceHint">Sobald die Auswahl vollständig ist, erscheint hier der passende Preisstand.</p>
             </div>
+            <div class="preview-summary-request" id="summaryRequestBox" hidden>
+              <button
+                class="btn primary preview-summary-request__button"
+                type="button"
+                id="downloadPreviewSummaryButton"
+                aria-expanded="false"
+                aria-controls="requestMenuPanelSummary"
+                disabled
+              >
+                Vorschau speichern und Anfrage senden
+              </button>
+              <div class="preview-request-menu preview-request-menu--summary" id="requestMenuPanelSummary" hidden>
+                <a
+                  class="preview-request-menu__item"
+                  id="requestWhatsappLinkSummary"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp
+                </a>
+                <a class="preview-request-menu__item" id="requestEmailLinkSummary" href="#">
+                  E-Mail
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -598,7 +624,7 @@
         aria-controls="requestMenuPanelMobile"
         disabled
       >
-        Vorschau speichern und als Angebot senden
+        Vorschau speichern und Anfrage senden
       </button>
       <div class="preview-request-menu preview-request-menu--mobile" id="requestMenuPanelMobile" hidden>
         <a
