@@ -5773,29 +5773,10 @@
   function getBottleOpenerTextLayout(text) {
     const box = getBottleOpenerDesignBox();
     const activeSideState = getActiveSideState();
-    const maxWidth = box.width * 0.88;
-    const maxHeight = box.height * 0.72;
-    let fontSize = Math.max(34, box.height * 0.46) * (activeSideState.textScalePercent / 100);
+    const baseFontSize = Math.max(34, box.height * 0.46);
+    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
     let metrics = measureBottleOpenerText(text, fontSize);
     let textHeight = Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-
-    if (metrics.width > maxWidth) {
-      fontSize *= maxWidth / metrics.width;
-      metrics = measureBottleOpenerText(text, fontSize);
-      textHeight = Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-    }
-
-    if (textHeight > maxHeight) {
-      fontSize *= maxHeight / textHeight;
-      metrics = measureBottleOpenerText(text, fontSize);
-      textHeight = Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
-    }
-
-    const effectiveScalePercent = Math.max(1, Math.round((fontSize / Math.max(34, box.height * 0.46)) * 100));
-    if (effectiveScalePercent !== activeSideState.textScalePercent) {
-      activeSideState.textScalePercent = effectiveScalePercent;
-      textSizeSlider.value = String(effectiveScalePercent);
-    }
 
     return {
       fontSize: fontSize,
@@ -7711,14 +7692,8 @@
     const text = sideState.monogramValue || "";
     const length = Math.max(1, text.length);
     const baseSizeByLength = length === 1 ? motifMask.width * 0.68 : (length === 2 ? motifMask.width * 0.54 : motifMask.width * 0.42);
-    let fontSize = Math.max(44, baseSizeByLength) * (sideState.scalePercent / 100);
-    let metrics = measureMonogram(text, fontSize, state.activeSide, pendantIndex);
-    const maxWidth = motifMask.width * 0.88;
-
-    if (metrics.width > maxWidth) {
-      fontSize *= maxWidth / metrics.width;
-      metrics = measureMonogram(text, fontSize, state.activeSide, pendantIndex);
-    }
+    const fontSize = Math.max(44, baseSizeByLength) * (sideState.scalePercent / 100);
+    const metrics = measureMonogram(text, fontSize, state.activeSide, pendantIndex);
 
     return {
       font: buildMonogramFont(fontSize, state.activeSide, pendantIndex),
@@ -7735,14 +7710,8 @@
     const text = sideState.monogramValue || "";
     const length = Math.max(1, text.length);
     const baseSizeByLength = length === 1 ? box.height * 1.02 : (length === 2 ? box.height * 0.84 : box.height * 0.66);
-    let fontSize = Math.max(34, baseSizeByLength) * (sideState.scalePercent / 100);
-    let metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
-    const maxWidth = box.width * 0.9;
-
-    if (metrics.width > maxWidth) {
-      fontSize *= maxWidth / metrics.width;
-      metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
-    }
+    const fontSize = Math.max(34, baseSizeByLength) * (sideState.scalePercent / 100);
+    const metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
 
     return {
       font: buildMonogramFont(fontSize, state.activeSide, state.activePendantIndex),
@@ -7773,21 +7742,10 @@
   function getTextLayout(text, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
     const activeSideState = getSideState(state.activeSide, pendantIndex);
-    const maxWidth = motifMask.width * 0.82;
     const baseFontSize = Math.max(34, motifMask.width * 0.19);
-    let fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
-    let metrics = measureText(text, fontSize, pendantIndex);
+    let fontSize = Math.max(22, baseFontSize * (activeSideState.textScalePercent / 100));
+    const metrics = measureText(text, fontSize, pendantIndex);
 
-    if (metrics.width > maxWidth) {
-      fontSize *= maxWidth / metrics.width;
-      metrics = measureText(text, fontSize, pendantIndex);
-    }
-
-    const safeFontSize = Math.max(22, fontSize);
-    if (safeFontSize !== fontSize) {
-      metrics = measureText(text, safeFontSize, pendantIndex);
-      fontSize = safeFontSize;
-    }
 
     return {
       fontSize: fontSize,
@@ -7831,7 +7789,7 @@
 
   function getDefaultTextOffsetY(pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
-    return motifMask ? motifMask.height * 0.22 : 0;
+    return motifMask ? motifMask.height * 0.04 : 0;
   }
 
   function measureText(text, fontSize, pendantIndex) {
