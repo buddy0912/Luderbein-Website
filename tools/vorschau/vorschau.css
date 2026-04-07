@@ -1608,6 +1608,43 @@
   --symbol-asset-scale: 100%;
 }
 
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option--symbol-card {
+  --symbol-thumb-height: 198px;
+  --symbol-thumb-padding: 14px;
+  --symbol-media-padding: 18px;
+  --symbol-asset-scale: 82%;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option__thumb {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,.9), rgba(255,255,255,.36) 45%, rgba(255,255,255,.1) 78%),
+    linear-gradient(180deg, rgba(245,240,233,.98), rgba(223,216,207,.96));
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option__thumb-media--symbol {
+  background:
+    linear-gradient(180deg, rgba(255,253,249,.98), rgba(243,238,229,.98));
+  box-shadow:
+    inset 0 0 0 1px rgba(73,57,40,.08),
+    inset 0 10px 24px rgba(255,255,255,.4);
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option__thumb-media--emblem img {
+  filter: grayscale(1) contrast(1.24) brightness(.72);
+  mix-blend-mode: multiply;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option__title {
+  letter-spacing: .015em;
+}
+
+#motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option__meta {
+  margin-top: 4px;
+  color: rgba(222,216,209,.88);
+  font-size: .86rem;
+  line-height: 1.3;
+}
+
 #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="ornament"] {
   grid-template-columns: repeat(2, minmax(220px, 280px));
   gap: 18px;
@@ -2397,6 +2434,13 @@
     --preview-asset-max-height: 100%;
   }
 
+  #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option--symbol-card {
+    --symbol-thumb-height: 168px;
+    --symbol-thumb-padding: 8px;
+    --symbol-media-padding: 12px;
+    --symbol-asset-scale: 82%;
+  }
+
   #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-outdoor"] .preview-option--preview-profile-motif-wide {
     --preview-scale: 2.08;
     --preview-offset-y: 9%;
@@ -2424,6 +2468,13 @@
 
   #motifOverlayOptions[data-overlay-step="emblemVariants"] .preview-option__meta {
     display: none;
+  }
+
+  #motifOverlayOptions[data-overlay-step="emblemVariants"][data-overlay-kind="custom-filesystem-runen"] .preview-option__meta {
+    display: block;
+    margin-top: 3px;
+    font-size: .72rem;
+    line-height: 1.2;
   }
 
   .preview-option {

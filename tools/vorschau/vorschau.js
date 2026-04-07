@@ -2046,7 +2046,7 @@
         kindId: kindId,
         parentId: "emblem",
         name: formatFilesystemVariantLabel(fileName, category.files),
-        description: "",
+        description: category.meanings && category.meanings[fileName] ? category.meanings[fileName] : "",
         imageSrc: category.sourcePath.replace(/\/$/, "") + "/" + fileName
       };
     });

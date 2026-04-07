@@ -202,6 +202,30 @@
         "uruz.svg",
         "wunjo.svg"
       ],
+      meanings: {
+        "algiz.svg": "Elch",
+        "ansuz.svg": "Ase",
+        "berkana.svg": "Birke",
+        "dagaz.svg": "Tag",
+        "ehwaz.svg": "Pferd",
+        "fehu.svg": "Vieh/Wohlstand",
+        "gebo.svg": "Gabe",
+        "ingwaz.svg": "Yngvi",
+        "isaz.svg": "Eis",
+        "iwaz.svg": "Eibe",
+        "jera.svg": "Jahr/Ernte",
+        "kenaz.svg": "Kien/Kahn",
+        "laguz.svg": "Wasser/See",
+        "mannaz.svg": "Mann/Mensch",
+        "naudhiz.svg": "Not",
+        "othala.svg": "Erbbesitz/Stammgut",
+        "perthro.svg": "Obstbaum",
+        "raidho.svg": "Ritt/reiten",
+        "thurisaz.svg": "Riese",
+        "tiwaz.svg": "Krieg/Kampf",
+        "uruz.svg": "Auerochse",
+        "wunjo.svg": "Wonne"
+      },
       previewTemplate: "/assets/tools/vorschau/custom/runen/svg/ansuz.svg"
     },
     {
