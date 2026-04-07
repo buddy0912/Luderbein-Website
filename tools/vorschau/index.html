@@ -374,13 +374,13 @@
         </div>
 
         <div class="preview-control-group" id="motifAdjustGroup" aria-labelledby="adjust-heading" hidden>
-          <div class="preview-control-title-row">
+          <div class="preview-control-title-row preview-control-title-row--compact preview-control-title-row--scale">
             <h3 id="adjust-heading">Größe</h3>
             <strong id="scaleValueLabel">100%</strong>
           </div>
           <input
             id="scaleSlider"
-            class="preview-range"
+            class="preview-range preview-range--scale"
             type="range"
             min="60"
             max="230"
@@ -448,19 +448,18 @@
         <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
           <div class="preview-control-title-row">
             <h3 id="text-heading">Text eingeben und positionieren</h3>
-            <strong id="textSizeValueLabel">100%</strong>
           </div>
 
           <label class="preview-field">
             <span class="preview-field__label">Kurzer Text</span>
-            <input
+            <textarea
               id="textInput"
               class="preview-text-input"
-              type="text"
               maxlength="18"
+              rows="2"
               placeholder="z. B. Emma, LB oder Für immer"
               aria-describedby="textInputHint textCharacterCount"
-            />
+            ></textarea>
           </label>
           <div class="preview-inline-meta">
             <p class="preview-help" id="textInputHint">Kurz halten.</p>
@@ -491,7 +490,7 @@
 
           <div class="preview-range-label-row">
             <span class="preview-field__label">Größe</span>
-            <strong class="preview-range-label-row__value" aria-hidden="true">Textgröße</strong>
+            <strong id="textSizeValueLabel">100%</strong>
           </div>
           <input
             id="textSizeSlider"

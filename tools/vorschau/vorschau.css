@@ -831,6 +831,15 @@
   font-size: .96rem;
 }
 
+#motifAdjustGroup[data-control-mode="text-transform"] .preview-nudge {
+  display: none;
+}
+
+#textGroup[data-control-mode="wood-text-transform"] .preview-range-label-row,
+#textGroup[data-control-mode="wood-text-transform"] #textSizeSlider {
+  display: none;
+}
+
 .preview-option-grid {
   display: grid;
   gap: 10px;
@@ -839,6 +848,11 @@
 
 .preview-option-grid--products {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+#productOptions[data-material-id="wood"].preview-option-grid--products {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
 }
 
 #materialOptions.preview-option-grid--products {
@@ -1607,6 +1621,18 @@
   font-weight: 600;
 }
 
+.preview-range-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text);
+}
+
+.preview-range-label-row strong {
+  font-size: .95rem;
+}
+
 .preview-text-input,
 .preview-select,
 .preview-textarea {
@@ -2228,6 +2254,10 @@
 
   .preview-option-grid--products {
     grid-template-columns: 1fr;
+  }
+
+  #productOptions[data-material-id="wood"].preview-option-grid--products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .preview-option-grid--modes {

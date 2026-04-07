@@ -140,6 +140,11 @@
   const textCharacterCount = document.getElementById("textCharacterCount");
 
   const MAX_TEXT_LENGTH = 18;
+  const MAX_WOOD_BOARD_TEXT_LENGTH = 48;
+  const MIN_TEXT_SCALE_PERCENT = 70;
+  const MIN_WOOD_BOARD_TEXT_SCALE_PERCENT = 20;
+  const MAX_TEXT_SCALE_PERCENT = 170;
+  const MAX_WOOD_BOARD_TEXT_SCALE_PERCENT = 230;
   const MAX_QR_LENGTH = 180;
   const MAX_FEEDBACK_MESSAGE_LENGTH = 500;
   const WHATSAPP_NUMBER = "491725925858";
@@ -196,7 +201,7 @@
     {
       id: "text",
       name: "Text",
-      description: "Namen, Initialen oder ein kurzes Wort setzen."
+      description: "Eigener Text."
     }
   ];
 
@@ -209,7 +214,7 @@
     {
       id: "text",
       name: "Text",
-      description: "Kurzen Text auf der Hauptfläche platzieren."
+      description: "Eigener Text."
     },
     {
       id: "qr",
@@ -424,17 +429,36 @@
       },
       {
         id: "wood",
-        name: "Holz",
-        description: "Wird vorbereitet.",
-        isComingSoon: true,
+        name: "Holzbrett",
+        description: "Holzformen.",
         productFamilies: [
           {
-            id: "wood-coming-soon",
-            name: "Produkte aus Holz",
-            description: "Struktur vorbereitet. Details folgen in einem nächsten Schritt.",
-            isComingSoon: true,
+            id: "wood-board-rect",
+            name: "Holzbrett rechteckig",
+            description: "",
             finishes: [],
-            products: []
+            products: [
+              {
+                id: "wood-board-rect-model",
+                name: "Rechteckiges Holzbrett",
+                description: "Schlichte Form mit leicht gerundeten Ecken.",
+                shape: "rect"
+              }
+            ]
+          },
+          {
+            id: "wood-board-round",
+            name: "Holzbrett rund",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "wood-board-round-model",
+                name: "Rundes Holzbrett",
+                description: "Warmer Holzton mit klarer Innenfläche.",
+                shape: "round"
+              }
+            ]
           }
         ]
       },
@@ -1149,7 +1173,11 @@
 
   const BOTTLE_OPENER_ENGRAVING_FILL = "rgba(210,207,206,0.92)";
   const BOTTLE_OPENER_ENGRAVING_STROKE = "rgba(210,207,206,0.82)";
+  const WOOD_BOARD_ENGRAVING_FILL = "rgba(58, 36, 18, 0.82)";
+  const WOOD_BOARD_ENGRAVING_STROKE = "rgba(58, 36, 18, 0.68)";
   const bottleOpenerEngravingCache = typeof WeakMap === "function" ? new WeakMap() : null;
+  const woodBoardEngravingCache = typeof WeakMap === "function" ? new WeakMap() : null;
+  const woodBoardMotifBoundsCache = typeof WeakMap === "function" ? new WeakMap() : null;
   const symbolSourceRegistry = window.PREVIEW_SYMBOL_SOURCE_REGISTRY || null;
   const GOOGLE_BROWSER_GROUP_FILES = {
     action: [
@@ -1722,7 +1750,7 @@
     if (!hasDesignModeSelection()) return "Noch nichts gewählt";
     const content = getSideSummary(state.activeSide, state.activePendantIndex);
     if (!content) return "Noch nichts gewählt";
-    return getPendantCount() > 1 && !isBottleOpenerProduct()
+    return getPendantCount() > 1 && !isSingleSurfaceProduct()
       ? getPendantLabel(state.activePendantIndex) + " · " + content
       : content;
   }
@@ -1748,6 +1776,12 @@
           ? "Staffelpreise gelten ab " + priceState.minQty + " Stück."
           : "Preis für die aktuelle Flaschenöffner-Ausführung.";
       }
+    } else if (isWoodBoardProduct()) {
+      configurationParts.push(productName);
+      if (hasDesignModeSelection()) {
+        configurationParts.push(getSummaryModeLabel());
+      }
+      priceHint = priceState.invalidReason || priceHint;
     } else {
       configurationParts.push(productName === "Noch offen" ? "Schmuckanhänger" : productName);
       if (finish) {
@@ -1765,7 +1799,7 @@
       }
     }
 
-    if (!isBottleOpenerProduct() && priceState.items.length) {
+    if (!isSingleSurfaceProduct() && priceState.items.length) {
       priceLabel = formatEuro(priceState.totalCents);
       priceHint = priceState.discountRate
         ? "Gesamtpreis inklusive Set-Rabatt."
@@ -2099,8 +2133,15 @@
     });
 
     scaleSlider.addEventListener("input", function () {
-      getActiveSideState().scalePercent = Number(scaleSlider.value);
-      clampPlacement();
+      const activeSideState = getActiveSideState();
+      if (isWoodBoardProduct() && isTextMode() && hasText()) {
+        const textScaleRange = getActiveTextScaleRange();
+        activeSideState.textScalePercent = clamp(Number(scaleSlider.value), textScaleRange.min, textScaleRange.max);
+        clampTextPlacement();
+      } else {
+        activeSideState.scalePercent = Number(scaleSlider.value);
+        clampPlacement();
+      }
       syncUi();
       queueRender();
     });
@@ -2108,7 +2149,11 @@
     if (stretchXSlider) {
       stretchXSlider.addEventListener("input", function () {
         getActiveSideState().stretchXPercent = clamp(Number(stretchXSlider.value), 70, 140);
-        clampPlacement();
+        if (isWoodBoardProduct() && isTextMode() && hasText()) {
+          clampTextPlacement();
+        } else {
+          clampPlacement();
+        }
         syncUi();
         queueRender();
       });
@@ -2117,7 +2162,11 @@
     if (stretchYSlider) {
       stretchYSlider.addEventListener("input", function () {
         getActiveSideState().stretchYPercent = clamp(Number(stretchYSlider.value), 70, 140);
-        clampPlacement();
+        if (isWoodBoardProduct() && isTextMode() && hasText()) {
+          clampTextPlacement();
+        } else {
+          clampPlacement();
+        }
         syncUi();
         queueRender();
       });
@@ -2126,13 +2175,17 @@
     if (rotationSlider) {
       rotationSlider.addEventListener("input", function () {
         getActiveSideState().rotationDeg = clamp(Number(rotationSlider.value), -180, 180);
+        if (isWoodBoardProduct() && isTextMode() && hasText()) {
+          clampTextPlacement();
+        }
         syncUi();
         queueRender();
       });
     }
 
     textSizeSlider.addEventListener("input", function () {
-      getActiveSideState().textScalePercent = Number(textSizeSlider.value);
+      const textScaleRange = getActiveTextScaleRange();
+      getActiveSideState().textScalePercent = clamp(Number(textSizeSlider.value), textScaleRange.min, textScaleRange.max);
       clampTextPlacement();
       syncUi();
       queueRender();
@@ -2658,6 +2711,14 @@
       return result;
     }
 
+    if (isWoodBoardProduct()) {
+      result.pricingMode = "wood-board";
+      result.discountRate = 0;
+      result.pendantCount = 1;
+      result.invalidReason = "Preis für Holzbrett-Vorschauen wird nach Prüfung berechnet.";
+      return result;
+    }
+
     if (!hasMaterialSelection() || !hasProductSelection() || !hasSetSelection()) {
       result.invalidReason = "Preis wird berechnet, sobald Material, Produkt und Set gewählt sind.";
       return result;
@@ -3013,7 +3074,7 @@
   }
 
   function getFlowStepIds() {
-    if (isBottleOpenerProduct()) {
+    if (isSingleSurfaceProduct()) {
       return ["material", "product", "designMode"];
     }
 
@@ -3037,7 +3098,7 @@
 
   function isStepAvailable(stepId) {
     if (stepId === "designMode") {
-      if (isBottleOpenerProduct()) {
+      if (isSingleSurfaceProduct()) {
         return hasProductSelection();
       }
       return hasSizeSelection();
@@ -3058,7 +3119,7 @@
       return haveAllPendantSizes();
     }
     if (stepId === "designMode") {
-      if (isBottleOpenerProduct()) {
+      if (isSingleSurfaceProduct()) {
         return hasDesignModeSelection();
       }
       return getPendantIndices().every(function (pendantIndex) {
@@ -3175,6 +3236,7 @@
 
     const material = getActiveMaterial();
     if (!material) return;
+    productOptionsEl.setAttribute("data-material-id", material.id);
 
     getAvailableProductFamilies(material).forEach((productFamily) => {
       const button = document.createElement("button");
@@ -3191,12 +3253,32 @@
 
       button.addEventListener("click", function () {
         if (productFamily.isComingSoon) return;
+        if (state.materialId === "wood" && /^wood-board-/.test(productFamily.id)) {
+          selectWoodBoardProductFamily(productFamily);
+          return;
+        }
         if (state.productFamilyId === productFamily.id) return;
         applyStepSelection("product", productFamily.id);
       });
 
       productOptionsEl.appendChild(button);
     });
+  }
+
+  function selectWoodBoardProductFamily(productFamily) {
+    if (!productFamily || state.materialId !== "wood" || !/^wood-board-/.test(productFamily.id)) return;
+
+    const products = Array.isArray(productFamily.products) ? productFamily.products : [];
+    clearSelectionsAfter("product");
+    state.productFamilyId = productFamily.id;
+    state.productId = products.length ? products[0].id : null;
+    state.finishId = null;
+    state.activePendantIndex = 0;
+    state.activeSide = "front";
+    state.isMotifVariantOverlayOpen = false;
+    closeRequestMenu();
+    syncUi();
+    renderPreview();
   }
 
   function renderFinishOptions() {
@@ -3434,11 +3516,11 @@
   }
 
   function getAvailableDesignModes() {
-    return isBottleOpenerProduct() ? BOTTLE_OPENER_MODE_LIBRARY : MODE_LIBRARY;
+    return isSingleSurfaceProduct() ? BOTTLE_OPENER_MODE_LIBRARY : MODE_LIBRARY;
   }
 
   function getAvailableTemplates() {
-    if (!isBottleOpenerProduct()) {
+    if (!isSingleSurfaceProduct()) {
       return TEMPLATE_LIBRARY.filter(function (template) {
         return template.hideFromMainSelection !== true;
       });
@@ -3988,7 +4070,7 @@
 
     const activeSideState = getActiveSideState();
     activeSideState.emblemVariantId = variant.id;
-    if (isBottleOpenerProduct()) {
+    if (isSingleSurfaceProduct()) {
       activeSideState.designMode = variant.isQr ? "qr" : "motif";
     }
     if (!variant.isQr) {
@@ -4050,7 +4132,7 @@
     activeSideState.emblemSourceMode = mode;
     if (mode === "upload") {
       activeSideState.emblemVariantId = null;
-      if (isBottleOpenerProduct()) {
+      if (isSingleSurfaceProduct()) {
         activeSideState.designMode = "motif";
       }
     } else {
@@ -4332,8 +4414,8 @@
 
   function nudgePlacement(direction) {
     const canNudgeMotif = isMotifMode() && hasActiveMotifContent();
-    const canNudgeBottleOpenerQr = isBottleOpenerProduct() && isQrMode();
-    if (!canNudgeMotif && !canNudgeBottleOpenerQr) return;
+    const canNudgeSurfaceQr = isSingleSurfaceProduct() && isQrMode();
+    if (!canNudgeMotif && !canNudgeSurfaceQr) return;
 
     const activeSideState = getActiveSideState();
     const step = 14;
@@ -4366,8 +4448,8 @@
 
   function onCanvasKeydown(event) {
     const canNudgeMotif = isMotifMode() && hasActiveMotifContent();
-    const canNudgeBottleOpenerQr = isBottleOpenerProduct() && isQrMode();
-    if (!canNudgeMotif && !canNudgeBottleOpenerQr) return;
+    const canNudgeSurfaceQr = isSingleSurfaceProduct() && isQrMode();
+    if (!canNudgeMotif && !canNudgeSurfaceQr) return;
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
@@ -4492,10 +4574,10 @@
     if (!summaryPreviewCtx || !summaryPreviewCanvas) return;
     summaryPreviewCtx.clearRect(0, 0, summaryPreviewCanvas.width, summaryPreviewCanvas.height);
     const targetAspect = summaryPreviewCanvas.width / summaryPreviewCanvas.height;
-    const sourceWidth = isBottleOpenerProduct() ? 980 : 1040;
+    const sourceWidth = isBottleOpenerProduct() ? 980 : (isWoodBoardProduct() ? 980 : 1040);
     const sourceHeight = Math.round(sourceWidth / targetAspect);
     const centerX = canvas.width / 2;
-    const centerY = isBottleOpenerProduct() ? 560 : 650;
+    const centerY = isBottleOpenerProduct() ? 560 : (isWoodBoardProduct() ? 632 : 650);
     const sx = clamp(Math.round(centerX - sourceWidth / 2), 0, Math.max(0, canvas.width - sourceWidth));
     const sy = clamp(Math.round(centerY - sourceHeight / 2), 0, Math.max(0, canvas.height - sourceHeight));
     summaryPreviewCtx.drawImage(
@@ -4563,9 +4645,10 @@
       return;
     }
 
+    const canDragText = isWoodBoardProduct() && isTextMode() && hasText();
     const canDragMotif = isMotifMode() && hasActiveMotifContent();
-    const canDragBottleOpenerQr = isBottleOpenerProduct() && isQrMode();
-    if (!canDragMotif && !canDragBottleOpenerQr) return;
+    const canDragSurfaceQr = isSingleSurfaceProduct() && isQrMode();
+    if (!canDragText && !canDragMotif && !canDragSurfaceQr) return;
 
     const activeSideState = getActiveSideState();
     canvas.setPointerCapture(event.pointerId);
@@ -4574,7 +4657,10 @@
       x: event.clientX,
       y: event.clientY,
       offsetX: activeSideState.offsetX,
-      offsetY: activeSideState.offsetY
+      offsetY: activeSideState.offsetY,
+      textOffsetX: activeSideState.textOffsetX,
+      textOffsetY: activeSideState.textOffsetY,
+      mode: canDragText ? "text" : "placement"
     };
     canvas.classList.add("is-dragging");
   }
@@ -4589,9 +4675,15 @@
     const deltaY = (event.clientY - state.dragOrigin.y) * ratioY;
     const activeSideState = getActiveSideState();
 
-    activeSideState.offsetX = state.dragOrigin.offsetX + deltaX;
-    activeSideState.offsetY = state.dragOrigin.offsetY + deltaY;
-    clampPlacement();
+    if (state.dragOrigin.mode === "text") {
+      activeSideState.textOffsetX = state.dragOrigin.textOffsetX + deltaX;
+      activeSideState.textOffsetY = state.dragOrigin.textOffsetY + deltaY;
+      clampTextPlacement();
+    } else {
+      activeSideState.offsetX = state.dragOrigin.offsetX + deltaX;
+      activeSideState.offsetY = state.dragOrigin.offsetY + deltaY;
+      clampPlacement();
+    }
     syncUi();
     queueRender();
   }
@@ -4611,7 +4703,7 @@
   }
 
   function onMobilePreviewPointerDown(event) {
-    if (!mobileCanvas || !hasAnyPendantSizeSelection() || isBottleOpenerProduct()) return;
+    if (!mobileCanvas || (!hasAnyPendantSizeSelection() && !isWoodBoardProduct()) || isBottleOpenerProduct()) return;
 
     const viewport = getMobilePreviewViewport(
       mobileCanvas.width / mobileCanvas.height,
@@ -4619,14 +4711,24 @@
     );
     if (!viewport) return;
 
+    const interactionMode = getMobilePreviewInteractionMode(event.clientX, event.clientY);
+    const activeSideState = getActiveSideState();
+    const originX = interactionMode === "engraving"
+      ? (isTextMode() && hasText() ? activeSideState.textOffsetX : activeSideState.offsetX)
+      : mobilePreviewPanX;
+    const originY = interactionMode === "engraving"
+      ? (isTextMode() && hasText() ? activeSideState.textOffsetY : activeSideState.offsetY)
+      : mobilePreviewPanY;
+
     mobileCanvas.setPointerCapture(event.pointerId);
     mobilePreviewDragOrigin = {
       pointerId: event.pointerId,
       x: event.clientX,
       y: event.clientY,
-      panX: mobilePreviewPanX,
-      panY: mobilePreviewPanY,
-      moved: false
+      panX: originX,
+      panY: originY,
+      moved: false,
+      mode: interactionMode
     };
   }
 
@@ -4656,6 +4758,11 @@
     const deltaX = (event.clientX - mobilePreviewDragOrigin.x) * ratioX;
     const deltaY = (event.clientY - mobilePreviewDragOrigin.y) * ratioY;
 
+    if (mobilePreviewDragOrigin.mode === "engraving") {
+      moveActiveEngravingFromMobileDelta(deltaX, deltaY);
+      return;
+    }
+
     mobilePreviewPanX = clamp(mobilePreviewDragOrigin.panX - deltaX, -viewport.maxPanX, viewport.maxPanX);
     mobilePreviewPanY = clamp(mobilePreviewDragOrigin.panY - deltaY, -viewport.maxPanY, viewport.maxPanY);
     syncMobilePreviewCanvas();
@@ -4663,7 +4770,7 @@
 
   function onMobilePreviewPointerUp(event) {
     if (!mobilePreviewDragOrigin || !mobileCanvas) return;
-    const wasTap = !mobilePreviewDragOrigin.moved;
+    const wasTap = event.type === "pointerup" && !mobilePreviewDragOrigin.moved;
 
     if (wasTap) {
       const tappedPendantIndex = getPendantIndexAtMobileClientPoint(event.clientX, event.clientY);
@@ -4699,25 +4806,16 @@
   function getPendantIndexAtMobileClientPoint(clientX, clientY) {
     if (!mobileCanvas || !hasAnyPendantSizeSelection()) return -1;
 
-    const viewport = getMobilePreviewViewport(
-      mobileCanvas.width / mobileCanvas.height,
-      true
-    );
-    if (!viewport) return -1;
-
-    const rect = mobileCanvas.getBoundingClientRect();
-    const localX = (clientX - rect.left) * (mobileCanvas.width / rect.width);
-    const localY = (clientY - rect.top) * (mobileCanvas.height / rect.height);
-    const sourceX = (localX / mobileCanvas.width) * viewport.sourceWidth + (viewport.centerX - viewport.sourceWidth / 2);
-    const sourceY = (localY / mobileCanvas.height) * viewport.sourceHeight + (viewport.centerY - viewport.sourceHeight / 2);
+    const sourcePoint = getMobilePreviewSourcePoint(clientX, clientY);
+    if (!sourcePoint) return -1;
 
     let bestPendantIndex = -1;
     let bestDistanceRatio = Infinity;
 
     getPendantLayouts().forEach(function (layout, pendantIndex) {
       const size = getActiveSize(pendantIndex);
-      const dx = sourceX - layout.x;
-      const dy = sourceY - layout.y;
+      const dx = sourcePoint.x - layout.x;
+      const dy = sourcePoint.y - layout.y;
       const radius = (size ? size.productRadius : 116) * layout.scale;
       const distanceRatio = Math.sqrt(dx * dx + dy * dy) / Math.max(radius, 1);
       if (distanceRatio <= 1 && distanceRatio < bestDistanceRatio) {
@@ -4727,6 +4825,139 @@
     });
 
     return bestPendantIndex;
+  }
+
+  function getMobilePreviewSourcePoint(clientX, clientY) {
+    if (!mobileCanvas) return null;
+
+    const viewport = getMobilePreviewViewport(
+      mobileCanvas.width / mobileCanvas.height,
+      true
+    );
+    if (!viewport) return null;
+
+    const rect = mobileCanvas.getBoundingClientRect();
+    const localX = (clientX - rect.left) * (mobileCanvas.width / rect.width);
+    const localY = (clientY - rect.top) * (mobileCanvas.height / rect.height);
+    return {
+      x: (localX / mobileCanvas.width) * viewport.sourceWidth + (viewport.centerX - viewport.sourceWidth / 2),
+      y: (localY / mobileCanvas.height) * viewport.sourceHeight + (viewport.centerY - viewport.sourceHeight / 2)
+    };
+  }
+
+  function getPendantLocalPointFromSourcePoint(sourcePoint, pendantIndex) {
+    const layout = getPendantLayouts()[pendantIndex];
+    if (!layout || !sourcePoint) return null;
+
+    const scale = layout.scale || 1;
+    return {
+      x: 600 + (sourcePoint.x - layout.x) / scale,
+      y: 650 + (sourcePoint.y - layout.y) / scale
+    };
+  }
+
+  function getActiveEngravingHitBox() {
+    if (isWoodBoardProduct()) {
+      const box = getWoodBoardDesignBox();
+      const activeSideState = getActiveSideState();
+      if (!box || !hasDesignModeSelection()) return null;
+
+      if (isTextMode() && hasText()) {
+        const textLayout = getWoodBoardTextLayout(activeSideState.textValue);
+        const centerX = box.x + box.width / 2 + activeSideState.textOffsetX;
+        const centerY = box.y + box.height / 2 + activeSideState.textOffsetY;
+        return buildCenteredHitBox(centerX, centerY, textLayout.drawWidth || textLayout.width, textLayout.drawHeight || textLayout.height);
+      }
+
+      return null;
+    }
+
+    if (!hasAnyPendantSizeSelection() || isBottleOpenerProduct()) return null;
+
+    const pendantIndex = state.activePendantIndex;
+    const motifMask = getMotifMask(pendantIndex);
+    const activeSideState = getActiveSideState();
+    if (!motifMask || !hasDesignModeSelection(state.activeSide, pendantIndex)) return null;
+
+    if (isTextMode(state.activeSide, pendantIndex) && hasText(state.activeSide, pendantIndex)) {
+      const textLayout = getTextLayout(activeSideState.textValue, pendantIndex);
+      const centerX = motifMask.x + motifMask.width / 2 + activeSideState.textOffsetX;
+      const centerY = motifMask.y + motifMask.height / 2 + activeSideState.textOffsetY;
+      return buildCenteredHitBox(centerX, centerY, textLayout.width, textLayout.height);
+    }
+
+    if (!isMotifMode(state.activeSide, pendantIndex) || !hasActiveMotifContent(state.activeSide)) {
+      return null;
+    }
+
+    if (isMonogramTemplateSelected(state.activeSide, pendantIndex) && hasMonogramValue(state.activeSide, pendantIndex)) {
+      const monogramLayout = getMonogramLayout(pendantIndex);
+      const centerX = motifMask.x + motifMask.width / 2 + activeSideState.offsetX;
+      const centerY = motifMask.y + motifMask.height / 2 + activeSideState.offsetY;
+      return buildCenteredHitBox(centerX, centerY, monogramLayout.drawWidth, monogramLayout.drawHeight);
+    }
+
+    const image = getActiveImage(state.activeSide, pendantIndex);
+    if (!image) return null;
+
+    const drawBox = getMotifDrawBox(image, pendantIndex);
+    const centerX = motifMask.x + motifMask.width / 2 + activeSideState.offsetX;
+    const centerY = motifMask.y + motifMask.height / 2 + activeSideState.offsetY;
+    return buildCenteredHitBox(centerX, centerY, drawBox.width, drawBox.height);
+  }
+
+  function buildCenteredHitBox(centerX, centerY, width, height) {
+    const hitPadding = 18;
+    return {
+      left: centerX - width / 2 - hitPadding,
+      top: centerY - height / 2 - hitPadding,
+      right: centerX + width / 2 + hitPadding,
+      bottom: centerY + height / 2 + hitPadding
+    };
+  }
+
+  function getMobilePreviewInteractionMode(clientX, clientY) {
+    const sourcePoint = getMobilePreviewSourcePoint(clientX, clientY);
+    const hitBox = getActiveEngravingHitBox();
+    const hitPoint = isWoodBoardProduct()
+      ? sourcePoint
+      : getPendantLocalPointFromSourcePoint(sourcePoint, state.activePendantIndex);
+
+    if (
+      hitPoint &&
+      hitBox &&
+      hitPoint.x >= hitBox.left &&
+      hitPoint.x <= hitBox.right &&
+      hitPoint.y >= hitBox.top &&
+      hitPoint.y <= hitBox.bottom
+    ) {
+      return "engraving";
+    }
+
+    return "stage";
+  }
+
+  function moveActiveEngravingFromMobileDelta(deltaX, deltaY) {
+    const activeLayout = getPendantLayouts()[state.activePendantIndex];
+    const scale = isWoodBoardProduct()
+      ? 1
+      : (activeLayout && activeLayout.scale ? activeLayout.scale : 1);
+    const localDeltaX = deltaX / scale;
+    const localDeltaY = deltaY / scale;
+    const activeSideState = getActiveSideState();
+
+    if (isTextMode() && hasText()) {
+      activeSideState.textOffsetX = mobilePreviewDragOrigin.panX + localDeltaX;
+      activeSideState.textOffsetY = mobilePreviewDragOrigin.panY + localDeltaY;
+      clampTextPlacement();
+    } else {
+      activeSideState.offsetX = mobilePreviewDragOrigin.panX + localDeltaX;
+      activeSideState.offsetY = mobilePreviewDragOrigin.panY + localDeltaY;
+      clampPlacement();
+    }
+
+    syncUi();
+    queueRender();
   }
 
   function getPlacementClampDistance(areaSize, contentSize, axis) {
@@ -4746,8 +4977,8 @@
   }
 
   function clampPlacement() {
-    if (isBottleOpenerProduct()) {
-      const box = getBottleOpenerDesignBox();
+    if (isSingleSurfaceProduct()) {
+      const box = getSingleSurfaceDesignBox();
       if (!box) return;
 
       const activeSideState = getActiveSideState();
@@ -4755,7 +4986,7 @@
       let contentHeight = 0;
 
       if (isQrMode() && hasQrValue()) {
-        const qrLayout = getBottleOpenerQrLayout();
+        const qrLayout = getSingleSurfaceQrLayout();
         if (!qrLayout) return;
 
         if (activeSideState.scalePercent > qrLayout.maxScalePercent) {
@@ -4768,14 +4999,14 @@
       } else {
         if (isMonogramTemplateSelected()) {
           if (!hasMonogramValue()) return;
-          const monogramLayout = getBottleOpenerMonogramLayout();
+          const monogramLayout = getSingleSurfaceMonogramLayout();
           contentWidth = monogramLayout.drawWidth;
           contentHeight = monogramLayout.drawHeight;
         } else {
           const image = getActiveImage();
           if (!image) return;
 
-          const motifLayout = getBottleOpenerMotifLayout(image);
+          const motifLayout = getSingleSurfaceMotifLayout(image);
           contentWidth = motifLayout.width;
           contentHeight = motifLayout.height;
         }
@@ -4814,9 +5045,9 @@
   }
 
   function clampTextPlacement() {
-    if (isBottleOpenerProduct()) {
+    if (isSingleSurfaceProduct()) {
       const activeSideState = getActiveSideState();
-      const box = getBottleOpenerDesignBox();
+      const box = getSingleSurfaceDesignBox();
 
       if (!box) {
         activeSideState.textOffsetX = 0;
@@ -4830,9 +5061,15 @@
         return;
       }
 
-      const textLayout = getBottleOpenerTextLayout(activeSideState.textValue);
-      const maxOffsetX = getPlacementClampDistance(box.width, textLayout.width, "x");
-      const maxOffsetY = getPlacementClampDistance(box.height, textLayout.height, "y");
+      const textLayout = getSingleSurfaceTextLayout(activeSideState.textValue);
+      const contentWidth = textLayout.drawWidth || textLayout.width;
+      const contentHeight = textLayout.drawHeight || textLayout.height;
+      const maxOffsetX = isWoodBoardProduct()
+        ? Math.max(0, (box.width - contentWidth) / 2)
+        : getPlacementClampDistance(box.width, contentWidth, "x");
+      const maxOffsetY = isWoodBoardProduct()
+        ? Math.max(0, (box.height - contentHeight) / 2)
+        : getPlacementClampDistance(box.height, contentHeight, "y");
 
       activeSideState.textOffsetX = clamp(activeSideState.textOffsetX, -maxOffsetX, maxOffsetX);
       activeSideState.textOffsetY = clamp(activeSideState.textOffsetY, -maxOffsetY, maxOffsetY);
@@ -4879,7 +5116,11 @@
 
     if (previewStageTitle) {
       previewStageTitle.textContent = hasProductSelection()
-        ? (isBottleOpenerProduct() ? "Metall-Flaschenöffner" : "Rundes Edelstahl-Plättchen")
+        ? (isBottleOpenerProduct()
+          ? "Metall-Flaschenöffner"
+          : isWoodBoardProduct()
+            ? getActiveProductDisplayName()
+            : "Rundes Edelstahl-Plättchen")
         : "Vorschau";
     }
 
@@ -4891,7 +5132,9 @@
       previewProductName.textContent = activeMaterial.name;
       previewProductHint.textContent = activeMaterial.id === "metal"
         ? "Wähle jetzt Schmuckanhänger oder Flaschenöffner."
-        : "Die Struktur für diese Materialwelt ist vorbereitet.";
+        : activeMaterial.id === "wood"
+          ? "Wähle jetzt die Brettform."
+          : "Die Struktur für diese Materialwelt ist vorbereitet.";
       previewModeChip.textContent = "Produkt wählen";
     } else if (isBottleOpenerProduct()) {
       if (!hasDesignModeSelection()) {
@@ -4903,6 +5146,14 @@
         previewProductHint.textContent = "Große äußere Hauptfläche · Vorderseite";
         previewModeChip.textContent = isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text");
       }
+    } else if (isWoodBoardProduct()) {
+      previewProductName.textContent = activeProductDisplayName;
+      previewProductHint.textContent = hasDesignModeSelection()
+        ? "Holzbrett · Hauptfläche · Vorderseite"
+        : "Die sichere Gravurfläche ist aktiv. Wähle jetzt Motiv, Text oder QR.";
+      previewModeChip.textContent = hasDesignModeSelection()
+        ? (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text"))
+        : "Gestaltungsart wählen";
     } else if (requiresFinishSelection() && !hasFinishSelection()) {
       previewProductName.textContent = activeProductFamily.name;
       previewProductHint.textContent = "Wähle jetzt die Ausführung für deinen Edelstahl-Schmuckanhänger.";
@@ -4927,9 +5178,9 @@
       previewModeChip.textContent = getPendantLabel(state.activePendantIndex) + " · " + getSideLabel(state.activeSide) + " · " + (isMotifMode() ? "Motiv" : "Text");
     }
 
-    previewSetLabel.textContent = isBottleOpenerProduct() ? "Standard" : (hasSetSelection() ? getActiveSetOption().shortLabel : "Einzel");
-    previewPendantLabel.textContent = isBottleOpenerProduct() ? "Produkt" : getPendantTabLabel(state.activePendantIndex);
-    previewActiveSideLabel.textContent = isBottleOpenerProduct() ? "Vorderseite" : getSideLabel(state.activeSide);
+    previewSetLabel.textContent = isSingleSurfaceProduct() ? "Standard" : (hasSetSelection() ? getActiveSetOption().shortLabel : "Einzel");
+    previewPendantLabel.textContent = isSingleSurfaceProduct() ? "Produkt" : getPendantTabLabel(state.activePendantIndex);
+    previewActiveSideLabel.textContent = isSingleSurfaceProduct() ? "Vorderseite" : getSideLabel(state.activeSide);
     if (previewProductNameMobile) {
       previewProductNameMobile.textContent = previewProductName.textContent;
     }
@@ -4944,7 +5195,24 @@
       : (hasDesignModeSelection() ? (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text")) : "Offen");
     previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
 
-    scaleSlider.value = String(activeSideState.scalePercent);
+    const isWoodTextTransformMode = isWoodBoardProduct() && isTextMode() && hasText();
+    const textScaleRange = getActiveTextScaleRange();
+    if (isWoodTextTransformMode) {
+      if (scaleSlider.min !== String(textScaleRange.min)) {
+        scaleSlider.min = String(textScaleRange.min);
+      }
+      if (scaleSlider.max !== String(textScaleRange.max)) {
+        scaleSlider.max = String(textScaleRange.max);
+      }
+    } else {
+      if (scaleSlider.min !== "60") {
+        scaleSlider.min = "60";
+      }
+      if (scaleSlider.max !== "230") {
+        scaleSlider.max = "230";
+      }
+    }
+    scaleSlider.value = String(isWoodTextTransformMode ? activeSideState.textScalePercent : activeSideState.scalePercent);
     if (stretchXSlider) {
       stretchXSlider.value = String(clamp(activeSideState.stretchXPercent || 100, 70, 140));
     }
@@ -4954,8 +5222,18 @@
     if (rotationSlider) {
       rotationSlider.value = String(clamp(activeSideState.rotationDeg || 0, -180, 180));
     }
+    if (textSizeSlider.min !== String(textScaleRange.min)) {
+      textSizeSlider.min = String(textScaleRange.min);
+    }
+    if (textSizeSlider.max !== String(textScaleRange.max)) {
+      textSizeSlider.max = String(textScaleRange.max);
+    }
+    activeSideState.textScalePercent = clamp(activeSideState.textScalePercent, textScaleRange.min, textScaleRange.max);
     textSizeSlider.value = String(activeSideState.textScalePercent);
-    scaleValueLabel.textContent = activeSideState.scalePercent + "%";
+    if (isWoodTextTransformMode) {
+      scaleSlider.value = String(activeSideState.textScalePercent);
+    }
+    scaleValueLabel.textContent = (isWoodTextTransformMode ? activeSideState.textScalePercent : activeSideState.scalePercent) + "%";
     if (stretchXValueLabel) {
       stretchXValueLabel.textContent = String(clamp(activeSideState.stretchXPercent || 100, 70, 140)) + "%";
     }
@@ -4966,7 +5244,12 @@
       rotationValueLabel.textContent = String(clamp(activeSideState.rotationDeg || 0, -180, 180)) + "°";
     }
     textSizeValueLabel.textContent = activeSideState.textScalePercent + "%";
-    textCharacterCount.textContent = activeSideState.textValue.length + " / " + MAX_TEXT_LENGTH;
+    const activeTextMaxLength = getActiveTextMaxLength();
+    if (activeSideState.textValue.length > activeTextMaxLength) {
+      activeSideState.textValue = activeSideState.textValue.slice(0, activeTextMaxLength);
+    }
+    textInput.maxLength = activeTextMaxLength;
+    textCharacterCount.textContent = activeSideState.textValue.length + " / " + activeTextMaxLength;
     textInput.value = activeSideState.textValue;
     textFontSelect.value = activeSideState.textFontId;
     qrCharacterCount.textContent = activeSideState.qrValue.length + " / " + MAX_QR_LENGTH;
@@ -4996,8 +5279,8 @@
       closeRequestMenu();
     }
 
-    const canShowBackSideSection = !isBottleOpenerProduct() && hasSizeSelection() && (isFrontConfigured() || isBackSideEnabled());
-    const canShowPendantSection = !isBottleOpenerProduct() && hasSetSelection() && getPendantCount() > 1;
+    const canShowBackSideSection = !isSingleSurfaceProduct() && hasSizeSelection() && (isFrontConfigured() || isBackSideEnabled());
+    const canShowPendantSection = !isSingleSurfaceProduct() && hasSetSelection() && getPendantCount() > 1;
     pendantSwitchGroup.hidden = !canShowPendantSection;
     if (canShowPendantSection) {
       pendantSwitchStatus.textContent = getPendantLabel(state.activePendantIndex) + " wird gerade bearbeitet";
@@ -5032,8 +5315,11 @@
     setSectionVisibility(
       motifAdjustGroup,
       (isMotifMode() && hasActiveMotifContent() && !isQrSelected()) ||
-      (isBottleOpenerProduct() && isQrMode())
+      (isSingleSurfaceProduct() && isQrMode()) ||
+      (isWoodBoardProduct() && isTextMode() && hasText())
     );
+    motifAdjustGroup.setAttribute("data-control-mode", isWoodTextTransformMode ? "text-transform" : "placement");
+    textGroup.setAttribute("data-control-mode", isWoodTextTransformMode ? "wood-text-transform" : "text");
     setSectionVisibility(monogramGroup, isMotifMode() && isMonogramTemplateSelected());
     setSectionVisibility(emblemGroup, isMotifMode() && isEmblemTemplateSelected() && hasSelectedEmblemKind() && !isQrSelected());
     setSectionVisibility(rotationGroup, hasDesignModeSelection());
@@ -5265,7 +5551,8 @@
   function getActiveSourceLabel(activeTemplate) {
     if (!hasMaterialSelection()) return "Offen";
     if (!hasProductSelection()) return "Weiter mit Produkt";
-    if (isBottleOpenerProduct() && !hasDesignModeSelection()) return "Weiter mit Gestaltungsart";
+    if (isSingleSurfaceProduct() && !hasDesignModeSelection()) return "Weiter mit Gestaltungsart";
+    if (isSingleSurfaceProduct()) return getSummaryModeLabel();
     if (!hasSetSelection()) return "Weiter mit Set";
     if (!hasSizeSelection()) return "Weiter mit Größe von " + getPendantLabel(state.activePendantIndex);
     if (!hasDesignModeSelection()) return "Weiter mit Gestaltungsart";
@@ -5419,6 +5706,12 @@
 
     if (isBottleOpenerProduct()) {
       drawBottleOpenerPreview();
+      syncMobilePreviewCanvas();
+      return;
+    }
+
+    if (isWoodBoardProduct()) {
+      drawWoodBoardPreview();
       syncMobilePreviewCanvas();
       return;
     }
@@ -5720,6 +6013,399 @@
     }
   }
 
+  function drawWoodBoardPreview() {
+    const spec = getWoodBoardRenderSpec();
+    const box = getWoodBoardDesignBox();
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.26)";
+    ctx.shadowBlur = 38;
+    ctx.shadowOffsetY = 18;
+
+    if (spec.shape === "round") {
+      drawWoodBoardRoundBase(spec);
+    } else {
+      drawWoodBoardRectBase(spec);
+    }
+
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(72,45,20,0.10)";
+    ctx.lineWidth = 1.4;
+    ctx.setLineDash([16, 14]);
+    if (box.shape === "round") {
+      ctx.beginPath();
+      ctx.arc(box.x + box.width / 2, box.y + box.height / 2, box.radius, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+      ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    if (!hasDesignModeSelection()) {
+      return;
+    }
+
+    if (isMotifMode()) {
+      if (isMonogramTemplateSelected()) {
+        if (hasMonogramValue()) {
+          drawWoodBoardMonogramContent();
+        }
+        return;
+      }
+      drawWoodBoardMotifContent();
+      return;
+    }
+
+    if (isTextMode()) {
+      drawWoodBoardTextContent();
+      return;
+    }
+
+    if (isQrMode()) {
+      drawWoodBoardQrContent();
+    }
+  }
+
+  function drawWoodBoardRectBase(spec) {
+    const gradient = ctx.createLinearGradient(spec.x, spec.y, spec.x + spec.width, spec.y + spec.height);
+    gradient.addColorStop(0, "#e7c584");
+    gradient.addColorStop(0.5, "#f1d9a3");
+    gradient.addColorStop(1, "#d3a85f");
+
+    ctx.beginPath();
+    drawRoundedRectPath(ctx, spec.x, spec.y, spec.width, spec.height, spec.radius);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(92,57,20,0.22)";
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.beginPath();
+    drawRoundedRectPath(ctx, spec.x + 2, spec.y + 2, spec.width - 4, spec.height - 4, spec.radius - 2);
+    ctx.clip();
+    drawWoodGrain(spec.x, spec.y, spec.width, spec.height, "rect");
+    ctx.restore();
+  }
+
+  function drawWoodBoardRoundBase(spec) {
+    const gradient = ctx.createRadialGradient(spec.centerX - 96, spec.centerY - 130, 28, spec.centerX, spec.centerY, spec.radius);
+    gradient.addColorStop(0, "#f0c17a");
+    gradient.addColorStop(0.52, "#d08a36");
+    gradient.addColorStop(1, "#a4662b");
+
+    ctx.beginPath();
+    ctx.arc(spec.centerX, spec.centerY, spec.radius, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(76,43,18,0.22)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(spec.centerX, spec.centerY, spec.radius - 24, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(86,47,17,0.11)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(spec.centerX, spec.centerY, spec.radius - 10, 0, Math.PI * 2);
+    ctx.clip();
+    drawWoodGrain(spec.centerX - spec.radius, spec.centerY - spec.radius, spec.radius * 2, spec.radius * 2, "round");
+    ctx.restore();
+  }
+
+  function drawWoodGrain(x, y, width, height, shape) {
+    ctx.save();
+    ctx.globalAlpha = shape === "round" ? 0.20 : 0.16;
+    ctx.strokeStyle = "rgba(91,52,18,0.72)";
+    ctx.lineWidth = 1.8;
+
+    for (let index = 0; index < 16; index += 1) {
+      const lineY = y + 26 + index * (height / 18);
+      const wave = index % 2 === 0 ? 18 : -14;
+      ctx.beginPath();
+      ctx.moveTo(x - 30, lineY);
+      ctx.bezierCurveTo(x + width * 0.26, lineY + wave, x + width * 0.58, lineY - wave, x + width + 30, lineY + wave * 0.35);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = shape === "round" ? 0.12 : 0.10;
+    ctx.fillStyle = "rgba(110,65,26,0.8)";
+    [
+      { x: x + width * 0.24, y: y + height * 0.36, r: 13 },
+      { x: x + width * 0.72, y: y + height * 0.64, r: 15 }
+    ].forEach(function (knot) {
+      ctx.beginPath();
+      ctx.ellipse(knot.x, knot.y, knot.r * 1.8, knot.r, -0.18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(80,45,18,0.72)";
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  }
+
+  function clipWoodBoardDesignArea() {
+    const box = getWoodBoardDesignBox();
+    ctx.beginPath();
+    if (box.shape === "round") {
+      ctx.arc(box.x + box.width / 2, box.y + box.height / 2, box.radius, 0, Math.PI * 2);
+    } else {
+      drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    }
+    ctx.clip();
+  }
+
+  function applyWoodBoardContentRotation(centerX, centerY) {
+    applyBottleOpenerContentRotation(centerX, centerY);
+  }
+
+  function getWoodBoardEngravingImage(image) {
+    if (!image) return null;
+    if (woodBoardEngravingCache && woodBoardEngravingCache.has(image)) {
+      return woodBoardEngravingCache.get(image);
+    }
+
+    const buffer = document.createElement("canvas");
+    buffer.width = image.width;
+    buffer.height = image.height;
+    const bufferCtx = buffer.getContext("2d");
+    bufferCtx.drawImage(image, 0, 0);
+
+    const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
+    const data = imageData.data;
+
+    for (let index = 0; index < data.length; index += 4) {
+      const originalAlpha = data[index + 3] / 255;
+      if (!originalAlpha) continue;
+
+      const luminance = (data[index] + data[index + 1] + data[index + 2]) / 3;
+      const darkness = (1 - (luminance / 255)) * originalAlpha;
+
+      if (darkness <= 0.04) {
+        data[index + 3] = 0;
+        continue;
+      }
+
+      data[index] = 58;
+      data[index + 1] = 36;
+      data[index + 2] = 18;
+      data[index + 3] = Math.round(Math.min(0.88, darkness * 1.18) * 255);
+    }
+
+    bufferCtx.putImageData(imageData, 0, 0);
+
+    if (woodBoardEngravingCache) {
+      woodBoardEngravingCache.set(image, buffer);
+    }
+
+    return buffer;
+  }
+
+  function getWoodBoardMotifSourceBounds(image) {
+    if (!image) return null;
+    if (woodBoardMotifBoundsCache && woodBoardMotifBoundsCache.has(image)) {
+      return woodBoardMotifBoundsCache.get(image);
+    }
+
+    const naturalWidth = Math.max(1, image.naturalWidth || image.width || 1);
+    const naturalHeight = Math.max(1, image.naturalHeight || image.height || 1);
+    const rawBounds = getDarkContentBoundsFromImage(image) || {
+      left: 0,
+      top: 0,
+      right: naturalWidth,
+      bottom: naturalHeight
+    };
+    const contentWidth = Math.max(1, rawBounds.right - rawBounds.left);
+    const contentHeight = Math.max(1, rawBounds.bottom - rawBounds.top);
+    const paddingX = contentWidth * 0.08;
+    const paddingY = contentHeight * 0.10;
+    const bounds = clampCropBounds({
+      left: rawBounds.left - paddingX,
+      top: rawBounds.top - paddingY,
+      right: rawBounds.right + paddingX,
+      bottom: rawBounds.bottom + paddingY
+    }, naturalWidth, naturalHeight);
+    const result = {
+      x: bounds.left,
+      y: bounds.top,
+      width: Math.max(1, bounds.right - bounds.left),
+      height: Math.max(1, bounds.bottom - bounds.top)
+    };
+
+    if (woodBoardMotifBoundsCache) {
+      woodBoardMotifBoundsCache.set(image, result);
+    }
+
+    return result;
+  }
+
+  function drawWoodBoardMotifContent() {
+    const image = getActiveImage();
+    if (!image) return;
+
+    const box = getWoodBoardDesignBox();
+    const activeSideState = getActiveSideState();
+    const sourceBounds = getWoodBoardMotifSourceBounds(image);
+    const fitScale = Math.min(box.width / sourceBounds.width, box.height / sourceBounds.height);
+    const scaleFactor = Math.max(0.01, activeSideState.scalePercent / 100);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+    const engravingImage = getWoodBoardEngravingImage(image);
+    const drawWidth = sourceBounds.width * fitScale * scaleFactor * stretchXFactor;
+    const drawHeight = sourceBounds.height * fitScale * scaleFactor * stretchYFactor;
+    const x = box.x + (box.width - drawWidth) / 2 + activeSideState.offsetX;
+    const y = box.y + (box.height - drawHeight) / 2 + activeSideState.offsetY;
+
+    ctx.save();
+    clipWoodBoardDesignArea();
+    applyWoodBoardContentRotation(x + drawWidth / 2, y + drawHeight / 2);
+    ctx.drawImage(
+      engravingImage || image,
+      sourceBounds.x,
+      sourceBounds.y,
+      sourceBounds.width,
+      sourceBounds.height,
+      x,
+      y,
+      drawWidth,
+      drawHeight
+    );
+    ctx.restore();
+  }
+
+  function drawWoodBoardMonogramContent() {
+    const box = getWoodBoardDesignBox();
+    const activeSideState = getActiveSideState();
+    const monogramLayout = getWoodBoardMonogramLayout();
+    const x = box.x + box.width / 2 + activeSideState.offsetX;
+    const y = box.y + box.height / 2 + activeSideState.offsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    ctx.save();
+    clipWoodBoardDesignArea();
+    applyWoodBoardContentRotation(x, y);
+    ctx.translate(x, y);
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.translate(-x, -y);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = monogramLayout.font;
+    ctx.fillStyle = WOOD_BOARD_ENGRAVING_FILL;
+    ctx.fillText(activeSideState.monogramValue, x, y);
+    ctx.restore();
+  }
+
+  function drawWoodBoardTextContent() {
+    const activeSideState = getActiveSideState();
+    if (!activeSideState.textValue) return;
+
+    const box = getWoodBoardDesignBox();
+    const textLayout = getWoodBoardTextLayout(activeSideState.textValue);
+    const x = box.x + box.width / 2 + activeSideState.textOffsetX;
+    const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    ctx.save();
+    clipWoodBoardDesignArea();
+    ctx.translate(x, y);
+    ctx.rotate(getBottleOpenerRotationRadians());
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = textLayout.font;
+    ctx.lineJoin = "round";
+    ctx.fillStyle = WOOD_BOARD_ENGRAVING_FILL;
+    ctx.strokeStyle = WOOD_BOARD_ENGRAVING_FILL;
+    textLayout.lines.forEach(function (line, index) {
+      const lineY = textLayout.startY + (index * textLayout.lineHeight);
+      const lineWidth = textLayout.lineWidths[index] || 0;
+
+      if (activeSideState.textStyles.bold) {
+        ctx.lineWidth = Math.max(1.2, textLayout.fontSize * 0.025);
+        ctx.strokeText(line, 0, lineY);
+      }
+      ctx.fillText(line, 0, lineY);
+
+      if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
+        ctx.lineWidth = Math.max(1.8, textLayout.fontSize * 0.055);
+        ctx.lineCap = "round";
+
+        if (activeSideState.textStyles.underline) {
+          const underlineY = lineY + textLayout.fontSize * 0.42;
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, underlineY);
+          ctx.lineTo(lineWidth / 2, underlineY);
+          ctx.stroke();
+        }
+
+        if (activeSideState.textStyles.strikethrough) {
+          const strikeY = lineY - textLayout.fontSize * 0.06;
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, strikeY);
+          ctx.lineTo(lineWidth / 2, strikeY);
+          ctx.stroke();
+        }
+      }
+    });
+    ctx.restore();
+  }
+
+  function drawWoodBoardQrContent() {
+    const box = getWoodBoardDesignBox();
+    const qrLayout = getWoodBoardQrLayout();
+    if (!box || !qrLayout) return;
+
+    const qrModel = getQrCodeModel(state.activeSide, state.activePendantIndex);
+
+    ctx.save();
+    clipWoodBoardDesignArea();
+    applyWoodBoardContentRotation(qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize / 2);
+
+    if (!qrModel) {
+      ctx.strokeStyle = WOOD_BOARD_ENGRAVING_STROKE;
+      ctx.lineWidth = Math.max(2, qrLayout.outerSize * 0.035);
+      ctx.strokeRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+      ctx.fillStyle = WOOD_BOARD_ENGRAVING_FILL;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "700 " + Math.max(12, qrLayout.outerSize * 0.16) + "px system-ui, sans-serif";
+      ctx.fillText("QR", qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize * 0.42);
+      ctx.font = "700 " + Math.max(9, qrLayout.outerSize * 0.11) + "px system-ui, sans-serif";
+      ctx.fillText("FEHLT", qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize * 0.62);
+      ctx.restore();
+      return;
+    }
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "rgba(255,248,232,0.9)";
+    ctx.fillRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+    ctx.fillStyle = WOOD_BOARD_ENGRAVING_FILL;
+    for (let row = 0; row < qrLayout.moduleCount; row += 1) {
+      for (let column = 0; column < qrLayout.moduleCount; column += 1) {
+        if (!qrModel.isDark(row, column)) continue;
+        const x = qrLayout.x + (column + qrLayout.quietZone) * qrLayout.moduleSize;
+        const y = qrLayout.y + (row + qrLayout.quietZone) * qrLayout.moduleSize;
+        ctx.fillRect(x, y, qrLayout.moduleSize, qrLayout.moduleSize);
+      }
+    }
+    ctx.strokeStyle = "rgba(58,36,18,0.18)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(qrLayout.x + 0.5, qrLayout.y + 0.5, qrLayout.outerSize - 1, qrLayout.outerSize - 1);
+    ctx.restore();
+  }
+
   function getBottleOpenerSourceBox() {
     return {
       x: 329,
@@ -5743,6 +6429,60 @@
     };
   }
 
+  function getWoodBoardRenderSpec() {
+    const product = getActiveProduct();
+    const shape = product && product.shape === "round" ? "round" : "rect";
+
+    if (shape === "round") {
+      return {
+        shape: "round",
+        centerX: 600,
+        centerY: 624,
+        radius: 312,
+        designRadius: 280
+      };
+    }
+
+    return {
+      shape: "rect",
+      x: 142,
+      y: 392,
+      width: 916,
+      height: 420,
+      radius: 28,
+      insetX: 46,
+      insetY: 38
+    };
+  }
+
+  function getWoodBoardDesignBox() {
+    const spec = getWoodBoardRenderSpec();
+
+    if (spec.shape === "round") {
+      return {
+        x: spec.centerX - spec.designRadius,
+        y: spec.centerY - spec.designRadius,
+        width: spec.designRadius * 2,
+        height: spec.designRadius * 2,
+        radius: spec.designRadius,
+        shape: "round"
+      };
+    }
+
+    return {
+      x: spec.x + spec.insetX,
+      y: spec.y + spec.insetY,
+      width: spec.width - spec.insetX * 2,
+      height: spec.height - spec.insetY * 2,
+      radius: Math.min(24, spec.radius),
+      shape: "rect"
+    };
+  }
+
+  function getSingleSurfaceDesignBox() {
+    return isWoodBoardProduct() ? getWoodBoardDesignBox() : getBottleOpenerDesignBox();
+  }
+
   function getBottleOpenerDesignBox() {
     const sourceBox = getBottleOpenerSourceBox();
     const renderBox = getBottleOpenerRenderBox(sourceBox);
@@ -5753,6 +6493,20 @@
       y: renderBox.y + Math.round(62 * scale),
       width: Math.round(560 * scale),
       height: Math.round(124 * scale)
+    };
+  }
+
+  function getSingleSurfaceMotifLayout(image) {
+    const box = getSingleSurfaceDesignBox();
+    const activeSideState = getActiveSideState();
+    const fitScale = Math.min(box.width / image.width, box.height / image.height);
+    const scaleFactor = Math.max(0.01, activeSideState.scalePercent / 100);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    return {
+      width: image.width * fitScale * scaleFactor * stretchXFactor,
+      height: image.height * fitScale * scaleFactor * stretchYFactor
     };
   }
 
@@ -5770,6 +6524,51 @@
     };
   }
 
+  function getSingleSurfaceTextLayout(text) {
+    return isWoodBoardProduct() ? getWoodBoardTextLayout(text) : getBottleOpenerTextLayout(text);
+  }
+
+  function getWoodBoardTextLayout(text) {
+    const box = getWoodBoardDesignBox();
+    const activeSideState = getActiveSideState();
+    const baseFontSize = Math.max(40, Math.min(box.width, box.height) * 0.22);
+    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const lines = getTextLines(text);
+    const metrics = lines.map(function (line) {
+      return measureBottleOpenerText(line, fontSize);
+    });
+    const textHeight = Math.max.apply(null, metrics.map(function (metric) {
+      return Math.max(fontSize * 0.92, metric.actualBoundingBoxAscent + metric.actualBoundingBoxDescent);
+    }));
+    const lineHeight = Math.max(fontSize * 1.08, textHeight);
+    const width = Math.max.apply(null, metrics.map(function (metric) {
+      return metric.width;
+    }));
+    const height = lineHeight * Math.max(1, lines.length);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+    const stretchedWidth = width * stretchXFactor;
+    const stretchedHeight = height * stretchYFactor;
+    const rotationRadians = Math.abs(getBottleOpenerRotationRadians());
+    const rotationCos = Math.abs(Math.cos(rotationRadians));
+    const rotationSin = Math.abs(Math.sin(rotationRadians));
+
+    return {
+      fontSize: fontSize,
+      font: buildBottleOpenerTextFont(fontSize),
+      lines: lines,
+      lineWidths: metrics.map(function (metric) {
+        return metric.width;
+      }),
+      lineHeight: lineHeight,
+      startY: -((lines.length - 1) * lineHeight) / 2,
+      width: width,
+      height: height,
+      drawWidth: stretchedWidth * rotationCos + stretchedHeight * rotationSin,
+      drawHeight: stretchedWidth * rotationSin + stretchedHeight * rotationCos
+    };
+  }
+
   function getBottleOpenerTextLayout(text) {
     const box = getBottleOpenerDesignBox();
     const activeSideState = getActiveSideState();
@@ -5783,6 +6582,48 @@
       font: buildBottleOpenerTextFont(fontSize),
       width: metrics.width,
       height: textHeight
+    };
+  }
+
+  function getSingleSurfaceQrLayout() {
+    return isWoodBoardProduct() ? getWoodBoardQrLayout() : getBottleOpenerQrLayout();
+  }
+
+  function getWoodBoardQrLayout() {
+    const box = getWoodBoardDesignBox();
+    const activeSideState = getActiveSideState();
+    if (!box) return null;
+
+    const quietZone = 4;
+    const fallbackModuleCount = 21;
+    const qrModel = getQrCodeModel(state.activeSide, state.activePendantIndex);
+    const moduleCount = qrModel ? qrModel.getModuleCount() : fallbackModuleCount;
+
+    const baseSize = Math.min(box.width, box.height) * 0.72;
+    const minSize = Math.min(box.width, box.height) * 0.48;
+    const maxOuterSize = Math.min(box.width, box.height) * 0.92;
+    const maxScalePercent = Math.max(1, Math.round((maxOuterSize / baseSize) * 100));
+    const requestedOuterSize = Math.max(minSize, baseSize * (activeSideState.scalePercent / 100));
+    const outerSize = Math.min(maxOuterSize, requestedOuterSize);
+
+    const totalModules = moduleCount + quietZone * 2;
+    const moduleSize = outerSize / totalModules;
+    const normalizedOuterSize = moduleSize * totalModules;
+
+    const maxOffsetX = Math.max(0, (box.width - normalizedOuterSize) / 2);
+    const maxOffsetY = Math.max(0, (box.height - normalizedOuterSize) / 2);
+
+    const clampedOffsetX = clamp(activeSideState.offsetX, -maxOffsetX, maxOffsetX);
+    const clampedOffsetY = clamp(activeSideState.offsetY, -maxOffsetY, maxOffsetY);
+
+    return {
+      moduleCount: moduleCount,
+      quietZone: quietZone,
+      moduleSize: moduleSize,
+      outerSize: normalizedOuterSize,
+      maxScalePercent: maxScalePercent,
+      x: box.x + (box.width - normalizedOuterSize) / 2 + clampedOffsetX,
+      y: box.y + (box.height - normalizedOuterSize) / 2 + clampedOffsetY
     };
   }
 
@@ -5826,6 +6667,30 @@
 
   function getBottleOpenerRotationRadians() {
     return clamp(getActiveSideState().rotationDeg || 0, -180, 180) * (Math.PI / 180);
+  }
+
+  function getSingleSurfaceMonogramLayout() {
+    return isWoodBoardProduct() ? getWoodBoardMonogramLayout() : getBottleOpenerMonogramLayout();
+  }
+
+  function getWoodBoardMonogramLayout() {
+    const box = getWoodBoardDesignBox();
+    const sideState = getActiveSideState();
+    const text = sideState.monogramValue || "";
+    const length = Math.max(1, text.length);
+    const baseSizeByLength = length === 1
+      ? Math.min(box.width, box.height) * 0.66
+      : (length === 2 ? Math.min(box.width, box.height) * 0.52 : Math.min(box.width, box.height) * 0.42);
+    const fontSize = Math.max(44, baseSizeByLength) * (sideState.scalePercent / 100);
+    const metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
+
+    return {
+      font: buildMonogramFont(fontSize, state.activeSide, state.activePendantIndex),
+      width: metrics.width,
+      height: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
+      drawWidth: metrics.width * getStretchFactor(sideState.stretchXPercent),
+      drawHeight: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * getStretchFactor(sideState.stretchYPercent)
+    };
   }
 
   function getPendantRotationRadians(pendantIndex) {
@@ -6176,12 +7041,12 @@
     const sourceWidthFallback = canvas.width;
     const sourceHeightFallback = Math.round(sourceWidthFallback / targetAspect);
 
-    if (isBottleOpenerProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
+    if (isBottleOpenerProduct() || isWoodBoardProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
       return {
         sourceWidth: sourceWidthFallback,
         sourceHeight: sourceHeightFallback,
         centerX: canvas.width / 2,
-        centerY: isBottleOpenerProduct() ? 560 : 650,
+        centerY: isBottleOpenerProduct() ? 560 : (isWoodBoardProduct() ? 632 : 650),
         maxPanX: 0,
         maxPanY: Math.max(0, (canvas.height - sourceHeightFallback) / 2)
       };
@@ -7506,10 +8371,24 @@
     return Boolean(productFamily && productFamily.id === "bottle-opener");
   }
 
+  function isWoodBoardProduct() {
+    const material = getActiveMaterial();
+    return Boolean(
+      material &&
+      material.id === "wood" &&
+      /^wood-board-/.test(state.productFamilyId || "")
+    );
+  }
+
+  function isSingleSurfaceProduct() {
+    return isBottleOpenerProduct() || isWoodBoardProduct();
+  }
+
   function getActiveProduct() {
     const productFamily = getActiveProductFamily();
     if (!productFamily) return null;
-    return productFamily.products.find((product) => product.id === state.productId) || null;
+    const products = Array.isArray(productFamily.products) ? productFamily.products : [];
+    return products.find((product) => product.id === state.productId) || (products.length === 1 ? products[0] : null);
   }
 
   function getAvailableFinishes(productFamily) {
@@ -7542,7 +8421,7 @@
   function getActiveSize(pendantIndex) {
     const product = getActiveProduct();
     const targetPendantState = getPendantState(pendantIndex == null ? state.activePendantIndex : pendantIndex);
-    if (!product) return null;
+    if (!product || !Array.isArray(product.sizes)) return null;
     return product.sizes.find((size) => size.id === targetPendantState.sizeId) || null;
   }
 
@@ -7955,11 +8834,34 @@
     );
   }
 
+  function getActiveTextMaxLength() {
+    return isWoodBoardProduct() ? MAX_WOOD_BOARD_TEXT_LENGTH : MAX_TEXT_LENGTH;
+  }
+
+  function getActiveTextScaleRange() {
+    return {
+      min: isWoodBoardProduct() ? MIN_WOOD_BOARD_TEXT_SCALE_PERCENT : MIN_TEXT_SCALE_PERCENT,
+      max: isWoodBoardProduct() ? MAX_WOOD_BOARD_TEXT_SCALE_PERCENT : MAX_TEXT_SCALE_PERCENT
+    };
+  }
+
+  function getTextLines(value) {
+    return String(value).split("\n").map(function (line) {
+      return line.length ? line : " ";
+    });
+  }
+
   function normalizeTextValue(value) {
+    if (isWoodBoardProduct()) {
+      return String(value)
+        .replace(/\r\n?/g, "\n")
+        .replace(/\t/g, " ")
+        .slice(0, getActiveTextMaxLength());
+    }
+
     return String(value)
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, MAX_TEXT_LENGTH);
+      .replace(/[\r\n\t]+/g, " ")
+      .slice(0, getActiveTextMaxLength());
   }
 
   function formatEuro(cents) {
