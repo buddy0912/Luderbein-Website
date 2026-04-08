@@ -526,17 +526,33 @@
         description: "Schieferplatten.",
         productFamilies: [
           {
-            id: "slate-plate-38x13",
-            name: "Schiefer 38x13 cm",
+            id: "slate-plate-10x10",
+            name: "Schiefer 10x10 cm",
             description: "",
             finishes: [],
             products: [
               {
-                id: "slate-plate-38x13-model",
-                name: "Schieferplatte 38x13 cm",
-                description: "Rechteckige Schieferplatte 38 x 13 cm.",
-                widthCm: 38,
-                heightCm: 13
+                id: "slate-plate-10x10-model",
+                name: "Schieferplatte 10x10 cm",
+                description: "Quadratische Schieferplatte 10 x 10 cm.",
+                widthCm: 10,
+                heightCm: 10
+              }
+            ]
+          },
+          {
+            id: "slate-round-10",
+            name: "Schiefer rund 10 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-round-10-model",
+                name: "Schiefer rund 10 cm",
+                description: "Runde Schieferplatte 10 cm.",
+                widthCm: 10,
+                heightCm: 10,
+                shape: "round"
               }
             ]
           },
@@ -556,6 +572,22 @@
             ]
           },
           {
+            id: "slate-round-20",
+            name: "Schiefer rund 20 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-round-20-model",
+                name: "Schiefer rund 20 cm",
+                description: "Runde Schieferplatte 20 cm.",
+                widthCm: 20,
+                heightCm: 20,
+                shape: "round"
+              }
+            ]
+          },
+          {
             id: "slate-plate-25x25",
             name: "Schiefer 25x25 cm",
             description: "",
@@ -567,6 +599,52 @@
                 description: "Quadratische Schieferplatte 25 x 25 cm.",
                 widthCm: 25,
                 heightCm: 25
+              }
+            ]
+          },
+          {
+            id: "slate-round-30",
+            name: "Schiefer rund 30 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-round-30-model",
+                name: "Schiefer rund 30 cm",
+                description: "Runde Schieferplatte 30 cm.",
+                widthCm: 30,
+                heightCm: 30,
+                shape: "round"
+              }
+            ]
+          },
+          {
+            id: "slate-plate-38x13",
+            name: "Schiefer 38x13 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-plate-38x13-model",
+                name: "Schieferplatte 38x13 cm",
+                description: "Rechteckige Schieferplatte 38 x 13 cm.",
+                widthCm: 38,
+                heightCm: 13
+              }
+            ]
+          },
+          {
+            id: "slate-plate-45x30",
+            name: "Schiefer 45x30 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-plate-45x30-model",
+                name: "Schieferplatte 45x30 cm",
+                description: "Rechteckige Schieferplatte 45 x 30 cm.",
+                widthCm: 45,
+                heightCm: 30
               }
             ]
           }
@@ -2842,6 +2920,14 @@
 
   function getSlatePlateFormatId(productFamilyId, priceMode) {
     const formatMap = {
+      "slate-plate-10x10": {
+        standard: "txt-10x10",
+        photo: "jl7-10x10"
+      },
+      "slate-round-10": {
+        standard: "txt-10r",
+        photo: "jl7-10r"
+      },
       "slate-plate-38x13": {
         standard: "txt-38x13",
         photo: "jl7-38x13"
@@ -2850,9 +2936,21 @@
         standard: "txt-20x20",
         photo: "jl7-20x20"
       },
+      "slate-round-20": {
+        standard: "txt-20r",
+        photo: "jl7-20r"
+      },
       "slate-plate-25x25": {
         standard: "txt-25x25",
         photo: "jl7-25x25"
+      },
+      "slate-round-30": {
+        standard: "txt-30r",
+        photo: "jl7-30r"
+      },
+      "slate-plate-45x30": {
+        standard: "txt-45x30",
+        photo: "jl7-45x30"
       }
     };
     const productFormatMap = formatMap[productFamilyId || state.productFamilyId];
@@ -3026,7 +3124,7 @@
         result.invalidReason = "Startpreis laut Preisquelle.";
         result.items.push({
           label: getActiveProductDisplayName() || "Schieferplatte",
-          sizeLabel: "38 x 13 cm",
+          sizeLabel: "",
           baseCents: slateStartPriceCents,
           backCents: 0,
           totalCents: slateStartPriceCents,
@@ -3617,7 +3715,7 @@
 
     getAvailableProductFamilies(material).forEach((productFamily) => {
       const isWoodBoardFamily = material.id === "wood" && /^wood-board-/.test(productFamily.id);
-      const isSlateFamily = material.id === "slate" && /^slate-plate-/.test(productFamily.id);
+      const isSlateFamily = material.id === "slate" && /^slate-(plate|round)-/.test(productFamily.id);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "preview-option" + (isWoodBoardFamily ? " preview-option--wood-board" : "") + (isSlateFamily ? " preview-option--slate" : "");
@@ -3824,7 +3922,7 @@
       return getWoodBoardStartPriceCents(productFamily.id);
     }
 
-    if (/^slate-plate-/.test(productFamily.id)) {
+    if (/^slate-(plate|round)-/.test(productFamily.id)) {
       return getSlatePlatePriceCents(productFamily.id, "standard");
     }
 
@@ -3833,7 +3931,8 @@
 
   function buildSlateProductThumbMarkup(productFamily) {
     const productFamilyId = productFamily && productFamily.id ? productFamily.id : state.productFamilyId;
-    const isSquare = productFamilyId === "slate-plate-20x20" || productFamilyId === "slate-plate-25x25";
+    const isRound = /^slate-round-/.test(productFamilyId || "");
+    const isSquare = productFamilyId === "slate-plate-10x10" || productFamilyId === "slate-plate-20x20" || productFamilyId === "slate-plate-25x25";
     return (
       '<span class="preview-option__thumb preview-option__thumb--slate" aria-hidden="true">' +
         '<svg viewBox="0 0 190 118" width="190" height="118" aria-hidden="true" focusable="false">' +
@@ -3844,7 +3943,12 @@
               '<stop offset="100%" stop-color="#141818"></stop>' +
             '</linearGradient>' +
           '</defs>' +
-          (isSquare
+          (isRound
+            ? '<circle cx="95" cy="61" r="47" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></circle>' +
+              '<path d="M95 13 C121 12 142 28 147 55 C151 82 133 104 105 109 C78 113 53 100 45 75 C37 50 50 24 75 17 C82 15 88 13 95 13 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.5"></path>' +
+              '<path d="M55 46 C72 39 96 38 121 45 M52 62 C77 58 105 60 137 68 M60 80 C82 78 104 82 129 86" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
+              '<path d="M50 40 C40 61 44 85 62 100 M134 28 C150 47 153 74 139 96" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="2" stroke-linecap="round"></path>'
+            : isSquare
             ? '<path d="M48 12 L65 10 L84 12 L105 9 L124 12 L145 11 L148 32 L146 52 L149 73 L146 93 L148 106 L128 108 L108 106 L87 109 L66 106 L48 108 L45 88 L47 67 L44 48 L47 28 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
               '<path d="M48 10 L65 8 L84 10 L105 7 L124 10 L145 9 L148 30 L146 51 L149 72 L146 93 L148 104 L128 106 L108 104 L87 107 L66 104 L48 106 L45 87 L47 66 L44 47 L47 27 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
               '<path d="M55 30 C73 27 95 33 121 29 S142 30 146 36 M53 54 C78 51 99 58 126 54 S142 55 147 60 M56 79 C78 77 99 82 129 78" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
@@ -7627,6 +7731,64 @@
     const y = spec.y;
     const w = spec.width;
     const h = spec.height;
+    if (spec.shape === "round") {
+      const cx = x + w / 2;
+      const cy = y + h / 2;
+      const radius = Math.min(w, h) / 2;
+      const points = [
+        [0, 0.992],
+        [Math.PI / 5, 1.012],
+        [Math.PI * 2 / 5, 0.984],
+        [Math.PI * 3 / 5, 1.018],
+        [Math.PI * 4 / 5, 0.996],
+        [Math.PI, 1.008],
+        [Math.PI * 6 / 5, 0.986],
+        [Math.PI * 7 / 5, 1.015],
+        [Math.PI * 8 / 5, 0.992],
+        [Math.PI * 9 / 5, 1.006]
+      ];
+      ctx.beginPath();
+      points.forEach(function (point, index) {
+        const pointRadius = radius * point[1];
+        const pointX = cx + Math.cos(point[0]) * pointRadius;
+        const pointY = cy + Math.sin(point[0]) * pointRadius;
+        if (index === 0) {
+          ctx.moveTo(pointX, pointY);
+          return;
+        }
+        const previous = points[index - 1];
+        const previousAngle = previous[0];
+        const previousRadius = radius * previous[1];
+        const previousX = cx + Math.cos(previousAngle) * previousRadius;
+        const previousY = cy + Math.sin(previousAngle) * previousRadius;
+        const controlDistance = radius * 0.18;
+        const cp1x = previousX - Math.sin(previousAngle) * controlDistance;
+        const cp1y = previousY + Math.cos(previousAngle) * controlDistance;
+        const cp2x = pointX + Math.sin(point[0]) * controlDistance;
+        const cp2y = pointY - Math.cos(point[0]) * controlDistance;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pointX, pointY);
+      });
+      const first = points[0];
+      const last = points[points.length - 1];
+      const firstRadius = radius * first[1];
+      const lastRadius = radius * last[1];
+      const firstX = cx + Math.cos(first[0]) * firstRadius;
+      const firstY = cy + Math.sin(first[0]) * firstRadius;
+      const lastX = cx + Math.cos(last[0]) * lastRadius;
+      const lastY = cy + Math.sin(last[0]) * lastRadius;
+      const controlDistance = radius * 0.18;
+      ctx.bezierCurveTo(
+        lastX - Math.sin(last[0]) * controlDistance,
+        lastY + Math.cos(last[0]) * controlDistance,
+        firstX + Math.sin(first[0]) * controlDistance,
+        firstY - Math.cos(first[0]) * controlDistance,
+        firstX,
+        firstY
+      );
+      ctx.closePath();
+      return;
+    }
+
     const topPoints = [
       [0.006, 0.069],
       [0.080, 0.054],
@@ -7734,7 +7896,11 @@
   function clipSlateDesignArea() {
     const box = getSlateDesignBox();
     ctx.beginPath();
-    drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    if (box.shape === "round") {
+      ctx.arc(box.x + box.width / 2, box.y + box.height / 2, Math.min(box.width, box.height) / 2, 0, Math.PI * 2);
+    } else {
+      drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    }
     ctx.clip();
   }
 
@@ -8106,6 +8272,21 @@
 
   function getSlateRenderSpec() {
     const specMap = {
+      "slate-plate-10x10": {
+        width: 520,
+        height: 520,
+        insetX: 34,
+        insetY: 34,
+        radius: 13
+      },
+      "slate-round-10": {
+        width: 520,
+        height: 520,
+        insetX: 42,
+        insetY: 42,
+        radius: 260,
+        shape: "round"
+      },
       "slate-plate-20x20": {
         width: 590,
         height: 590,
@@ -8113,12 +8294,35 @@
         insetY: 36,
         radius: 14
       },
+      "slate-round-20": {
+        width: 610,
+        height: 610,
+        insetX: 48,
+        insetY: 48,
+        radius: 305,
+        shape: "round"
+      },
       "slate-plate-25x25": {
         width: 660,
         height: 660,
         insetX: 40,
         insetY: 40,
         radius: 15
+      },
+      "slate-round-30": {
+        width: 720,
+        height: 720,
+        insetX: 56,
+        insetY: 56,
+        radius: 360,
+        shape: "round"
+      },
+      "slate-plate-45x30": {
+        width: 880,
+        height: 586,
+        insetX: 42,
+        insetY: 38,
+        radius: 13
       }
     };
     const baseSpec = specMap[state.productFamilyId] || {
@@ -8137,19 +8341,23 @@
       height: baseSpec.height,
       insetX: baseSpec.insetX,
       insetY: baseSpec.insetY,
-      radius: baseSpec.radius
+      radius: baseSpec.radius,
+      shape: baseSpec.shape || "rect"
     };
   }
 
   function getSlateDesignBox() {
     const spec = getSlateRenderSpec();
+    const width = spec.width - spec.insetX * 2;
+    const height = spec.height - spec.insetY * 2;
+    const shape = spec.shape === "round" ? "round" : "rect";
     return {
       x: spec.x + spec.insetX,
       y: spec.y + spec.insetY,
-      width: spec.width - spec.insetX * 2,
-      height: spec.height - spec.insetY * 2,
-      radius: spec.radius,
-      shape: "rect"
+      width: width,
+      height: height,
+      radius: shape === "round" ? Math.min(width, height) / 2 : spec.radius,
+      shape: shape
     };
   }
 
@@ -10549,7 +10757,7 @@
     return Boolean(
       material &&
       material.id === "slate" &&
-      /^slate-plate-/.test(state.productFamilyId || "")
+      /^slate-(plate|round)-/.test(state.productFamilyId || "")
     );
   }
 

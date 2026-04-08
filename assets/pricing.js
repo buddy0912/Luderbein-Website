@@ -59,10 +59,14 @@ window.LUDERBEIN_PRICING = {
           label: "Text / Symbol",
           note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean & schnell.",
           formats: [
-            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 },
+            { id: "txt-10x10", label: "10 × 10 cm", price: 7.95 },
+            { id: "txt-10r",   label: "10 cm rund", price: 7.95 },
             { id: "txt-20x20", label: "20 × 20 cm", price: 9.95 },
+            { id: "txt-20r",   label: "20 cm rund", price: 9.95 },
             { id: "txt-25x25", label: "25 × 25 cm", price: 14.95 },
-            { id: "txt-38x13", label: "38 × 13 cm (Langtafel)", price: 19.95 }
+            { id: "txt-30r",   label: "30 cm rund", price: 17.95 },
+            { id: "txt-38x13", label: "38 × 13 cm (Langtafel)", price: 19.95 },
+            { id: "txt-45x30", label: "45 × 30 cm", price: 24.95 }
           ]
         }
       },
