@@ -3933,6 +3933,7 @@
     const productFamilyId = productFamily && productFamily.id ? productFamily.id : state.productFamilyId;
     const isRound = /^slate-round-/.test(productFamilyId || "");
     const isSquare = productFamilyId === "slate-plate-10x10" || productFamilyId === "slate-plate-20x20" || productFamilyId === "slate-plate-25x25";
+    const isMediumRect = productFamilyId === "slate-plate-45x30";
     return (
       '<span class="preview-option__thumb preview-option__thumb--slate" aria-hidden="true">' +
         '<svg viewBox="0 0 190 118" width="190" height="118" aria-hidden="true" focusable="false">' +
@@ -3953,6 +3954,11 @@
               '<path d="M48 10 L65 8 L84 10 L105 7 L124 10 L145 9 L148 30 L146 51 L149 72 L146 93 L148 104 L128 106 L108 104 L87 107 L66 104 L48 106 L45 87 L47 66 L44 47 L47 27 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
               '<path d="M55 30 C73 27 95 33 121 29 S142 30 146 36 M53 54 C78 51 99 58 126 54 S142 55 147 60 M56 79 C78 77 99 82 129 78" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
               '<path d="M49 15 L46 99 M145 14 L147 101" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2" stroke-linecap="round"></path>'
+            : isMediumRect
+            ? '<path d="M38 19 L55 17 L77 18 L99 16 L122 18 L149 17 L153 36 L151 57 L154 78 L151 99 L135 102 L111 100 L89 102 L67 100 L39 102 L36 82 L38 62 L35 40 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
+              '<path d="M38 17 L56 15 L77 16 L99 14 L122 16 L150 15 L154 34 L152 56 L155 78 L152 98 L135 100 L112 98 L90 100 L67 98 L39 100 L36 81 L38 61 L35 39 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
+              '<path d="M48 34 C70 31 95 37 120 33 S147 34 152 39 M45 57 C73 53 99 61 128 56 S148 57 153 62 M49 80 C75 78 101 83 132 79" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
+              '<path d="M40 21 L38 95 M151 20 L153 94" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2" stroke-linecap="round"></path>'
             : '<path d="M16 42 L32 39 L52 40 L71 38 L91 40 L112 38 L134 40 L155 38 L175 41 L178 77 L162 80 L139 78 L118 80 L94 78 L72 80 L49 78 L29 80 L14 77 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
               '<path d="M15 38 L31 36 L53 37 L72 35 L92 37 L113 35 L135 37 L156 35 L176 38 L179 75 L162 78 L140 76 L118 78 L95 76 L73 78 L49 76 L29 78 L14 75 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
               '<path d="M28 47 C60 43 96 50 130 46 S166 45 172 51 M25 60 C66 57 99 64 139 59 S166 59 174 64 M32 70 C69 68 101 72 142 69" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
@@ -5391,15 +5397,12 @@
       }
       return response.json();
     }).then(function () {
-      feedbackStatus.textContent = "Danke, die Rückmeldung wurde gespeichert.";
+      feedbackStatus.textContent = "Danke, die Meldung wurde gespeichert. Du kannst das Fenster jetzt schließen.";
       if (feedbackMessage) {
         feedbackMessage.value = "";
       }
-      window.setTimeout(function () {
-        closeFeedbackOverlay();
-      }, 900);
     }).catch(function () {
-      feedbackStatus.textContent = "Die Meldung konnte gerade nicht gespeichert werden.";
+      feedbackStatus.textContent = "Die Meldung konnte gerade nicht gespeichert werden. Bitte später erneut versuchen.";
     }).finally(function () {
       submitFeedbackButton.disabled = false;
     });
@@ -6458,11 +6461,7 @@
   function scrollToBackSideConfiguration() {
     const targetSection = getBackSideScrollTarget();
     if (!targetSection) return;
-
-    targetSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    scrollGuidedToSection(targetSection);
   }
 
   function getBackSideScrollTarget() {
@@ -6558,7 +6557,7 @@
   function scrollGuidedToSection(targetSection) {
     if (!targetSection || targetSection.hidden) return;
 
-    if (controlCard && controlCard.contains(targetSection) && controlCard.scrollHeight > controlCard.clientHeight + 12) {
+    if (!isMobileGuidedScroll() && controlCard && controlCard.contains(targetSection) && controlCard.scrollHeight > controlCard.clientHeight + 12) {
       const cardRect = controlCard.getBoundingClientRect();
       const targetRect = targetSection.getBoundingClientRect();
       const currentScrollTop = controlCard.scrollTop;
@@ -6585,10 +6584,37 @@
       return;
     }
 
+    const scrollOffset = getGuidedScrollDocumentOffset();
+    if (scrollOffset > 0) {
+      const targetTop = targetSection.getBoundingClientRect().top + window.pageYOffset;
+      const nextTop = Math.max(0, targetTop - scrollOffset);
+      if (Math.abs(window.pageYOffset - nextTop) < 10) return;
+      window.scrollTo({
+        top: nextTop,
+        behavior: "smooth"
+      });
+      return;
+    }
+
     targetSection.scrollIntoView({
       behavior: "smooth",
       block: "start"
     });
+  }
+
+  function isMobileGuidedScroll() {
+    return window.matchMedia ? window.matchMedia("(max-width: 760px)").matches : window.innerWidth <= 760;
+  }
+
+  function getGuidedScrollDocumentOffset() {
+    if (!isMobileGuidedScroll()) return 0;
+    const stickyPreview = document.querySelector(".preview-mobile-sticky");
+    const stickyRect = stickyPreview && !stickyPreview.hidden
+      ? stickyPreview.getBoundingClientRect()
+      : null;
+    const headerHeight = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 72;
+    const stickyHeight = stickyRect && stickyRect.height > 0 ? stickyRect.height : 0;
+    return Math.round(headerHeight + stickyHeight + 22);
   }
 
   function queueRender() {
