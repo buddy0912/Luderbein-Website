@@ -163,6 +163,7 @@
 
   const MAX_TEXT_LENGTH = 18;
   const MAX_WOOD_BOARD_TEXT_LENGTH = 48;
+  const MAX_SLATE_TEXT_LENGTH = 300;
   const MIN_TEXT_SCALE_PERCENT = 70;
   const MIN_WOOD_BOARD_TEXT_SCALE_PERCENT = 20;
   const MAX_TEXT_SCALE_PERCENT = 170;
@@ -536,6 +537,36 @@
                 description: "Rechteckige Schieferplatte 38 x 13 cm.",
                 widthCm: 38,
                 heightCm: 13
+              }
+            ]
+          },
+          {
+            id: "slate-plate-20x20",
+            name: "Schiefer 20x20 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-plate-20x20-model",
+                name: "Schieferplatte 20x20 cm",
+                description: "Quadratische Schieferplatte 20 x 20 cm.",
+                widthCm: 20,
+                heightCm: 20
+              }
+            ]
+          },
+          {
+            id: "slate-plate-25x25",
+            name: "Schiefer 25x25 cm",
+            description: "",
+            finishes: [],
+            products: [
+              {
+                id: "slate-plate-25x25-model",
+                name: "Schieferplatte 25x25 cm",
+                description: "Quadratische Schieferplatte 25 x 25 cm.",
+                widthCm: 25,
+                heightCm: 25
               }
             ]
           }
@@ -2809,10 +2840,30 @@
     return getPricingVariant("schiefer", priceMode === "photo" ? "fotogravur" : "textsymbol");
   }
 
+  function getSlatePlateFormatId(productFamilyId, priceMode) {
+    const formatMap = {
+      "slate-plate-38x13": {
+        standard: "txt-38x13",
+        photo: "jl7-38x13"
+      },
+      "slate-plate-20x20": {
+        standard: "txt-20x20",
+        photo: "jl7-20x20"
+      },
+      "slate-plate-25x25": {
+        standard: "txt-25x25",
+        photo: "jl7-25x25"
+      }
+    };
+    const productFormatMap = formatMap[productFamilyId || state.productFamilyId];
+    if (!productFormatMap) return null;
+    return productFormatMap[priceMode === "photo" ? "photo" : "standard"] || null;
+  }
+
   function getSlatePlatePriceCents(productFamilyId, priceMode) {
-    if (productFamilyId && productFamilyId !== "slate-plate-38x13") return null;
     const pricingVariant = getSlatePricingVariant(priceMode);
-    const formatId = priceMode === "photo" ? "jl7-38x13" : "txt-38x13";
+    const formatId = getSlatePlateFormatId(productFamilyId, priceMode);
+    if (!formatId) return null;
     const format = pricingVariant && Array.isArray(pricingVariant.formats)
       ? pricingVariant.formats.find(function (formatItem) {
         return formatItem.id === formatId;
@@ -3780,7 +3831,9 @@
     return null;
   }
 
-  function buildSlateProductThumbMarkup() {
+  function buildSlateProductThumbMarkup(productFamily) {
+    const productFamilyId = productFamily && productFamily.id ? productFamily.id : state.productFamilyId;
+    const isSquare = productFamilyId === "slate-plate-20x20" || productFamilyId === "slate-plate-25x25";
     return (
       '<span class="preview-option__thumb preview-option__thumb--slate" aria-hidden="true">' +
         '<svg viewBox="0 0 190 118" width="190" height="118" aria-hidden="true" focusable="false">' +
@@ -3791,10 +3844,15 @@
               '<stop offset="100%" stop-color="#141818"></stop>' +
             '</linearGradient>' +
           '</defs>' +
-          '<path d="M16 42 L32 39 L52 40 L71 38 L91 40 L112 38 L134 40 L155 38 L175 41 L178 77 L162 80 L139 78 L118 80 L94 78 L72 80 L49 78 L29 80 L14 77 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
-          '<path d="M15 38 L31 36 L53 37 L72 35 L92 37 L113 35 L135 37 L156 35 L176 38 L179 75 L162 78 L140 76 L118 78 L95 76 L73 78 L49 76 L29 78 L14 75 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
-          '<path d="M28 47 C60 43 96 50 130 46 S166 45 172 51 M25 60 C66 57 99 64 139 59 S166 59 174 64 M32 70 C69 68 101 72 142 69" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
-          '<path d="M20 40 L25 76 M173 39 L176 74" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2" stroke-linecap="round"></path>' +
+          (isSquare
+            ? '<path d="M48 12 L65 10 L84 12 L105 9 L124 12 L145 11 L148 32 L146 52 L149 73 L146 93 L148 106 L128 108 L108 106 L87 109 L66 106 L48 108 L45 88 L47 67 L44 48 L47 28 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
+              '<path d="M48 10 L65 8 L84 10 L105 7 L124 10 L145 9 L148 30 L146 51 L149 72 L146 93 L148 104 L128 106 L108 104 L87 107 L66 104 L48 106 L45 87 L47 66 L44 47 L47 27 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
+              '<path d="M55 30 C73 27 95 33 121 29 S142 30 146 36 M53 54 C78 51 99 58 126 54 S142 55 147 60 M56 79 C78 77 99 82 129 78" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
+              '<path d="M49 15 L46 99 M145 14 L147 101" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2" stroke-linecap="round"></path>'
+            : '<path d="M16 42 L32 39 L52 40 L71 38 L91 40 L112 38 L134 40 L155 38 L175 41 L178 77 L162 80 L139 78 L118 80 L94 78 L72 80 L49 78 L29 80 L14 77 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
+              '<path d="M15 38 L31 36 L53 37 L72 35 L92 37 L113 35 L135 37 L156 35 L176 38 L179 75 L162 78 L140 76 L118 78 L95 76 L73 78 L49 76 L29 78 L14 75 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
+              '<path d="M28 47 C60 43 96 50 130 46 S166 45 172 51 M25 60 C66 57 99 64 139 59 S166 59 174 64 M32 70 C69 68 101 72 142 69" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
+              '<path d="M20 40 L25 76 M173 39 L176 74" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2" stroke-linecap="round"></path>') +
         '</svg>' +
       '</span>'
     );
@@ -7569,35 +7627,46 @@
     const y = spec.y;
     const w = spec.width;
     const h = spec.height;
+    const topPoints = [
+      [0.006, 0.069],
+      [0.080, 0.054],
+      [0.164, 0.060],
+      [0.291, 0.045],
+      [0.408, 0.057],
+      [0.545, 0.042],
+      [0.684, 0.054],
+      [0.811, 0.045],
+      [0.963, 0.057]
+    ];
+    const bottomPoints = [
+      [0.873, 0.054],
+      [0.756, 0.039],
+      [0.631, 0.051],
+      [0.494, 0.036],
+      [0.367, 0.054],
+      [0.236, 0.039],
+      [0.178, 0.054],
+      [0.085, 0.042],
+      [0.018, 0.054]
+    ];
 
     ctx.beginPath();
-    ctx.moveTo(x + 6, y + 23);
-    ctx.lineTo(x + 78, y + 18);
-    ctx.lineTo(x + 160, y + 20);
-    ctx.lineTo(x + 284, y + 15);
-    ctx.lineTo(x + 398, y + 19);
-    ctx.lineTo(x + 532, y + 14);
-    ctx.lineTo(x + 668, y + 18);
-    ctx.lineTo(x + 792, y + 15);
-    ctx.lineTo(x + w - 36, y + 19);
-    ctx.quadraticCurveTo(x + w - 7, y + 18, x + w - 8, y + 48);
-    ctx.lineTo(x + w - 5, y + 116);
-    ctx.lineTo(x + w - 10, y + 201);
-    ctx.lineTo(x + w - 7, y + h - 45);
-    ctx.quadraticCurveTo(x + w - 9, y + h - 15, x + w - 39, y + h - 16);
-    ctx.lineTo(x + w - 124, y + h - 18);
-    ctx.lineTo(x + w - 238, y + h - 13);
-    ctx.lineTo(x + w - 360, y + h - 17);
-    ctx.lineTo(x + w - 494, y + h - 12);
-    ctx.lineTo(x + w - 618, y + h - 18);
-    ctx.lineTo(x + w - 746, y + h - 13);
-    ctx.lineTo(x + 174, y + h - 18);
-    ctx.lineTo(x + 83, y + h - 14);
-    ctx.lineTo(x + 18, y + h - 18);
-    ctx.quadraticCurveTo(x + 5, y + h - 20, x + 6, y + h - 47);
-    ctx.lineTo(x + 9, y + h - 119);
-    ctx.lineTo(x + 6, y + 204);
-    ctx.lineTo(x + 10, y + 95);
+    ctx.moveTo(x + topPoints[0][0] * w, y + topPoints[0][1] * h);
+    topPoints.slice(1).forEach(function (point) {
+      ctx.lineTo(x + point[0] * w, y + point[1] * h);
+    });
+    ctx.quadraticCurveTo(x + w - 7, y + 0.054 * h, x + w - 8, y + 0.144 * h);
+    ctx.lineTo(x + w - 5, y + 0.347 * h);
+    ctx.lineTo(x + w - 10, y + 0.602 * h);
+    ctx.lineTo(x + w - 7, y + h - 0.135 * h);
+    ctx.quadraticCurveTo(x + w - 9, y + h - 0.045 * h, x + w - 0.040 * w, y + h - 0.048 * h);
+    bottomPoints.forEach(function (point) {
+      ctx.lineTo(x + point[0] * w, y + h - point[1] * h);
+    });
+    ctx.quadraticCurveTo(x + 5, y + h - 0.060 * h, x + 6, y + h - 0.141 * h);
+    ctx.lineTo(x + 9, y + h - 0.356 * h);
+    ctx.lineTo(x + 6, y + 0.611 * h);
+    ctx.lineTo(x + 10, y + 0.284 * h);
     ctx.closePath();
   }
 
@@ -8036,7 +8105,23 @@
   }
 
   function getSlateRenderSpec() {
-    return {
+    const specMap = {
+      "slate-plate-20x20": {
+        width: 590,
+        height: 590,
+        insetX: 36,
+        insetY: 36,
+        radius: 14
+      },
+      "slate-plate-25x25": {
+        width: 660,
+        height: 660,
+        insetX: 40,
+        insetY: 40,
+        radius: 15
+      }
+    };
+    const baseSpec = specMap[state.productFamilyId] || {
       x: 112,
       y: 474,
       width: 976,
@@ -8044,6 +8129,15 @@
       insetX: 42,
       insetY: 30,
       radius: 12
+    };
+    return {
+      x: baseSpec.x != null ? baseSpec.x : Math.round((1200 - baseSpec.width) / 2),
+      y: baseSpec.y != null ? baseSpec.y : Math.round(632 - baseSpec.height / 2),
+      width: baseSpec.width,
+      height: baseSpec.height,
+      insetX: baseSpec.insetX,
+      insetY: baseSpec.insetY,
+      radius: baseSpec.radius
     };
   }
 
@@ -10914,6 +11008,7 @@
   }
 
   function getActiveTextMaxLength() {
+    if (isSlateProduct()) return MAX_SLATE_TEXT_LENGTH;
     return isWoodBoardProduct() ? MAX_WOOD_BOARD_TEXT_LENGTH : MAX_TEXT_LENGTH;
   }
 
@@ -10931,7 +11026,7 @@
   }
 
   function normalizeTextValue(value) {
-    if (isWoodBoardProduct()) {
+    if (isWoodBoardProduct() || isSlateProduct()) {
       return String(value)
         .replace(/\r\n?/g, "\n")
         .replace(/\t/g, " ")
