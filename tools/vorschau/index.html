@@ -278,7 +278,7 @@
                 <strong id="pendantSwitchStatus">Anhänger 1 wird gerade bearbeitet</strong>
               </div>
             </div>
-            <p class="preview-help" id="pendantSwitchHint">Wähle den Anhänger, den du gerade gestalten möchtest.</p>
+            <p class="preview-help" id="pendantSwitchHint">Anhänger wählen.</p>
             <div class="preview-side-switch preview-side-switch--pendants" id="pendantTabs" role="tablist" aria-label="Zwischen Anhängern im Set wechseln"></div>
           </div>
 
@@ -436,6 +436,58 @@
             />
           </div>
 
+          <div class="preview-control-group preview-control-group--subsection" id="slatePhotoAdjustGroup" aria-labelledby="slate-photo-adjust-heading" hidden>
+            <div class="preview-toggle-grid preview-toggle-grid--compact" aria-label="Schiefer-Foto-Polarität">
+              <button class="preview-toggle-button" type="button" id="slatePhotoPolarityNormalButton" aria-pressed="true">Standard</button>
+              <button class="preview-toggle-button" type="button" id="slatePhotoPolarityInvertedButton" aria-pressed="false">Invertiert</button>
+            </div>
+
+            <div class="preview-control-title-row preview-control-title-row--compact">
+              <h3 id="slate-photo-adjust-heading">Intensität</h3>
+              <strong id="slatePhotoIntensityValueLabel">95%</strong>
+            </div>
+            <input
+              id="slatePhotoIntensitySlider"
+              class="preview-range"
+              type="range"
+              min="45"
+              max="140"
+              step="1"
+              value="95"
+              aria-label="Schiefer-Foto-Intensität"
+            />
+
+            <div class="preview-control-title-row preview-control-title-row--compact">
+              <h3>Detailreduktion</h3>
+              <strong id="slatePhotoDetailReductionValueLabel">55%</strong>
+            </div>
+            <input
+              id="slatePhotoDetailReductionSlider"
+              class="preview-range"
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="55"
+              aria-label="Schiefer-Foto-Detailreduktion"
+            />
+
+            <div class="preview-control-title-row preview-control-title-row--compact">
+              <h3>Kontrast</h3>
+              <strong id="slatePhotoContrastValueLabel">10</strong>
+            </div>
+            <input
+              id="slatePhotoContrastSlider"
+              class="preview-range"
+              type="range"
+              min="-25"
+              max="35"
+              step="1"
+              value="10"
+              aria-label="Schiefer-Foto-Kontrast"
+            />
+          </div>
+
           <div class="preview-nudge">
             <button class="preview-nudge__button" type="button" data-nudge="up" aria-label="Nach oben verschieben">↑</button>
             <button class="preview-nudge__button" type="button" data-nudge="left" aria-label="Nach links verschieben">←</button>
@@ -447,7 +499,7 @@
 
         <div class="preview-control-group" id="textGroup" aria-labelledby="text-heading" hidden>
           <div class="preview-control-title-row">
-            <h3 id="text-heading">Text eingeben und positionieren</h3>
+            <h3 id="text-heading">Text eingeben</h3>
           </div>
 
           <label class="preview-field">
@@ -457,7 +509,7 @@
               class="preview-text-input"
               maxlength="18"
               rows="2"
-              placeholder="z. B. Emma, LB oder Für immer"
+              placeholder="z. B. Emma oder Für immer"
               aria-describedby="textInputHint textCharacterCount"
             ></textarea>
           </label>
@@ -557,15 +609,15 @@
         </div>
         <div class="preview-summary-layout">
           <div class="preview-summary-preview">
-            <div class="preview-summary-preview__frame">
+            <button class="preview-summary-preview__frame" type="button" id="summaryPreviewZoomButton" aria-label="Vorschau groß ansehen">
               <canvas
                 id="summaryPreviewCanvas"
                 width="900"
                 height="900"
                 aria-label="Zusammenfassung der aktuellen Vorschau"
               ></canvas>
-              <div class="preview-stage-overlay preview-summary-preview__overlay">Unverbindliche Vorschau</div>
-            </div>
+              <span class="preview-stage-overlay preview-summary-preview__overlay">Unverbindliche Vorschau</span>
+            </button>
           </div>
           <div class="preview-summary-grid">
             <div class="preview-summary-item preview-summary-item--content">
@@ -579,7 +631,7 @@
             <div class="preview-summary-price">
               <span class="preview-summary-item__label">Preisstand</span>
               <strong id="summaryPrice">Wird berechnet</strong>
-              <p id="summaryPriceHint">Sobald die Auswahl vollständig ist, erscheint hier der passende Preisstand.</p>
+              <p id="summaryPriceHint">Nach vollständiger Auswahl erscheint hier der Preisstand.</p>
             </div>
             <div class="preview-summary-request" id="summaryRequestBox" hidden>
               <button
@@ -611,6 +663,16 @@
         </div>
       </div>
     </section>
+
+    <div class="preview-summary-lightbox" id="summaryPreviewLightbox" hidden role="dialog" aria-modal="true" aria-label="Vorschau vergrößert">
+      <button class="preview-summary-lightbox__backdrop" type="button" id="summaryPreviewLightboxBackdrop" aria-label="Große Vorschau schließen"></button>
+      <div class="preview-summary-lightbox__panel">
+        <button class="preview-summary-lightbox__close" type="button" id="summaryPreviewLightboxClose" aria-label="Große Vorschau schließen">Schließen</button>
+        <div class="preview-summary-lightbox__stage" id="summaryPreviewLightboxStage">
+          <img class="preview-summary-lightbox__image" id="summaryPreviewLightboxImage" alt="Vergrößerte Vorschau" />
+        </div>
+      </div>
+    </div>
 
   </main>
 

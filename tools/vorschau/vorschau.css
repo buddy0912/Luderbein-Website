@@ -418,6 +418,20 @@
   background:
     radial-gradient(circle at top, rgba(255,255,255,.06), transparent 40%),
     linear-gradient(180deg, rgba(14,6,11,.88), rgba(10,8,12,.98));
+  cursor: zoom-in;
+}
+
+button.preview-summary-preview__frame {
+  display: block;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+
+.preview-summary-preview__frame:focus-visible {
+  outline: 2px solid rgba(245, 177, 73, .78);
+  outline-offset: 4px;
 }
 
 .preview-summary-preview__frame canvas {
@@ -495,6 +509,79 @@
 .preview-summary-request__button {
   width: 100%;
   justify-content: center;
+}
+
+.preview-summary-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 44px);
+  background: rgba(5, 5, 8, .82);
+}
+
+.preview-summary-lightbox[hidden] {
+  display: none;
+}
+
+.preview-summary-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-out;
+}
+
+.preview-summary-lightbox__panel {
+  position: relative;
+  z-index: 1;
+  width: min(96vw, 1120px);
+  height: min(88vh, 940px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+}
+
+.preview-summary-lightbox__close {
+  justify-self: end;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background: rgba(18, 16, 20, .88);
+  color: #f5f3f1;
+  font: inherit;
+  cursor: pointer;
+}
+
+.preview-summary-lightbox__stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, .08), transparent 45%),
+    rgba(11, 10, 14, .96);
+  touch-action: none;
+  cursor: grab;
+}
+
+.preview-summary-lightbox__stage.is-dragging {
+  cursor: grabbing;
+}
+
+.preview-summary-lightbox__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
 
 .preview-price-box {
@@ -898,6 +985,29 @@
 }
 
 #productOptions[data-material-id="wood"] .preview-option__thumb--wood-board svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#productOptions[data-material-id="slate"] .preview-option--slate {
+  align-self: stretch;
+  padding: 10px 10px 11px;
+  min-height: 0;
+}
+
+#productOptions[data-material-id="slate"] .preview-option__thumb--slate {
+  height: 92px;
+  flex-basis: 92px;
+  margin-bottom: 8px;
+  padding: 5px;
+  border-color: rgba(255,255,255,.12);
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255,255,255,.26), rgba(255,255,255,0) 58%),
+    linear-gradient(180deg, rgba(34,36,36,.78), rgba(12,14,14,.9));
+}
+
+#productOptions[data-material-id="slate"] .preview-option__thumb--slate svg {
   display: block;
   width: 100%;
   height: 100%;

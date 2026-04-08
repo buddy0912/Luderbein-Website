@@ -59,7 +59,8 @@ window.LUDERBEIN_PRICING = {
           label: "Text / Symbol",
           note: "Koordinaten, Widmung, kurzer Spruch, kleines Icon – clean & schnell.",
           formats: [
-            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 }
+            { id: "txt-10x10", label: "10 × 10 cm", price: 9.95 },
+            { id: "txt-38x13", label: "38 × 13 cm (Langtafel)", price: 19.95 }
           ]
         }
       },
@@ -165,7 +166,7 @@ window.LUDERBEIN_PRICING = {
               label: "Logo-Aufbereitung (wenn nicht druckfertig 1-farbig)",
               type: "one_time",
               description: "Einmalige Aufbereitung/Vektorisierung/Optimierung für saubere Gravur.",
-              once: 14.95
+              once: 9.95
             },
 
             display_stand_3d_printed: {
@@ -305,7 +306,22 @@ window.LUDERBEIN_PRICING = {
       label: "Holz",
       active: false,
       note: "Kommt als Nächstes. Laserbearbeitung bis 850 × 800 mm möglich.",
-      variants: {},
+      variants: {
+        holzbrett_rechteckig: {
+          label: "Holzbrett rechteckig",
+          note: "Startpreis für die Vorschau.",
+          formats: [
+            { id: "wood-board-rect", label: "Holzbrett rechteckig", price: 7.95 }
+          ]
+        },
+        holzbrett_rund: {
+          label: "Holzbrett rund",
+          note: "Startpreis für die Vorschau.",
+          formats: [
+            { id: "wood-board-round", label: "Holzbrett rund", price: 7.95 }
+          ]
+        }
+      },
       upgrades: {}
     },
 

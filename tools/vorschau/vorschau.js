@@ -46,6 +46,7 @@
   const monogramGroup = document.getElementById("monogramGroup");
   const emblemGroup = document.getElementById("emblemGroup");
   const rotationGroup = document.getElementById("rotationGroup");
+  const slatePhotoAdjustGroup = document.getElementById("slatePhotoAdjustGroup");
   const qrCodeGroup = document.getElementById("qrCodeGroup");
   const textGroup = document.getElementById("textGroup");
   const uploadInput = document.getElementById("uploadInput");
@@ -73,6 +74,11 @@
   const stretchXSlider = document.getElementById("stretchXSlider");
   const stretchYSlider = document.getElementById("stretchYSlider");
   const rotationSlider = document.getElementById("rotationSlider");
+  const slatePhotoPolarityNormalButton = document.getElementById("slatePhotoPolarityNormalButton");
+  const slatePhotoPolarityInvertedButton = document.getElementById("slatePhotoPolarityInvertedButton");
+  const slatePhotoIntensitySlider = document.getElementById("slatePhotoIntensitySlider");
+  const slatePhotoDetailReductionSlider = document.getElementById("slatePhotoDetailReductionSlider");
+  const slatePhotoContrastSlider = document.getElementById("slatePhotoContrastSlider");
   const textSizeSlider = document.getElementById("textSizeSlider");
   const textFontSelect = document.getElementById("textFontSelect");
   const qrInput = document.getElementById("qrInput");
@@ -84,6 +90,9 @@
   const stretchXValueLabel = document.getElementById("stretchXValueLabel");
   const stretchYValueLabel = document.getElementById("stretchYValueLabel");
   const rotationValueLabel = document.getElementById("rotationValueLabel");
+  const slatePhotoIntensityValueLabel = document.getElementById("slatePhotoIntensityValueLabel");
+  const slatePhotoDetailReductionValueLabel = document.getElementById("slatePhotoDetailReductionValueLabel");
+  const slatePhotoContrastValueLabel = document.getElementById("slatePhotoContrastValueLabel");
   const textSizeValueLabel = document.getElementById("textSizeValueLabel");
   const motifSizeHint = document.getElementById("motifSizeHint");
   const photoPricingHint = document.getElementById("photoPricingHint");
@@ -128,6 +137,12 @@
   const summaryToggleMeta = document.getElementById("summaryToggleMeta");
   const summaryPreviewCanvas = document.getElementById("summaryPreviewCanvas");
   const summaryPreviewCtx = summaryPreviewCanvas ? summaryPreviewCanvas.getContext("2d") : null;
+  const summaryPreviewZoomButton = document.getElementById("summaryPreviewZoomButton");
+  const summaryPreviewLightbox = document.getElementById("summaryPreviewLightbox");
+  const summaryPreviewLightboxBackdrop = document.getElementById("summaryPreviewLightboxBackdrop");
+  const summaryPreviewLightboxClose = document.getElementById("summaryPreviewLightboxClose");
+  const summaryPreviewLightboxStage = document.getElementById("summaryPreviewLightboxStage");
+  const summaryPreviewLightboxImage = document.getElementById("summaryPreviewLightboxImage");
   const summaryConfiguration = document.getElementById("summaryConfiguration");
   const summaryContent = document.getElementById("summaryContent");
   const summaryPrice = document.getElementById("summaryPrice");
@@ -180,7 +195,7 @@
     5: 3795
   };
   const BACK_SIDE_STANDARD_CENTS = 495;
-  const DOGTAG_BACK_SIDE_CENTS = 300;
+  const DOGTAG_BACK_SIDE_FALLBACK_CENTS = 300;
   const PHOTO_NEW_PREP_CENTS = 3495;
   const PHOTO_REPEAT_FRONT_CENTS = 2495;
   const PHOTO_REPEAT_BACK_CENTS = 995;
@@ -191,8 +206,8 @@
     4: 0.14,
     5: 0.15
   };
-  const WOOD_BOARD_START_PRICE_CENTS = 795;
-  const DOGTAG_START_PRICE_CENTS = 695;
+  const WOOD_BOARD_START_PRICE_FALLBACK_CENTS = 795;
+  const DOGTAG_START_PRICE_FALLBACK_CENTS = 695;
   const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
   const mobileThumbCropCache = new Map();
   let mobileThumbCropFrame = 0;
@@ -201,12 +216,20 @@
   let mobilePreviewDragOrigin = null;
   let mobilePreviewGeometryKey = "";
   const MOBILE_PREVIEW_TAP_SLOP = 8;
+  const summaryZoomState = {
+    scale: 1,
+    offsetX: 0,
+    offsetY: 0,
+    pointers: new Map(),
+    lastPinchDistance: 0,
+    dragOrigin: null
+  };
 
   const MODE_LIBRARY = [
     {
       id: "motif",
       name: "Motiv",
-      description: "Vorlage wählen oder eigenes Bild nutzen."
+      description: "Vorlage oder eigenes Bild."
     },
     {
       id: "text",
@@ -219,7 +242,7 @@
     {
       id: "motif",
       name: "Motiv",
-      description: "Vorlage für die Hauptfläche wählen."
+      description: "Vorlage oder eigenes Bild."
     },
     {
       id: "text",
@@ -229,7 +252,7 @@
     {
       id: "qr",
       name: "QR",
-      description: "QR-Code direkt auf der Hauptfläche zeigen."
+      description: "Link oder kurze Info."
     }
   ];
 
@@ -239,35 +262,35 @@
       count: 1,
       name: "Einzelanhänger",
       shortLabel: "Einzel",
-      description: "Ein einzelnes rundes Edelstahl-Plättchen."
+      description: "Ein Anhänger."
     },
     {
       id: "set-2",
       count: 2,
       name: "Set mit 2 Anhängern",
       shortLabel: "2er-Set",
-      description: "Zwei Anhänger als ruhiges kleines Set."
+      description: "Zwei Anhänger."
     },
     {
       id: "set-3",
       count: 3,
       name: "Set mit 3 Anhängern",
       shortLabel: "3er-Set",
-      description: "Drei Anhänger mit klarer Staffelung."
+      description: "Drei Anhänger."
     },
     {
       id: "set-4",
       count: 4,
       name: "Set mit 4 Anhängern",
       shortLabel: "4er-Set",
-      description: "Vier Anhänger als erstes Familien- oder Setbild."
+      description: "Vier Anhänger."
     },
     {
       id: "set-5",
       count: 5,
       name: "Set mit 5 Anhängern",
       shortLabel: "5er-Set",
-      description: "Fünf Anhänger als ruhige kleine Gruppe."
+      description: "Fünf Anhänger."
     }
   ];
 
@@ -344,29 +367,29 @@
       {
         id: "metal",
         name: "Metall",
-        description: "Schmuckanhänger und weitere Metallprodukte.",
+        description: "Metallprodukte.",
         productFamilies: [
           {
             id: "jewelry-pendant",
             name: "Schmuckanhänger",
-            description: "Edelstahl-Schmuckanhänger mit Gravur in Juwelierstandard.",
+            description: "Runde Edelstahl-Anhänger.",
             finishes: [
               {
                 id: "silver",
                 name: "silberfarbig",
-                description: "Edelstahl-Schmuckanhänger in silberfarbiger Ausführung."
+                description: "Silberfarbig."
               },
               {
                 id: "gold",
                 name: "goldfarbig",
-                description: "Edelstahl-Schmuckanhänger in goldfarbiger Ausführung."
+                description: "Goldfarbig."
               }
             ],
             products: [
               {
                 id: "round-tag",
                 name: "Rundes Blättchen",
-                description: "Internes Standardmodell für Schmuckanhänger.",
+                description: "Rundes Modell.",
                 sizes: [
                   {
                     id: "8mm",
@@ -430,7 +453,7 @@
           {
             id: "bottle-opener",
             name: "Flaschenöffner",
-            description: "Metall-Flaschenöffner mit Gravur für Text, Motiv oder QR.",
+            description: "Flaschenöffner mit Gravur.",
             isComingSoon: false,
             finishes: [],
             products: []
@@ -438,24 +461,24 @@
           {
             id: "dogtag",
             name: "Dogtag",
-            description: "Dogtag mit Gravur für Motiv, Text oder QR.",
+            description: "Dogtag mit Gravur.",
             finishes: [
               {
                 id: "silver",
                 name: "silberfarbig",
-                description: "Dogtag in silberfarbiger Ausführung."
+                description: "Silberfarbig."
               },
               {
                 id: "black",
                 name: "schwarz",
-                description: "Dogtag in schwarzer Ausführung."
+                description: "Schwarz."
               }
             ],
             products: [
               {
                 id: "dogtag-model",
                 name: "Dogtag",
-                description: "Hochkante Dogtag-Form mit Loch."
+                description: "Querform mit Loch."
               }
             ]
           }
@@ -499,16 +522,22 @@
       {
         id: "slate",
         name: "Schiefer",
-        description: "Wird vorbereitet.",
-        isComingSoon: true,
+        description: "Schieferplatten.",
         productFamilies: [
           {
-            id: "slate-coming-soon",
-            name: "Produkte aus Schiefer",
-            description: "Struktur vorbereitet. Details folgen in einem nächsten Schritt.",
-            isComingSoon: true,
+            id: "slate-plate-38x13",
+            name: "Schiefer 38x13 cm",
+            description: "",
             finishes: [],
-            products: []
+            products: [
+              {
+                id: "slate-plate-38x13-model",
+                name: "Schieferplatte 38x13 cm",
+                description: "Rechteckige Schieferplatte 38 x 13 cm.",
+                widthCm: 38,
+                heightCm: 13
+              }
+            ]
           }
         ]
       }
@@ -544,14 +573,14 @@
     {
       id: "monogram",
       name: "Monogramm",
-      description: "1–3 Zeichen direkt setzen.",
+      description: "1–3 Zeichen.",
       imageSrc: "/assets/tools/vorschau/vorlage-monogramm.png",
       category: "monogram"
     },
     {
       id: "photo-portrait",
       name: "Foto / Porträt",
-      description: "Eigenes Bild für die Vorschau nutzen.",
+      description: "Eigenes Bild.",
       imageSrc: "/assets/tools/vorschau/vorlage-portraet.png",
       category: "photo",
       prefersUpload: true
@@ -559,7 +588,7 @@
     {
       id: "animal-symbols",
       name: "Tiersymbole",
-      description: "Hund, Katze, Pferd oder Vogel auswählen.",
+      description: "Tiermotiv wählen.",
       imageSrc: "/assets/tools/vorschau/tiere/hund/hund-01-klassisch.svg",
       category: "animal-symbols",
       hideFromMainSelection: true,
@@ -571,7 +600,7 @@
     {
       id: "crest",
       name: "Wappen",
-      description: "Klarer Schildcharakter mit etwas mehr Detail.",
+      description: "Klarer Schild.",
       imageSrc: buildInlineSvgDataUri(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
           '<rect width="200" height="200" fill="#f6f2ee"/>' +
@@ -584,7 +613,7 @@
     {
       id: "emblem",
       name: "Emblem",
-      description: "Reduzierte Symbolwirkung mit ruhiger Form.",
+      description: "Ruhiges Symbol.",
       imageSrc: buildInlineSvgDataUri(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
           '<rect width="200" height="200" fill="#f6f2ee"/>' +
@@ -597,7 +626,7 @@
     {
       id: "qr",
       name: "QR-Code",
-      description: "Für Link oder kurze Information.",
+      description: "Link oder kurze Info.",
       imageSrc: buildInlineSvgDataUri(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">' +
           '<rect width="200" height="200" fill="#f6f2ee"/>' +
@@ -1802,7 +1831,7 @@
     const priceState = calculatePriceSummary();
     const configurationParts = [];
     let priceLabel = "Wird berechnet";
-    let priceHint = "Sobald die Auswahl vollständig ist, erscheint hier die passende Preisübersicht.";
+    let priceHint = "Nach vollständiger Auswahl erscheint hier der Preisstand.";
 
     if (isBottleOpenerProduct()) {
       configurationParts.push(productName);
@@ -1823,7 +1852,19 @@
       }
       if (priceState.isReady) {
         priceLabel = formatEuro(priceState.totalCents);
-        priceHint = priceState.invalidReason || "Vorläufiger Startpreis für die aktuelle Holzbrett-Auswahl.";
+        priceHint = priceState.invalidReason || "Startpreis laut Preisquelle.";
+      }
+    } else if (isSlateProduct()) {
+      configurationParts.push(productName);
+      if (hasDesignModeSelection()) {
+        configurationParts.push(getSummaryModeLabel());
+      }
+      if (priceState.isReady) {
+        priceLabel = formatEuro(priceState.totalCents);
+        priceHint = priceState.invalidReason || "Startpreis laut Preisquelle.";
+      } else {
+        priceLabel = "Preis offen";
+        priceHint = priceState.invalidReason || "Preis offen / auf Anfrage.";
       }
     } else if (isDogtagProduct()) {
       configurationParts.push(productName);
@@ -1835,7 +1876,7 @@
       }
       if (priceState.isReady) {
         priceLabel = formatEuro(priceState.totalCents);
-        priceHint = priceState.invalidReason || "Vorläufiger Startpreis für die aktuelle Dogtag-Auswahl.";
+        priceHint = priceState.invalidReason || "Startpreis laut Preisquelle.";
       }
     } else {
       configurationParts.push(productName === "Noch offen" ? "Schmuckanhänger" : productName);
@@ -2133,6 +2174,10 @@
       offsetX: 0,
       offsetY: 0,
       rotationDeg: 0,
+      slatePhotoPolarity: "normal",
+      slatePhotoIntensity: 95,
+      slatePhotoDetailReduction: 55,
+      slatePhotoContrast: 10,
       textValue: "",
       textScalePercent: 100,
       textFontId: TEXT_FONT_LIBRARY[0].id,
@@ -2233,6 +2278,42 @@
         if (isWoodBoardProduct() && isTextMode() && hasText()) {
           clampTextPlacement();
         }
+        syncUi();
+        queueRender();
+      });
+    }
+
+    if (slatePhotoPolarityNormalButton) {
+      slatePhotoPolarityNormalButton.addEventListener("click", function () {
+        setSlatePhotoPolarity("normal");
+      });
+    }
+
+    if (slatePhotoPolarityInvertedButton) {
+      slatePhotoPolarityInvertedButton.addEventListener("click", function () {
+        setSlatePhotoPolarity("inverted");
+      });
+    }
+
+    if (slatePhotoIntensitySlider) {
+      slatePhotoIntensitySlider.addEventListener("input", function () {
+        getActiveSideState().slatePhotoIntensity = clamp(Number(slatePhotoIntensitySlider.value), 45, 140);
+        syncUi();
+        queueRender();
+      });
+    }
+
+    if (slatePhotoDetailReductionSlider) {
+      slatePhotoDetailReductionSlider.addEventListener("input", function () {
+        getActiveSideState().slatePhotoDetailReduction = clamp(Number(slatePhotoDetailReductionSlider.value), 0, 100);
+        syncUi();
+        queueRender();
+      });
+    }
+
+    if (slatePhotoContrastSlider) {
+      slatePhotoContrastSlider.addEventListener("input", function () {
+        getActiveSideState().slatePhotoContrast = clamp(Number(slatePhotoContrastSlider.value), -25, 35);
         syncUi();
         queueRender();
       });
@@ -2347,6 +2428,22 @@
       closeSummaryButton.addEventListener("click", function () {
         setSummaryOpen(false);
       });
+    }
+    if (summaryPreviewZoomButton) {
+      summaryPreviewZoomButton.addEventListener("click", openSummaryPreviewLightbox);
+    }
+    if (summaryPreviewLightboxBackdrop) {
+      summaryPreviewLightboxBackdrop.addEventListener("click", closeSummaryPreviewLightbox);
+    }
+    if (summaryPreviewLightboxClose) {
+      summaryPreviewLightboxClose.addEventListener("click", closeSummaryPreviewLightbox);
+    }
+    if (summaryPreviewLightboxStage) {
+      summaryPreviewLightboxStage.addEventListener("wheel", handleSummaryPreviewWheel, { passive: false });
+      summaryPreviewLightboxStage.addEventListener("pointerdown", handleSummaryPreviewPointerDown);
+      summaryPreviewLightboxStage.addEventListener("pointermove", handleSummaryPreviewPointerMove);
+      summaryPreviewLightboxStage.addEventListener("pointerup", handleSummaryPreviewPointerEnd);
+      summaryPreviewLightboxStage.addEventListener("pointercancel", handleSummaryPreviewPointerEnd);
     }
     clearTextButton.addEventListener("click", clearText);
     clearQrButton.addEventListener("click", clearQrValue);
@@ -2627,6 +2724,7 @@
   }
 
   function canUsePhotoOnPendant(pendantIndex) {
+    if (isSlateProduct()) return true;
     const size = getActiveSize(pendantIndex);
     return Boolean(size && size.diameterMm >= 12);
   }
@@ -2651,11 +2749,80 @@
     return Math.round(numeric * 100);
   }
 
-  function getBottleOpenerPricingVariant() {
+  function getPricingVariant(materialKey, variantKey) {
     const pricingProducts = EXTERNAL_PRICING && EXTERNAL_PRICING.products;
-    const metalPricing = pricingProducts && pricingProducts.metall;
-    const variants = metalPricing && metalPricing.variants;
-    return variants && variants.flaschenoeffner ? variants.flaschenoeffner : null;
+    const materialPricing = pricingProducts && pricingProducts[materialKey];
+    const variants = materialPricing && materialPricing.variants;
+    return variants && variants[variantKey] ? variants[variantKey] : null;
+  }
+
+  function getBottleOpenerPricingVariant() {
+    return getPricingVariant("metall", "flaschenoeffner");
+  }
+
+  function getDogtagPricingVariant() {
+    return getPricingVariant("metall", "dogtags_alu_elox_schwarz_29x50");
+  }
+
+  function getDogtagStartPriceCents() {
+    const pricingVariant = getDogtagPricingVariant();
+    if (pricingVariant && Array.isArray(pricingVariant.tiers)) {
+      const firstTier = pricingVariant.tiers.find(function (tier) {
+        return Number(tier.min || 0) <= 1 && (tier.max == null || Number(tier.max) >= 1);
+      });
+      const firstTierPrice = firstTier ? priceEuroToCents(firstTier.price) : null;
+      if (firstTierPrice != null) return firstTierPrice;
+    }
+    return DOGTAG_START_PRICE_FALLBACK_CENTS;
+  }
+
+  function getDogtagBackSideCents() {
+    const pricingVariant = getDogtagPricingVariant();
+    const upgrade = pricingVariant && pricingVariant.upgrades && pricingVariant.upgrades.engrave_inside_and_outside;
+    const upgradePrice = upgrade ? priceEuroToCents(upgrade.unit) : null;
+    return upgradePrice != null ? upgradePrice : DOGTAG_BACK_SIDE_FALLBACK_CENTS;
+  }
+
+  function getDogtagLogoReworkCents() {
+    const pricingVariant = getDogtagPricingVariant();
+    const upgrade = pricingVariant && pricingVariant.upgrades && pricingVariant.upgrades.logo_rework;
+    return upgrade ? priceEuroToCents(upgrade.once) : null;
+  }
+
+  function getWoodBoardPricingVariant(productFamilyId) {
+    const variantKey = productFamilyId === "wood-board-round"
+      ? "holzbrett_rund"
+      : productFamilyId === "wood-board-rect"
+        ? "holzbrett_rechteckig"
+        : null;
+    return variantKey ? getPricingVariant("holz", variantKey) : null;
+  }
+
+  function getWoodBoardStartPriceCents(productFamilyId) {
+    const pricingVariant = getWoodBoardPricingVariant(productFamilyId || state.productFamilyId);
+    const format = pricingVariant && Array.isArray(pricingVariant.formats) ? pricingVariant.formats[0] : null;
+    const formatPrice = format ? priceEuroToCents(format.price) : null;
+    return formatPrice != null ? formatPrice : WOOD_BOARD_START_PRICE_FALLBACK_CENTS;
+  }
+
+  function getSlatePricingVariant(priceMode) {
+    return getPricingVariant("schiefer", priceMode === "photo" ? "fotogravur" : "textsymbol");
+  }
+
+  function getSlatePlatePriceCents(productFamilyId, priceMode) {
+    if (productFamilyId && productFamilyId !== "slate-plate-38x13") return null;
+    const pricingVariant = getSlatePricingVariant(priceMode);
+    const formatId = priceMode === "photo" ? "jl7-38x13" : "txt-38x13";
+    const format = pricingVariant && Array.isArray(pricingVariant.formats)
+      ? pricingVariant.formats.find(function (formatItem) {
+        return formatItem.id === formatId;
+      })
+      : null;
+    return format ? priceEuroToCents(format.price) : null;
+  }
+
+  function getActiveSlatePriceMode() {
+    return isPhotoMotifSelected("front", 0) ? "photo" : "standard";
   }
 
   function getBottleOpenerSinglePriceCents() {
@@ -2773,44 +2940,74 @@
     }
 
     if (isWoodBoardProduct()) {
+      const woodBoardStartPriceCents = getWoodBoardStartPriceCents();
       result.pricingMode = "wood-board";
       result.discountRate = 0;
       result.pendantCount = 1;
-      result.subtotalCents = WOOD_BOARD_START_PRICE_CENTS;
-      result.totalCents = WOOD_BOARD_START_PRICE_CENTS;
+      result.subtotalCents = woodBoardStartPriceCents;
+      result.totalCents = woodBoardStartPriceCents;
       result.discountCents = 0;
       result.isReady = true;
-      result.invalidReason = "Vorläufiger Startpreis für die Holzbrett-Vorschau.";
+      result.invalidReason = "Startpreis laut Preisquelle.";
       result.items.push({
         label: getActiveProductDisplayName() || "Holzbrett",
         sizeLabel: "",
-        baseCents: WOOD_BOARD_START_PRICE_CENTS,
+        baseCents: woodBoardStartPriceCents,
         backCents: 0,
-        totalCents: WOOD_BOARD_START_PRICE_CENTS,
-        displayPrice: formatEuro(WOOD_BOARD_START_PRICE_CENTS),
-        metaParts: ["Vorläufiger Startpreis"]
+        totalCents: woodBoardStartPriceCents,
+        displayPrice: formatEuro(woodBoardStartPriceCents),
+        metaParts: ["Startpreis"]
       });
       return result;
     }
 
+    if (isSlateProduct()) {
+      const slatePriceMode = getActiveSlatePriceMode();
+      const slateStartPriceCents = getSlatePlatePriceCents(state.productFamilyId, slatePriceMode);
+      result.pricingMode = "slate";
+      result.discountRate = 0;
+      result.pendantCount = 1;
+      if (slateStartPriceCents != null) {
+        result.subtotalCents = slateStartPriceCents;
+        result.totalCents = slateStartPriceCents;
+        result.discountCents = 0;
+        result.isReady = true;
+        result.invalidReason = "Startpreis laut Preisquelle.";
+        result.items.push({
+          label: getActiveProductDisplayName() || "Schieferplatte",
+          sizeLabel: "38 x 13 cm",
+          baseCents: slateStartPriceCents,
+          backCents: 0,
+          totalCents: slateStartPriceCents,
+          displayPrice: formatEuro(slateStartPriceCents),
+          metaParts: [slatePriceMode === "photo" ? "Schiefer Fotogravur" : "Schiefer Gravur"]
+        });
+        return result;
+      }
+      result.isReady = false;
+      result.invalidReason = "Preis offen / auf Anfrage.";
+      return result;
+    }
+
     if (isDogtagProduct()) {
-      const dogtagBackCents = isBackSideEnabled(0) ? DOGTAG_BACK_SIDE_CENTS : 0;
+      const dogtagStartPriceCents = getDogtagStartPriceCents();
+      const dogtagBackCents = isBackSideEnabled(0) ? getDogtagBackSideCents() : 0;
       result.pricingMode = "dogtag";
       result.discountRate = 0;
       result.pendantCount = 1;
-      result.subtotalCents = DOGTAG_START_PRICE_CENTS;
-      result.totalCents = DOGTAG_START_PRICE_CENTS + dogtagBackCents;
+      result.subtotalCents = dogtagStartPriceCents;
+      result.totalCents = dogtagStartPriceCents + dogtagBackCents;
       result.discountCents = 0;
       result.isReady = true;
-      result.invalidReason = "Vorläufiger Startpreis für die Dogtag-Vorschau.";
+      result.invalidReason = "Startpreis laut Preisquelle.";
       result.items.push({
         label: getActiveProductDisplayName() || "Dogtag",
         sizeLabel: getActiveFinish() ? getActiveFinish().name : "",
-        baseCents: DOGTAG_START_PRICE_CENTS,
+        baseCents: dogtagStartPriceCents,
         backCents: 0,
-        totalCents: DOGTAG_START_PRICE_CENTS,
-        displayPrice: formatEuro(DOGTAG_START_PRICE_CENTS),
-        metaParts: ["Vorläufiger Startpreis"]
+        totalCents: dogtagStartPriceCents,
+        displayPrice: formatEuro(dogtagStartPriceCents),
+        metaParts: ["Startpreis"]
       });
       if (dogtagBackCents) {
         result.subtotalCents += dogtagBackCents;
@@ -3369,13 +3566,15 @@
 
     getAvailableProductFamilies(material).forEach((productFamily) => {
       const isWoodBoardFamily = material.id === "wood" && /^wood-board-/.test(productFamily.id);
+      const isSlateFamily = material.id === "slate" && /^slate-plate-/.test(productFamily.id);
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "preview-option" + (isWoodBoardFamily ? " preview-option--wood-board" : "");
+      button.className = "preview-option" + (isWoodBoardFamily ? " preview-option--wood-board" : "") + (isSlateFamily ? " preview-option--slate" : "");
       button.setAttribute("data-product-id", productFamily.id);
       const startingPriceCents = getProductFamilyStartingPriceCents(productFamily);
       button.innerHTML =
         (isWoodBoardFamily ? buildWoodBoardProductThumbMarkup(productFamily) : "") +
+        (isSlateFamily ? buildSlateProductThumbMarkup(productFamily) : "") +
         '<span class="preview-option__title">' + escapeHtml(productFamily.name) + "</span>" +
         (startingPriceCents != null
           ? '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
@@ -3425,7 +3624,7 @@
     finishes.forEach(function (finish) {
       const button = document.createElement("button");
       const isDogtagFinish = productFamily.id === "dogtag";
-      const startingPriceCents = isDogtagFinish ? DOGTAG_START_PRICE_CENTS : null;
+      const startingPriceCents = isDogtagFinish ? getDogtagStartPriceCents() : null;
       button.type = "button";
       button.className = "preview-option" + (isDogtagFinish ? " preview-option--dogtag-finish" : "");
       button.setAttribute("data-finish-id", finish.id);
@@ -3567,14 +3766,38 @@
     }
 
     if (productFamily.id === "dogtag") {
-      return DOGTAG_START_PRICE_CENTS;
+      return getDogtagStartPriceCents();
     }
 
     if (/^wood-board-/.test(productFamily.id)) {
-      return WOOD_BOARD_START_PRICE_CENTS;
+      return getWoodBoardStartPriceCents(productFamily.id);
+    }
+
+    if (/^slate-plate-/.test(productFamily.id)) {
+      return getSlatePlatePriceCents(productFamily.id, "standard");
     }
 
     return null;
+  }
+
+  function buildSlateProductThumbMarkup() {
+    return (
+      '<span class="preview-option__thumb preview-option__thumb--slate" aria-hidden="true">' +
+        '<svg viewBox="0 0 190 118" width="190" height="118" aria-hidden="true" focusable="false">' +
+          '<defs>' +
+            '<linearGradient id="slate-card-gradient" x1="0%" y1="0%" x2="100%" y2="100%">' +
+              '<stop offset="0%" stop-color="#414746"></stop>' +
+              '<stop offset="48%" stop-color="#262b2b"></stop>' +
+              '<stop offset="100%" stop-color="#141818"></stop>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<path d="M16 42 L32 39 L52 40 L71 38 L91 40 L112 38 L134 40 L155 38 L175 41 L178 77 L162 80 L139 78 L118 80 L94 78 L72 80 L49 78 L29 80 L14 77 Z" fill="rgba(0,0,0,.24)" transform="translate(0 4)"></path>' +
+          '<path d="M15 38 L31 36 L53 37 L72 35 L92 37 L113 35 L135 37 L156 35 L176 38 L179 75 L162 78 L140 76 L118 78 L95 76 L73 78 L49 76 L29 78 L14 75 Z" fill="url(#slate-card-gradient)" stroke="rgba(214,218,214,.24)" stroke-width="1.4"></path>' +
+          '<path d="M28 47 C60 43 96 50 130 46 S166 45 172 51 M25 60 C66 57 99 64 139 59 S166 59 174 64 M32 70 C69 68 101 72 142 69" fill="none" stroke="rgba(222,226,222,.13)" stroke-width="1.2" stroke-linecap="round"></path>' +
+          '<path d="M20 40 L25 76 M173 39 L176 74" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="2" stroke-linecap="round"></path>' +
+        '</svg>' +
+      '</span>'
+    );
   }
 
   function buildWoodBoardProductThumbMarkup(productFamily) {
@@ -3742,6 +3965,12 @@
       });
     }
 
+    if (isSlateProduct()) {
+      return TEMPLATE_LIBRARY.filter(function (template) {
+        return template.hideFromMainSelection !== true;
+      });
+    }
+
     if (!isSingleSurfaceProduct()) {
       return TEMPLATE_LIBRARY.filter(function (template) {
         return template.hideFromMainSelection !== true;
@@ -3843,7 +4072,7 @@
       availableCategories.forEach(function (category) {
         const button = document.createElement("button");
         const previewSrc = category.previewTemplate || "/assets/tools/vorschau/vorlage-emblem.png";
-        const metaText = "Kategorie jetzt öffnen.";
+        const metaText = "Kategorie öffnen.";
         const previewConfig = getActiveCategoryPreviewConfig(category.id);
 
         button.type = "button";
@@ -3879,7 +4108,7 @@
           '<span class="preview-option__status-badge">Bald verfügbar</span>' +
           '<span class="preview-option__thumb"><span class="preview-option__thumb-media preview-option__thumb-media--symbol preview-option__thumb-media--emblem"><img src="' + previewSrc + '" alt=""></span></span>' +
           '<span class="preview-option__title">' + escapeHtml(category.label) + "</span>" +
-          '<span class="preview-option__meta">Kategorie ist vorbereitet.</span>';
+          '<span class="preview-option__meta">Bald verfügbar.</span>';
 
         button.disabled = true;
         motifOverlayOptionsEl.appendChild(button);
@@ -3931,8 +4160,8 @@
 
     if (state.motifOverlayStep === "emblemSourceChoice") {
       [
-        { id: "template", name: "Vorlage", description: "Passende Vorlage wählen." },
-        { id: "upload", name: "Eigene Datei", description: "SVG oder PNG transparent." }
+        { id: "template", name: "Vorlage", description: "Vorlage wählen." },
+        { id: "upload", name: "Eigene Datei", description: "SVG oder PNG." }
       ].forEach((option) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -4283,6 +4512,7 @@
     clearUploadedImage(false);
     resetImagePlacement(false);
     syncUi();
+    scheduleGuidedScrollAfterTemplateSelection();
     queueRender();
     closeMotifVariantOverlay();
   }
@@ -4304,6 +4534,7 @@
     clearUploadedImage(false);
     resetImagePlacement(false);
     syncUi();
+    scheduleGuidedScrollAfterTemplateSelection();
     queueRender();
   }
 
@@ -4709,6 +4940,7 @@
       closeRequestMenu();
       closeMotifVariantOverlay();
       closeFeedbackOverlay();
+      closeSummaryPreviewLightbox();
     }
   }
 
@@ -4766,6 +4998,138 @@
     lastFeedbackOverlayTrigger = null;
   }
 
+  function setSlatePhotoPolarity(nextPolarity) {
+    getActiveSideState().slatePhotoPolarity = nextPolarity === "inverted" ? "inverted" : "normal";
+    syncUi();
+    queueRender();
+  }
+
+  function openSummaryPreviewLightbox() {
+    if (!summaryPreviewCanvas || !summaryPreviewLightbox || !summaryPreviewLightboxImage) return;
+    syncSummaryPreviewCanvas();
+    try {
+      summaryPreviewLightboxImage.src = summaryPreviewCanvas.toDataURL("image/png");
+    } catch (error) {
+      return;
+    }
+    summaryPreviewLightbox.hidden = false;
+    resetSummaryPreviewZoom();
+    if (summaryPreviewLightboxClose) {
+      summaryPreviewLightboxClose.focus({ preventScroll: true });
+    }
+  }
+
+  function closeSummaryPreviewLightbox() {
+    if (!summaryPreviewLightbox || summaryPreviewLightbox.hidden) return;
+    summaryPreviewLightbox.hidden = true;
+    summaryZoomState.pointers.clear();
+    summaryZoomState.dragOrigin = null;
+    summaryZoomState.lastPinchDistance = 0;
+    if (summaryPreviewLightboxStage) {
+      summaryPreviewLightboxStage.classList.remove("is-dragging");
+    }
+    if (summaryPreviewZoomButton) {
+      summaryPreviewZoomButton.focus({ preventScroll: true });
+    }
+  }
+
+  function resetSummaryPreviewZoom() {
+    summaryZoomState.scale = 1;
+    summaryZoomState.offsetX = 0;
+    summaryZoomState.offsetY = 0;
+    summaryZoomState.pointers.clear();
+    summaryZoomState.dragOrigin = null;
+    summaryZoomState.lastPinchDistance = 0;
+    applySummaryPreviewZoom();
+  }
+
+  function clampSummaryPreviewOffset() {
+    if (!summaryPreviewLightboxStage) return;
+    const rect = summaryPreviewLightboxStage.getBoundingClientRect();
+    const maxX = Math.max(0, ((summaryZoomState.scale - 1) * rect.width) / 2);
+    const maxY = Math.max(0, ((summaryZoomState.scale - 1) * rect.height) / 2);
+    summaryZoomState.offsetX = clamp(summaryZoomState.offsetX, -maxX, maxX);
+    summaryZoomState.offsetY = clamp(summaryZoomState.offsetY, -maxY, maxY);
+  }
+
+  function applySummaryPreviewZoom() {
+    if (!summaryPreviewLightboxImage) return;
+    clampSummaryPreviewOffset();
+    summaryPreviewLightboxImage.style.transform = "translate(" + summaryZoomState.offsetX + "px, " + summaryZoomState.offsetY + "px) scale(" + summaryZoomState.scale + ")";
+  }
+
+  function setSummaryPreviewScale(nextScale) {
+    const previousScale = summaryZoomState.scale;
+    summaryZoomState.scale = clamp(nextScale, 1, 4);
+    if (summaryZoomState.scale === 1 || summaryZoomState.scale < previousScale) {
+      clampSummaryPreviewOffset();
+    }
+    applySummaryPreviewZoom();
+  }
+
+  function getSummaryPointerDistance() {
+    const pointers = Array.from(summaryZoomState.pointers.values());
+    if (pointers.length < 2) return 0;
+    const first = pointers[0];
+    const second = pointers[1];
+    return Math.hypot(second.x - first.x, second.y - first.y);
+  }
+
+  function handleSummaryPreviewWheel(event) {
+    if (!summaryPreviewLightbox || summaryPreviewLightbox.hidden) return;
+    event.preventDefault();
+    setSummaryPreviewScale(summaryZoomState.scale + (event.deltaY < 0 ? 0.18 : -0.18));
+  }
+
+  function handleSummaryPreviewPointerDown(event) {
+    if (!summaryPreviewLightboxStage) return;
+    summaryPreviewLightboxStage.setPointerCapture(event.pointerId);
+    summaryZoomState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (summaryZoomState.pointers.size === 2) {
+      summaryZoomState.lastPinchDistance = getSummaryPointerDistance();
+      summaryZoomState.dragOrigin = null;
+      return;
+    }
+    summaryZoomState.dragOrigin = {
+      x: event.clientX,
+      y: event.clientY,
+      offsetX: summaryZoomState.offsetX,
+      offsetY: summaryZoomState.offsetY
+    };
+    summaryPreviewLightboxStage.classList.add("is-dragging");
+  }
+
+  function handleSummaryPreviewPointerMove(event) {
+    if (!summaryZoomState.pointers.has(event.pointerId)) return;
+    summaryZoomState.pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (summaryZoomState.pointers.size >= 2) {
+      const distance = getSummaryPointerDistance();
+      if (summaryZoomState.lastPinchDistance > 0 && distance > 0) {
+        setSummaryPreviewScale(summaryZoomState.scale * (distance / summaryZoomState.lastPinchDistance));
+      }
+      summaryZoomState.lastPinchDistance = distance;
+      return;
+    }
+    if (!summaryZoomState.dragOrigin || summaryZoomState.scale <= 1) return;
+    summaryZoomState.offsetX = summaryZoomState.dragOrigin.offsetX + (event.clientX - summaryZoomState.dragOrigin.x);
+    summaryZoomState.offsetY = summaryZoomState.dragOrigin.offsetY + (event.clientY - summaryZoomState.dragOrigin.y);
+    applySummaryPreviewZoom();
+  }
+
+  function handleSummaryPreviewPointerEnd(event) {
+    summaryZoomState.pointers.delete(event.pointerId);
+    if (summaryPreviewLightboxStage) {
+      try {
+        summaryPreviewLightboxStage.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        // Pointer capture can already be released by the browser.
+      }
+      summaryPreviewLightboxStage.classList.remove("is-dragging");
+    }
+    summaryZoomState.dragOrigin = null;
+    summaryZoomState.lastPinchDistance = summaryZoomState.pointers.size >= 2 ? getSummaryPointerDistance() : 0;
+  }
+
   function setSummaryOpen(isOpen) {
     if (!previewSummaryPanel) return;
     previewSummaryPanel.hidden = !isOpen;
@@ -4812,10 +5176,10 @@
     if (!summaryPreviewCtx || !summaryPreviewCanvas) return;
     summaryPreviewCtx.clearRect(0, 0, summaryPreviewCanvas.width, summaryPreviewCanvas.height);
     const targetAspect = summaryPreviewCanvas.width / summaryPreviewCanvas.height;
-    const sourceWidth = isBottleOpenerProduct() ? 980 : ((isWoodBoardProduct() || isDogtagProduct()) ? 980 : 1040);
+    const sourceWidth = isBottleOpenerProduct() ? 980 : ((isWoodBoardProduct() || isSlateProduct() || isDogtagProduct()) ? 980 : 1040);
     const sourceHeight = Math.round(sourceWidth / targetAspect);
     const centerX = canvas.width / 2;
-    const centerY = isBottleOpenerProduct() ? 560 : ((isWoodBoardProduct() || isDogtagProduct()) ? 632 : 650);
+    const centerY = isBottleOpenerProduct() ? 560 : ((isWoodBoardProduct() || isSlateProduct() || isDogtagProduct()) ? 632 : 650);
     const sx = clamp(Math.round(centerX - sourceWidth / 2), 0, Math.max(0, canvas.width - sourceWidth));
     const sy = clamp(Math.round(centerY - sourceHeight / 2), 0, Math.max(0, canvas.height - sourceHeight));
     summaryPreviewCtx.drawImage(
@@ -4829,6 +5193,13 @@
       summaryPreviewCanvas.width,
       summaryPreviewCanvas.height
     );
+    if (summaryPreviewLightbox && !summaryPreviewLightbox.hidden && summaryPreviewLightboxImage) {
+      try {
+        summaryPreviewLightboxImage.src = summaryPreviewCanvas.toDataURL("image/png");
+      } catch (error) {
+        closeSummaryPreviewLightbox();
+      }
+    }
   }
 
   function submitFeedbackReport() {
@@ -5360,6 +5731,8 @@
             ? "Dogtag"
           : isWoodBoardProduct()
             ? getActiveProductDisplayName()
+          : isSlateProduct()
+            ? getActiveProductDisplayName()
             : "Rundes Edelstahl-Plättchen")
         : "Vorschau";
     }
@@ -5371,19 +5744,21 @@
     } else if (!hasProductSelection()) {
       previewProductName.textContent = activeMaterial.name;
       previewProductHint.textContent = activeMaterial.id === "metal"
-        ? "Wähle jetzt dein Metallprodukt."
+        ? "Metallprodukt wählen."
         : activeMaterial.id === "wood"
-          ? "Wähle jetzt die Brettform."
-          : "Die Struktur für diese Materialwelt ist vorbereitet.";
+          ? "Brettform wählen."
+          : activeMaterial.id === "slate"
+            ? "Schieferplatte wählen."
+            : "Produkt wählen.";
       previewModeChip.textContent = "Produkt wählen";
     } else if (isDogtagProduct()) {
       if (!hasFinishSelection()) {
         previewProductName.textContent = "Dogtag";
-        previewProductHint.textContent = "Wähle jetzt silberfarbig oder schwarz.";
+        previewProductHint.textContent = "Ausführung wählen.";
         previewModeChip.textContent = "Ausführung wählen";
       } else if (!hasDesignModeSelection()) {
         previewProductName.textContent = "Dogtag · " + getActiveFinish().name;
-        previewProductHint.textContent = "Die vordere Hauptfläche ist aktiv. Wähle jetzt Motiv, Text oder QR.";
+        previewProductHint.textContent = "Vorderseite aktiv. Motiv, Text oder QR wählen.";
         previewModeChip.textContent = "Gestaltungsart wählen";
       } else {
         previewProductName.textContent = "Dogtag · " + getActiveFinish().name;
@@ -5393,7 +5768,7 @@
     } else if (isBottleOpenerProduct()) {
       if (!hasDesignModeSelection()) {
         previewProductName.textContent = "Flaschenöffner";
-        previewProductHint.textContent = "Die große Hauptfläche ist aktiv. Wähle jetzt Motiv, Text oder QR.";
+        previewProductHint.textContent = "Hauptfläche aktiv. Motiv, Text oder QR wählen.";
         previewModeChip.textContent = "Gestaltungsart wählen";
       } else {
         previewProductName.textContent = "Flaschenöffner";
@@ -5404,27 +5779,35 @@
       previewProductName.textContent = activeProductDisplayName;
       previewProductHint.textContent = hasDesignModeSelection()
         ? "Holzbrett · Hauptfläche · Vorderseite"
-        : "Die sichere Gravurfläche ist aktiv. Wähle jetzt Motiv, Text oder QR.";
+        : "Gravurfläche aktiv. Motiv, Text oder QR wählen.";
+      previewModeChip.textContent = hasDesignModeSelection()
+        ? (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text"))
+        : "Gestaltungsart wählen";
+    } else if (isSlateProduct()) {
+      previewProductName.textContent = activeProductDisplayName;
+      previewProductHint.textContent = hasDesignModeSelection()
+        ? "Schieferplatte · Hauptfläche · Vorderseite"
+        : "Gravurfläche aktiv. Motiv, Text oder QR wählen.";
       previewModeChip.textContent = hasDesignModeSelection()
         ? (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text"))
         : "Gestaltungsart wählen";
     } else if (requiresFinishSelection() && !hasFinishSelection()) {
       previewProductName.textContent = activeProductFamily.name;
-      previewProductHint.textContent = "Wähle jetzt die Ausführung für deinen Edelstahl-Schmuckanhänger.";
+      previewProductHint.textContent = "Ausführung wählen.";
       previewModeChip.textContent = "Ausführung wählen";
     } else if (!hasSetSelection()) {
       previewProductName.textContent = activeProductDisplayName;
-      previewProductHint.textContent = "Lege jetzt fest, wie viele Anhänger im Set gezeigt werden.";
+      previewProductHint.textContent = "Setumfang wählen.";
       previewModeChip.textContent = "Set wählen";
     } else if (!hasSizeSelection()) {
       previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel;
-      previewProductHint.textContent = "Wähle jetzt die passende Größe für " + getPendantLabel(state.activePendantIndex) + ".";
+      previewProductHint.textContent = "Größe für " + getPendantLabel(state.activePendantIndex) + " wählen.";
       previewModeChip.textContent = "Größe wählen";
     } else if (!hasDesignModeSelection()) {
       previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
       previewProductHint.textContent = isBackSideEnabled()
         ? "Die Rückseite für " + getPendantLabel(state.activePendantIndex) + " ist zusätzlich verfügbar."
-        : "Wähle jetzt Motiv oder Text für " + getPendantLabel(state.activePendantIndex) + ".";
+        : "Motiv oder Text für " + getPendantLabel(state.activePendantIndex) + " wählen.";
       previewModeChip.textContent = "Gestaltungsart wählen";
     } else {
       previewProductName.textContent = activeProductDisplayName + " · " + getActiveSetOption().shortLabel + " · " + activeSize.label;
@@ -5496,6 +5879,34 @@
     }
     if (rotationValueLabel) {
       rotationValueLabel.textContent = String(clamp(activeSideState.rotationDeg || 0, -180, 180)) + "°";
+    }
+    if (slatePhotoPolarityNormalButton) {
+      const isNormalPolarity = activeSideState.slatePhotoPolarity !== "inverted";
+      slatePhotoPolarityNormalButton.setAttribute("aria-pressed", isNormalPolarity ? "true" : "false");
+      slatePhotoPolarityNormalButton.classList.toggle("is-active", isNormalPolarity);
+    }
+    if (slatePhotoPolarityInvertedButton) {
+      const isInvertedPolarity = activeSideState.slatePhotoPolarity === "inverted";
+      slatePhotoPolarityInvertedButton.setAttribute("aria-pressed", isInvertedPolarity ? "true" : "false");
+      slatePhotoPolarityInvertedButton.classList.toggle("is-active", isInvertedPolarity);
+    }
+    if (slatePhotoIntensitySlider) {
+      slatePhotoIntensitySlider.value = String(clamp(Number(activeSideState.slatePhotoIntensity || 95), 45, 140));
+    }
+    if (slatePhotoDetailReductionSlider) {
+      slatePhotoDetailReductionSlider.value = String(clamp(Number(activeSideState.slatePhotoDetailReduction || 55), 0, 100));
+    }
+    if (slatePhotoContrastSlider) {
+      slatePhotoContrastSlider.value = String(clamp(Number(activeSideState.slatePhotoContrast || 10), -25, 35));
+    }
+    if (slatePhotoIntensityValueLabel) {
+      slatePhotoIntensityValueLabel.textContent = String(clamp(Number(activeSideState.slatePhotoIntensity || 95), 45, 140)) + "%";
+    }
+    if (slatePhotoDetailReductionValueLabel) {
+      slatePhotoDetailReductionValueLabel.textContent = String(clamp(Number(activeSideState.slatePhotoDetailReduction || 55), 0, 100)) + "%";
+    }
+    if (slatePhotoContrastValueLabel) {
+      slatePhotoContrastValueLabel.textContent = String(clamp(Number(activeSideState.slatePhotoContrast || 10), -25, 35));
     }
     textSizeValueLabel.textContent = activeSideState.textScalePercent + "%";
     const activeTextMaxLength = getActiveTextMaxLength();
@@ -5594,6 +6005,7 @@
     setSectionVisibility(monogramGroup, isMotifMode() && isMonogramTemplateSelected());
     setSectionVisibility(emblemGroup, isMotifMode() && isEmblemTemplateSelected() && hasSelectedEmblemKind() && !isQrSelected());
     setSectionVisibility(rotationGroup, hasDesignModeSelection());
+    setSectionVisibility(slatePhotoAdjustGroup, isSlatePhotoMotifSelected());
     setSectionVisibility(qrCodeGroup, isQrMode() || (isMotifMode() && isQrSelected()));
     setSectionVisibility(textGroup, isTextMode());
     if (emblemSourceTemplateButton) {
@@ -5609,10 +6021,11 @@
     const motifHint = getMotifSizeHint();
     motifSizeHint.hidden = !motifHint;
     motifSizeHint.textContent = motifHint;
-    photoPricingHint.hidden = !(priceState.hasPhoto || hasAnyPhotoSelection());
+    const shouldShowPhotoPricingHint = !isSlateProduct() && (priceState.hasPhoto || hasAnyPhotoSelection());
+    photoPricingHint.hidden = !shouldShowPhotoPricingHint;
     photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_DISCOUNT_HINT;
 
-    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || isDogtagProduct() || hasSetSelection());
+    const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || isSlateProduct() || isDogtagProduct() || hasSetSelection());
     priceSummaryBox.hidden = !shouldShowPriceBox;
     if (shouldShowPriceBox) {
       if (priceState.items.length) {
@@ -5656,14 +6069,18 @@
         priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
         priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
         priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
-        if (priceTotalLabel) priceTotalLabel.textContent = (isWoodBoardProduct() || isDogtagProduct()) ? "Vorläufig" : "Gesamtpreis";
+        if (priceTotalLabel) priceTotalLabel.textContent = (isWoodBoardProduct() || isSlateProduct() || isDogtagProduct())
+          ? "Startpreis"
+          : "Gesamtpreis";
         priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
         priceSummaryHint.textContent = priceState.items.length
           ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
           : priceState.invalidReason;
         if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = (isWoodBoardProduct() || isDogtagProduct())
-            ? "Vorläufiger Startpreis. Finale Kalkulation erfolgt nach Prüfung."
+          priceSummarySubhint.textContent = isSlateProduct()
+            ? (priceState.isReady ? "Startpreis laut Preisquelle. Finale Prüfung bleibt vorbehalten." : "Preis offen / auf Anfrage.")
+            : (isWoodBoardProduct() || isDogtagProduct())
+            ? "Startpreis laut Preisquelle. Finale Prüfung bleibt vorbehalten."
             : "Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.";
           priceSummarySubhint.hidden = false;
         }
@@ -6057,6 +6474,12 @@
 
     if (isWoodBoardProduct()) {
       drawWoodBoardPreview();
+      syncMobilePreviewCanvas();
+      return;
+    }
+
+    if (isSlateProduct()) {
+      drawSlatePreview();
       syncMobilePreviewCanvas();
       return;
     }
@@ -7068,6 +7491,449 @@
     ctx.restore();
   }
 
+  function drawSlatePreview() {
+    const spec = getSlateRenderSpec();
+    const box = getSlateDesignBox();
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,0.42)";
+    ctx.shadowBlur = 34;
+    ctx.shadowOffsetY = 18;
+    drawSlateBase(spec);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(232,236,230,0.10)";
+    ctx.lineWidth = 1.3;
+    ctx.setLineDash([18, 16]);
+    drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    if (!hasDesignModeSelection()) {
+      return;
+    }
+
+    if (isMotifMode()) {
+      if (isMonogramTemplateSelected()) {
+        if (hasMonogramValue()) {
+          drawSlateMonogramContent();
+        }
+        return;
+      }
+      drawSlateMotifContent();
+      return;
+    }
+
+    if (isTextMode()) {
+      drawSlateTextContent();
+      return;
+    }
+
+    if (isQrMode()) {
+      drawSlateQrContent();
+    }
+  }
+
+  function drawSlateBase(spec) {
+    const gradient = ctx.createLinearGradient(spec.x, spec.y, spec.x + spec.width, spec.y + spec.height);
+    gradient.addColorStop(0, "#454c4b");
+    gradient.addColorStop(0.38, "#2d3434");
+    gradient.addColorStop(1, "#171b1b");
+
+    ctx.save();
+    drawSlatePath(spec);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(221,226,220,0.18)";
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    ctx.clip();
+    drawSlateSurface(spec);
+    ctx.restore();
+
+    ctx.save();
+    drawSlatePath(spec);
+    ctx.strokeStyle = "rgba(0,0,0,0.42)";
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(238,242,236,0.10)";
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSlatePath(spec) {
+    const x = spec.x;
+    const y = spec.y;
+    const w = spec.width;
+    const h = spec.height;
+
+    ctx.beginPath();
+    ctx.moveTo(x + 6, y + 23);
+    ctx.lineTo(x + 78, y + 18);
+    ctx.lineTo(x + 160, y + 20);
+    ctx.lineTo(x + 284, y + 15);
+    ctx.lineTo(x + 398, y + 19);
+    ctx.lineTo(x + 532, y + 14);
+    ctx.lineTo(x + 668, y + 18);
+    ctx.lineTo(x + 792, y + 15);
+    ctx.lineTo(x + w - 36, y + 19);
+    ctx.quadraticCurveTo(x + w - 7, y + 18, x + w - 8, y + 48);
+    ctx.lineTo(x + w - 5, y + 116);
+    ctx.lineTo(x + w - 10, y + 201);
+    ctx.lineTo(x + w - 7, y + h - 45);
+    ctx.quadraticCurveTo(x + w - 9, y + h - 15, x + w - 39, y + h - 16);
+    ctx.lineTo(x + w - 124, y + h - 18);
+    ctx.lineTo(x + w - 238, y + h - 13);
+    ctx.lineTo(x + w - 360, y + h - 17);
+    ctx.lineTo(x + w - 494, y + h - 12);
+    ctx.lineTo(x + w - 618, y + h - 18);
+    ctx.lineTo(x + w - 746, y + h - 13);
+    ctx.lineTo(x + 174, y + h - 18);
+    ctx.lineTo(x + 83, y + h - 14);
+    ctx.lineTo(x + 18, y + h - 18);
+    ctx.quadraticCurveTo(x + 5, y + h - 20, x + 6, y + h - 47);
+    ctx.lineTo(x + 9, y + h - 119);
+    ctx.lineTo(x + 6, y + 204);
+    ctx.lineTo(x + 10, y + 95);
+    ctx.closePath();
+  }
+
+  function drawSlateSurface(spec) {
+    ctx.save();
+
+    ctx.globalAlpha = 0.105;
+    ctx.strokeStyle = "rgba(226,232,226,0.36)";
+    ctx.lineWidth = 0.85;
+    for (let index = 0; index < 34; index += 1) {
+      const y = spec.y + 24 + index * (spec.height / 38);
+      const wave = index % 2 === 0 ? 5 : -4;
+      ctx.beginPath();
+      ctx.moveTo(spec.x - 24, y + wave * 0.2);
+      ctx.bezierCurveTo(spec.x + spec.width * 0.24, y - wave, spec.x + spec.width * 0.58, y + wave, spec.x + spec.width + 24, y - wave * 0.2);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 0.045;
+    ctx.strokeStyle = "rgba(255,255,255,0.34)";
+    ctx.lineWidth = 0.65;
+    for (let index = 0; index < 28; index += 1) {
+      const startX = spec.x + 34 + (index * 137) % Math.max(1, spec.width - 122);
+      const startY = spec.y + 38 + (index * 61) % Math.max(1, spec.height - 86);
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(startX + 34 + (index % 3) * 12, startY - 2 + (index % 4) * 2);
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 0.035;
+    ctx.strokeStyle = "rgba(0,0,0,0.34)";
+    ctx.lineWidth = 1.1;
+    for (let index = 0; index < 18; index += 1) {
+      const startX = spec.x + 58 + (index * 173) % Math.max(1, spec.width - 150);
+      const startY = spec.y + 44 + (index * 43) % Math.max(1, spec.height - 96);
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(startX + 58 + (index % 5) * 8, startY + 2 + (index % 3));
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 0.22;
+    ctx.strokeStyle = "rgba(0,0,0,0.38)";
+    ctx.lineWidth = 3.2;
+    ctx.beginPath();
+    ctx.moveTo(spec.x + 24, spec.y + 25);
+    ctx.lineTo(spec.x + spec.width - 28, spec.y + 22);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(spec.x + 20, spec.y + spec.height - 22);
+    ctx.lineTo(spec.x + spec.width - 34, spec.y + spec.height - 22);
+    ctx.stroke();
+
+    ctx.globalAlpha = 0.08;
+    ctx.strokeStyle = "rgba(255,255,255,0.38)";
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(spec.x + 42, spec.y + 42);
+    ctx.lineTo(spec.x + spec.width - 58, spec.y + 38);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function clipSlateDesignArea() {
+    const box = getSlateDesignBox();
+    ctx.beginPath();
+    drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, box.radius);
+    ctx.clip();
+  }
+
+  function getSlateEngravingImage(image) {
+    if (!image) return null;
+
+    const buffer = document.createElement("canvas");
+    buffer.width = image.width;
+    buffer.height = image.height;
+    const bufferCtx = buffer.getContext("2d");
+    const isSlatePhoto = isSlatePhotoMotifSelected();
+
+    if (isSlatePhoto) {
+      const sideState = getActiveSideState();
+      const intensity = clamp(Number(sideState.slatePhotoIntensity || 95), 45, 140) / 100;
+      const detailReduction = clamp(Number(sideState.slatePhotoDetailReduction || 55), 0, 100);
+      const contrast = clamp(Number(sideState.slatePhotoContrast || 10), -25, 35);
+      const isInvertedPolarity = sideState.slatePhotoPolarity === "inverted";
+      const reductionFactor = 1 - (detailReduction / 100) * 0.74;
+      const sampleWidth = Math.max(32, Math.round(image.width * reductionFactor));
+      const sampleHeight = Math.max(18, Math.round(image.height * reductionFactor));
+      const detailCanvas = document.createElement("canvas");
+      detailCanvas.width = sampleWidth;
+      detailCanvas.height = sampleHeight;
+      const detailCtx = detailCanvas.getContext("2d");
+      detailCtx.imageSmoothingEnabled = true;
+      detailCtx.imageSmoothingQuality = "high";
+      detailCtx.drawImage(image, 0, 0, sampleWidth, sampleHeight);
+
+      bufferCtx.imageSmoothingEnabled = true;
+      bufferCtx.imageSmoothingQuality = "high";
+      bufferCtx.drawImage(detailCanvas, 0, 0, buffer.width, buffer.height);
+
+      const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
+      const data = imageData.data;
+      const histogram = new Array(256).fill(0);
+      let sampleCount = 0;
+
+      for (let index = 0; index < data.length; index += 4) {
+        const alpha = data[index + 3] / 255;
+        if (alpha <= 0.02) continue;
+        const luminance = Math.round(0.2126 * data[index] + 0.7152 * data[index + 1] + 0.0722 * data[index + 2]);
+        histogram[luminance] += alpha;
+        sampleCount += alpha;
+      }
+
+      let lowPoint = 0;
+      let highPoint = 255;
+      if (sampleCount > 0) {
+        const trim = 0.035 + (detailReduction / 100) * 0.045;
+        const lowTarget = sampleCount * trim;
+        const highTarget = sampleCount * (1 - trim);
+        let running = 0;
+        for (let value = 0; value < histogram.length; value += 1) {
+          running += histogram[value];
+          if (running >= lowTarget) {
+            lowPoint = value;
+            break;
+          }
+        }
+        running = 0;
+        for (let value = 0; value < histogram.length; value += 1) {
+          running += histogram[value];
+          if (running >= highTarget) {
+            highPoint = value;
+            break;
+          }
+        }
+        highPoint = Math.max(lowPoint + 18, highPoint);
+      }
+
+      const contrastFactor = 1 + (contrast / 100);
+      const floor = 0.055 + (detailReduction / 100) * 0.055;
+      const gamma = 1.08 + (detailReduction / 100) * 0.18;
+
+      for (let index = 0; index < data.length; index += 4) {
+        const originalAlpha = data[index + 3] / 255;
+        if (!originalAlpha) continue;
+
+        const luminance = 0.2126 * data[index] + 0.7152 * data[index + 1] + 0.0722 * data[index + 2];
+        const normalized = clamp((luminance - lowPoint) / Math.max(1, highPoint - lowPoint), 0, 1);
+        const adjustedLuminance = clamp(((normalized - 0.5) * contrastFactor) + 0.5, 0, 1);
+        const polarityLuminance = isInvertedPolarity ? 1 - adjustedLuminance : adjustedLuminance;
+        const maskValue = clamp((polarityLuminance - floor) / Math.max(0.28, 1 - floor), 0, 1);
+        const engravingStrength = Math.pow(maskValue, gamma) * intensity * originalAlpha;
+
+        if (engravingStrength <= 0.035) {
+          data[index + 3] = 0;
+          continue;
+        }
+
+        data[index] = 220;
+        data[index + 1] = 226;
+        data[index + 2] = 219;
+        data[index + 3] = Math.round(Math.min(0.88, engravingStrength * 0.95) * 255);
+      }
+
+      bufferCtx.putImageData(imageData, 0, 0);
+      return buffer;
+    }
+
+    bufferCtx.drawImage(image, 0, 0);
+
+    const imageData = bufferCtx.getImageData(0, 0, buffer.width, buffer.height);
+    const data = imageData.data;
+
+    for (let index = 0; index < data.length; index += 4) {
+      const originalAlpha = data[index + 3] / 255;
+      if (!originalAlpha) continue;
+
+      const luminance = (data[index] + data[index + 1] + data[index + 2]) / 3;
+      const engravingStrength = (1 - (luminance / 255)) * originalAlpha;
+
+      if (engravingStrength <= 0.04) {
+        data[index + 3] = 0;
+        continue;
+      }
+
+      data[index] = 216;
+      data[index + 1] = 222;
+      data[index + 2] = 216;
+      data[index + 3] = Math.round(Math.min(0.82, engravingStrength * 1.2) * 255);
+    }
+
+    bufferCtx.putImageData(imageData, 0, 0);
+    return buffer;
+  }
+
+  function drawSlateMotifContent() {
+    const image = getActiveImage();
+    if (!image) return;
+
+    const box = getSlateDesignBox();
+    const activeSideState = getActiveSideState();
+    const motifLayout = getSingleSurfaceMotifLayout(image);
+    const engravingImage = getSlateEngravingImage(image);
+    const drawWidth = motifLayout.width;
+    const drawHeight = motifLayout.height;
+    const x = box.x + (box.width - drawWidth) / 2 + activeSideState.offsetX;
+    const y = box.y + (box.height - drawHeight) / 2 + activeSideState.offsetY;
+
+    ctx.save();
+    clipSlateDesignArea();
+    applyBottleOpenerContentRotation(x + drawWidth / 2, y + drawHeight / 2);
+    ctx.drawImage(engravingImage || image, x, y, drawWidth, drawHeight);
+    ctx.restore();
+  }
+
+  function drawSlateMonogramContent() {
+    const box = getSlateDesignBox();
+    const activeSideState = getActiveSideState();
+    const monogramLayout = getSlateMonogramLayout();
+    const x = box.x + box.width / 2 + activeSideState.offsetX;
+    const y = box.y + box.height / 2 + activeSideState.offsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    ctx.save();
+    clipSlateDesignArea();
+    applyBottleOpenerContentRotation(x, y);
+    ctx.translate(x, y);
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.translate(-x, -y);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = monogramLayout.font;
+    ctx.fillStyle = "rgba(222,228,222,0.84)";
+    ctx.fillText(activeSideState.monogramValue, x, y);
+    ctx.restore();
+  }
+
+  function drawSlateTextContent() {
+    const activeSideState = getActiveSideState();
+    if (!activeSideState.textValue) return;
+
+    const box = getSlateDesignBox();
+    const textLayout = getSlateTextLayout(activeSideState.textValue);
+    const x = box.x + box.width / 2 + activeSideState.textOffsetX;
+    const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+
+    ctx.save();
+    clipSlateDesignArea();
+    ctx.translate(x, y);
+    ctx.rotate(getBottleOpenerRotationRadians());
+    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = textLayout.font;
+    ctx.fillStyle = "rgba(222,228,222,0.84)";
+    ctx.strokeStyle = "rgba(222,228,222,0.72)";
+    textLayout.lines.forEach(function (line, index) {
+      const lineY = textLayout.startY + (index * textLayout.lineHeight);
+      const lineWidth = textLayout.lineWidths[index] || 0;
+
+      if (activeSideState.textStyles.bold) {
+        ctx.lineWidth = Math.max(1.1, textLayout.fontSize * 0.025);
+        ctx.strokeText(line, 0, lineY);
+      }
+      ctx.fillText(line, 0, lineY);
+
+      if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
+        ctx.lineWidth = Math.max(1.8, textLayout.fontSize * 0.055);
+        ctx.lineCap = "round";
+
+        if (activeSideState.textStyles.underline) {
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, lineY + textLayout.fontSize * 0.42);
+          ctx.lineTo(lineWidth / 2, lineY + textLayout.fontSize * 0.42);
+          ctx.stroke();
+        }
+
+        if (activeSideState.textStyles.strikethrough) {
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, lineY - textLayout.fontSize * 0.06);
+          ctx.lineTo(lineWidth / 2, lineY - textLayout.fontSize * 0.06);
+          ctx.stroke();
+        }
+      }
+    });
+    ctx.restore();
+  }
+
+  function drawSlateQrContent() {
+    const box = getSlateDesignBox();
+    const qrLayout = getSlateQrLayout();
+    if (!box || !qrLayout) return;
+
+    const qrModel = getQrCodeModel(state.activeSide, state.activePendantIndex);
+
+    ctx.save();
+    clipSlateDesignArea();
+    applyBottleOpenerContentRotation(qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize / 2);
+
+    if (!qrModel) {
+      ctx.strokeStyle = "rgba(222,228,222,0.78)";
+      ctx.lineWidth = Math.max(2, qrLayout.outerSize * 0.035);
+      ctx.strokeRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+      ctx.fillStyle = "rgba(222,228,222,0.84)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "700 " + Math.max(12, qrLayout.outerSize * 0.16) + "px system-ui, sans-serif";
+      ctx.fillText("QR", qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize * 0.42);
+      ctx.font = "700 " + Math.max(9, qrLayout.outerSize * 0.11) + "px system-ui, sans-serif";
+      ctx.fillText("FEHLT", qrLayout.x + qrLayout.outerSize / 2, qrLayout.y + qrLayout.outerSize * 0.62);
+      ctx.restore();
+      return;
+    }
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = "rgba(28,32,32,0.26)";
+    ctx.fillRect(qrLayout.x, qrLayout.y, qrLayout.outerSize, qrLayout.outerSize);
+    ctx.fillStyle = "rgba(222,228,222,0.88)";
+    for (let row = 0; row < qrLayout.moduleCount; row += 1) {
+      for (let column = 0; column < qrLayout.moduleCount; column += 1) {
+        if (!qrModel.isDark(row, column)) continue;
+        const x = qrLayout.x + (column + qrLayout.quietZone) * qrLayout.moduleSize;
+        const y = qrLayout.y + (row + qrLayout.quietZone) * qrLayout.moduleSize;
+        ctx.fillRect(x, y, qrLayout.moduleSize, qrLayout.moduleSize);
+      }
+    }
+    ctx.strokeStyle = "rgba(222,228,222,0.18)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(qrLayout.x + 0.5, qrLayout.y + 0.5, qrLayout.outerSize - 1, qrLayout.outerSize - 1);
+    ctx.restore();
+  }
+
   function getBottleOpenerSourceBox() {
     return {
       x: 329,
@@ -7169,9 +8035,36 @@
     };
   }
 
+  function getSlateRenderSpec() {
+    return {
+      x: 112,
+      y: 474,
+      width: 976,
+      height: 334,
+      insetX: 42,
+      insetY: 30,
+      radius: 12
+    };
+  }
+
+  function getSlateDesignBox() {
+    const spec = getSlateRenderSpec();
+    return {
+      x: spec.x + spec.insetX,
+      y: spec.y + spec.insetY,
+      width: spec.width - spec.insetX * 2,
+      height: spec.height - spec.insetY * 2,
+      radius: spec.radius,
+      shape: "rect"
+    };
+  }
+
   function getSingleSurfaceDesignBox() {
     if (isDogtagProduct()) {
       return getDogtagDesignBox();
+    }
+    if (isSlateProduct()) {
+      return getSlateDesignBox();
     }
     return isWoodBoardProduct() ? getWoodBoardDesignBox() : getBottleOpenerDesignBox();
   }
@@ -7220,6 +8113,9 @@
   function getSingleSurfaceTextLayout(text) {
     if (isDogtagProduct()) {
       return getDogtagTextLayout(text);
+    }
+    if (isSlateProduct()) {
+      return getSlateTextLayout(text);
     }
     return isWoodBoardProduct() ? getWoodBoardTextLayout(text) : getBottleOpenerTextLayout(text);
   }
@@ -7306,6 +8202,47 @@
     };
   }
 
+  function getSlateTextLayout(text) {
+    const box = getSlateDesignBox();
+    const activeSideState = getActiveSideState();
+    const baseFontSize = Math.max(34, Math.min(box.width * 0.16, box.height * 0.34));
+    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const lines = getTextLines(text);
+    const metrics = lines.map(function (line) {
+      return measureBottleOpenerText(line, fontSize);
+    });
+    const textHeight = Math.max.apply(null, metrics.map(function (metric) {
+      return Math.max(fontSize * 0.92, metric.actualBoundingBoxAscent + metric.actualBoundingBoxDescent);
+    }));
+    const lineHeight = Math.max(fontSize * 1.08, textHeight);
+    const width = Math.max.apply(null, metrics.map(function (metric) {
+      return metric.width;
+    }));
+    const height = lineHeight * Math.max(1, lines.length);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+    const stretchedWidth = width * stretchXFactor;
+    const stretchedHeight = height * stretchYFactor;
+    const rotationRadians = Math.abs(getBottleOpenerRotationRadians());
+    const rotationCos = Math.abs(Math.cos(rotationRadians));
+    const rotationSin = Math.abs(Math.sin(rotationRadians));
+
+    return {
+      fontSize: fontSize,
+      font: buildBottleOpenerTextFont(fontSize),
+      lines: lines,
+      lineWidths: metrics.map(function (metric) {
+        return metric.width;
+      }),
+      lineHeight: lineHeight,
+      startY: -((lines.length - 1) * lineHeight) / 2,
+      width: width,
+      height: height,
+      drawWidth: stretchedWidth * rotationCos + stretchedHeight * rotationSin,
+      drawHeight: stretchedWidth * rotationSin + stretchedHeight * rotationCos
+    };
+  }
+
   function getBottleOpenerTextLayout(text) {
     const box = getBottleOpenerDesignBox();
     const activeSideState = getActiveSideState();
@@ -7325,6 +8262,9 @@
   function getSingleSurfaceQrLayout() {
     if (isDogtagProduct()) {
       return getDogtagQrLayout();
+    }
+    if (isSlateProduct()) {
+      return getSlateQrLayout();
     }
     return isWoodBoardProduct() ? getWoodBoardQrLayout() : getBottleOpenerQrLayout();
   }
@@ -7369,6 +8309,44 @@
 
   function getWoodBoardQrLayout() {
     const box = getWoodBoardDesignBox();
+    const activeSideState = getActiveSideState();
+    if (!box) return null;
+
+    const quietZone = 4;
+    const fallbackModuleCount = 21;
+    const qrModel = getQrCodeModel(state.activeSide, state.activePendantIndex);
+    const moduleCount = qrModel ? qrModel.getModuleCount() : fallbackModuleCount;
+
+    const baseSize = Math.min(box.width, box.height) * 0.72;
+    const minSize = Math.min(box.width, box.height) * 0.48;
+    const maxOuterSize = Math.min(box.width, box.height) * 0.92;
+    const maxScalePercent = Math.max(1, Math.round((maxOuterSize / baseSize) * 100));
+    const requestedOuterSize = Math.max(minSize, baseSize * (activeSideState.scalePercent / 100));
+    const outerSize = Math.min(maxOuterSize, requestedOuterSize);
+
+    const totalModules = moduleCount + quietZone * 2;
+    const moduleSize = outerSize / totalModules;
+    const normalizedOuterSize = moduleSize * totalModules;
+
+    const maxOffsetX = Math.max(0, (box.width - normalizedOuterSize) / 2);
+    const maxOffsetY = Math.max(0, (box.height - normalizedOuterSize) / 2);
+
+    const clampedOffsetX = clamp(activeSideState.offsetX, -maxOffsetX, maxOffsetX);
+    const clampedOffsetY = clamp(activeSideState.offsetY, -maxOffsetY, maxOffsetY);
+
+    return {
+      moduleCount: moduleCount,
+      quietZone: quietZone,
+      moduleSize: moduleSize,
+      outerSize: normalizedOuterSize,
+      maxScalePercent: maxScalePercent,
+      x: box.x + (box.width - normalizedOuterSize) / 2 + clampedOffsetX,
+      y: box.y + (box.height - normalizedOuterSize) / 2 + clampedOffsetY
+    };
+  }
+
+  function getSlateQrLayout() {
+    const box = getSlateDesignBox();
     const activeSideState = getActiveSideState();
     if (!box) return null;
 
@@ -7451,6 +8429,9 @@
     if (isDogtagProduct()) {
       return getDogtagMonogramLayout();
     }
+    if (isSlateProduct()) {
+      return getSlateMonogramLayout();
+    }
     return isWoodBoardProduct() ? getWoodBoardMonogramLayout() : getBottleOpenerMonogramLayout();
   }
 
@@ -7492,6 +8473,27 @@
       height: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
       drawWidth: metrics.width * getStretchFactor(sideState.stretchXPercent),
       drawHeight: Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * getStretchFactor(sideState.stretchYPercent)
+    };
+  }
+
+  function getSlateMonogramLayout() {
+    const box = getSlateDesignBox();
+    const sideState = getActiveSideState();
+    const text = sideState.monogramValue || "";
+    const length = Math.max(1, text.length);
+    const baseSizeByLength = length === 1
+      ? Math.min(box.width, box.height) * 0.58
+      : (length === 2 ? Math.min(box.width, box.height) * 0.46 : Math.min(box.width, box.height) * 0.36);
+    const fontSize = Math.max(40, baseSizeByLength) * (sideState.scalePercent / 100);
+    const metrics = measureMonogram(text, fontSize, state.activeSide, state.activePendantIndex);
+    const height = Math.max(fontSize * 0.88, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+
+    return {
+      font: buildMonogramFont(fontSize, state.activeSide, state.activePendantIndex),
+      width: metrics.width,
+      height: height,
+      drawWidth: metrics.width * getStretchFactor(sideState.stretchXPercent),
+      drawHeight: height * getStretchFactor(sideState.stretchYPercent)
     };
   }
 
@@ -7843,12 +8845,12 @@
     const sourceWidthFallback = canvas.width;
     const sourceHeightFallback = Math.round(sourceWidthFallback / targetAspect);
 
-    if (isBottleOpenerProduct() || isWoodBoardProduct() || isDogtagProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
+    if (isBottleOpenerProduct() || isWoodBoardProduct() || isSlateProduct() || isDogtagProduct() || getPendantCount() <= 1 || !hasAnyPendantSizeSelection()) {
       return {
         sourceWidth: sourceWidthFallback,
         sourceHeight: sourceHeightFallback,
         centerX: canvas.width / 2,
-        centerY: isBottleOpenerProduct() ? 560 : ((isWoodBoardProduct() || isDogtagProduct()) ? 632 : 650),
+        centerY: isBottleOpenerProduct() ? 560 : ((isWoodBoardProduct() || isSlateProduct() || isDogtagProduct()) ? 632 : 650),
         maxPanX: 0,
         maxPanY: Math.max(0, (canvas.height - sourceHeightFallback) / 2)
       };
@@ -7923,6 +8925,11 @@
       return;
     }
 
+    if (isSlateProduct()) {
+      drawSlateBackdrop();
+      return;
+    }
+
     const gradient = ctx.createRadialGradient(220, 180, 20, 600, 600, 980);
     gradient.addColorStop(0, "rgba(219, 16, 33, 0.20)");
     gradient.addColorStop(0.4, "rgba(88, 26, 34, 0.10)");
@@ -7938,6 +8945,36 @@
       ctx.beginPath();
       ctx.moveTo(40, y);
       ctx.lineTo(1160, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawSlateBackdrop() {
+    const gradient = ctx.createRadialGradient(600, 500, 120, 600, 620, 1080);
+    gradient.addColorStop(0, "rgba(224, 221, 214, 0.86)");
+    gradient.addColorStop(0.5, "rgba(134, 130, 123, 0.50)");
+    gradient.addColorStop(1, "rgba(30, 29, 31, 0.96)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.10)";
+    ctx.lineWidth = 1;
+    for (let index = 0; index < 18; index += 1) {
+      const y = 92 + index * 56;
+      ctx.beginPath();
+      ctx.moveTo(48, y);
+      ctx.lineTo(1150, y - 12);
+      ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(10,10,12,0.07)";
+    for (let index = 0; index < 9; index += 1) {
+      const x = 112 + index * 122;
+      ctx.beginPath();
+      ctx.moveTo(x, 76);
+      ctx.lineTo(x + 42, 1088);
       ctx.stroke();
     }
     ctx.restore();
@@ -8700,6 +9737,10 @@
       return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Holzbrett") + " · " + getSummaryModeLabel();
     }
 
+    if (isSlateProduct()) {
+      return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Schieferplatte") + " · " + getSummaryModeLabel();
+    }
+
     if (isDogtagProduct()) {
       return "Anfrage zur Motiv-Vorschau – " + (getActiveProductDisplayName() || "Dogtag") + " · " + (getActiveFinish() ? getActiveFinish().name + " · " : "") + getSummaryModeLabel();
     }
@@ -8739,7 +9780,31 @@
       ];
 
       if (priceState.isReady) {
-        lines.push("Vorläufiger Startpreis: " + formatEuro(priceState.totalCents));
+        lines.push("Startpreis: " + formatEuro(priceState.totalCents));
+      } else if (priceState.invalidReason) {
+        lines.push("Preisstatus: " + priceState.invalidReason);
+      }
+
+      lines.push("");
+      lines.push("Viele Grüße");
+
+      return lines.join("\n");
+    }
+
+    if (isSlateProduct()) {
+      const lines = [
+        "Hallo Luderbein,",
+        "",
+        "ich habe eine Anfrage zur Motiv-Vorschau. Hier sind die ersten Infos:",
+        "",
+        "Material: " + getActiveMaterial().name,
+        "Produkt: " + (getActiveProductDisplayName() || "Schieferplatte"),
+        "Gestaltungsart: " + getSummaryModeLabel(),
+        "Inhalt: " + buildSideSummaryText("front")
+      ];
+
+      if (priceState.isReady) {
+        lines.push("Startpreis: " + formatEuro(priceState.totalCents));
       } else if (priceState.invalidReason) {
         lines.push("Preisstatus: " + priceState.invalidReason);
       }
@@ -8764,11 +9829,11 @@
 
       if (isBackSideEnabled(0)) {
         lines.push("Rückseite: " + buildSideSummaryText("back"));
-        lines.push("Aufpreis Rückseite: +" + formatEuro(DOGTAG_BACK_SIDE_CENTS));
+        lines.push("Aufpreis Rückseite: +" + formatEuro(getDogtagBackSideCents()));
       }
 
       if (priceState.isReady) {
-        lines.push("Vorläufiger Startpreis: " + formatEuro(priceState.totalCents));
+        lines.push("Startpreis: " + formatEuro(priceState.totalCents));
       } else if (priceState.invalidReason) {
         lines.push("Preisstatus: " + priceState.invalidReason);
       }
@@ -8913,7 +9978,7 @@
 
   function getBackSideSurchargeHint() {
     return isDogtagProduct()
-      ? "Rückseite: +" + formatEuro(DOGTAG_BACK_SIDE_CENTS) + "."
+      ? "Rückseite: +" + formatEuro(getDogtagBackSideCents()) + "."
       : "Rückseite je Anhänger: +" + formatEuro(BACK_SIDE_STANDARD_CENTS) + ".";
   }
 
@@ -8962,7 +10027,7 @@
         );
     }
 
-    if (isWoodBoardProduct()) {
+    if (isWoodBoardProduct() || isSlateProduct()) {
       return hasMaterialSelection() &&
         hasProductSelection() &&
         hasDesignModeSelection() &&
@@ -9224,6 +10289,10 @@
     return Boolean(template && template.category === "photo");
   }
 
+  function isSlatePhotoMotifSelected() {
+    return isSlateProduct() && isPhotoMotifSelected("front", 0);
+  }
+
   function isMonogramTemplateSelected(sideId, pendantIndex) {
     const template = getActiveTemplate(sideId, pendantIndex);
     return Boolean(template && template.category === "monogram");
@@ -9285,7 +10354,7 @@
           motifVariantOverlayHelp.textContent = "Wappen, Emblem oder QR-Code.";
         } else if (state.motifOverlayStep === "emblemSourceChoice") {
           motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "custom-filesystem-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
-          motifVariantOverlayHelp.textContent = "Vorlage oder eigene Datei.";
+          motifVariantOverlayHelp.textContent = "Vorlage oder Datei.";
         } else if (state.motifOverlayStep === "emblemUpload") {
           motifVariantOverlayTitle.textContent = getActiveEmblemKindId() === "crest" ? "Wappen" : (getActiveEmblemKindId() === "ornament" ? "Ornamente" : (getActiveEmblemKindId() === "custom-filesystem-outdoor" ? "Outdoor" : (getActiveEmblemKindId() === "custom-filesystem-runen" ? "Runen" : (getActiveEmblemKindId() === "google-hearts" ? "Herzen" : (getActiveEmblemKindId() === "google-motorsport" ? "Mobilität" : "Embleme")))));
           motifVariantOverlayHelp.textContent = "Datei wählen.";
@@ -9297,7 +10366,7 @@
         }
       } else {
         motifVariantOverlayTitle.textContent = "Tiermotiv";
-        motifVariantOverlayHelp.textContent = "Wähle eine Tiergruppe.";
+        motifVariantOverlayHelp.textContent = "Tiergruppe wählen.";
       }
       return;
     }
@@ -9381,8 +10450,17 @@
     );
   }
 
+  function isSlateProduct() {
+    const material = getActiveMaterial();
+    return Boolean(
+      material &&
+      material.id === "slate" &&
+      /^slate-plate-/.test(state.productFamilyId || "")
+    );
+  }
+
   function isSingleSurfaceProduct() {
-    return isBottleOpenerProduct() || isWoodBoardProduct() || isDogtagProduct();
+    return isBottleOpenerProduct() || isWoodBoardProduct() || isSlateProduct() || isDogtagProduct();
   }
 
   function getActiveProduct() {
