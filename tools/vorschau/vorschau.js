@@ -5477,7 +5477,9 @@
   }
 
   function onMobilePreviewPointerDown(event) {
-    if (!mobileCanvas || (!hasAnyPendantSizeSelection() && !isWoodBoardProduct()) || isBottleOpenerProduct()) return;
+    const canDragSlatePhoto = isSlateProduct() && isSlatePhotoMotifSelected() && Boolean(getActiveImage());
+    const canDragMobilePreview = hasAnyPendantSizeSelection() || isWoodBoardProduct() || canDragSlatePhoto;
+    if (!mobileCanvas || !canDragMobilePreview || isBottleOpenerProduct()) return;
 
     const viewport = getMobilePreviewViewport(
       mobileCanvas.width / mobileCanvas.height,
@@ -5486,6 +5488,8 @@
     if (!viewport) return;
 
     const interactionMode = getMobilePreviewInteractionMode(event.clientX, event.clientY);
+    if (canDragSlatePhoto && interactionMode !== "engraving") return;
+
     const activeSideState = getActiveSideState();
     const originX = interactionMode === "engraving"
       ? (isTextMode() && hasText() ? activeSideState.textOffsetX : activeSideState.offsetX)
@@ -5646,6 +5650,20 @@
       return null;
     }
 
+    if (isSlateProduct()) {
+      const box = getSlateDesignBox();
+      const activeSideState = getActiveSideState();
+      if (!box || !hasDesignModeSelection() || !isSlatePhotoMotifSelected()) return null;
+
+      const image = getActiveImage();
+      if (!image) return null;
+
+      const motifLayout = getSingleSurfaceMotifLayout(image);
+      const centerX = box.x + box.width / 2 + activeSideState.offsetX;
+      const centerY = box.y + box.height / 2 + activeSideState.offsetY;
+      return buildCenteredHitBox(centerX, centerY, motifLayout.width, motifLayout.height);
+    }
+
     if (!hasAnyPendantSizeSelection() || isBottleOpenerProduct()) return null;
 
     const pendantIndex = state.activePendantIndex;
@@ -5693,7 +5711,7 @@
   function getMobilePreviewInteractionMode(clientX, clientY) {
     const sourcePoint = getMobilePreviewSourcePoint(clientX, clientY);
     const hitBox = getActiveEngravingHitBox();
-    const hitPoint = isWoodBoardProduct()
+    const hitPoint = (isWoodBoardProduct() || isSlateProduct())
       ? sourcePoint
       : getPendantLocalPointFromSourcePoint(sourcePoint, state.activePendantIndex);
 
@@ -5713,7 +5731,7 @@
 
   function moveActiveEngravingFromMobileDelta(deltaX, deltaY) {
     const activeLayout = getPendantLayouts()[state.activePendantIndex];
-    const scale = isWoodBoardProduct()
+    const scale = (isWoodBoardProduct() || isSlateProduct())
       ? 1
       : (activeLayout && activeLayout.scale ? activeLayout.scale : 1);
     const localDeltaX = deltaX / scale;
