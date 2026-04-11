@@ -163,7 +163,16 @@
 
   const MAX_TEXT_LENGTH = 18;
   const MAX_WOOD_BOARD_TEXT_LENGTH = 48;
-  const MAX_SLATE_TEXT_LENGTH = 300;
+  const MAX_SLATE_TEXT_LENGTH_BY_PRODUCT = {
+    "slate-plate-10x10": 80,
+    "slate-round-10": 80,
+    "slate-plate-20x20": 140,
+    "slate-round-20": 140,
+    "slate-plate-38x13": 140,
+    "slate-plate-25x25": 180,
+    "slate-round-30": 180,
+    "slate-plate-45x30": 220
+  };
   const MIN_TEXT_SCALE_PERCENT = 70;
   const MIN_WOOD_BOARD_TEXT_SCALE_PERCENT = 20;
   const MAX_TEXT_SCALE_PERCENT = 170;
@@ -2308,6 +2317,7 @@
       slatePhotoDetailReduction: 55,
       slatePhotoContrast: 10,
       textValue: "",
+      textFontScalePercent: 100,
       textScalePercent: 100,
       textFontId: TEXT_FONT_LIBRARY[0].id,
       textStyles: {
@@ -2363,12 +2373,10 @@
 
     scaleSlider.addEventListener("input", function () {
       const activeSideState = getActiveSideState();
-      if (isWoodBoardProduct() && isTextMode() && hasText()) {
-        const textScaleRange = getActiveTextScaleRange();
-        activeSideState.textScalePercent = clamp(Number(scaleSlider.value), textScaleRange.min, textScaleRange.max);
+      activeSideState.scalePercent = clamp(Number(scaleSlider.value), 60, 230);
+      if (isTextMode() && hasText()) {
         clampTextPlacement();
       } else {
-        activeSideState.scalePercent = Number(scaleSlider.value);
         clampPlacement();
       }
       syncUi();
@@ -2450,7 +2458,7 @@
 
     textSizeSlider.addEventListener("input", function () {
       const textScaleRange = getActiveTextScaleRange();
-      getActiveSideState().textScalePercent = clamp(Number(textSizeSlider.value), textScaleRange.min, textScaleRange.max);
+      getActiveSideState().textFontScalePercent = clamp(Number(textSizeSlider.value), textScaleRange.min, textScaleRange.max);
       clampTextPlacement();
       syncUi();
       queueRender();
@@ -4961,7 +4969,7 @@
     const activeSideState = getActiveSideState();
     activeSideState.textValue = "";
     textInput.value = "";
-    activeSideState.textScalePercent = 100;
+    activeSideState.textFontScalePercent = 100;
     textSizeSlider.value = "100";
     activeSideState.textFontId = TEXT_FONT_LIBRARY[0].id;
     textFontSelect.value = activeSideState.textFontId;
@@ -5018,7 +5026,7 @@
 
   function resetTextPlacement(shouldRender) {
     const activeSideState = getActiveSideState();
-    activeSideState.textScalePercent = 100;
+    activeSideState.textFontScalePercent = 100;
     textSizeSlider.value = "100";
     activeSideState.textOffsetX = 0;
     activeSideState.textOffsetY = getDefaultTextOffsetY(state.activePendantIndex);
@@ -5912,9 +5920,11 @@
     }
 
     const textLayout = getTextLayout(activeSideState.textValue);
-    const maxOffsetX = getPlacementClampDistance(motifMask.width, textLayout.width, "x");
+    const contentWidth = textLayout.drawWidth || textLayout.width;
+    const contentHeight = textLayout.drawHeight || textLayout.height;
+    const maxOffsetX = getPlacementClampDistance(motifMask.width, contentWidth, "x");
     const defaultOffsetY = getDefaultTextOffsetY(state.activePendantIndex);
-    const maxOffsetY = getPlacementClampDistance(motifMask.height, textLayout.height, "y");
+    const maxOffsetY = getPlacementClampDistance(motifMask.height, contentHeight, "y");
 
     activeSideState.textOffsetX = clamp(activeSideState.textOffsetX, -maxOffsetX, maxOffsetX);
     activeSideState.textOffsetY = clamp(activeSideState.textOffsetY, Math.min(defaultOffsetY, -maxOffsetY), maxOffsetY);
@@ -6043,24 +6053,15 @@
       : (hasDesignModeSelection() ? (isQrMode() ? "QR" : (isMotifMode() ? "Motiv" : "Text")) : "Offen");
     previewSourceLabel.textContent = getActiveSourceLabel(activeTemplate);
 
-    const isWoodTextTransformMode = isWoodBoardProduct() && isTextMode() && hasText();
     const textScaleRange = getActiveTextScaleRange();
-    if (isWoodTextTransformMode) {
-      if (scaleSlider.min !== String(textScaleRange.min)) {
-        scaleSlider.min = String(textScaleRange.min);
-      }
-      if (scaleSlider.max !== String(textScaleRange.max)) {
-        scaleSlider.max = String(textScaleRange.max);
-      }
-    } else {
-      if (scaleSlider.min !== "60") {
-        scaleSlider.min = "60";
-      }
-      if (scaleSlider.max !== "230") {
-        scaleSlider.max = "230";
-      }
+    if (scaleSlider.min !== "60") {
+      scaleSlider.min = "60";
     }
-    scaleSlider.value = String(isWoodTextTransformMode ? activeSideState.textScalePercent : activeSideState.scalePercent);
+    if (scaleSlider.max !== "230") {
+      scaleSlider.max = "230";
+    }
+    activeSideState.scalePercent = clamp(activeSideState.scalePercent || 100, 60, 230);
+    scaleSlider.value = String(activeSideState.scalePercent);
     if (stretchXSlider) {
       stretchXSlider.value = String(clamp(activeSideState.stretchXPercent || 100, 70, 140));
     }
@@ -6076,12 +6077,9 @@
     if (textSizeSlider.max !== String(textScaleRange.max)) {
       textSizeSlider.max = String(textScaleRange.max);
     }
-    activeSideState.textScalePercent = clamp(activeSideState.textScalePercent, textScaleRange.min, textScaleRange.max);
-    textSizeSlider.value = String(activeSideState.textScalePercent);
-    if (isWoodTextTransformMode) {
-      scaleSlider.value = String(activeSideState.textScalePercent);
-    }
-    scaleValueLabel.textContent = (isWoodTextTransformMode ? activeSideState.textScalePercent : activeSideState.scalePercent) + "%";
+    activeSideState.textFontScalePercent = clamp(activeSideState.textFontScalePercent || 100, textScaleRange.min, textScaleRange.max);
+    textSizeSlider.value = String(activeSideState.textFontScalePercent);
+    scaleValueLabel.textContent = activeSideState.scalePercent + "%";
     if (stretchXValueLabel) {
       stretchXValueLabel.textContent = String(clamp(activeSideState.stretchXPercent || 100, 70, 140)) + "%";
     }
@@ -6119,7 +6117,7 @@
     if (slatePhotoContrastValueLabel) {
       slatePhotoContrastValueLabel.textContent = String(clamp(Number(activeSideState.slatePhotoContrast || 10), -25, 35));
     }
-    textSizeValueLabel.textContent = activeSideState.textScalePercent + "%";
+    textSizeValueLabel.textContent = activeSideState.textFontScalePercent + "%";
     const activeTextMaxLength = getActiveTextMaxLength();
     if (activeSideState.textValue.length > activeTextMaxLength) {
       activeSideState.textValue = activeSideState.textValue.slice(0, activeTextMaxLength);
@@ -6209,10 +6207,10 @@
       motifAdjustGroup,
       (isMotifMode() && hasActiveMotifContent() && !isQrSelected()) ||
       (isSingleSurfaceProduct() && isQrMode()) ||
-      (isWoodBoardProduct() && isTextMode() && hasText())
+      (isTextMode() && hasText())
     );
-    motifAdjustGroup.setAttribute("data-control-mode", isWoodTextTransformMode ? "text-transform" : "placement");
-    textGroup.setAttribute("data-control-mode", isWoodTextTransformMode ? "wood-text-transform" : "text");
+    motifAdjustGroup.setAttribute("data-control-mode", isTextMode() && hasText() ? "text-transform" : "placement");
+    textGroup.setAttribute("data-control-mode", "text");
     setSectionVisibility(monogramGroup, isMotifMode() && isMonogramTemplateSelected());
     setSectionVisibility(emblemGroup, isMotifMode() && isEmblemTemplateSelected() && hasSelectedEmblemKind() && !isQrSelected());
     setSectionVisibility(rotationGroup, hasDesignModeSelection());
@@ -6617,12 +6615,15 @@
   }
 
   function getGuidedScrollLeadOffset(targetSection) {
+    if (targetSection === textGroup) {
+      return 272;
+    }
+
     if (
       targetSection === sizeGroup ||
       targetSection === designModeGroup ||
       targetSection === motifTemplateGroup ||
       targetSection === motifAdjustGroup ||
-      targetSection === textGroup ||
       targetSection === qrCodeGroup ||
       targetSection === monogramGroup ||
       targetSection === emblemGroup
@@ -6645,28 +6646,34 @@
       const visibleTop = currentScrollTop;
       const visibleBottom = currentScrollTop + controlCard.clientHeight;
       const titleOffset = getGuidedScrollLeadOffset(targetSection);
-      const desiredTop = Math.max(0, targetTop - titleOffset);
+      const forceTextTarget = targetSection === textGroup;
+      const desiredTop = Math.max(0, targetTop - titleOffset - (forceTextTarget ? 132 : 0));
       const maxScrollTop = Math.max(0, controlCard.scrollHeight - controlCard.clientHeight);
       const nextScrollTop = Math.min(desiredTop, maxScrollTop);
+      const targetVisibleTopLimit = forceTextTarget
+        ? cardRect.top + Math.round(controlCard.clientHeight * 0.18)
+        : cardRect.top + Math.round(controlCard.clientHeight * 0.38);
       const isAlreadyWellVisible =
         targetTop >= visibleTop + titleOffset - 4 &&
         targetBottom <= visibleBottom - 28 &&
-        targetRect.top >= cardRect.top + 8 &&
-        targetRect.top <= cardRect.top + Math.round(controlCard.clientHeight * 0.38);
+        targetRect.top >= cardRect.top + (forceTextTarget ? 8 : 8) &&
+        targetRect.top <= targetVisibleTopLimit;
 
-      if (isAlreadyWellVisible || Math.abs(nextScrollTop - currentScrollTop) < 10) return;
+      if (!forceTextTarget && (isAlreadyWellVisible || Math.abs(nextScrollTop - currentScrollTop) < 10)) return;
+      if (forceTextTarget && Math.abs(nextScrollTop - currentScrollTop) < 4) return;
 
       controlCard.scrollTo({
         top: nextScrollTop,
-        behavior: "smooth"
+        behavior: forceTextTarget ? "auto" : "smooth"
       });
       return;
     }
 
     const scrollOffset = getGuidedScrollDocumentOffset();
     if (scrollOffset > 0) {
+      const leadOffset = getGuidedScrollLeadOffset(targetSection);
       const targetTop = targetSection.getBoundingClientRect().top + window.pageYOffset;
-      const nextTop = Math.max(0, targetTop - scrollOffset);
+      const nextTop = Math.max(0, targetTop - scrollOffset - leadOffset);
       if (Math.abs(window.pageYOffset - nextTop) < 10) return;
       window.scrollTo({
         top: nextTop,
@@ -7274,6 +7281,7 @@
     const palette = getDogtagPalette();
     const x = box.x + box.width / 2 + activeSideState.textOffsetX;
     const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
@@ -7281,7 +7289,7 @@
     clipDogtagDesignArea();
     ctx.translate(x, y);
     ctx.rotate(getBottleOpenerRotationRadians());
-    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.scale(scaleFactor * stretchXFactor, scaleFactor * stretchYFactor);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = textLayout.font;
@@ -7666,6 +7674,7 @@
     const textLayout = getWoodBoardTextLayout(activeSideState.textValue);
     const x = box.x + box.width / 2 + activeSideState.textOffsetX;
     const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
@@ -7673,7 +7682,7 @@
     clipWoodBoardDesignArea();
     ctx.translate(x, y);
     ctx.rotate(getBottleOpenerRotationRadians());
-    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.scale(scaleFactor * stretchXFactor, scaleFactor * stretchYFactor);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = textLayout.font;
@@ -8185,6 +8194,7 @@
     const textLayout = getSlateTextLayout(activeSideState.textValue);
     const x = box.x + box.width / 2 + activeSideState.textOffsetX;
     const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
@@ -8192,7 +8202,7 @@
     clipSlateDesignArea();
     ctx.translate(x, y);
     ctx.rotate(getBottleOpenerRotationRadians());
-    ctx.scale(stretchXFactor, stretchYFactor);
+    ctx.scale(scaleFactor * stretchXFactor, scaleFactor * stretchYFactor);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = textLayout.font;
@@ -8531,7 +8541,7 @@
     const box = getDogtagDesignBox();
     const activeSideState = getActiveSideState();
     const baseFontSize = Math.max(32, Math.min(box.width * 0.20, box.height * 0.13));
-    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const fontSize = baseFontSize * getTextFontScaleFactor(activeSideState);
     const lines = getTextLines(text);
     const metrics = lines.map(function (line) {
       return measureBottleOpenerText(line, fontSize);
@@ -8546,8 +8556,9 @@
     const height = lineHeight * Math.max(1, lines.length);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
-    const stretchedWidth = width * stretchXFactor;
-    const stretchedHeight = height * stretchYFactor;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
+    const stretchedWidth = width * stretchXFactor * scaleFactor;
+    const stretchedHeight = height * stretchYFactor * scaleFactor;
     const rotationRadians = Math.abs(getBottleOpenerRotationRadians());
     const rotationCos = Math.abs(Math.cos(rotationRadians));
     const rotationSin = Math.abs(Math.sin(rotationRadians));
@@ -8572,7 +8583,7 @@
     const box = getWoodBoardDesignBox();
     const activeSideState = getActiveSideState();
     const baseFontSize = Math.max(40, Math.min(box.width, box.height) * 0.22);
-    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const fontSize = baseFontSize * getTextFontScaleFactor(activeSideState);
     const lines = getTextLines(text);
     const metrics = lines.map(function (line) {
       return measureBottleOpenerText(line, fontSize);
@@ -8587,8 +8598,9 @@
     const height = lineHeight * Math.max(1, lines.length);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
-    const stretchedWidth = width * stretchXFactor;
-    const stretchedHeight = height * stretchYFactor;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
+    const stretchedWidth = width * stretchXFactor * scaleFactor;
+    const stretchedHeight = height * stretchYFactor * scaleFactor;
     const rotationRadians = Math.abs(getBottleOpenerRotationRadians());
     const rotationCos = Math.abs(Math.cos(rotationRadians));
     const rotationSin = Math.abs(Math.sin(rotationRadians));
@@ -8613,7 +8625,7 @@
     const box = getSlateDesignBox();
     const activeSideState = getActiveSideState();
     const baseFontSize = Math.max(34, Math.min(box.width * 0.16, box.height * 0.34));
-    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const fontSize = baseFontSize * getTextFontScaleFactor(activeSideState);
     const lines = getTextLines(text);
     const metrics = lines.map(function (line) {
       return measureBottleOpenerText(line, fontSize);
@@ -8628,8 +8640,9 @@
     const height = lineHeight * Math.max(1, lines.length);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
-    const stretchedWidth = width * stretchXFactor;
-    const stretchedHeight = height * stretchYFactor;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
+    const stretchedWidth = width * stretchXFactor * scaleFactor;
+    const stretchedHeight = height * stretchYFactor * scaleFactor;
     const rotationRadians = Math.abs(getBottleOpenerRotationRadians());
     const rotationCos = Math.abs(Math.cos(rotationRadians));
     const rotationSin = Math.abs(Math.sin(rotationRadians));
@@ -8654,15 +8667,20 @@
     const box = getBottleOpenerDesignBox();
     const activeSideState = getActiveSideState();
     const baseFontSize = Math.max(34, box.height * 0.46);
-    const fontSize = baseFontSize * (activeSideState.textScalePercent / 100);
+    const fontSize = baseFontSize * getTextFontScaleFactor(activeSideState);
     let metrics = measureBottleOpenerText(text, fontSize);
     let textHeight = Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
 
     return {
       fontSize: fontSize,
       font: buildBottleOpenerTextFont(fontSize),
       width: metrics.width,
-      height: textHeight
+      height: textHeight,
+      drawWidth: metrics.width * stretchXFactor * scaleFactor,
+      drawHeight: textHeight * stretchYFactor * scaleFactor
     };
   }
 
@@ -9019,20 +9037,24 @@
 
     const box = getBottleOpenerDesignBox();
     const textLayout = getBottleOpenerTextLayout(activeSideState.textValue);
-
     const x = box.x + box.width / 2 + activeSideState.textOffsetX;
     const y = box.y + box.height / 2 + activeSideState.textOffsetY;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
     ctx.save();
     ctx.beginPath();
     drawRoundedRectPath(ctx, box.x, box.y, box.width, box.height, Math.min(20, box.height / 4));
     ctx.clip();
-    applyBottleOpenerContentRotation(x, y);
+    ctx.translate(x, y);
+    ctx.rotate(getBottleOpenerRotationRadians());
+    ctx.scale(scaleFactor * stretchXFactor, scaleFactor * stretchYFactor);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = textLayout.font;
     ctx.fillStyle = BOTTLE_OPENER_ENGRAVING_FILL;
-    ctx.fillText(activeSideState.textValue, x, y);
+    ctx.fillText(activeSideState.textValue, 0, 0);
     ctx.restore();
   }
 
@@ -9785,13 +9807,18 @@
     const textLayout = getTextLayout(activeSideState.textValue, pendantIndex);
     const x = motifMask.x + motifMask.width / 2 + activeSideState.textOffsetX;
     const y = motifMask.y + motifMask.height / 2 + activeSideState.textOffsetY;
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
     const decorationLineWidth = Math.max(3, textLayout.fontSize * 0.06);
 
     ctx.save();
     ctx.beginPath();
     ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.clip();
-    applyPendantContentRotation(x, y, pendantIndex);
+    ctx.translate(x, y);
+    ctx.rotate(getPendantRotationRadians(pendantIndex));
+    ctx.scale(scaleFactor * stretchXFactor, scaleFactor * stretchYFactor);
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -9800,10 +9827,10 @@
     ctx.strokeStyle = "rgba(250, 246, 242, 0.78)";
     ctx.lineWidth = Math.max(6, textLayout.fontSize * 0.11);
     ctx.globalAlpha = 0.92;
-    ctx.strokeText(activeSideState.textValue, x, y);
+    ctx.strokeText(activeSideState.textValue, 0, 0);
 
     ctx.fillStyle = "rgba(22, 24, 28, 0.84)";
-    ctx.fillText(activeSideState.textValue, x, y);
+    ctx.fillText(activeSideState.textValue, 0, 0);
 
     if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
       ctx.strokeStyle = "rgba(22, 24, 28, 0.84)";
@@ -9811,25 +9838,25 @@
       ctx.lineCap = "round";
 
       if (activeSideState.textStyles.underline) {
-        const underlineY = y + textLayout.height * 0.34;
+        const underlineY = textLayout.height * 0.34;
         ctx.beginPath();
-        ctx.moveTo(x - textLayout.width / 2, underlineY);
-        ctx.lineTo(x + textLayout.width / 2, underlineY);
+        ctx.moveTo(-textLayout.width / 2, underlineY);
+        ctx.lineTo(textLayout.width / 2, underlineY);
         ctx.stroke();
       }
 
       if (activeSideState.textStyles.strikethrough) {
-        const strikeY = y - textLayout.height * 0.04;
+        const strikeY = -textLayout.height * 0.04;
         ctx.beginPath();
-        ctx.moveTo(x - textLayout.width / 2, strikeY);
-        ctx.lineTo(x + textLayout.width / 2, strikeY);
+        ctx.moveTo(-textLayout.width / 2, strikeY);
+        ctx.lineTo(textLayout.width / 2, strikeY);
         ctx.stroke();
       }
     }
 
     ctx.globalAlpha = 0.2;
     ctx.beginPath();
-    ctx.ellipse(x, y + textLayout.height * 0.18, textLayout.width * 0.46, Math.max(10, textLayout.height * 0.18), 0, 0, Math.PI * 2);
+    ctx.ellipse(0, textLayout.height * 0.18, textLayout.width * 0.46, Math.max(10, textLayout.height * 0.18), 0, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.22)";
     ctx.fill();
 
@@ -11128,19 +11155,31 @@
     return clamp(Number(percentValue) || 100, 70, 140) / 100;
   }
 
+  function getTextFontScaleFactor(sideState) {
+    return clamp(Number(sideState.textFontScalePercent) || 100, getActiveTextScaleRange().min, getActiveTextScaleRange().max) / 100;
+  }
+
+  function getTextOverallScaleFactor(sideState) {
+    return clamp(Number(sideState.scalePercent) || 100, 60, 230) / 100;
+  }
+
   function getTextLayout(text, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
     const activeSideState = getSideState(state.activeSide, pendantIndex);
     const baseFontSize = Math.max(34, motifMask.width * 0.19);
-    let fontSize = Math.max(22, baseFontSize * (activeSideState.textScalePercent / 100));
+    const fontSize = Math.max(22, baseFontSize * getTextFontScaleFactor(activeSideState));
     const metrics = measureText(text, fontSize, pendantIndex);
-
+    const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
+    const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
+    const scaleFactor = getTextOverallScaleFactor(activeSideState);
 
     return {
       fontSize: fontSize,
       font: buildTextFont(fontSize, pendantIndex),
       width: metrics.width,
-      height: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent)
+      height: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
+      drawWidth: metrics.width * stretchXFactor * scaleFactor,
+      drawHeight: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * stretchYFactor * scaleFactor
     };
   }
 
@@ -11345,14 +11384,29 @@
   }
 
   function getActiveTextMaxLength() {
-    if (isSlateProduct()) return MAX_SLATE_TEXT_LENGTH;
+    if (isSlateProduct()) {
+      const activeProductFamily = getActiveProductFamily();
+      return MAX_SLATE_TEXT_LENGTH_BY_PRODUCT[activeProductFamily ? activeProductFamily.id : ""] || 140;
+    }
     return isWoodBoardProduct() ? MAX_WOOD_BOARD_TEXT_LENGTH : MAX_TEXT_LENGTH;
   }
 
   function getActiveTextScaleRange() {
+    if (isSlateProduct()) {
+      return { min: 30, max: 190 };
+    }
+    if (isWoodBoardProduct()) {
+      return { min: MIN_WOOD_BOARD_TEXT_SCALE_PERCENT, max: MAX_WOOD_BOARD_TEXT_SCALE_PERCENT };
+    }
+    if (isDogtagProduct()) {
+      return { min: 40, max: 185 };
+    }
+    if (isBottleOpenerProduct()) {
+      return { min: 45, max: 180 };
+    }
     return {
-      min: isWoodBoardProduct() ? MIN_WOOD_BOARD_TEXT_SCALE_PERCENT : MIN_TEXT_SCALE_PERCENT,
-      max: isWoodBoardProduct() ? MAX_WOOD_BOARD_TEXT_SCALE_PERCENT : MAX_TEXT_SCALE_PERCENT
+      min: 45,
+      max: MAX_TEXT_SCALE_PERCENT
     };
   }
 
