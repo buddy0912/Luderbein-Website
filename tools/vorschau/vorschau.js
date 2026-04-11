@@ -1940,7 +1940,7 @@
     const priceState = calculatePriceSummary();
     const configurationParts = [];
     let priceLabel = "Wird berechnet";
-    let priceHint = "Nach vollständiger Auswahl erscheint hier der Preisstand.";
+    let priceHint = getCustomerPriceStandHint(priceState);
 
     if (isBottleOpenerProduct()) {
       configurationParts.push(productName);
@@ -1949,10 +1949,8 @@
       }
       const bottlePriceCents = getBottleOpenerSinglePriceCents();
       if (bottlePriceCents != null) {
-        priceLabel = formatEuro(bottlePriceCents) + " / Stk.";
-        priceHint = priceState.minQty
-          ? "Staffelpreise gelten ab " + priceState.minQty + " Stück."
-          : "Preis für die aktuelle Flaschenöffner-Ausführung.";
+        priceLabel = formatPreviewStartPrice(bottlePriceCents, " / Stk.");
+        priceHint = getCustomerPriceStandHint(priceState);
       }
     } else if (isWoodBoardProduct()) {
       configurationParts.push(productName);
@@ -1960,8 +1958,8 @@
         configurationParts.push(getSummaryModeLabel());
       }
       if (priceState.isReady) {
-        priceLabel = formatEuro(priceState.totalCents);
-        priceHint = priceState.invalidReason || "Startpreis laut Preisquelle.";
+        priceLabel = formatPreviewStartPrice(priceState.totalCents);
+        priceHint = getCustomerPriceStandHint(priceState);
       }
     } else if (isSlateProduct()) {
       configurationParts.push(productName);
@@ -1969,11 +1967,11 @@
         configurationParts.push(getSummaryModeLabel());
       }
       if (priceState.isReady) {
-        priceLabel = formatEuro(priceState.totalCents);
-        priceHint = priceState.invalidReason || "Startpreis laut Preisquelle.";
+        priceLabel = formatPreviewStartPrice(priceState.totalCents);
+        priceHint = getCustomerPriceStandHint(priceState);
       } else {
         priceLabel = "Preis offen";
-        priceHint = priceState.invalidReason || "Preis offen / auf Anfrage.";
+        priceHint = getCustomerPriceStandHint(priceState);
       }
     } else if (isDogtagProduct()) {
       configurationParts.push(productName);
@@ -1984,8 +1982,8 @@
         configurationParts.push(getSummaryModeLabel());
       }
       if (priceState.isReady) {
-        priceLabel = formatEuro(priceState.totalCents);
-        priceHint = priceState.invalidReason || "Startpreis laut Preisquelle.";
+        priceLabel = formatPreviewStartPrice(priceState.totalCents);
+        priceHint = getCustomerPriceStandHint(priceState);
       }
     } else {
       configurationParts.push(productName === "Noch offen" ? "Schmuckanhänger" : productName);
@@ -2006,11 +2004,9 @@
 
     if (!isSingleSurfaceProduct() && priceState.items.length) {
       priceLabel = formatEuro(priceState.totalCents);
-      priceHint = priceState.discountRate
-        ? "Gesamtpreis inklusive Set-Rabatt."
-        : "Gesamtpreis für die aktuelle Auswahl.";
+      priceHint = getCustomerPriceStandHint(priceState);
     } else if (!isBottleOpenerProduct() && priceState.invalidReason) {
-      priceHint = priceState.invalidReason;
+      priceHint = getCustomerPriceStandHint(priceState);
     }
 
     return {
@@ -2019,6 +2015,30 @@
       priceLabel: priceLabel,
       priceHint: priceHint
     };
+  }
+
+  function getCustomerPriceStandHint(priceState) {
+    const reviewHint = "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe.";
+    if (!priceState || !priceState.isReady) {
+      if (priceState && priceState.invalidReason === "Preis offen / auf Anfrage.") {
+        return "Preis offen / auf Anfrage. " + reviewHint;
+      }
+      return "Nach vollständiger Auswahl erscheint hier der Preisstand.";
+    }
+
+    if (isBottleOpenerProduct()) {
+      return reviewHint;
+    }
+
+    if (isSingleSurfaceProduct()) {
+      return reviewHint;
+    }
+
+    return "Gesamtpreis für die aktuelle Auswahl.";
+  }
+
+  function formatPreviewStartPrice(cents, suffix) {
+    return "ab " + formatEuro(cents) + (suffix || "");
   }
 
   function getFilesystemLabelBase(fileName) {
@@ -6136,7 +6156,7 @@
       requestBoxMobile.hidden = !readyForExport;
     }
     if (requestBoxSummary) {
-      requestBoxSummary.hidden = !(readyForExport && (isWoodBoardProduct() || isDogtagProduct()));
+      requestBoxSummary.hidden = !readyForExport;
     }
     if (!readyForExport) {
       closeRequestMenu();
@@ -6237,14 +6257,17 @@
         priceDiscountRow.hidden = true;
         if (priceTotalLabel) priceTotalLabel.textContent = "Einzelpreis";
         priceTotal.textContent = singlePriceCents != null
-          ? formatEuro(singlePriceCents) + " / Stk."
+          ? formatPreviewStartPrice(singlePriceCents, " / Stk.")
           : "—";
         priceSummaryHint.textContent = priceState.minQty
-          ? "Staffelpreise gelten ab " + priceState.minQty + " Stück."
+          ? "Staffelpreise ab " + priceState.minQty + " Stück."
           : "";
+        priceSummaryHint.hidden = !priceSummaryHint.textContent;
         if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = "";
-          priceSummarySubhint.hidden = true;
+          priceSummarySubhint.textContent = singlePriceCents != null
+            ? "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
+            : "";
+          priceSummarySubhint.hidden = !priceSummarySubhint.textContent;
         }
       } else {
         if (priceSubtotalLabel) priceSubtotalLabel.textContent = (isWoodBoardProduct() || isDogtagProduct()) ? "Startpreis" : "Zwischensumme";
@@ -6255,17 +6278,30 @@
         if (priceTotalLabel) priceTotalLabel.textContent = (isWoodBoardProduct() || isSlateProduct() || isDogtagProduct())
           ? "Startpreis"
           : "Gesamtpreis";
-        priceTotal.textContent = priceState.items.length ? formatEuro(priceState.totalCents) : "—";
-        priceSummaryHint.textContent = priceState.items.length
-          ? (priceState.hasPhotoAt12mm ? PHOTO_SIZE_12_HINT : priceState.invalidReason)
-          : priceState.invalidReason;
+        priceTotal.textContent = priceState.items.length
+          ? ((isSingleSurfaceProduct() || isBottleOpenerProduct()) ? formatPreviewStartPrice(priceState.totalCents) : formatEuro(priceState.totalCents))
+          : "—";
+        priceSummaryHint.textContent = priceState.hasPhotoAt12mm
+          ? PHOTO_SIZE_12_HINT
+          : (
+            priceState.isReady
+              ? (isSingleSurfaceProduct() ? "" : "Gesamtpreis für die aktuelle Auswahl.")
+              : (priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen / auf Anfrage." : "")
+          );
+        priceSummaryHint.hidden = !priceSummaryHint.textContent;
         if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = isSlateProduct()
-            ? (priceState.isReady ? "Startpreis laut Preisquelle. Finale Prüfung bleibt vorbehalten." : "Preis offen / auf Anfrage.")
-            : (isWoodBoardProduct() || isDogtagProduct())
-            ? "Startpreis laut Preisquelle. Finale Prüfung bleibt vorbehalten."
-            : "Schmuckträger nicht enthalten. Preis bezieht sich auf die aktuell konfigurierten Anhänger.";
-          priceSummarySubhint.hidden = false;
+          priceSummarySubhint.textContent = priceState.isReady
+            ? (
+              isSingleSurfaceProduct()
+                ? "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
+                : "Schmuckträger nicht enthalten. Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
+            )
+            : (
+              priceState.invalidReason === "Preis offen / auf Anfrage."
+                ? "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
+                : ""
+            );
+          priceSummarySubhint.hidden = !priceSummarySubhint.textContent;
         }
       }
     }
