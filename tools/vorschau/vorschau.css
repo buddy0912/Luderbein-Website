@@ -2029,9 +2029,9 @@ button.preview-summary-preview__frame {
 
 @media (min-width: 641px) {
   .preview-layout {
-    align-items: stretch;
-    height: calc(100vh - var(--header-h, 72px) - 42px);
-    overflow: hidden;
+    align-items: start;
+    height: auto;
+    overflow: visible;
   }
 
   .preview-stage-column,
@@ -2040,11 +2040,9 @@ button.preview-summary-preview__frame {
   }
 
   .preview-stage-column {
-    max-height: 100%;
-    overflow-y: auto;
-    overscroll-behavior-y: auto;
-    scrollbar-gutter: stable;
-    align-self: stretch;
+    max-height: none;
+    overflow: visible;
+    align-self: start;
   }
 
   .preview-stage-card {
@@ -2064,11 +2062,9 @@ button.preview-summary-preview__frame {
   }
 
   .preview-control-card {
-    max-height: 100%;
-    overflow-y: auto;
-    overscroll-behavior-y: auto;
-    scrollbar-gutter: stable;
-    align-self: stretch;
+    max-height: none;
+    overflow: visible;
+    align-self: start;
   }
 }
 
