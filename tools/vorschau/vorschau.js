@@ -3464,6 +3464,13 @@
     state.isMotifVariantOverlayOpen = false;
     renderSizeOptions();
     syncUi();
+    pendingAfterRenderAction = function () {
+      if (!hasAnyPendantSizeSelection() || !hasSizeSelection(pendantIndex)) {
+        scrollGuidedToSection(sizeGroup);
+        return;
+      }
+      scrollGuidedToSection(getGuidedScrollTargetAfterStep("size"));
+    };
     queueRender();
   }
 
@@ -4056,6 +4063,7 @@
         renderPendantTabs();
         closeRequestMenu();
         syncUi();
+        scheduleGuidedScrollAfterStep("size");
         queueRender();
       });
 
@@ -6608,6 +6616,23 @@
     return getGuidedDesignModeDetailTarget();
   }
 
+  function getGuidedScrollLeadOffset(targetSection) {
+    if (
+      targetSection === sizeGroup ||
+      targetSection === designModeGroup ||
+      targetSection === motifTemplateGroup ||
+      targetSection === motifAdjustGroup ||
+      targetSection === textGroup ||
+      targetSection === qrCodeGroup ||
+      targetSection === monogramGroup ||
+      targetSection === emblemGroup
+    ) {
+      return 32;
+    }
+
+    return 18;
+  }
+
   function scrollGuidedToSection(targetSection) {
     if (!targetSection || targetSection.hidden) return;
 
@@ -6619,15 +6644,15 @@
       const targetBottom = targetTop + targetSection.offsetHeight;
       const visibleTop = currentScrollTop;
       const visibleBottom = currentScrollTop + controlCard.clientHeight;
-      const titleOffset = 18;
+      const titleOffset = getGuidedScrollLeadOffset(targetSection);
       const desiredTop = Math.max(0, targetTop - titleOffset);
       const maxScrollTop = Math.max(0, controlCard.scrollHeight - controlCard.clientHeight);
       const nextScrollTop = Math.min(desiredTop, maxScrollTop);
       const isAlreadyWellVisible =
-        targetTop >= visibleTop + 6 &&
-        targetBottom <= visibleBottom - 22 &&
+        targetTop >= visibleTop + titleOffset - 4 &&
+        targetBottom <= visibleBottom - 28 &&
         targetRect.top >= cardRect.top + 8 &&
-        targetRect.top <= cardRect.top + Math.round(controlCard.clientHeight * 0.5);
+        targetRect.top <= cardRect.top + Math.round(controlCard.clientHeight * 0.38);
 
       if (isAlreadyWellVisible || Math.abs(nextScrollTop - currentScrollTop) < 10) return;
 
