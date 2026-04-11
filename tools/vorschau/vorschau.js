@@ -2011,8 +2011,11 @@
       }
     }
 
-    if (!isSingleSurfaceProduct() && priceState.items.length) {
-      priceLabel = formatEuro(priceState.totalCents);
+    if (!isSingleSurfaceProduct() && priceState.items.length && priceState.isReady) {
+      priceLabel = formatPreviewStartPrice(priceState.totalCents);
+      priceHint = getCustomerPriceStandHint(priceState);
+    } else if (!isSingleSurfaceProduct() && priceState.items.length && !priceState.isReady) {
+      priceLabel = priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen" : "Noch offen";
       priceHint = getCustomerPriceStandHint(priceState);
     } else if (!isBottleOpenerProduct() && priceState.invalidReason) {
       priceHint = getCustomerPriceStandHint(priceState);
@@ -2027,23 +2030,15 @@
   }
 
   function getCustomerPriceStandHint(priceState) {
-    const reviewHint = "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe.";
+    const reviewHint = "Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach.";
+    const pendingSetHint = "Endpreis erscheint, sobald alle ausgewählten Produkte vollständig konfiguriert sind.";
     if (!priceState || !priceState.isReady) {
       if (priceState && priceState.invalidReason === "Preis offen / auf Anfrage.") {
         return "Preis offen / auf Anfrage. " + reviewHint;
       }
-      return "Nach vollständiger Auswahl erscheint hier der Preisstand.";
+      return pendingSetHint + " " + reviewHint;
     }
-
-    if (isBottleOpenerProduct()) {
-      return reviewHint;
-    }
-
-    if (isSingleSurfaceProduct()) {
-      return reviewHint;
-    }
-
-    return "Gesamtpreis für die aktuelle Auswahl.";
+    return reviewHint;
   }
 
   function formatPreviewStartPrice(cents, suffix) {
@@ -6271,42 +6266,35 @@
         priceSummaryHint.hidden = !priceSummaryHint.textContent;
         if (priceSummarySubhint) {
           priceSummarySubhint.textContent = singlePriceCents != null
-            ? "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
+            ? "Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach."
             : "";
           priceSummarySubhint.hidden = !priceSummarySubhint.textContent;
         }
       } else {
-        if (priceSubtotalLabel) priceSubtotalLabel.textContent = (isWoodBoardProduct() || isDogtagProduct()) ? "Startpreis" : "Zwischensumme";
-        priceSubtotal.textContent = priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
+        const reviewHint = "Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach.";
+        const pendingSetHint = "Endpreis erscheint, sobald alle ausgewählten Produkte vollständig konfiguriert sind.";
+        const usesStartPriceLabel = isWoodBoardProduct() || isSlateProduct() || isDogtagProduct();
+        if (priceSubtotalLabel) priceSubtotalLabel.textContent = (isWoodBoardProduct() || isSlateProduct() || isDogtagProduct()) ? "Startpreis" : "Zwischensumme";
+        priceSubtotal.textContent = priceState.isReady && priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
         priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
-        priceDiscount.textContent = priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
-        priceDiscountRow.hidden = !priceState.items.length || !priceState.discountRate;
-        if (priceTotalLabel) priceTotalLabel.textContent = (isWoodBoardProduct() || isSlateProduct() || isDogtagProduct())
-          ? "Startpreis"
-          : "Gesamtpreis";
-        priceTotal.textContent = priceState.items.length
-          ? ((isSingleSurfaceProduct() || isBottleOpenerProduct()) ? formatPreviewStartPrice(priceState.totalCents) : formatEuro(priceState.totalCents))
-          : "—";
+        priceDiscount.textContent = priceState.isReady && priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
+        priceDiscountRow.hidden = !priceState.isReady || !priceState.items.length || !priceState.discountRate;
+        if (priceTotalLabel) priceTotalLabel.textContent = priceState.isReady
+          ? (usesStartPriceLabel ? "Startpreis" : "Preis")
+          : "Endpreis";
+        priceTotal.textContent = priceState.isReady && priceState.items.length
+          ? formatPreviewStartPrice(priceState.totalCents)
+          : (priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen" : "Noch offen");
         priceSummaryHint.textContent = priceState.hasPhotoAt12mm
           ? PHOTO_SIZE_12_HINT
           : (
             priceState.isReady
-              ? (isSingleSurfaceProduct() ? "" : "Gesamtpreis für die aktuelle Auswahl.")
-              : (priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen / auf Anfrage." : "")
+              ? ""
+              : (priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen / auf Anfrage." : pendingSetHint)
           );
         priceSummaryHint.hidden = !priceSummaryHint.textContent;
         if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = priceState.isReady
-            ? (
-              isSingleSurfaceProduct()
-                ? "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
-                : "Schmuckträger nicht enthalten. Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
-            )
-            : (
-              priceState.invalidReason === "Preis offen / auf Anfrage."
-                ? "Ich prüfe Motiv und Datei vor finaler Preiszusage und Freigabe."
-                : ""
-            );
+          priceSummarySubhint.textContent = reviewHint;
           priceSummarySubhint.hidden = !priceSummarySubhint.textContent;
         }
       }
