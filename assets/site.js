@@ -530,6 +530,26 @@
       };
     }
 
+    function getActiveCardImage(card) {
+      if (!card) return null;
+
+      const images = Array.from(card.querySelectorAll(".lb-card__media img, .thumb img, .reel__img"));
+      if (!images.length) return null;
+
+      const visibleImage = images.find((img) => {
+        const styles = window.getComputedStyle(img);
+        const opacity = Number.parseFloat(styles.opacity || "1");
+        return img.classList.contains("is-on") || (opacity > 0.5 && styles.display !== "none" && styles.visibility !== "hidden");
+      }) || images[0];
+
+      if (!visibleImage || !visibleImage.currentSrc && !visibleImage.src) return null;
+
+      return {
+        src: visibleImage.currentSrc || visibleImage.src,
+        alt: visibleImage.getAttribute("alt") || card.getAttribute("data-modal-alt") || "Detailbild"
+      };
+    }
+
     function updateModalQuery(card) {
       if (!card || !window.history || typeof window.history.replaceState !== "function") return;
 
@@ -563,8 +583,9 @@
       lastActive = card || document.activeElement;
       const linkedCard = resolveLinkedModalCard(card);
       const infoCard = linkedCard || card;
-      const img = card.getAttribute("data-modal-img");
-      const alt = card.getAttribute("data-modal-alt") || "Detailbild";
+      const activeImage = getActiveCardImage(card);
+      const img = activeImage?.src || card.getAttribute("data-modal-img");
+      const alt = activeImage?.alt || card.getAttribute("data-modal-alt") || "Detailbild";
       const title = infoCard.getAttribute("data-modal-title") || infoCard.querySelector("h3")?.textContent || "";
       const text = infoCard.getAttribute("data-modal-text") || infoCard.querySelector(".kicker")?.textContent || "";
       const product = infoCard.getAttribute("data-modal-product");
