@@ -2471,6 +2471,20 @@
       queueRender();
     });
 
+    textInput.addEventListener("keydown", function (event) {
+      if (event.key !== "Enter" || !allowsCompactMultilineText()) return;
+
+      const currentValue = String(textInput.value || "");
+      const selectionStart = textInput.selectionStart == null ? currentValue.length : textInput.selectionStart;
+      const selectionEnd = textInput.selectionEnd == null ? selectionStart : textInput.selectionEnd;
+      const nextValue = currentValue.slice(0, selectionStart) + "\n" + currentValue.slice(selectionEnd);
+      const normalizedNextValue = normalizeTextValue(nextValue);
+
+      if (normalizedNextValue === currentValue && currentValue.includes("\n")) {
+        event.preventDefault();
+      }
+    });
+
     textFontSelect.addEventListener("change", function () {
       getActiveSideState().textFontId = textFontSelect.value;
       syncFontSelectPreview(textFontSelect, TEXT_FONT_LIBRARY);
@@ -5498,7 +5512,7 @@
       return;
     }
 
-    const canDragText = isWoodBoardProduct() && isTextMode() && hasText();
+    const canDragText = isTextMode() && hasText();
     const canDragMotif = isMotifMode() && hasActiveMotifContent();
     const canDragSurfaceQr = isSingleSurfaceProduct() && isQrMode();
     if (!canDragText && !canDragMotif && !canDragSurfaceQr) return;
@@ -6162,8 +6176,8 @@
     }
     textSizeValueLabel.textContent = activeSideState.textFontScalePercent + "%";
     const activeTextMaxLength = getActiveTextMaxLength();
-    if (activeSideState.textValue.length > activeTextMaxLength) {
-      activeSideState.textValue = activeSideState.textValue.slice(0, activeTextMaxLength);
+    if (activeSideState.textValue !== normalizeTextValue(activeSideState.textValue)) {
+      activeSideState.textValue = normalizeTextValue(activeSideState.textValue);
     }
     textInput.maxLength = activeTextMaxLength;
     textCharacterCount.textContent = activeSideState.textValue.length + " / " + activeTextMaxLength;
@@ -9853,32 +9867,37 @@
     ctx.strokeStyle = "rgba(250, 246, 242, 0.78)";
     ctx.lineWidth = Math.max(6, textLayout.fontSize * 0.11);
     ctx.globalAlpha = 0.92;
-    ctx.strokeText(activeSideState.textValue, 0, 0);
 
     ctx.fillStyle = "rgba(22, 24, 28, 0.84)";
-    ctx.fillText(activeSideState.textValue, 0, 0);
+    textLayout.lines.forEach(function (line, index) {
+      const lineY = textLayout.startY + (index * textLayout.lineHeight);
+      const lineWidth = textLayout.lineWidths[index] || 0;
 
-    if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
-      ctx.strokeStyle = "rgba(22, 24, 28, 0.84)";
-      ctx.lineWidth = decorationLineWidth;
-      ctx.lineCap = "round";
+      ctx.strokeText(line, 0, lineY);
+      ctx.fillText(line, 0, lineY);
 
-      if (activeSideState.textStyles.underline) {
-        const underlineY = textLayout.height * 0.34;
-        ctx.beginPath();
-        ctx.moveTo(-textLayout.width / 2, underlineY);
-        ctx.lineTo(textLayout.width / 2, underlineY);
-        ctx.stroke();
+      if (activeSideState.textStyles.underline || activeSideState.textStyles.strikethrough) {
+        ctx.strokeStyle = "rgba(22, 24, 28, 0.84)";
+        ctx.lineWidth = decorationLineWidth;
+        ctx.lineCap = "round";
+
+        if (activeSideState.textStyles.underline) {
+          const underlineY = lineY + textLayout.fontSize * 0.34;
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, underlineY);
+          ctx.lineTo(lineWidth / 2, underlineY);
+          ctx.stroke();
+        }
+
+        if (activeSideState.textStyles.strikethrough) {
+          const strikeY = lineY - textLayout.fontSize * 0.04;
+          ctx.beginPath();
+          ctx.moveTo(-lineWidth / 2, strikeY);
+          ctx.lineTo(lineWidth / 2, strikeY);
+          ctx.stroke();
+        }
       }
-
-      if (activeSideState.textStyles.strikethrough) {
-        const strikeY = -textLayout.height * 0.04;
-        ctx.beginPath();
-        ctx.moveTo(-textLayout.width / 2, strikeY);
-        ctx.lineTo(textLayout.width / 2, strikeY);
-        ctx.stroke();
-      }
-    }
+    });
 
     ctx.globalAlpha = 0.2;
     ctx.beginPath();
@@ -11194,7 +11213,18 @@
     const activeSideState = getSideState(state.activeSide, pendantIndex);
     const baseFontSize = Math.max(34, motifMask.width * 0.19);
     const fontSize = Math.max(22, baseFontSize * getTextFontScaleFactor(activeSideState));
-    const metrics = measureText(text, fontSize, pendantIndex);
+    const lines = getTextLines(text);
+    const metrics = lines.map(function (line) {
+      return measureText(line, fontSize, pendantIndex);
+    });
+    const textHeight = Math.max.apply(null, metrics.map(function (metric) {
+      return Math.max(fontSize * 0.92, metric.actualBoundingBoxAscent + metric.actualBoundingBoxDescent);
+    }));
+    const lineHeight = Math.max(fontSize * 1.08, textHeight);
+    const width = Math.max.apply(null, metrics.map(function (metric) {
+      return metric.width;
+    }));
+    const height = lineHeight * Math.max(1, lines.length);
     const stretchXFactor = getStretchFactor(activeSideState.stretchXPercent);
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
     const scaleFactor = getTextOverallScaleFactor(activeSideState);
@@ -11202,10 +11232,16 @@
     return {
       fontSize: fontSize,
       font: buildTextFont(fontSize, pendantIndex),
-      width: metrics.width,
-      height: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent),
-      drawWidth: metrics.width * stretchXFactor * scaleFactor,
-      drawHeight: Math.max(fontSize * 0.92, metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent) * stretchYFactor * scaleFactor
+      lines: lines,
+      lineWidths: metrics.map(function (metric) {
+        return metric.width;
+      }),
+      lineHeight: lineHeight,
+      startY: -((lines.length - 1) * lineHeight) / 2,
+      width: width,
+      height: height,
+      drawWidth: width * stretchXFactor * scaleFactor,
+      drawHeight: height * stretchYFactor * scaleFactor
     };
   }
 
@@ -11450,9 +11486,42 @@
         .slice(0, getActiveTextMaxLength());
     }
 
+    if (allowsCompactMultilineText()) {
+      return normalizeCompactMultilineText(value, getActiveTextMaxLength(), 2);
+    }
+
     return String(value)
       .replace(/[\r\n\t]+/g, " ")
       .slice(0, getActiveTextMaxLength());
+  }
+
+  function allowsCompactMultilineText() {
+    return !isWoodBoardProduct() && !isSlateProduct() && !isBottleOpenerProduct();
+  }
+
+  function normalizeCompactMultilineText(value, maxLength, maxLines) {
+    const normalized = String(value)
+      .replace(/\r\n?/g, "\n")
+      .replace(/\t/g, " ")
+      .replace(/[ \u00a0]*\n[ \u00a0]*/g, "\n");
+
+    let result = "";
+    let lineCount = 1;
+
+    for (const character of normalized) {
+      if (result.length >= maxLength) break;
+
+      if (character === "\n") {
+        if (lineCount >= maxLines || result.endsWith("\n")) continue;
+        result += "\n";
+        lineCount += 1;
+        continue;
+      }
+
+      result += character;
+    }
+
+    return result.replace(/^\n+|\n+$/g, "");
   }
 
   function formatEuro(cents) {
