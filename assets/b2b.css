@@ -199,6 +199,7 @@ body.page-b2b .btn:hover {
 }
 
 .b2b-meta-card {
+  min-width: 0;
   padding: 18px;
 }
 
@@ -221,8 +222,12 @@ body.page-b2b .btn:hover {
 .b2b-meta-card strong,
 .b2b-stat strong {
   display: block;
+  min-width: 0;
   color: var(--text);
   line-height: 1.42;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
 }
 
 .b2b-hero__rail {
@@ -295,6 +300,7 @@ body.page-b2b .btn:hover {
 .b2b-tech-card h3,
 .b2b-cta-box h3 {
   margin: 0 0 10px;
+  overflow-wrap: anywhere;
 }
 
 .b2b-card p,
@@ -304,6 +310,7 @@ body.page-b2b .btn:hover {
   margin: 0;
   color: var(--muted);
   line-height: 1.62;
+  overflow-wrap: anywhere;
 }
 
 .b2b-card--highlight {
@@ -321,6 +328,7 @@ body.page-b2b .btn:hover {
   display: inline-flex;
   align-items: center;
   width: fit-content;
+  max-width: 100%;
   margin-bottom: 12px;
   padding: 5px 10px;
   border-radius: 999px;
@@ -328,8 +336,11 @@ body.page-b2b .btn:hover {
   background: rgba(29, 37, 46, 0.54);
   color: rgba(214, 224, 234, 0.92);
   font-size: 0.74rem;
+  line-height: 1.35;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .b2b-trust-card {
