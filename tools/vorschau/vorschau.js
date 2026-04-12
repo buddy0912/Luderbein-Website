@@ -7,6 +7,7 @@
   const ctx = canvas.getContext("2d");
   const mobileCanvas = document.getElementById("previewCanvasMobile");
   const mobileCtx = mobileCanvas ? mobileCanvas.getContext("2d") : null;
+  const previewStageDetailsCard = document.querySelector(".preview-stage-details");
   const materialGroup = document.getElementById("materialGroup");
   const materialOptionsEl = document.getElementById("materialOptions");
   const productGroup = document.getElementById("productGroup");
@@ -6231,6 +6232,9 @@
 
     const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || isSlateProduct() || isDogtagProduct() || hasSetSelection());
     priceSummaryBox.hidden = !shouldShowPriceBox;
+    if (previewStageDetailsCard) {
+      previewStageDetailsCard.hidden = !readyForExport && !shouldShowPriceBox;
+    }
     if (shouldShowPriceBox) {
       if (priceState.items.length) {
         priceBreakdown.innerHTML = priceState.items.map(function (item) {

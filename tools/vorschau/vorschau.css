@@ -2036,13 +2036,13 @@ button.preview-summary-preview__frame {
 
   .preview-stage-column,
   .preview-control-card {
+    height: auto;
     min-height: 0;
   }
 
   .preview-stage-column {
-    max-height: none;
-    overflow: visible;
     align-self: start;
+    overflow: visible;
   }
 
   .preview-stage-card {
@@ -2062,8 +2062,11 @@ button.preview-summary-preview__frame {
   }
 
   .preview-control-card {
-    max-height: none;
-    overflow: visible;
+    max-height: min(980px, calc(100vh - var(--header-h, 72px) - 42px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: auto;
+    scrollbar-gutter: stable;
     align-self: start;
   }
 }
