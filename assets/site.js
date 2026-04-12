@@ -432,20 +432,36 @@
       modal.innerHTML = `
         <div class="lb-modal__panel" role="dialog" aria-modal="true" aria-label="Detailansicht">
           <button class="lb-modal__close" type="button" data-lb-modal-close aria-label="Schließen">✕</button>
-          <img class="lb-modal__img" alt="" />
-          <h3 class="lb-modal__title"></h3>
-          <p class="lb-modal__text"></p>
-          <div class="cta">
-            <a class="btn primary" data-lb-modal-cta href="/kontakt/">Mach mir ein Angebot</a>
+          <div class="lb-modal__media">
+            <img class="lb-modal__img" alt="" />
+          </div>
+          <div class="lb-modal__content">
+            <h3 class="lb-modal__title"></h3>
+            <p class="lb-modal__text"></p>
+            <div class="lb-modal__info" data-lb-modal-info hidden>
+              <div class="lb-modal__price" data-lb-modal-price hidden>
+                <span class="lb-modal__price-label">Preis</span>
+                <strong class="lb-modal__price-value" data-lb-modal-price-value></strong>
+              </div>
+              <p class="lb-modal__note" data-lb-modal-note hidden>Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach.</p>
+            </div>
+            <div class="cta">
+              <a class="btn primary" data-lb-modal-cta href="/kontakt/">Mach mir ein Angebot</a>
+            </div>
           </div>
         </div>
       `;
       document.body.appendChild(modal);
     }
 
+    const modalMedia = modal.querySelector(".lb-modal__media");
     const modalImg = modal.querySelector(".lb-modal__img");
     const modalTitle = modal.querySelector(".lb-modal__title");
     const modalText = modal.querySelector(".lb-modal__text");
+    const modalInfo = modal.querySelector("[data-lb-modal-info]");
+    const modalPrice = modal.querySelector("[data-lb-modal-price]");
+    const modalPriceValue = modal.querySelector("[data-lb-modal-price-value]");
+    const modalNote = modal.querySelector("[data-lb-modal-note]");
     const modalCta = modal.querySelector("[data-lb-modal-cta]");
     let lastActive = null;
     let autoOpenedCard = null;
@@ -461,6 +477,57 @@
 
     function normalizeModalValue(value) {
       return normalizeSearchText(value || "");
+    }
+
+    function getModalMatchCandidates(card) {
+      if (!card) return [];
+
+      const values = [
+        card.getAttribute("data-modal-product"),
+        card.getAttribute("data-modal-variant"),
+        card.getAttribute("data-modal-title"),
+        card.querySelector(".reel__tag, .thumblabel, .lb-card__tag")?.textContent,
+        card.querySelector(".reel__cap, .lb-card__title, h3")?.textContent
+      ];
+
+      return Array.from(new Set(
+        values
+          .map((value) => normalizeModalValue(value))
+          .filter(Boolean)
+      ));
+    }
+
+    function resolveLinkedModalCard(card) {
+      if (!card || !card.classList.contains("reel__item")) return null;
+
+      const candidates = getModalMatchCandidates(card);
+      if (!candidates.length) return null;
+
+      const productCards = Array.from(document.querySelectorAll("[data-lb-modal-card]")).filter((node) => {
+        return node !== card && !node.classList.contains("reel__item");
+      });
+
+      const matches = productCards.filter((node) => {
+        const nodeValues = getModalMatchCandidates(node);
+        return candidates.some((candidate) => nodeValues.includes(candidate));
+      });
+
+      return matches.length === 1 ? matches[0] : null;
+    }
+
+    function getCardMetaInfo(card) {
+      if (!card) return { priceText: "", hasStartPrice: false };
+
+      const explicitPrice = (card.getAttribute("data-modal-price") || "").trim();
+      const cardPrice = card.querySelector(".meta .price")?.textContent?.trim() || "";
+      const priceText = explicitPrice || cardPrice;
+      const normalizedPrice = normalizeSearchText(priceText);
+      const hasStartPrice = Boolean(normalizedPrice) && normalizedPrice.startsWith("ab ");
+
+      return {
+        priceText,
+        hasStartPrice
+      };
     }
 
     function updateModalQuery(card) {
@@ -494,31 +561,45 @@
     function openModal(card, options) {
       const opts = options || {};
       lastActive = card || document.activeElement;
+      const linkedCard = resolveLinkedModalCard(card);
+      const infoCard = linkedCard || card;
       const img = card.getAttribute("data-modal-img");
       const alt = card.getAttribute("data-modal-alt") || "Detailbild";
-      const title = card.getAttribute("data-modal-title") || card.querySelector("h3")?.textContent || "";
-      const text = card.getAttribute("data-modal-text") || card.querySelector(".kicker")?.textContent || "";
-      const product = card.getAttribute("data-modal-product");
-      const variant = card.getAttribute("data-modal-variant");
-      const format = card.getAttribute("data-modal-format");
+      const title = infoCard.getAttribute("data-modal-title") || infoCard.querySelector("h3")?.textContent || "";
+      const text = infoCard.getAttribute("data-modal-text") || infoCard.querySelector(".kicker")?.textContent || "";
+      const product = infoCard.getAttribute("data-modal-product");
+      const variant = infoCard.getAttribute("data-modal-variant");
+      const format = infoCard.getAttribute("data-modal-format");
 
       if (img) {
         modalImg.src = img;
         modalImg.alt = alt;
-        modalImg.style.display = "block";
+        modalMedia.hidden = false;
       } else {
         modalImg.src = "";
         modalImg.alt = "";
-        modalImg.style.display = "none";
+        modalMedia.hidden = true;
       }
 
       modalTitle.textContent = title;
       modalText.textContent = text;
+      const metaInfo = getCardMetaInfo(infoCard);
+      if (metaInfo.hasStartPrice) {
+        modalInfo.hidden = false;
+        modalPrice.hidden = false;
+        modalNote.hidden = false;
+        modalPriceValue.textContent = metaInfo.priceText;
+      } else {
+        modalInfo.hidden = true;
+        modalPrice.hidden = true;
+        modalNote.hidden = true;
+        modalPriceValue.textContent = "";
+      }
       modalCta.setAttribute("href", buildContactUrl(product, variant, format));
 
       modal.classList.add("is-open");
       document.body.style.overflow = "hidden";
-      if (!opts.skipUrlSync) updateModalQuery(card);
+      if (!opts.skipUrlSync) updateModalQuery(infoCard);
       modal.querySelector("[data-lb-modal-close]")?.focus();
     }
 
