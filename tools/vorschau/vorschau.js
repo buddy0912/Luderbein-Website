@@ -2619,18 +2619,24 @@
     [downloadPreviewButton, downloadPreviewButtonMobile, downloadPreviewSummaryButton].filter(Boolean).forEach((button) => {
       button.addEventListener("click", downloadPreview);
     });
+    requestWhatsappLink.addEventListener("click", refreshRequestLinkOnClick);
     requestWhatsappLink.addEventListener("click", closeRequestMenu);
+    requestEmailLink.addEventListener("click", refreshRequestLinkOnClick);
     requestEmailLink.addEventListener("click", closeRequestMenu);
     if (requestWhatsappLinkMobile) {
+      requestWhatsappLinkMobile.addEventListener("click", refreshRequestLinkOnClick);
       requestWhatsappLinkMobile.addEventListener("click", closeRequestMenu);
     }
     if (requestEmailLinkMobile) {
+      requestEmailLinkMobile.addEventListener("click", refreshRequestLinkOnClick);
       requestEmailLinkMobile.addEventListener("click", closeRequestMenu);
     }
     if (requestWhatsappLinkSummary) {
+      requestWhatsappLinkSummary.addEventListener("click", refreshRequestLinkOnClick);
       requestWhatsappLinkSummary.addEventListener("click", closeRequestMenu);
     }
     if (requestEmailLinkSummary) {
+      requestEmailLinkSummary.addEventListener("click", refreshRequestLinkOnClick);
       requestEmailLinkSummary.addEventListener("click", closeRequestMenu);
     }
 
@@ -2662,6 +2668,8 @@
     canvas.addEventListener("keydown", onCanvasKeydown);
     document.addEventListener("click", onDocumentClick);
     document.addEventListener("keydown", onDocumentKeydown);
+    window.addEventListener("pageshow", refreshRequestLinks);
+    window.addEventListener("focus", refreshRequestLinks);
     canvas.tabIndex = 0;
   }
 
@@ -5148,6 +5156,45 @@
     setRequestMenuOpen(false);
   }
 
+  function refreshRequestLinks() {
+    const readyForExport = isConfigurationReady();
+    const whatsappHref = readyForExport ? buildWhatsappUrl() : "#";
+    const emailHref = readyForExport ? buildMailtoUrl() : "#";
+
+    requestWhatsappLink.href = whatsappHref;
+    requestEmailLink.href = emailHref;
+
+    if (requestWhatsappLinkMobile) {
+      requestWhatsappLinkMobile.href = whatsappHref;
+    }
+    if (requestWhatsappLinkSummary) {
+      requestWhatsappLinkSummary.href = whatsappHref;
+    }
+    if (requestEmailLinkMobile) {
+      requestEmailLinkMobile.href = emailHref;
+    }
+    if (requestEmailLinkSummary) {
+      requestEmailLinkSummary.href = emailHref;
+    }
+  }
+
+  function refreshRequestLinkOnClick(event) {
+    const link = event.currentTarget;
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    if (!isConfigurationReady()) {
+      link.href = "#";
+      return;
+    }
+
+    const isWhatsappLink =
+      link === requestWhatsappLink ||
+      link === requestWhatsappLinkMobile ||
+      link === requestWhatsappLinkSummary;
+
+    link.href = isWhatsappLink ? buildWhatsappUrl() : buildMailtoUrl();
+  }
+
   function setRequestMenuOpen(isOpen) {
     requestMenuPanel.hidden = !isOpen;
     if (requestMenuPanelMobile) {
@@ -6134,20 +6181,7 @@
       monogramFontSelect.value = activeSideState.monogramFontId;
     }
 
-    requestWhatsappLink.href = readyForExport ? buildWhatsappUrl() : "#";
-    requestEmailLink.href = readyForExport ? buildMailtoUrl() : "#";
-    if (requestWhatsappLinkMobile) {
-      requestWhatsappLinkMobile.href = requestWhatsappLink.href;
-    }
-    if (requestWhatsappLinkSummary) {
-      requestWhatsappLinkSummary.href = requestWhatsappLink.href;
-    }
-    if (requestEmailLinkMobile) {
-      requestEmailLinkMobile.href = requestEmailLink.href;
-    }
-    if (requestEmailLinkSummary) {
-      requestEmailLinkSummary.href = requestEmailLink.href;
-    }
+    refreshRequestLinks();
     [downloadPreviewButton, downloadPreviewButtonMobile, downloadPreviewSummaryButton].filter(Boolean).forEach((button) => {
       button.disabled = !readyForExport;
     });
