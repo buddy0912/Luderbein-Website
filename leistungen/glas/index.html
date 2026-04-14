@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Glasgravur – Luderbein</title>
   <meta name="description" content="Glasgravur von Luderbein: aktuell auf Anfrage. Motiv, Stückzahl und Einsatz nennen – wir melden uns mit einem Angebot." />
   <link rel="canonical" href="https://luderbein-gravur.pages.dev/leistungen/glas/" />

@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Epidemic Scorn Schwibbogen – Luderbein</title>
   <meta name="description" content="Epidemic Scorn Schwibbogen von Luderbein – Bandprojekt als individueller Schwibbogen mit passendem Look." />
   <link rel="stylesheet" href="/assets/style.css" />

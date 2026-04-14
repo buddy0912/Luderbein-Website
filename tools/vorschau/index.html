@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Motiv-Vorschau – Luderbein</title>
   <meta name="description" content="Einfache unverbindliche Motiv-Vorschau von Luderbein: Material, Produkt, Größe, Bildmotiv und kurzen Zusatztext grob platzieren und Vorschau speichern." />
   <link rel="canonical" href="https://luderbein-gravur.pages.dev/tools/vorschau/" />
@@ -25,7 +34,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@600;700&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Inter:wght@500;700&family=Marcellus&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/style.css" />
   <link rel="stylesheet" href="/assets/nav-dropdown.css" />
-  <link rel="stylesheet" href="/tools/vorschau/vorschau.css" />
+  <link rel="stylesheet" href="/tools/vorschau/vorschau.css?v=lb2" />
 </head>
 <body data-enablebot="0">
   <header>

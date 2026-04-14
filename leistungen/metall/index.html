@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Metallgravur – Luderbein</title>
   <meta name="description" content="Metallgravur von Luderbein: Edelstahl, Aluminium, Tags, Plaketten, Gravuren – präzise, robust und ehrlich." />
   <link rel="stylesheet" href="/assets/style.css" />

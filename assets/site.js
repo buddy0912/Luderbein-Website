@@ -25,6 +25,43 @@
     email: "luderbein_gravur@icloud.com",
   };
 
+  const LB_LIGHT_MODE_KEY = "lb-light-readable";
+  const LB_LIGHT_MODE_CLASS = "light-readable";
+  const LB_LIGHT_MODE_EXCLUDED_PATHS = [
+    "/tools/vorschau/",
+    "/tools/kalkulator/",
+    "/tools/schwibbogen-konfigurator/",
+  ];
+
+  function isLightModeFeatureEnabled() {
+    const path = (window.location.pathname || "").replace(/index\.html$/, "");
+    return !LB_LIGHT_MODE_EXCLUDED_PATHS.some((prefix) => path.startsWith(prefix));
+  }
+
+  function isLightModeStored() {
+    try {
+      return window.localStorage.getItem(LB_LIGHT_MODE_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function setLightModeEnabled(isEnabled) {
+    document.documentElement.classList.toggle(LB_LIGHT_MODE_CLASS, !!isEnabled);
+  }
+
+  function persistLightMode(isEnabled) {
+    try {
+      if (isEnabled) {
+        window.localStorage.setItem(LB_LIGHT_MODE_KEY, "1");
+      } else {
+        window.localStorage.removeItem(LB_LIGHT_MODE_KEY);
+      }
+    } catch (_) {
+      // ignore
+    }
+  }
+
   // ---------------------------------
   // Analytics: Cloudflare Web Analytics Token (public)
   // ---------------------------------
@@ -1938,6 +1975,86 @@
     quick.insertBefore(link, quick.firstChild);
   }
 
+  function initLightModeToggle() {
+    if (!isLightModeFeatureEnabled()) return;
+
+    const nav = document.querySelector("header .nav");
+    const menu = document.querySelector("[data-nav]");
+    if (!nav || !menu) return;
+
+    let quick = nav.querySelector(".nav-quick");
+    if (!quick) {
+      quick = document.createElement("div");
+      quick.className = "nav-quick";
+      const navToggle = nav.querySelector("[data-nav-toggle]");
+      if (navToggle) nav.insertBefore(quick, navToggle);
+      else nav.appendChild(quick);
+    }
+
+    function buildButton(idSuffix) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "lb-lightmode-toggle";
+      button.id = `lb-lightmode-toggle-${idSuffix}`;
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-label", "Helle Ansicht umschalten");
+      button.innerHTML = `
+        <span class="lb-lightmode-toggle__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="4.4" stroke="currentColor" stroke-width="1.8"></circle>
+            <path d="M12 2.75V5.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M12 18.9V21.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M21.25 12H18.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            <path d="M5.1 12H2.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+        </span>
+        <span class="lb-lightmode-toggle__label">Helle Ansicht</span>
+      `;
+      return button;
+    }
+
+    let quickToggle = document.getElementById("lb-lightmode-toggle-quick");
+    if (!quickToggle) {
+      quickToggle = buildButton("quick");
+      quick.insertBefore(quickToggle, quick.firstChild);
+    }
+
+    let menuItem = menu.querySelector(".lb-lightmode-menuitem");
+    if (!menuItem) {
+      menuItem = document.createElement("div");
+      menuItem.className = "lb-lightmode-menuitem";
+      menuItem.appendChild(buildButton("menu"));
+      menu.insertBefore(menuItem, menu.firstChild);
+    }
+
+    const toggles = Array.from(document.querySelectorAll(".lb-lightmode-toggle"));
+
+    function syncState() {
+      const isEnabled = document.documentElement.classList.contains(LB_LIGHT_MODE_CLASS);
+      toggles.forEach((toggle) => {
+        const label = toggle.querySelector(".lb-lightmode-toggle__label");
+        const nextLabel = isEnabled ? "Dunkle Ansicht" : "Helle Ansicht";
+        toggle.setAttribute("aria-pressed", isEnabled ? "true" : "false");
+        toggle.setAttribute("aria-label", nextLabel + " umschalten");
+        toggle.setAttribute("title", isEnabled ? "Zur dunklen Ansicht wechseln" : "Zur hellen Ansicht wechseln");
+        if (label) label.textContent = nextLabel;
+      });
+    }
+
+    function toggleLightMode() {
+      const nextState = !document.documentElement.classList.contains(LB_LIGHT_MODE_CLASS);
+      setLightModeEnabled(nextState);
+      persistLightMode(nextState);
+      syncState();
+    }
+
+    toggles.forEach((toggle) => {
+      toggle.addEventListener("click", toggleLightMode);
+    });
+
+    syncState();
+  }
+
   // ---------------------------------
   // DOM Ready
   // ---------------------------------
@@ -2011,10 +2128,15 @@
     });
 
     initIdeaWallNavLink();
+    initLightModeToggle();
 
     // CTA Autofill (a[data-lb-cta])
     const ctx = getQueryContext();
     applyCtasFromContext(ctx);
+
+    if (isLightModeFeatureEnabled()) {
+      setLightModeEnabled(isLightModeStored());
+    }
 
     // Kontakt: Anfrage-Builder
     initContactRequestBuilder();

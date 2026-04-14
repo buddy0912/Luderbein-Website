@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Über – Luderbein</title>
   <meta name="description" content="Über Luderbein: urban, frech, ehrlich – Handwerk mit Haltung. Gravur, Design und Fertigung mit Liebe zum Detail." />
   <link rel="stylesheet" href="/assets/style.css" />
@@ -212,7 +221,7 @@
       <ul>
         <li>Schwibbögen – Serien &amp; Fotos</li>
         <li>Schiefer – mehr Beispiele</li>
-        <li>Metall / Acryl / Holz – klare Demos</li>
+        <li>Metall / Acryl / Holz – weitere Beispiele</li>
       </ul>
       <p>Die Seite wächst. Der Anspruch bleibt.</p>
     </section>

@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Service & Downloads – Luderbein</title>
   <meta name="description" content="Service & Downloads von Luderbein: Vorbestellformulare, PDF-Infos und Anleitungen rund um Gravur & Sonderwünsche." />
   <link rel="stylesheet" href="/assets/style.css" />
@@ -144,9 +153,9 @@
         </div>
 
         <div class="card">
-          <h3>Mini-Anleitung</h3>
+          <h3>So funktioniert's</h3>
           <p class="small">
-            Formular am Merch-Stand ausfüllen & abgeben – oder ausgefüllt per Mail schicken.
+            Formular am Merch-Stand ausfüllen und abgeben – oder vorab ausgefüllt per Mail senden.
           </p>
 
           <div class="cta" style="margin-top:12px">

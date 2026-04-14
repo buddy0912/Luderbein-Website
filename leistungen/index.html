@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Leistungen – Luderbein</title>
   <meta name="description" content="Leistungen von Luderbein: Schiefer, Metall, Holz, Acryl, Schwibbögen und Sonderanfertigungen – sauber graviert, präzise gefertigt." />
   <link rel="stylesheet" href="/assets/style.css" />
@@ -98,7 +107,7 @@
     <section class="section" aria-label="Leistungsübersicht">
       <div class="section-head">
         <h2>Auswahl</h2>
-        <p class="small muted">V1 – Fotos & Beispielarbeiten werden fortlaufend ergänzt.</p>
+        <p class="small muted">Fotos &amp; Beispielarbeiten werden fortlaufend ergänzt.</p>
       </div>
 
       <div class="products">

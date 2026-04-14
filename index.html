@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Luderbein – Schwibbögen & Gravur</title>
   <meta name="description" content="Luderbein – Gravur & Sonderwünsche – sauber, frech, personalisierbar. Kontakt per Mail oder WhatsApp." />
 
@@ -352,7 +361,7 @@
   </section>
 
   <div class="status-banner" role="status" aria-live="polite">
-    <strong>Noch nicht fertig.</strong> Inhalte &amp; Beispiele werden laufend ergänzt – der Kern steht, der Feinschliff kommt.
+    <strong>Laufend erweitert.</strong> Inhalte &amp; Beispiele werden fortlaufend ergänzt – die wichtigsten Bereiche sind bereits online.
   </div>
 
   <!-- Werkstatt Feed -->

@@ -3,6 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
   <title>Ideen- und Diskussionspinnwand – Luderbein</title>
   <meta name="description" content="Ideen, Wünsche und Diskussionsbeiträge für Luderbein. Öffentlich auf der Pinnwand oder nicht öffentlich nur intern." />
   <link rel="stylesheet" href="/assets/style.css" />
@@ -12,74 +21,100 @@
     .page-pinnwand main {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 22px;
+      padding-bottom: 10px;
     }
 
     .pin-board,
     .pin-compose {
-      border: 1px solid rgba(64,62,65,.55);
-      border-radius: 22px;
-      box-shadow: var(--shadow);
+      position: relative;
+      border: 1px solid rgba(80,72,77,.58);
+      border-radius: 24px;
+      box-shadow:
+        0 28px 64px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    .pin-board::after,
+    .pin-compose::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
     }
 
     .pin-board {
       background:
-        radial-gradient(760px 220px at 0% 0%, rgba(219,16,33,.1), transparent 58%),
-        linear-gradient(180deg, rgba(32,24,28,.96), rgba(15,11,15,.98));
+        radial-gradient(780px 260px at 0% 0%, rgba(219,16,33,.13), transparent 56%),
+        radial-gradient(480px 180px at 100% 0%, rgba(255,255,255,.05), transparent 72%),
+        linear-gradient(180deg, rgba(34,25,30,.98), rgba(15,11,15,.99));
       overflow: hidden;
     }
 
     .pin-board__head {
       display: flex;
-      align-items: center;
+      align-items: end;
       justify-content: space-between;
-      gap: 14px;
-      padding: 16px 18px;
-      border-bottom: 1px solid rgba(64,62,65,.55);
-      background: linear-gradient(180deg, rgba(50,23,28,.46), rgba(22,18,22,.66));
+      gap: 16px;
+      padding: 20px 22px 18px;
+      border-bottom: 1px solid rgba(90,78,84,.45);
+      background:
+        linear-gradient(180deg, rgba(66,24,31,.38), rgba(22,18,22,.82)),
+        linear-gradient(90deg, rgba(255,255,255,.02), transparent 45%);
     }
 
     .pin-board__title {
       margin: 0;
-      font-size: 1rem;
-      letter-spacing: .08em;
+      font-size: 1.16rem;
+      letter-spacing: .11em;
       text-transform: uppercase;
       color: var(--text);
     }
 
     .pin-board__meta {
-      color: var(--muted);
-      font-size: .84rem;
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(112,96,103,.38);
+      background: rgba(255,255,255,.04);
+      color: rgba(228,223,223,.82);
+      font-size: .8rem;
+      letter-spacing: .04em;
       white-space: nowrap;
     }
 
     .pin-board__viewport {
       max-height: min(58vh, 720px);
       overflow-y: auto;
-      padding: 18px;
+      padding: 22px;
       display: grid;
-      gap: 14px;
+      gap: 16px;
       align-content: start;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.015), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 18%),
         repeating-linear-gradient(
           180deg,
-          rgba(255,255,255,.02) 0,
-          rgba(255,255,255,.02) 1px,
+          rgba(255,255,255,.015) 0,
+          rgba(255,255,255,.015) 1px,
           transparent 1px,
-          transparent 48px
+          transparent 56px
         );
     }
 
     .pin-board__empty {
-      min-height: 180px;
+      min-height: 220px;
       display: grid;
       place-items: center;
-      padding: 26px;
-      border-radius: 18px;
-      border: 1px dashed rgba(88,81,86,.72);
-      background: rgba(18,14,18,.68);
-      color: var(--muted);
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px dashed rgba(100,90,96,.72);
+      background:
+        linear-gradient(180deg, rgba(35,27,31,.9), rgba(18,14,18,.78));
+      color: rgba(205,199,199,.82);
       text-align: center;
     }
 
@@ -89,20 +124,20 @@
 
     .pin-board__empty strong {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       color: var(--text);
-      font-size: 1rem;
+      font-size: 1.03rem;
     }
 
     .pin-card {
       position: relative;
-      border: 1px solid rgba(95,84,90,.7);
-      border-radius: 18px;
-      padding: 16px;
+      border: 1px solid rgba(102,90,97,.7);
+      border-radius: 20px;
+      padding: 18px 18px 17px;
       background:
-        linear-gradient(180deg, rgba(47,35,40,.98), rgba(24,18,22,.98));
+        linear-gradient(180deg, rgba(49,37,42,.98), rgba(24,18,22,.99));
       box-shadow:
-        0 14px 28px rgba(0,0,0,.28),
+        0 18px 34px rgba(0,0,0,.26),
         inset 0 1px 0 rgba(255,255,255,.03);
     }
 
@@ -120,26 +155,26 @@
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .pin-chip {
       display: inline-flex;
       align-items: center;
-      min-height: 28px;
-      padding: 4px 10px;
+      min-height: 30px;
+      padding: 4px 11px;
       border-radius: 999px;
-      border: 1px solid rgba(64,62,65,.55);
-      background: rgba(42,45,51,.22);
-      color: var(--muted);
-      font-size: .8rem;
+      border: 1px solid rgba(96,85,91,.44);
+      background: rgba(255,255,255,.04);
+      color: rgba(214,209,209,.74);
+      font-size: .78rem;
       letter-spacing: .04em;
     }
 
     .pin-chip--author {
       color: var(--text);
-      background: rgba(68,26,31,.3);
-      border-color: rgba(219,16,33,.3);
+      background: rgba(92,28,35,.28);
+      border-color: rgba(219,16,33,.34);
     }
 
     .pin-card__body,
@@ -152,57 +187,63 @@
     }
 
     .pin-card__body {
-      color: rgba(222,218,217,.96);
+      color: rgba(236,231,231,.94);
+      font-size: .98rem;
     }
 
     .pin-reply {
-      margin-top: 12px;
-      padding: 12px 14px;
+      margin-top: 14px;
+      padding: 13px 15px;
       border-radius: 14px;
-      border: 1px solid rgba(64,62,65,.5);
-      background: rgba(42,45,51,.16);
+      border: 1px solid rgba(91,81,87,.48);
+      background:
+        linear-gradient(180deg, rgba(50,43,48,.48), rgba(32,27,32,.42));
     }
 
     .pin-reply strong {
       display: block;
-      margin-bottom: 4px;
-      color: var(--text);
+      margin-bottom: 6px;
+      color: rgba(245,239,239,.92);
       font-size: .92rem;
+      letter-spacing: .02em;
     }
 
     .pin-reply p {
-      color: var(--muted);
+      color: rgba(207,200,200,.8);
       font-size: .94rem;
     }
 
     .pin-compose {
-      background: rgba(26,26,31,.74);
-      padding: 18px;
+      background:
+        radial-gradient(600px 220px at 100% 0%, rgba(219,16,33,.08), transparent 60%),
+        linear-gradient(180deg, rgba(30,25,29,.94), rgba(18,15,18,.97));
+      padding: 22px;
     }
 
     .pin-compose h1,
     .pin-compose h2 {
-      margin: 0 0 10px;
+      margin: 0 0 8px;
     }
 
     .pin-compose > p {
-      margin: 0 0 14px;
-      color: var(--muted);
+      margin: 0 0 16px;
+      color: rgba(214,208,208,.74);
     }
 
     .pin-rule {
-      margin: 0 0 14px;
-      padding: 12px 14px;
+      margin: 0 0 18px;
+      padding: 14px 16px;
       border-radius: 16px;
-      border: 1px solid rgba(219,16,33,.28);
-      background: linear-gradient(180deg, rgba(60,18,24,.42), rgba(24,16,20,.72));
-      color: rgba(210,207,206,.9);
+      border: 1px solid rgba(219,16,33,.22);
+      background:
+        linear-gradient(180deg, rgba(73,22,30,.32), rgba(25,19,22,.76));
+      color: rgba(221,217,217,.88);
       font-size: .95rem;
     }
 
     .pin-form {
       display: grid;
-      gap: 12px;
+      gap: 14px;
     }
 
     .pin-form__row {
@@ -212,9 +253,10 @@
 
     .pin-form label {
       display: block;
-      margin-bottom: 6px;
-      font-size: .9rem;
-      color: var(--muted);
+      margin-bottom: 7px;
+      font-size: .88rem;
+      letter-spacing: .03em;
+      color: rgba(214,208,208,.8);
     }
 
     .pin-form textarea,
@@ -222,17 +264,19 @@
     .pin-form input[type="text"],
     .pin-form input[type="email"] {
       width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(64,62,65,.65);
-      background: rgba(14,6,11,.42);
-      color: var(--text);
-      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(96,84,91,.64);
+      background:
+        linear-gradient(180deg, rgba(20,14,18,.9), rgba(14,10,13,.96));
+      color: rgba(245,240,240,.94);
+      padding: 13px 14px;
       font: inherit;
       outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
     }
 
     .pin-form textarea {
-      min-height: 132px;
+      min-height: 152px;
       resize: vertical;
     }
 
@@ -242,13 +286,14 @@
     .pin-form input[type="email"]:focus {
       border-color: rgba(219,16,33,.62);
       box-shadow: 0 0 0 3px rgba(219,16,33,.12);
+      background: rgba(24,17,21,.98);
     }
 
     .pin-form__subhint {
       display: block;
-      margin-top: 4px;
+      margin-top: 6px;
       font-size: .84rem;
-      color: var(--muted);
+      color: rgba(186,179,180,.72);
     }
 
     .pin-form__actions {
@@ -256,6 +301,7 @@
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
+      padding-top: 4px;
     }
 
     .pin-form__actions .btn {
@@ -263,18 +309,149 @@
     }
 
     .pin-form__meta {
-      color: var(--muted);
+      color: rgba(201,194,194,.72);
       font-size: .9rem;
     }
 
     .pin-form__status {
       margin: 0;
-      color: var(--muted);
+      color: rgba(196,188,189,.76);
       font-size: .92rem;
     }
 
     .pin-form__status.is-live {
-      color: var(--text);
+      color: rgba(241,235,235,.92);
+    }
+
+    html.light-readable .page-pinnwand .pin-board,
+    html.light-readable .page-pinnwand .pin-compose {
+      border-color: rgba(201,184,186,.85);
+      box-shadow:
+        0 22px 50px rgba(96,33,42,.08),
+        0 10px 24px rgba(35,24,27,.08),
+        inset 0 1px 0 rgba(255,255,255,.68);
+    }
+
+    html.light-readable .page-pinnwand .pin-board {
+      background:
+        radial-gradient(820px 300px at 0% 0%, rgba(188,25,41,.12), transparent 58%),
+        radial-gradient(420px 180px at 100% 0%, rgba(255,255,255,.75), transparent 70%),
+        linear-gradient(180deg, rgba(255,250,249,.98), rgba(248,242,241,.99));
+    }
+
+    html.light-readable .page-pinnwand .pin-board__head {
+      border-bottom-color: rgba(218,202,203,.9);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.9), rgba(248,240,239,.95)),
+        linear-gradient(90deg, rgba(188,25,41,.06), transparent 45%);
+    }
+
+    html.light-readable .page-pinnwand .pin-board__title {
+      color: #1d1619;
+    }
+
+    html.light-readable .page-pinnwand .pin-board__meta {
+      border-color: rgba(204,187,189,.9);
+      background: rgba(255,255,255,.78);
+      color: #5a474b;
+    }
+
+    html.light-readable .page-pinnwand .pin-board__viewport {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.5), transparent 18%),
+        repeating-linear-gradient(
+          180deg,
+          rgba(134,98,104,.05) 0,
+          rgba(134,98,104,.05) 1px,
+          transparent 1px,
+          transparent 56px
+        );
+    }
+
+    html.light-readable .page-pinnwand .pin-board__empty {
+      border-color: rgba(211,191,194,.95);
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(247,239,238,.95));
+      color: #6a575b;
+    }
+
+    html.light-readable .page-pinnwand .pin-board__empty strong {
+      color: #21191c;
+    }
+
+    html.light-readable .page-pinnwand .pin-card {
+      border-color: rgba(206,188,191,.95);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(246,239,238,.98));
+      box-shadow:
+        0 18px 30px rgba(91,34,42,.08),
+        inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    html.light-readable .page-pinnwand .pin-chip {
+      border-color: rgba(212,195,197,.95);
+      background: rgba(255,255,255,.86);
+      color: #6e5c60;
+    }
+
+    html.light-readable .page-pinnwand .pin-chip--author {
+      border-color: rgba(188,25,41,.22);
+      background: rgba(188,25,41,.08);
+      color: #281d20;
+    }
+
+    html.light-readable .page-pinnwand .pin-card__body {
+      color: #2a2024;
+    }
+
+    html.light-readable .page-pinnwand .pin-reply {
+      border-color: rgba(214,197,199,.95);
+      background: linear-gradient(180deg, rgba(252,245,244,.95), rgba(246,239,238,.98));
+    }
+
+    html.light-readable .page-pinnwand .pin-reply strong {
+      color: #231a1d;
+    }
+
+    html.light-readable .page-pinnwand .pin-reply p,
+    html.light-readable .page-pinnwand .pin-compose > p,
+    html.light-readable .page-pinnwand .pin-form__meta,
+    html.light-readable .page-pinnwand .pin-form__status,
+    html.light-readable .page-pinnwand .pin-form__subhint,
+    html.light-readable .page-pinnwand .pin-form label {
+      color: #67555a;
+    }
+
+    html.light-readable .page-pinnwand .pin-compose {
+      background:
+        radial-gradient(620px 220px at 100% 0%, rgba(188,25,41,.08), transparent 60%),
+        linear-gradient(180deg, rgba(255,251,250,.98), rgba(248,241,240,.99));
+    }
+
+    html.light-readable .page-pinnwand .pin-compose h1,
+    html.light-readable .page-pinnwand .pin-compose h2,
+    html.light-readable .page-pinnwand .pin-form__status.is-live {
+      color: #1f171a;
+    }
+
+    html.light-readable .page-pinnwand .pin-rule {
+      border-color: rgba(188,25,41,.18);
+      background: linear-gradient(180deg, rgba(188,25,41,.06), rgba(255,250,249,.9));
+      color: #4e3f44;
+    }
+
+    html.light-readable .page-pinnwand .pin-form textarea,
+    html.light-readable .page-pinnwand .pin-form select,
+    html.light-readable .page-pinnwand .pin-form input[type="text"],
+    html.light-readable .page-pinnwand .pin-form input[type="email"] {
+      border-color: rgba(214,197,199,.95);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(249,243,242,.99));
+      color: #241b1f;
+    }
+
+    html.light-readable .page-pinnwand .pin-form textarea:focus,
+    html.light-readable .page-pinnwand .pin-form select:focus,
+    html.light-readable .page-pinnwand .pin-form input[type="text"]:focus,
+    html.light-readable .page-pinnwand .pin-form input[type="email"]:focus {
+      background: rgba(255,255,255,.99);
     }
 
     @media (min-width: 760px) {
@@ -456,6 +633,18 @@
         emptyState.hidden = items > 0;
       }
 
+      async function readJsonResponse(response, fallbackMessage) {
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (error) {
+          if (!response.ok) {
+            throw new Error(fallbackMessage);
+          }
+          throw new Error("Pinnwand ist gerade nicht erreichbar. Bitte später noch einmal versuchen.");
+        }
+      }
+
       async function loadPosts() {
         status.classList.remove("is-live");
         status.textContent = "";
@@ -464,7 +653,7 @@
           const response = await fetch("/api/pinnwand", {
             headers: { Accept: "application/json" }
           });
-          const data = await response.json();
+          const data = await readJsonResponse(response, "Pinnwand konnte nicht geladen werden.");
           if (!response.ok) {
             throw new Error(data.error || "Pinnwand konnte nicht geladen werden.");
           }
@@ -513,7 +702,7 @@
               email: form.querySelector("#pin-email")?.value || ""
             })
           });
-          const data = await response.json();
+          const data = await readJsonResponse(response, "Beitrag konnte nicht gespeichert werden.");
           if (!response.ok) {
             throw new Error(data.error || "Beitrag konnte nicht gespeichert werden.");
           }

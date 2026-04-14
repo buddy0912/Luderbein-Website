@@ -2831,3 +2831,338 @@ button.preview-summary-preview__frame {
   }
 
 }
+
+html.light-readable .preview-note,
+html.light-readable .preview-steps,
+html.light-readable .preview-card,
+html.light-readable .preview-mobile-sticky__inner,
+html.light-readable .preview-summary-card,
+html.light-readable .preview-summary-panel,
+html.light-readable .preview-price-box,
+html.light-readable .preview-motif-overlay__panel {
+  border-color: rgba(126,105,97,.16);
+  background: linear-gradient(180deg, rgba(255,255,255,.985), rgba(245,238,231,.94));
+  box-shadow:
+    0 18px 36px rgba(74,48,39,.06),
+    0 2px 8px rgba(74,48,39,.03);
+}
+
+html.light-readable .preview-kicker,
+html.light-readable .preview-stage-meta p,
+html.light-readable .preview-source span,
+html.light-readable .preview-caption,
+html.light-readable .preview-help,
+html.light-readable .preview-status,
+html.light-readable .preview-inline-note,
+html.light-readable .preview-summary-toggle__meta,
+html.light-readable .preview-price-box__kicker,
+html.light-readable .preview-price-box__item-meta,
+html.light-readable .preview-price-box__hint,
+html.light-readable .preview-price-box__subhint,
+html.light-readable .preview-step p,
+html.light-readable .preview-note,
+html.light-readable .preview-mobile-sticky__label,
+html.light-readable .preview-mobile-sticky__meta,
+html.light-readable .preview-side-switch__label,
+html.light-readable .preview-option__meta,
+html.light-readable .preview-feedback-status,
+html.light-readable .preview-option-grid__section-label {
+  color: #6b5c5d;
+}
+
+html.light-readable .preview-card__head h2,
+html.light-readable .preview-control-group h3,
+html.light-readable .preview-stage-meta strong,
+html.light-readable .preview-side-switch__copy strong,
+html.light-readable .preview-field__label,
+html.light-readable .preview-range-label-row,
+html.light-readable .preview-character-count,
+html.light-readable .preview-summary-panel__title,
+html.light-readable .preview-summary-item strong,
+html.light-readable .preview-summary-price strong,
+html.light-readable .preview-price-box__title,
+html.light-readable .preview-price-box__item-head strong,
+html.light-readable .preview-price-box__row strong,
+html.light-readable .preview-price-box__row--total strong,
+html.light-readable .preview-option__title,
+html.light-readable .selection-header-row__title,
+html.light-readable .preview-mobile-sticky__copy strong,
+html.light-readable .preview-step span {
+  color: #241c1d;
+}
+
+html.light-readable .preview-chip,
+html.light-readable .preview-help-trigger,
+html.light-readable .preview-summary-launch,
+html.light-readable .preview-summary-toggle,
+html.light-readable .preview-summary-panel__close,
+html.light-readable .preview-side-switch__button,
+html.light-readable .preview-size-chip,
+html.light-readable .preview-toggle-button,
+html.light-readable .preview-nudge__button,
+html.light-readable .preview-request-menu__item,
+html.light-readable .preview-feedback-choice {
+  border-color: rgba(126,105,97,.18);
+  background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(242,234,226,.84));
+  color: #241c1d;
+  box-shadow:
+    0 5px 14px rgba(74,48,39,.04),
+    inset 0 1px 0 rgba(255,255,255,.74);
+}
+
+html.light-readable .preview-help-trigger:hover,
+html.light-readable .preview-help-trigger:focus-visible,
+html.light-readable .preview-summary-launch:hover,
+html.light-readable .preview-summary-launch:focus-visible,
+html.light-readable .preview-summary-toggle:hover,
+html.light-readable .preview-summary-toggle:focus-visible,
+html.light-readable .preview-summary-panel__close:hover,
+html.light-readable .preview-summary-panel__close:focus-visible,
+html.light-readable .preview-side-switch__button:hover,
+html.light-readable .preview-side-switch__button:focus-visible,
+html.light-readable .preview-size-chip:hover,
+html.light-readable .preview-size-chip:focus-visible,
+html.light-readable .preview-toggle-button:hover,
+html.light-readable .preview-toggle-button:focus-visible,
+html.light-readable .preview-nudge__button:hover,
+html.light-readable .preview-nudge__button:focus-visible,
+html.light-readable .preview-request-menu__item:hover,
+html.light-readable .preview-request-menu__item:focus-visible,
+html.light-readable .preview-feedback-choice:hover,
+html.light-readable .preview-feedback-choice:focus-within {
+  border-color: rgba(154,25,32,.34);
+  background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(247,239,232,.92));
+  color: #241c1d;
+}
+
+html.light-readable .preview-side-switch__button.is-active,
+html.light-readable .preview-size-chip.is-active,
+html.light-readable .preview-toggle-button.is-active,
+html.light-readable .preview-toggle-button[aria-pressed="true"] {
+  border-color: rgba(138,20,27,.48);
+  background: linear-gradient(180deg, rgba(247,234,228,.98), rgba(239,225,219,.92));
+  box-shadow:
+    0 12px 26px rgba(121,12,19,.09),
+    inset 0 1px 0 rgba(255,255,255,.74);
+  color: #241c1d;
+}
+
+html.light-readable .preview-stage-frame,
+html.light-readable .preview-summary-preview__frame,
+html.light-readable .preview-mobile-sticky__frame,
+html.light-readable .preview-summary-lightbox__stage {
+  border-color: rgba(126,105,97,.16);
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.76), transparent 44%),
+    linear-gradient(180deg, rgba(250,244,239,.98), rgba(238,230,223,.92));
+}
+
+html.light-readable .preview-stage-overlay,
+html.light-readable .preview-summary-preview__overlay {
+  border-color: rgba(126,105,97,.18);
+  background: rgba(255,250,247,.84);
+  color: #5b4748;
+  backdrop-filter: blur(10px);
+}
+
+html.light-readable .preview-source,
+html.light-readable .preview-side-switch-group,
+html.light-readable .preview-summary-item,
+html.light-readable .preview-summary-price,
+html.light-readable .preview-price-box__summary,
+html.light-readable .preview-price-box__item,
+html.light-readable .preview-control-group[data-step-state="active"],
+html.light-readable .preview-control-group--notice {
+  border-color: rgba(126,105,97,.16);
+  background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(244,236,229,.88));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+html.light-readable .preview-control-group,
+html.light-readable .preview-control-group--subsection {
+  border-top-color: rgba(126,105,97,.16);
+}
+
+html.light-readable .preview-control-group[data-step-state="completed"] .preview-control-title-row::after {
+  border-color: rgba(126,105,97,.14);
+  background: rgba(255,255,255,.68);
+  color: #6b5c5d;
+}
+
+html.light-readable .preview-control-group--notice p,
+html.light-readable .preview-help--notice {
+  color: #5f4244;
+}
+
+html.light-readable .preview-help--notice,
+html.light-readable .preview-control-group--notice {
+  border-color: rgba(173,24,34,.22);
+  background: linear-gradient(180deg, rgba(255,246,244,.98), rgba(247,233,230,.94));
+}
+
+html.light-readable .preview-text-input,
+html.light-readable .preview-select,
+html.light-readable .preview-textarea {
+  border-color: rgba(126,105,97,.18);
+  background: linear-gradient(180deg, rgba(255,255,255,.97), rgba(244,236,229,.9));
+  color: #241c1d;
+}
+
+html.light-readable .preview-text-input::placeholder,
+html.light-readable .preview-textarea::placeholder {
+  color: rgba(115,97,95,.72);
+}
+
+html.light-readable .preview-text-input:focus-visible,
+html.light-readable .preview-select:focus-visible,
+html.light-readable .preview-textarea:focus-visible {
+  outline: 2px solid rgba(173,24,34,.18);
+  outline-offset: 2px;
+}
+
+html.light-readable .preview-select {
+  background-image:
+    linear-gradient(45deg, transparent 50%, rgba(68,53,52,.72) 50%),
+    linear-gradient(135deg, rgba(68,53,52,.72) 50%, transparent 50%);
+}
+
+html.light-readable .preview-select option {
+  color: #241c1d;
+  background: #f8f3ed;
+}
+
+html.light-readable .preview-range::-webkit-slider-runnable-track,
+html.light-readable #motifAdjustGroup .preview-range::-webkit-slider-runnable-track,
+html.light-readable #rotationGroup .preview-range::-webkit-slider-runnable-track,
+html.light-readable #textGroup .preview-range::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, rgba(173,24,34,.72), rgba(166,147,141,.32));
+}
+
+html.light-readable .preview-range::-moz-range-track,
+html.light-readable #motifAdjustGroup .preview-range::-moz-range-track,
+html.light-readable #rotationGroup .preview-range::-moz-range-track,
+html.light-readable #textGroup .preview-range::-moz-range-track {
+  background: linear-gradient(90deg, rgba(173,24,34,.72), rgba(166,147,141,.32));
+}
+
+html.light-readable .preview-range::-webkit-slider-thumb,
+html.light-readable #motifAdjustGroup .preview-range::-webkit-slider-thumb,
+html.light-readable #rotationGroup .preview-range::-webkit-slider-thumb,
+html.light-readable #textGroup .preview-range::-webkit-slider-thumb,
+html.light-readable .preview-range::-moz-range-thumb,
+html.light-readable #motifAdjustGroup .preview-range::-moz-range-thumb,
+html.light-readable #rotationGroup .preview-range::-moz-range-thumb,
+html.light-readable #textGroup .preview-range::-moz-range-thumb {
+  border-color: rgba(126,105,97,.18);
+  background: #fffaf7;
+  box-shadow: 0 2px 8px rgba(74,48,39,.12);
+}
+
+html.light-readable .preview-price-box__row,
+html.light-readable .preview-price-box__item-head span,
+html.light-readable .preview-summary-price p {
+  color: #655658;
+}
+
+html.light-readable .preview-price-box__row--total {
+  background: linear-gradient(180deg, rgba(247,234,228,.98), rgba(239,225,219,.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+html.light-readable .preview-price-box__row--total span {
+  color: #5f4244;
+}
+
+html.light-readable .preview-request-menu {
+  border-color: rgba(126,105,97,.16);
+  background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(244,236,229,.95));
+  box-shadow: 0 18px 40px rgba(74,48,39,.12);
+}
+
+html.light-readable .preview-actions .btn:disabled,
+html.light-readable .preview-request .btn:disabled {
+  border-color: rgba(126,105,97,.14);
+  background: linear-gradient(180deg, rgba(250,246,241,.78), rgba(237,230,224,.72));
+  color: #998c88;
+  box-shadow: none;
+}
+
+html.light-readable .preview-option {
+  border-color: rgba(126,105,97,.16);
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(244,236,229,.88));
+  color: #241c1d;
+  box-shadow:
+    0 12px 24px rgba(74,48,39,.05),
+    inset 0 1px 0 rgba(255,255,255,.7);
+}
+
+html.light-readable .preview-option:hover,
+html.light-readable .preview-option:focus-visible {
+  border-color: rgba(154,25,32,.34);
+  background: linear-gradient(180deg, rgba(255,255,255,.99), rgba(247,239,232,.92));
+  box-shadow:
+    0 14px 28px rgba(74,48,39,.06),
+    inset 0 1px 0 rgba(255,255,255,.74);
+}
+
+html.light-readable .preview-option.is-active {
+  border-color: rgba(138,20,27,.48);
+  background: linear-gradient(180deg, rgba(247,234,228,.98), rgba(239,225,219,.92));
+  box-shadow:
+    0 14px 28px rgba(121,12,19,.09),
+    inset 0 1px 0 rgba(255,255,255,.72);
+}
+
+html.light-readable .preview-option__price,
+html.light-readable .preview-option__status-badge--quiet {
+  border-color: rgba(126,105,97,.14);
+  background: rgba(255,255,255,.7);
+  color: #5f4244;
+}
+
+html.light-readable .preview-option__price strong {
+  color: #241c1d;
+}
+
+html.light-readable .preview-option--set {
+  border-color: rgba(126,105,97,.14);
+  background: linear-gradient(180deg, rgba(250,245,240,.98), rgba(241,233,226,.92));
+}
+
+html.light-readable .preview-option--set .preview-option__thumb {
+  border-color: rgba(126,105,97,.12);
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255,255,255,.46), rgba(255,255,255,0) 44%),
+    linear-gradient(180deg, rgba(244,238,232,.94), rgba(230,222,214,.96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.58);
+}
+
+html.light-readable .preview-motif-overlay__backdrop,
+html.light-readable .preview-summary-lightbox,
+html.light-readable .preview-summary-card {
+  background: rgba(88,72,67,.22);
+  backdrop-filter: blur(8px);
+}
+
+html.light-readable .preview-summary-lightbox__close {
+  border-color: rgba(126,105,97,.16);
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(242,234,226,.86));
+  color: #241c1d;
+}
+
+html.light-readable .preview-feedback-choice input {
+  accent-color: #b81922;
+}
+
+html.light-readable .preview-option--symbol-category .preview-option__status-badge {
+  border-color: rgba(126,105,97,.14);
+  background: rgba(255,255,255,.92);
+  color: #241c1d;
+  box-shadow: 0 8px 18px rgba(74,48,39,.10);
+}
+
+html.light-readable .preview-option--symbol-category[data-category-status="coming-soon"] .preview-option__status-badge {
+  background: rgba(89,76,74,.86);
+  border-color: rgba(255,255,255,.18);
+  color: #fff7f5;
+}
