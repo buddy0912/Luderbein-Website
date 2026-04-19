@@ -28,8 +28,6 @@
   const LB_LIGHT_MODE_KEY = "lb-light-readable";
   const LB_LIGHT_MODE_CLASS = "light-readable";
   const LB_LIGHT_MODE_EXCLUDED_PATHS = [
-    "/tools/vorschau/",
-    "/tools/kalkulator/",
     "/tools/schwibbogen-konfigurator/",
   ];
 

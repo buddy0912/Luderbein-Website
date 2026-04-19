@@ -383,6 +383,44 @@
         </div>
       </a>
 
+      <div class="nav-quick">
+        <button
+          type="button"
+          class="lb-lightmode-toggle"
+          id="lb-lightmode-toggle-quick"
+          aria-pressed="false"
+          aria-label="Helle Ansicht umschalten"
+        >
+          <span class="lb-lightmode-toggle__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="4.4" stroke="currentColor" stroke-width="1.8"></circle>
+              <path d="M12 2.75V5.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M12 18.9V21.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M21.25 12H18.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              <path d="M5.1 12H2.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+            </svg>
+          </span>
+          <span class="lb-lightmode-toggle__label">Helle Ansicht</span>
+        </button>
+        <a
+          class="nav-symbol-link"
+          id="lb-idea-wall-link"
+          href="/ideenpinnwand/"
+          aria-label="Ideen- und Diskussionspinnwand"
+          title="Ideen- und Diskussionspinnwand"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="5.5" y="4.75" width="13" height="13" rx="1.8" stroke="currentColor" stroke-width="1.6"></rect>
+            <path d="M8 8.25H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M8 12H14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M9 4.75V2.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M15 4.75V2.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M12 17.75V21.25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M9.5 21.25H14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+          </svg>
+        </a>
+      </div>
+
       <button
         class="navbtn"
         type="button"
@@ -395,6 +433,26 @@
       </button>
 
       <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <div class="lb-lightmode-menuitem">
+          <button
+            type="button"
+            class="lb-lightmode-toggle"
+            id="lb-lightmode-toggle-menu"
+            aria-pressed="false"
+            aria-label="Helle Ansicht umschalten"
+          >
+            <span class="lb-lightmode-toggle__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="4.4" stroke="currentColor" stroke-width="1.8"></circle>
+                <path d="M12 2.75V5.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                <path d="M12 18.9V21.25" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                <path d="M21.25 12H18.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                <path d="M5.1 12H2.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+            </span>
+            <span class="lb-lightmode-toggle__label">Helle Ansicht</span>
+          </button>
+        </div>
         <a href="/">Start</a>
 
         <div class="navdrop" data-navdrop>
@@ -425,10 +483,12 @@
             <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
             <div class="navdrop__sep" aria-hidden="true"></div>
             <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/tools/vorschau/" role="menuitem">Motiv-Vorschau</a>
             <a href="/service/" role="menuitem">Downloads</a>
           </div>
         </div>
 
+        <a href="/b2b/">B2B</a>
         <a href="/ueber/">Über</a>
         <a href="/kontakt/">Kontakt</a>
         <a href="/rechtliches/">Rechtliches</a>
