@@ -401,63 +401,137 @@
                 id: "round-tag",
                 name: "Rundes Blättchen",
                 description: "Rundes Modell.",
-                sizes: [
-                  {
-                    id: "8mm",
-                    label: "8 mm",
-                    diameterMm: 8,
-                    productRadius: 180,
-                    engravingRatio: 0.94,
-                    ringOuter: 54,
-                    ringInner: 26,
-                    ringY: 362,
-                    lift: 56
-                  },
-                  {
-                    id: "10mm",
-                    label: "10 mm",
-                    diameterMm: 10,
-                    productRadius: 210,
-                    engravingRatio: 0.95,
-                    ringOuter: 58,
-                    ringInner: 28,
-                    ringY: 334,
-                    lift: 64
-                  },
-                  {
-                    id: "12mm",
-                    label: "12 mm",
-                    diameterMm: 12,
-                    productRadius: 238,
-                    engravingRatio: 0.955,
-                    ringOuter: 62,
-                    ringInner: 30,
-                    ringY: 306,
-                    lift: 72
-                  },
-                  {
-                    id: "15mm",
-                    label: "15 mm",
-                    diameterMm: 15,
-                    productRadius: 272,
-                    engravingRatio: 0.96,
-                    ringOuter: 68,
-                    ringInner: 32,
-                    ringY: 272,
-                    lift: 82
-                  },
-                  {
-                    id: "20mm",
-                    label: "20 mm",
-                    diameterMm: 20,
-                    productRadius: 326,
-                    engravingRatio: 0.965,
-                    ringOuter: 78,
-                    ringInner: 38,
-                    ringY: 214,
-                    lift: 98
-                  }
-                ]
+                sizesByFinish: {
+                  silver: [
+                    {
+                      id: "8mm",
+                      label: "8 mm",
+                      diameterMm: 8,
+                      productRadius: 180,
+                      engravingRatio: 0.94,
+                      ringOuter: 54,
+                      ringInner: 26,
+                      ringY: 362,
+                      lift: 56
+                    },
+                    {
+                      id: "10mm",
+                      label: "10 mm",
+                      diameterMm: 10,
+                      productRadius: 210,
+                      engravingRatio: 0.95,
+                      ringOuter: 58,
+                      ringInner: 28,
+                      ringY: 334,
+                      lift: 64
+                    },
+                    {
+                      id: "12mm",
+                      label: "12 mm",
+                      diameterMm: 12,
+                      productRadius: 238,
+                      engravingRatio: 0.955,
+                      ringOuter: 62,
+                      ringInner: 30,
+                      ringY: 306,
+                      lift: 72
+                    },
+                    {
+                      id: "15mm",
+                      label: "15 mm",
+                      diameterMm: 15,
+                      productRadius: 272,
+                      engravingRatio: 0.96,
+                      ringOuter: 68,
+                      ringInner: 32,
+                      ringY: 272,
+                      lift: 82
+                    },
+                    {
+                      id: "20mm",
+                      label: "20 mm",
+                      diameterMm: 20,
+                      productRadius: 326,
+                      engravingRatio: 0.965,
+                      ringOuter: 78,
+                      ringInner: 38,
+                      ringY: 214,
+                      lift: 98
+                    }
+                  ],
+                  gold: [
+                    {
+                      id: "8mm",
+                      label: "8 mm",
+                      diameterMm: 8,
+                      productRadius: 180,
+                      engravingRatio: 0.94,
+                      ringOuter: 54,
+                      ringInner: 26,
+                      ringY: 362,
+                      lift: 56
+                    },
+                    {
+                      id: "10mm",
+                      label: "10 mm",
+                      diameterMm: 10,
+                      productRadius: 210,
+                      engravingRatio: 0.95,
+                      ringOuter: 58,
+                      ringInner: 28,
+                      ringY: 334,
+                      lift: 64
+                    },
+                    {
+                      id: "12mm",
+                      label: "12 mm",
+                      diameterMm: 12,
+                      productRadius: 238,
+                      engravingRatio: 0.955,
+                      ringOuter: 62,
+                      ringInner: 30,
+                      ringY: 306,
+                      lift: 72
+                    },
+                    {
+                      id: "12mm-double-hole",
+                      label: "12 mm / 2 Bohrungen",
+                      diameterMm: 12,
+                      productRadius: 238,
+                      engravingRatio: 0.92,
+                      ringOuter: 62,
+                      ringInner: 30,
+                      ringY: 306,
+                      lift: 72,
+                      attachmentType: "double-hole",
+                      holeOffsetX: 186,
+                      holeOffsetY: 0,
+                      holeRadius: 17
+                    },
+                    {
+                      id: "15mm",
+                      label: "15 mm",
+                      diameterMm: 15,
+                      productRadius: 272,
+                      engravingRatio: 0.96,
+                      ringOuter: 68,
+                      ringInner: 32,
+                      ringY: 272,
+                      lift: 82
+                    },
+                    {
+                      id: "30mm",
+                      label: "30 mm",
+                      diameterMm: 30,
+                      productRadius: 410,
+                      engravingRatio: 0.97,
+                      ringOuter: 88,
+                      ringInner: 42,
+                      ringY: 126,
+                      lift: 120
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -4070,9 +4144,10 @@
 
     const product = getActiveProduct();
     if (!product) return;
-    if (!Array.isArray(product.sizes) || !product.sizes.length) return;
+    const sizes = getAvailableProductSizes(product);
+    if (!sizes.length) return;
 
-    product.sizes.forEach((size) => {
+    sizes.forEach((size) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "preview-size-chip";
@@ -6891,6 +6966,7 @@
       }
 
       drawProductHighlights(size);
+      drawRoundTagHoleCutouts(size);
     });
 
     drawPendantSelectionHalo(size, layout, pendantIndex);
@@ -9208,17 +9284,18 @@
 
   function getSmallestPendantRadius() {
     const product = getActiveProduct();
-    if (!product || !Array.isArray(product.sizes) || !product.sizes.length) {
+    const sizes = getAvailableProductSizes(product);
+    if (!sizes.length) {
       return 116;
     }
 
-    return product.sizes.reduce(function (minRadius, size) {
+    return sizes.reduce(function (minRadius, size) {
       const nextRadius = Number(size && size.productRadius);
       if (!Number.isFinite(nextRadius) || nextRadius <= 0) {
         return minRadius;
       }
       return Math.min(minRadius, nextRadius);
-    }, Number(product.sizes[0] && product.sizes[0].productRadius) || 116);
+    }, Number(sizes[0] && sizes[0].productRadius) || 116);
   }
 
   function getMobilePendantPreviewCenterY(sourceHeight) {
@@ -9261,7 +9338,7 @@
       const scale = layout.scale || 1;
       const radius = size.productRadius * scale;
       const horizontalPadding = 24 * scale;
-      const topAttachment = (650 - (size.ringY - size.ringOuter)) * scale;
+      const topAttachment = getRoundPendantTopExtent(size) * scale;
       const left = layout.x - radius - horizontalPadding;
       const top = layout.y - topAttachment;
       const right = layout.x + radius + horizontalPadding;
@@ -9543,8 +9620,6 @@
     const centerX = 600;
     const centerY = 650;
     const radius = size.productRadius;
-    const ringX = 600;
-    const ringY = size.ringY;
     const finishPalette = getPendantFinishPalette();
 
     const gradient = ctx.createLinearGradient(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
@@ -9562,7 +9637,9 @@
     ctx.fill();
     ctx.restore();
 
-    drawRing(ringX, ringY, size);
+    if (getRoundPendantAttachmentType(size) === "outer-ring") {
+      drawRing(centerX, size.ringY, size);
+    }
 
     ctx.save();
     ctx.beginPath();
@@ -9594,6 +9671,105 @@
       ctx.stroke();
     }
 
+    ctx.restore();
+  }
+
+  function getRoundPendantAttachmentType(size) {
+    if (!size) return "outer-ring";
+    if (size.attachmentType === "double-hole") return "double-hole";
+    return Number(size.diameterMm) >= 20 ? "outer-ring" : "single-hole";
+  }
+
+  function getRoundPendantTopExtent(size) {
+    if (!size) return 116;
+    if (getRoundPendantAttachmentType(size) === "outer-ring") {
+      return 650 - (size.ringY - size.ringOuter);
+    }
+    return Number(size.productRadius) + 24;
+  }
+
+  function drawRoundTagHoleCutouts(size) {
+    const attachmentType = getRoundPendantAttachmentType(size);
+    if (attachmentType === "outer-ring") return;
+
+    if (attachmentType === "double-hole") {
+      drawDoubleHoleCutouts(size);
+      return;
+    }
+
+    drawSingleHoleCutout(size);
+  }
+
+  function drawSingleHoleCutout(size) {
+    const radius = Number(size.productRadius) || 180;
+    const holeRadius = Math.max(13, Math.min(21, radius * 0.078));
+    drawPendantHoleCutouts([
+      {
+        x: 600,
+        y: 650 - radius * 0.72,
+        radius: holeRadius
+      }
+    ]);
+  }
+
+  function drawDoubleHoleCutouts(size) {
+    const centerY = 650;
+    const radius = Number(size.productRadius) || 238;
+    const offsetXValue = Number(size.holeOffsetX);
+    const offsetYValue = Number(size.holeOffsetY);
+    const holeRadiusValue = Number(size.holeRadius);
+    const offsetX = Number.isFinite(offsetXValue) ? offsetXValue : 72;
+    const offsetY = Number.isFinite(offsetYValue) ? offsetYValue : radius * 0.72;
+    const holeRadius = Number.isFinite(holeRadiusValue) ? holeRadiusValue : Math.max(13, Math.min(20, radius * 0.072));
+    drawPendantHoleCutouts([
+      { x: 600 - offsetX, y: centerY - offsetY, radius: holeRadius },
+      { x: 600 + offsetX, y: centerY - offsetY, radius: holeRadius }
+    ]);
+  }
+
+  function drawPendantHoleCutouts(holeCenters) {
+    const finishPalette = getPendantFinishPalette();
+
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    holeCenters.forEach(function (hole) {
+      ctx.beginPath();
+      ctx.arc(hole.x, hole.y, hole.radius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+
+    ctx.save();
+    holeCenters.forEach(function (hole) {
+      const holeGradient = ctx.createRadialGradient(
+        hole.x - hole.radius * 0.35,
+        hole.y - hole.radius * 0.35,
+        hole.radius * 0.2,
+        hole.x,
+        hole.y,
+        hole.radius * 1.05
+      );
+      holeGradient.addColorStop(0, "rgba(80,28,36,0.98)");
+      holeGradient.addColorStop(0.58, "rgba(28,6,12,0.96)");
+      holeGradient.addColorStop(1, "rgba(6,0,4,0.92)");
+
+      ctx.beginPath();
+      ctx.arc(hole.x, hole.y, hole.radius, 0, Math.PI * 2);
+      ctx.fillStyle = holeGradient;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(hole.x, hole.y, hole.radius + 2.8, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(0,0,0,0.28)";
+      ctx.lineWidth = 4.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(hole.x, hole.y, hole.radius + 0.8, 0, Math.PI * 2);
+      ctx.strokeStyle = finishPalette.innerStroke;
+      ctx.lineWidth = 1.6;
+      ctx.stroke();
+    });
     ctx.restore();
   }
 
@@ -10982,6 +11158,17 @@
     return getAvailableFinishes(productFamily).find((finish) => finish.id === state.finishId) || null;
   }
 
+  function getAvailableProductSizes(product, finishId) {
+    if (!product) return [];
+
+    const nextFinishId = finishId || (getActiveFinish() ? getActiveFinish().id : null);
+    if (product.sizesByFinish && nextFinishId && Array.isArray(product.sizesByFinish[nextFinishId])) {
+      return product.sizesByFinish[nextFinishId];
+    }
+
+    return Array.isArray(product.sizes) ? product.sizes : [];
+  }
+
   function getActiveProductDisplayName() {
     const productFamily = getActiveProductFamily();
     if (!productFamily) return "";
@@ -11003,8 +11190,9 @@
   function getActiveSize(pendantIndex) {
     const product = getActiveProduct();
     const targetPendantState = getPendantState(pendantIndex == null ? state.activePendantIndex : pendantIndex);
-    if (!product || !Array.isArray(product.sizes)) return null;
-    return product.sizes.find((size) => size.id === targetPendantState.sizeId) || null;
+    const sizes = getAvailableProductSizes(product);
+    if (!sizes.length) return null;
+    return sizes.find((size) => size.id === targetPendantState.sizeId) || null;
   }
 
   function getActiveTextFont(sideId, pendantIndex) {
