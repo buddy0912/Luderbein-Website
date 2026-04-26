@@ -2930,6 +2930,37 @@ button.preview-summary-preview__frame {
     min-width: 0;
   }
 
+  #sizeOptions.preview-size-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  #sizeOptions .preview-size-group {
+    gap: 8px;
+  }
+
+  #sizeOptions .preview-size-group + .preview-size-group {
+    margin-top: 0;
+  }
+
+  #sizeOptions .preview-size-group__title {
+    font-size: .76rem;
+    line-height: 1.1;
+  }
+
+  #sizeOptions .preview-size-group__options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #sizeOptions .preview-size-chip {
+    width: 100%;
+    min-height: 46px;
+    padding: 0 12px;
+    text-align: center;
+  }
+
   .preview-nudge {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     width: 100%;
