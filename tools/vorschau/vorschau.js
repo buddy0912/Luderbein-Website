@@ -148,6 +148,10 @@
   const summaryContent = document.getElementById("summaryContent");
   const summaryPrice = document.getElementById("summaryPrice");
   const summaryPriceHint = document.getElementById("summaryPriceHint");
+  const HEART_TAG_VIEWBOX_WIDTH = 170;
+  const HEART_TAG_VIEWBOX_HEIGHT = 160;
+  const HEART_TAG_PATH_D = "M85 41C79 27 65 18 50 18C30 18 16 34 16 54C16 74 27 90 42 104C58 119 72 132 85 147C98 132 112 119 128 104C143 90 154 74 154 54C154 34 140 18 120 18C105 18 91 27 85 41Z";
+  const HEART_TAG_BASE_PATH = new Path2D(HEART_TAG_PATH_D);
   const pendantSwitchGroup = document.getElementById("pendantSwitchGroup");
   const pendantTabs = document.getElementById("pendantTabs");
   const pendantSwitchStatus = document.getElementById("pendantSwitchStatus");
@@ -186,6 +190,7 @@
   const SIDE_IDS = ["front", "back"];
   const PHOTO_SIZE_12_HINT = "Foto bei 12 mm nur unter Vorbehalt: Ergebnis hängt stark von der Vorlage ab (Kontrast/Details).";
   const PHOTO_DISCOUNT_HINT = "Foto wird händisch optimiert (Zufriedenheitsgarantie). Der Rabatt gilt nur bei identischem Foto (keine Neuaufbereitung).";
+  const HEART_TAG_SINGLE_PRICE_CENTS = 1295;
   const FEEDBACK_REASON_LABELS = {
     orientation: "Ich finde mich nicht zurecht",
     broken: "Die Seite funktioniert nicht richtig",
@@ -529,6 +534,30 @@
                       ringInner: 42,
                       ringY: 126,
                       lift: 120
+                    }
+                  ]
+                }
+              },
+              {
+                id: "heart-tag",
+                name: "Herz",
+                description: "Herzförmiger Anhänger aus Edelstahl.",
+                sizesByFinish: {
+                  silver: [],
+                  gold: [
+                    {
+                      id: "heart-17x16",
+                      label: "17 × 16 mm",
+                      widthMm: 17,
+                      heightMm: 16,
+                      diameterMm: 17,
+                      productRadius: 324,
+                      productWidth: 616,
+                      productHeight: 580,
+                      productCenterY: 690,
+                      holeRadius: 11,
+                      finishId: "gold",
+                      shape: "heart"
                     }
                   ]
                 }
@@ -2860,11 +2889,25 @@
     return sizeGroup ? PRICE_BY_SIZE_GROUP_CENTS[sizeGroup] : 0;
   }
 
+  function isGoldHeartPendantSelection(product, finish) {
+    const activeProduct = product || getActiveProduct();
+    const activeFinish = finish || getActiveFinish();
+    return Boolean(
+      activeProduct &&
+      activeProduct.id === "heart-tag" &&
+      activeFinish &&
+      activeFinish.id === "gold"
+    );
+  }
+
   function getSetDiscountRate(pendantCount) {
     return SET_DISCOUNT_RATES[pendantCount] || 0;
   }
 
-  function getJewelrySetBasePriceCents(count) {
+  function getJewelrySetBasePriceCents(count, product, finish) {
+    if (Number(count) === 1 && isGoldHeartPendantSelection(product, finish)) {
+      return HEART_TAG_SINGLE_PRICE_CENTS;
+    }
     return JEWELRY_SET_BASE_PRICES_CENTS[count] || JEWELRY_SET_BASE_PRICES_CENTS[1];
   }
 
@@ -2952,10 +2995,24 @@
     return Boolean(getSideContentType(sideId, pendantIndex));
   }
 
+  function isHeartTagProduct() {
+    const product = getActiveProduct();
+    return Boolean(product && product.id === "heart-tag");
+  }
+
   function canUsePhotoOnPendant(pendantIndex) {
     if (isSlateProduct()) return true;
+    if (isHeartTagProduct()) return false;
     const size = getActiveSize(pendantIndex);
     return Boolean(size && size.diameterMm >= 12);
+  }
+
+  function shouldDisableTemplateForCurrentSelection(template, pendantIndex) {
+    if (!template) return false;
+    if (template.category === "photo") {
+      return !canUsePhotoOnPendant(pendantIndex);
+    }
+    return false;
   }
 
   function getPhotoIdentityKey(sideId, pendantIndex) {
@@ -3308,7 +3365,11 @@
     });
 
     if (!hasAnyPhotoInPendantSet) {
-      const baseSetPriceCents = getJewelrySetBasePriceCents(getPendantCount());
+      const baseSetPriceCents = getJewelrySetBasePriceCents(
+        getPendantCount(),
+        getActiveProduct(),
+        getActiveFinish()
+      );
       result.discountRate = 0;
       result.subtotalCents = baseSetPriceCents;
       result.items.push({
@@ -4027,7 +4088,7 @@
   }
 
   function getSetStartingPriceCents(count) {
-    return getJewelrySetBasePriceCents(count);
+    return getJewelrySetBasePriceCents(count, getActiveProduct(), getActiveFinish());
   }
 
   function getProductFamilyStartingPriceCents(productFamily) {
@@ -4142,21 +4203,23 @@
   function renderSizeOptions() {
     sizeOptionsEl.innerHTML = "";
 
-    const product = getActiveProduct();
-    if (!product) return;
-    const sizes = getAvailableProductSizes(product);
-    if (!sizes.length) return;
+    const productFamily = getActiveProductFamily();
+    if (!productFamily) return;
 
-    sizes.forEach((size) => {
+    const activePendantState = getActivePendantState();
+
+    function appendSizeButton(targetProduct, size, container) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "preview-size-chip";
       button.setAttribute("data-size-id", size.id);
+      button.setAttribute("data-product-id", targetProduct.id);
       button.textContent = size.label;
+      button.classList.toggle("is-active", activePendantState.sizeId === size.id && state.productId === targetProduct.id);
 
       button.addEventListener("click", function () {
-        const activePendantState = getActivePendantState();
-        if (activePendantState.sizeId === size.id) return;
+        if (activePendantState.sizeId === size.id && state.productId === targetProduct.id) return;
+        state.productId = targetProduct.id;
         activePendantState.sizeId = size.id;
         sanitizePhotoSelectionsForPendant(state.activePendantIndex);
         resetImagePlacement(false);
@@ -4168,7 +4231,41 @@
         queueRender();
       });
 
-      sizeOptionsEl.appendChild(button);
+      container.appendChild(button);
+    }
+
+    if (hasJewelryShapeSelection(productFamily)) {
+      productFamily.products.forEach(function (product) {
+        const sizes = getAvailableProductSizes(product);
+        if (!sizes.length) return;
+
+        const group = document.createElement("div");
+        group.className = "preview-size-group";
+
+        const title = document.createElement("p");
+        title.className = "preview-size-group__title";
+        title.textContent = product.name;
+        group.appendChild(title);
+
+        const options = document.createElement("div");
+        options.className = "preview-size-group__options";
+        sizes.forEach(function (size) {
+          appendSizeButton(product, size, options);
+        });
+
+        group.appendChild(options);
+        sizeOptionsEl.appendChild(group);
+      });
+      return;
+    }
+
+    const product = getActiveProduct();
+    if (!product) return;
+    const sizes = getAvailableProductSizes(product);
+    if (!sizes.length) return;
+
+    sizes.forEach(function (size) {
+      appendSizeButton(product, size, sizeOptionsEl);
     });
   }
 
@@ -4200,10 +4297,15 @@
       const metaMarkup = template.description
         ? '<span class="preview-option__meta">' + escapeHtml(template.description) + "</span>"
         : "";
+      const isDisabled = shouldDisableTemplateForCurrentSelection(template);
       button.type = "button";
       button.className = "preview-option";
       if (template.id === "symbol-template") {
         button.classList.add("preview-option--template-symbol-template");
+      }
+      if (isDisabled) {
+        button.classList.add("is-disabled");
+        button.disabled = true;
       }
       button.setAttribute("data-template-id", template.id);
       button.innerHTML =
@@ -4212,6 +4314,7 @@
         metaMarkup;
 
       button.addEventListener("click", function () {
+        if (shouldDisableTemplateForCurrentSelection(template)) return;
         selectMotifTemplate(template.id);
       });
 
@@ -4559,7 +4662,7 @@
   function selectMotifTemplate(templateId) {
     const template = getTemplateById(templateId);
     if (!template) return;
-    if (template.category === "photo" && !canUsePhotoOnPendant()) return;
+    if (shouldDisableTemplateForCurrentSelection(template)) return;
 
     const activeSideState = getActiveSideState();
     const isPhotoTemplate = template.category === "photo";
@@ -5744,7 +5847,7 @@
       const size = getActiveSize(pendantIndex);
       const dx = x - layout.x;
       const dy = y - layout.y;
-      const radius = (size ? size.productRadius : 116) * layout.scale;
+      const radius = getPendantBoundingRadius(size) * layout.scale;
       return Math.sqrt(dx * dx + dy * dy) <= radius;
     });
   }
@@ -5762,7 +5865,7 @@
       const size = getActiveSize(pendantIndex);
       const dx = sourcePoint.x - layout.x;
       const dy = sourcePoint.y - layout.y;
-      const radius = (size ? size.productRadius : 116) * layout.scale;
+      const radius = getPendantBoundingRadius(size) * layout.scale;
       const distanceRatio = Math.sqrt(dx * dx + dy * dy) / Math.max(radius, 1);
       if (distanceRatio <= 1 && distanceRatio < bestDistanceRatio) {
         bestDistanceRatio = distanceRatio;
@@ -6062,7 +6165,31 @@
     activeSideState.textOffsetY = clamp(activeSideState.textOffsetY, Math.min(defaultOffsetY, -maxOffsetY), maxOffsetY);
   }
 
+  function clearInvalidTemplateSelections() {
+    getPendantIndices().forEach(function (pendantIndex) {
+      SIDE_IDS.forEach(function (sideId) {
+        const sideState = getSideState(sideId, pendantIndex);
+        const template = getTemplateById(sideState.templateId);
+        if (!shouldDisableTemplateForCurrentSelection(template, pendantIndex)) {
+          return;
+        }
+
+        sideState.templateId = null;
+        sideState.motifVariantId = null;
+        sideState.animalGroupId = null;
+        sideState.emblemVariantId = null;
+        sideState.emblemKindId = null;
+        if (!isEmblemUploadSelected(sideId, pendantIndex)) {
+          sideState.uploadedImage = null;
+          sideState.uploadedImageSrc = "";
+          sideState.uploadedFileName = "";
+        }
+      });
+    });
+  }
+
   function syncUi() {
+    clearInvalidTemplateSelections();
     const activeMaterial = getActiveMaterial();
     const activeProduct = getActiveProduct();
     const activeProductFamily = getActiveProductFamily();
@@ -6086,7 +6213,7 @@
             ? getActiveProductDisplayName()
           : isSlateProduct()
             ? getActiveProductDisplayName()
-            : "Rundes Edelstahl-Plättchen")
+            : (isHeartPendant(activeSize) ? "Herz Edelstahl-Anhänger" : "Rundes Edelstahl-Plättchen"))
         : "Vorschau";
     }
 
@@ -6466,7 +6593,11 @@
     });
 
     sizeOptionsEl.querySelectorAll("[data-size-id]").forEach((button) => {
-      button.classList.toggle("is-active", button.getAttribute("data-size-id") === getActivePendantState().sizeId);
+      button.classList.toggle(
+        "is-active",
+        button.getAttribute("data-size-id") === getActivePendantState().sizeId &&
+        button.getAttribute("data-product-id") === state.productId
+      );
     });
 
     designModeOptionsEl.querySelectorAll("[data-design-mode]").forEach((button) => {
@@ -6489,10 +6620,10 @@
     templateOptionsEl.querySelectorAll("[data-template-id]").forEach((button) => {
       const template = getTemplateById(button.getAttribute("data-template-id"));
       const activeTopLevelId = getActiveTopLevelTemplateId();
-      const isPhotoDisabled = Boolean(template && template.category === "photo" && !canUsePhotoOnPendant());
+      const isDisabled = shouldDisableTemplateForCurrentSelection(template);
       button.classList.toggle("is-active", template && template.id === activeTopLevelId);
-      button.classList.toggle("is-disabled", isPhotoDisabled);
-      button.disabled = isPhotoDisabled;
+      button.classList.toggle("is-disabled", isDisabled);
+      button.disabled = isDisabled;
     });
 
     motifOverlayOptionsEl.querySelectorAll("[data-animal-group-id]").forEach((button) => {
@@ -6982,7 +7113,7 @@
   }
 
   function drawPendantSelectionHalo(size, layout, pendantIndex) {
-    const radius = size.productRadius * layout.scale;
+    const radius = getPendantBoundingRadius(size) * layout.scale;
     ctx.save();
     ctx.beginPath();
     ctx.arc(layout.x, layout.y, radius + 18, 0, Math.PI * 2);
@@ -9290,12 +9421,12 @@
     }
 
     return sizes.reduce(function (minRadius, size) {
-      const nextRadius = Number(size && size.productRadius);
+      const nextRadius = getPendantBoundingRadius(size);
       if (!Number.isFinite(nextRadius) || nextRadius <= 0) {
         return minRadius;
       }
       return Math.min(minRadius, nextRadius);
-    }, Number(sizes[0] && sizes[0].productRadius) || 116);
+    }, getPendantBoundingRadius(sizes[0]));
   }
 
   function getMobilePendantPreviewCenterY(sourceHeight) {
@@ -9336,7 +9467,7 @@
       if (!size) return;
 
       const scale = layout.scale || 1;
-      const radius = size.productRadius * scale;
+      const radius = getPendantBoundingRadius(size) * scale;
       const horizontalPadding = 24 * scale;
       const topAttachment = getRoundPendantTopExtent(size) * scale;
       const left = layout.x - radius - horizontalPadding;
@@ -9617,6 +9748,11 @@
   }
 
   function drawRoundTagBase(size) {
+    if (isHeartPendant(size)) {
+      drawHeartPendantBase(size);
+      return;
+    }
+
     const centerX = 600;
     const centerY = 650;
     const radius = size.productRadius;
@@ -9676,12 +9812,17 @@
 
   function getRoundPendantAttachmentType(size) {
     if (!size) return "outer-ring";
+    if (isHeartPendant(size)) return "single-hole";
     if (size.attachmentType === "double-hole") return "double-hole";
     return Number(size.diameterMm) >= 20 ? "outer-ring" : "single-hole";
   }
 
   function getRoundPendantTopExtent(size) {
     if (!size) return 116;
+    if (isHeartPendant(size)) {
+      const heartMetrics = getHeartPendantMetrics(size);
+      return 650 - heartMetrics.topY;
+    }
     if (getRoundPendantAttachmentType(size) === "outer-ring") {
       return 650 - (size.ringY - size.ringOuter);
     }
@@ -9701,6 +9842,11 @@
   }
 
   function drawSingleHoleCutout(size) {
+    if (isHeartPendant(size)) {
+      drawHeartTabHoleCutout(size);
+      return;
+    }
+
     const radius = Number(size.productRadius) || 180;
     const holeRadius = Math.max(13, Math.min(21, radius * 0.078));
     drawPendantHoleCutouts([
@@ -9797,6 +9943,178 @@
     ctx.restore();
   }
 
+  function isHeartPendant(size) {
+    return Boolean(size && size.shape === "heart");
+  }
+
+  function getPendantBoundingRadius(size) {
+    if (!size) return 116;
+    if (isHeartPendant(size)) {
+      const metrics = getHeartPendantMetrics(size, 0);
+      return Math.max(metrics.width, metrics.height) / 2;
+    }
+    const radius = Number(size.productRadius);
+    return Number.isFinite(radius) && radius > 0 ? radius : 116;
+  }
+
+  function getHeartPendantMetrics(size, insetValue) {
+    const inset = Math.max(0, Number(insetValue) || 0);
+    const baseWidth = Number(size && size.productWidth) || 604;
+    const baseHeight = Number(size && size.productHeight) || Math.round(baseWidth * (HEART_TAG_VIEWBOX_HEIGHT / HEART_TAG_VIEWBOX_WIDTH));
+    const width = Math.max(220, baseWidth - inset * 2);
+    const height = Math.max(208, baseHeight - inset * 2);
+    const centerX = 600;
+    const centerY = Number(size && size.productCenterY) || 690;
+    const topY = centerY - height / 2;
+    const holeRadius = Math.max(7, (Number(size && size.holeRadius) || 11) - inset * 0.18);
+    const holeCenterY = topY + height * 0.23;
+
+    return {
+      centerX: centerX,
+      centerY: centerY,
+      width: width,
+      height: height,
+      topY: topY,
+      holeRadius: holeRadius,
+      holeCenterX: centerX,
+      holeCenterY: holeCenterY
+    };
+  }
+
+  function buildHeartPath(metrics) {
+    const path = new Path2D();
+    path.addPath(
+      HEART_TAG_BASE_PATH,
+      new DOMMatrix([
+        metrics.width / HEART_TAG_VIEWBOX_WIDTH,
+        0,
+        0,
+        metrics.height / HEART_TAG_VIEWBOX_HEIGHT,
+        metrics.centerX - metrics.width / 2,
+        metrics.centerY - metrics.height / 2
+      ])
+    );
+    return path;
+  }
+
+  function getHeartMotifMetrics(size) {
+    const metrics = getHeartPendantMetrics(size, 0);
+    const clipWidth = metrics.width - 10;
+    const clipHeight = metrics.height - 12;
+    const clipCenterY = metrics.centerY + metrics.height * 0.02;
+    return {
+      centerX: metrics.centerX,
+      centerY: metrics.centerY + metrics.height * 0.068,
+      width: metrics.width * 0.925,
+      height: metrics.height * 0.805,
+      path: buildHeartPath({
+        centerX: metrics.centerX,
+        centerY: clipCenterY,
+        width: clipWidth,
+        height: clipHeight
+      })
+    };
+  }
+
+  function getPendantProductPath(size) {
+    if (isHeartPendant(size)) {
+      return buildHeartPath(getHeartPendantMetrics(size, 0));
+    }
+
+    const path = new Path2D();
+    path.arc(600, 650, size.productRadius, 0, Math.PI * 2);
+    return path;
+  }
+
+  function getPendantMotifPath(motifMask) {
+    if (!motifMask) return null;
+
+    if (motifMask.shape === "heart") {
+      return motifMask.path || buildHeartPath({
+        centerX: motifMask.centerX,
+        centerY: motifMask.centerY,
+        width: motifMask.width,
+        height: motifMask.height
+      });
+    }
+
+    const path = new Path2D();
+    path.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
+    return path;
+  }
+
+  function drawHeartPendantBase(size) {
+    const finishPalette = getPendantFinishPalette();
+    const metrics = getHeartPendantMetrics(size, 0);
+    const productPath = getPendantProductPath(size);
+    const gradient = ctx.createLinearGradient(
+      metrics.centerX - metrics.width * 0.62,
+      metrics.topY,
+      metrics.centerX + metrics.width * 0.68,
+      metrics.centerY + metrics.height * 0.72
+    );
+    gradient.addColorStop(0, finishPalette.baseStart);
+    gradient.addColorStop(0.42, finishPalette.baseMid);
+    gradient.addColorStop(1, finishPalette.baseEnd);
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.42)";
+    ctx.shadowBlur = 60;
+    ctx.shadowOffsetY = 20;
+    ctx.fillStyle = gradient;
+    ctx.fill(productPath);
+    ctx.restore();
+
+    ctx.save();
+    ctx.clip(productPath);
+
+    const metalSheen = ctx.createLinearGradient(
+      metrics.centerX - metrics.width * 0.65,
+      metrics.topY,
+      metrics.centerX + metrics.width * 0.72,
+      metrics.centerY + metrics.height * 0.82
+    );
+    metalSheen.addColorStop(0, finishPalette.highlightStrong);
+    metalSheen.addColorStop(0.16, finishPalette.highlightSoft);
+    metalSheen.addColorStop(0.5, "rgba(255,255,255,0)");
+    metalSheen.addColorStop(0.84, finishPalette.shadowTone);
+    metalSheen.addColorStop(1, finishPalette.highlightEdge);
+    ctx.fillStyle = metalSheen;
+    ctx.fillRect(
+      metrics.centerX - metrics.width * 0.76,
+      metrics.topY,
+      metrics.width * 1.52,
+      metrics.height * 1.56
+    );
+
+    ctx.strokeStyle = finishPalette.edgeHighlight;
+    ctx.lineWidth = 2;
+    ctx.stroke(productPath);
+
+    ctx.strokeStyle = finishPalette.surfaceLines;
+    ctx.lineWidth = 1;
+    for (let index = 0; index < 34; index += 1) {
+      const y = metrics.centerY - metrics.height * 0.42 + index * ((metrics.height * 0.86) / 34);
+      ctx.beginPath();
+      ctx.moveTo(metrics.centerX - metrics.width * 0.62, y);
+      ctx.lineTo(metrics.centerX + metrics.width * 0.62, y - 12);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  function drawHeartTabHoleCutout(size) {
+    const metrics = getHeartPendantMetrics(size, 0);
+    drawPendantHoleCutouts([
+      {
+        x: metrics.holeCenterX,
+        y: metrics.holeCenterY,
+        radius: metrics.holeRadius
+      }
+    ]);
+  }
+
   function getPendantFinishPalette(finishId) {
     const effectiveFinishId = finishId || (getActiveFinish() ? getActiveFinish().id : "silver");
 
@@ -9890,31 +10208,29 @@
   function drawMotifMask(size, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
     if (!motifMask) return;
+    const motifPath = getPendantMotifPath(motifMask);
 
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255,255,255,0.04)";
-    ctx.fill();
+    ctx.fill(motifPath);
     ctx.strokeStyle = "rgba(10, 12, 16, 0.14)";
     ctx.lineWidth = 2;
     ctx.setLineDash([10, 10]);
-    ctx.stroke();
+    ctx.stroke(motifPath);
     ctx.setLineDash([]);
     ctx.restore();
   }
 
   function drawMotif(size, image, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
+    const motifPath = getPendantMotifPath(motifMask);
     const drawBox = getMotifDrawBox(image, pendantIndex);
     const activeSideState = getSideState(state.activeSide, pendantIndex);
     const x = motifMask.x + motifMask.width / 2 - drawBox.width / 2 + activeSideState.offsetX;
     const y = motifMask.y + motifMask.height / 2 - drawBox.height / 2 + activeSideState.offsetY;
 
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.clip(motifPath);
     applyPendantContentRotation(x + drawBox.width / 2, y + drawBox.height / 2, pendantIndex);
 
     ctx.filter = "grayscale(1) contrast(1.15) brightness(0.82)";
@@ -9923,9 +10239,7 @@
     ctx.filter = "none";
 
     ctx.fillStyle = "rgba(18, 22, 28, 0.24)";
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.fill(motifPath);
 
     ctx.globalCompositeOperation = "screen";
     const sheen = ctx.createLinearGradient(motifMask.x, motifMask.y, motifMask.x + motifMask.width, motifMask.y + motifMask.height);
@@ -9951,6 +10265,7 @@
 
   function drawMonogramMotif(size, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
+    const motifPath = getPendantMotifPath(motifMask);
     const activeSideState = getSideState(state.activeSide, pendantIndex);
     const monogramLayout = getMonogramLayout(pendantIndex);
     const x = motifMask.x + motifMask.width / 2 + activeSideState.offsetX;
@@ -9959,9 +10274,7 @@
     const stretchYFactor = getStretchFactor(activeSideState.stretchYPercent);
 
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.clip(motifPath);
     applyPendantContentRotation(x, y, pendantIndex);
     ctx.translate(x, y);
     ctx.scale(stretchXFactor, stretchYFactor);
@@ -9976,6 +10289,7 @@
 
   function drawQrMotif(size, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
+    const motifPath = getPendantMotifPath(motifMask);
     const qrModel = getQrCodeModel(state.activeSide, pendantIndex);
     if (!qrModel || !motifMask) {
       drawMotifPrompt("QR-Code nicht bereit", "Bitte Inhalt prüfen oder kurz erneut versuchen.");
@@ -9991,9 +10305,7 @@
     const squareY = Math.round(motifMask.y + (motifMask.height - outerSize) / 2);
 
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.clip(motifPath);
     applyPendantContentRotation(squareX + outerSize / 2, squareY + outerSize / 2, pendantIndex);
 
     ctx.imageSmoothingEnabled = false;
@@ -10019,6 +10331,7 @@
 
   function drawTextOverlay(size, pendantIndex) {
     const motifMask = getMotifMask(pendantIndex);
+    const motifPath = getPendantMotifPath(motifMask);
     const activeSideState = getSideState(state.activeSide, pendantIndex);
     const textLayout = getTextLayout(activeSideState.textValue, pendantIndex);
     const x = motifMask.x + motifMask.width / 2 + activeSideState.textOffsetX;
@@ -10029,9 +10342,7 @@
     const decorationLineWidth = Math.max(3, textLayout.fontSize * 0.06);
 
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.clip(motifPath);
     ctx.translate(x, y);
     ctx.rotate(getPendantRotationRadians(pendantIndex));
     ctx.scale(scaleFactor * stretchXFactor, scaleFactor * stretchYFactor);
@@ -10087,11 +10398,12 @@
   function drawMotifPrompt(title, description) {
     const motifMask = getMotifMask(state.activePendantIndex);
     if (!motifMask) return;
+    const motifPath = getPendantMotifPath(motifMask);
+    const centerX = motifMask.centerX || 600;
+    const centerY = motifMask.centerY || 650;
 
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, motifMask.radius, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.clip(motifPath);
     ctx.fillStyle = "rgba(0,0,0,0.06)";
     ctx.fillRect(motifMask.x, motifMask.y, motifMask.width, motifMask.height);
     ctx.restore();
@@ -10100,18 +10412,17 @@
     ctx.fillStyle = "rgba(14,16,18,0.44)";
     ctx.font = "600 34px system-ui, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(title, 600, 638);
+    ctx.fillText(title, centerX, centerY - 18);
     ctx.font = "500 22px system-ui, sans-serif";
     ctx.fillStyle = "rgba(14,16,18,0.30)";
-    ctx.fillText(description, 600, 684);
+    ctx.fillText(description, centerX, centerY + 26);
     ctx.restore();
   }
 
   function drawProductHighlights(size) {
+    const productPath = getPendantProductPath(size);
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(600, 650, size.productRadius, 0, Math.PI * 2);
-    ctx.clip();
+    ctx.clip(productPath);
 
     const highlight = ctx.createLinearGradient(240, 220, 980, 1040);
     highlight.addColorStop(0, "rgba(255,255,255,0.22)");
@@ -11169,12 +11480,27 @@
     return Array.isArray(product.sizes) ? product.sizes : [];
   }
 
+  function hasJewelryShapeSelection(productFamily) {
+    return Boolean(
+      productFamily &&
+      productFamily.id === "jewelry-pendant" &&
+      Array.isArray(productFamily.products) &&
+      productFamily.products.length > 1
+    );
+  }
+
   function getActiveProductDisplayName() {
     const productFamily = getActiveProductFamily();
     if (!productFamily) return "";
 
     if (productFamily.id === "jewelry-pendant") {
+      const product = getActiveProduct();
       const finish = getActiveFinish();
+      if (product && product.id === "heart-tag") {
+        return finish
+          ? "Herz Edelstahl-Anhänger · " + finish.name
+          : "Herz Edelstahl-Anhänger";
+      }
       return finish
         ? "Edelstahl-Schmuckanhänger · " + finish.name
         : "Edelstahl-Schmuckanhänger";
@@ -11311,6 +11637,24 @@
   function getMotifMask(pendantIndex) {
     const size = getActiveSize(pendantIndex);
     if (!size) return null;
+
+    if (isHeartPendant(size)) {
+      const heartMetrics = getHeartMotifMetrics(size);
+      const width = heartMetrics.width;
+      const height = heartMetrics.height;
+      const centerY = heartMetrics.centerY;
+      return {
+        x: heartMetrics.centerX - width / 2,
+        y: centerY - height / 2,
+        width: width,
+        height: height,
+        radius: Math.min(width, height) / 2,
+        centerX: heartMetrics.centerX,
+        centerY: centerY,
+        path: heartMetrics.path,
+        shape: "heart"
+      };
+    }
 
     const radius = size.productRadius * size.engravingRatio;
     return {
