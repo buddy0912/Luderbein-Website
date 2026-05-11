@@ -1,0 +1,7 @@
+[     715ms] NotFoundError: Failed to execute 'insertBefore' on 'Node': The node before which the new node is to be inserted is not a child of this node.
+    at wrapImageForOverlay (http://127.0.0.1:4173/assets/site.js:431:11)
+    at http://127.0.0.1:4173/assets/site.js:449:21
+    at NodeList.forEach (<anonymous>)
+    at initImageWatermarks (http://127.0.0.1:4173/assets/site.js:440:14)
+    at HTMLDocument.<anonymous> (http://127.0.0.1:4173/assets/site.js:2148:5)
+[     846ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://127.0.0.1:4173/favicon.ico:0

@@ -1,0 +1,106 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Luderbein Schwibbögen • Gravur • Sonderwünsche" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - strong [ref=e7]: Luderbein
+          - generic [ref=e8]: Schwibbögen • Gravur • Sonderwünsche
+      - generic [ref=e9]:
+        - button "Dunkle Ansicht umschalten" [pressed] [ref=e10] [cursor=pointer]:
+          - img [ref=e12]
+          - generic [ref=e14]: Dunkle Ansicht
+        - link "Ideen- und Diskussionspinnwand" [ref=e15] [cursor=pointer]:
+          - /url: /ideenpinnwand/
+          - img [ref=e16]
+      - navigation "Hauptmenü" [ref=e18]:
+        - link "Start" [ref=e19] [cursor=pointer]:
+          - /url: /
+        - button "Leistungen" [ref=e21] [cursor=pointer]:
+          - text: Leistungen
+          - generic [ref=e22]: ▾
+        - link "B2B" [ref=e23] [cursor=pointer]:
+          - /url: /b2b/
+        - link "Über" [ref=e24] [cursor=pointer]:
+          - /url: /ueber/
+        - link "Kontakt" [ref=e25] [cursor=pointer]:
+          - /url: /kontakt/
+        - link "Rechtliches" [ref=e26] [cursor=pointer]:
+          - /url: /rechtliches/
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]: Tool
+      - heading "Konfigurator & Preisvorschau" [level=1] [ref=e31]
+      - paragraph [ref=e32]: Produkte gestalten und Preise direkt prüfen.
+    - region "Hinweise zur Vorschau" [ref=e33]:
+      - article [ref=e34]:
+        - paragraph [ref=e35]: Video-Anleitung
+        - paragraph [ref=e36]: So nutzt du das Vorschautool
+        - group "So nutzt du das Vorschautool" [ref=e37]:
+          - generic "Video-Anleitung So nutzt du das Vorschautool Kurze Anleitung für Auswahl, Gestaltung und Anfrage." [ref=e38] [cursor=pointer]:
+            - generic [ref=e41]:
+              - generic [ref=e42]: Video-Anleitung
+              - strong [ref=e43]: So nutzt du das Vorschautool
+              - generic [ref=e44]: Kurze Anleitung für Auswahl, Gestaltung und Anfrage.
+            - generic [ref=e45]: ▾
+    - region "Motiv-Vorschau Tool" [ref=e46]:
+      - article [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - paragraph [ref=e51]: Vorschau
+            - heading "Vorschau" [level=2] [ref=e52]
+          - generic [ref=e53]: Start
+        - generic [ref=e55]:
+          - generic "Produktvorschau" [ref=e56]
+          - generic: Unverbindliche Vorschau
+      - article [ref=e57]:
+        - generic [ref=e58]:
+          - heading "Auswahl" [level=2] [ref=e59]
+          - button "Hilfe / Problem melden" [ref=e61] [cursor=pointer]
+        - generic "Material wählen" [ref=e63]:
+          - heading "Material wählen" [level=3] [ref=e65]
+          - generic [ref=e66]:
+            - button "Metall Metallprodukte." [ref=e67] [cursor=pointer]:
+              - generic [ref=e68]: Metall
+              - generic [ref=e69]: Metallprodukte.
+            - button "Holzbrett Holzformen." [ref=e70] [cursor=pointer]:
+              - generic [ref=e71]: Holzbrett
+              - generic [ref=e72]: Holzformen.
+            - button "Schiefer Schieferplatten." [ref=e73] [cursor=pointer]:
+              - generic [ref=e74]: Schiefer
+              - generic [ref=e75]: Schieferplatten.
+    - region "Zusammenfassung" [ref=e76]:
+      - button "Zusammenfassung Anzeigen" [ref=e77] [cursor=pointer]:
+        - generic [ref=e78]: Zusammenfassung
+        - generic [ref=e79]: Anzeigen
+  - contentinfo [ref=e80]:
+    - generic [ref=e81]:
+      - generic [ref=e82]: © 2026 Luderbein
+      - generic [ref=e83]:
+        - generic [ref=e84]:
+          - link "Wunschmotiv anfragen" [ref=e85] [cursor=pointer]:
+            - /url: /kontakt/?p=Wunschmotiv
+          - link "Beispiele ansehen" [ref=e86] [cursor=pointer]:
+            - /url: /leistungen/
+          - link "B2B-Anfragen" [ref=e87] [cursor=pointer]:
+            - /url: /b2b/
+        - generic [ref=e88]:
+          - link "WhatsApp" [ref=e89] [cursor=pointer]:
+            - /url: https://wa.me/491725925858
+            - img [ref=e91]
+            - text: WhatsApp
+          - link "E-Mail" [ref=e93] [cursor=pointer]:
+            - /url: mailto:luderbein_gravur@icloud.com
+            - img [ref=e95]
+            - text: E-Mail
+          - link "Instagram" [ref=e98] [cursor=pointer]:
+            - /url: https://instagram.com/Luderbein_Gravur
+            - img [ref=e100]
+            - text: Instagram
+      - generic "Rechtstexte" [ref=e103]:
+        - link "Impressum" [ref=e104] [cursor=pointer]:
+          - /url: /rechtliches/impressum.html
+        - link "Datenschutz" [ref=e105] [cursor=pointer]:
+          - /url: /rechtliches/datenschutz.html
+        - link "AGB" [ref=e106] [cursor=pointer]:
+          - /url: /rechtliches/agb.html

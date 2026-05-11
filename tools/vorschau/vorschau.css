@@ -24,23 +24,6 @@
   color: rgba(210,207,206,.92);
 }
 
-.preview-note--special {
-  position: relative;
-  overflow: hidden;
-  padding: 18px 20px 16px;
-  background:
-    radial-gradient(circle at top right, rgba(219,16,33,.18), transparent 42%),
-    linear-gradient(180deg, rgba(44,18,24,.94), rgba(25,14,18,.88));
-}
-
-.preview-note--special::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,.06), transparent 36%);
-}
-
 .preview-note__eyebrow {
   margin: 0 0 8px;
   font-size: .78rem;
@@ -55,16 +38,6 @@
   font-size: clamp(1rem, 2vw, 1.22rem);
   line-height: 1.28;
   color: #f6f1ee;
-}
-
-.preview-note__code {
-  margin: 10px 0 0;
-  font-size: .95rem;
-  color: rgba(233,226,223,.92);
-}
-
-.preview-note__code strong {
-  color: #fff;
 }
 
 .preview-video-card {
@@ -3065,22 +3038,14 @@ html.light-readable .preview-option-grid__section-label {
   color: #6b5c5d;
 }
 
-html.light-readable .preview-note--special {
-  background:
-    radial-gradient(circle at top right, rgba(203,42,62,.12), transparent 46%),
-    linear-gradient(180deg, rgba(255,247,245,.985), rgba(250,239,235,.96));
-}
-
 html.light-readable .preview-note__eyebrow {
   color: #8f3844;
 }
 
-html.light-readable .preview-note__title,
-html.light-readable .preview-note__code strong {
+html.light-readable .preview-note__title {
   color: #231d1f;
 }
 
-html.light-readable .preview-note__code,
 html.light-readable .preview-video-card__copy,
 html.light-readable .preview-size-group__title {
   color: #6b5c5d;
