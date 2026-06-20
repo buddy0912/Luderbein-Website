@@ -6,6 +6,7 @@
 // - Kontakt: Anfrage-Builder
 // - CTA Autofill (WhatsApp + Mail)
 // - Landingpage Banner
+// - Temporary Phone Alert
 // - Scroll Indicator
 // - Modal Cards
 // - Cloudflare Web Analytics (idle-load, safe)
@@ -65,6 +66,14 @@
   // ---------------------------------
   const CF_WEB_ANALYTICS_TOKEN = "0dfffdc44a97468d9f46712e66c46119";
 
+  // Temporary phone alert: remove after technical issue is resolved
+  const TEMPORARY_PHONE_ALERT_ENABLED = true;
+  const TEMPORARY_PHONE_ALERT_TITLE = "Technische Störung: Telefon & SMS eingeschränkt";
+  const TEMPORARY_PHONE_ALERT_TEXT =
+    "Telefon & SMS sind aktuell über die gewohnte geschäftliche Telefonnummer nicht möglich. WhatsApp, WhatsApp-Anrufe und E-Mail funktionieren wie gewohnt. Für Anrufe und SMS bitte vorübergehend diese Rufnummer nutzen: 0152 037 330 18.";
+  const TEMPORARY_PHONE_ALERT_NOTE =
+    "Sobald die geschäftliche Telefonnummer wieder wie gewohnt erreichbar ist, geben wir Bescheid.";
+
   function setHeaderHeight() {
     const h = document.querySelector("header");
     if (!h) return;
@@ -100,6 +109,54 @@
     } catch (_) {
       // Analytics darf niemals die Seite brechen → still fail
     }
+  }
+
+  // ---------------------------------
+  // Temporary Phone Alert
+  // ---------------------------------
+  function initTemporaryPhoneAlert() {
+    if (!TEMPORARY_PHONE_ALERT_ENABLED) return;
+    if (document.querySelector("[data-temporary-phone-alert]")) return;
+
+    const header = document.querySelector("body > header") || document.querySelector("header");
+    if (!header || !header.parentNode) return;
+
+    const comment = document.createComment(" Temporary phone alert: remove after technical issue is resolved ");
+    const alert = document.createElement("aside");
+    alert.className = "temporary-phone-alert site-alert-banner";
+    alert.setAttribute("data-temporary-phone-alert", "");
+    alert.setAttribute("role", "note");
+    alert.setAttribute("aria-label", "Hinweis zur telefonischen Erreichbarkeit");
+    alert.innerHTML = `
+      <details class="temporary-phone-alert__inner wrap">
+        <summary class="temporary-phone-alert__summary">
+          <span class="temporary-phone-alert__dot" aria-hidden="true"></span>
+          <span class="temporary-phone-alert__title">${TEMPORARY_PHONE_ALERT_TITLE}</span>
+          <span class="temporary-phone-alert__toggle" aria-hidden="true">
+            <span class="temporary-phone-alert__more">Mehr anzeigen</span>
+            <span class="temporary-phone-alert__less">Weniger anzeigen</span>
+            <span class="temporary-phone-alert__chevron"></span>
+          </span>
+        </summary>
+        <div class="temporary-phone-alert__body">
+          <p>${TEMPORARY_PHONE_ALERT_TEXT}</p>
+          <p class="temporary-phone-alert__note">${TEMPORARY_PHONE_ALERT_NOTE}</p>
+        </div>
+      </details>
+    `;
+
+    header.insertAdjacentElement("afterend", alert);
+    alert.parentNode.insertBefore(comment, alert);
+
+    function updateAlertSpace() {
+      const height = Math.ceil(alert.getBoundingClientRect().height || 0);
+      document.body.classList.toggle("has-temporary-phone-alert", height > 0);
+      document.documentElement.style.setProperty("--temporary-phone-alert-space", `${height + 18}px`);
+    }
+
+    updateAlertSpace();
+    alert.querySelector("details")?.addEventListener("toggle", updateAlertSpace);
+    window.addEventListener("resize", updateAlertSpace);
   }
 
   // ---------------------------------
@@ -2140,7 +2197,8 @@
     initContactRequestBuilder();
     initB2BMailForm();
 
-    // Landing Banner / Scroll Indicator / Modal Cards
+    // Temporary Phone Alert / Landing Banner / Scroll Indicator / Modal Cards
+    initTemporaryPhoneAlert();
     initBanner();
     initVisitorPopup();
     initScrollIndicator();
