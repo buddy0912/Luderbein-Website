@@ -68,11 +68,49 @@
 
   // Temporary phone alert: remove after technical issue is resolved
   const TEMPORARY_PHONE_ALERT_ENABLED = true;
-  const TEMPORARY_PHONE_ALERT_TITLE = "Technische Störung: Telefon & SMS eingeschränkt";
-  const TEMPORARY_PHONE_ALERT_TEXT =
-    "Telefon & SMS sind aktuell über die gewohnte geschäftliche Telefonnummer nicht möglich. WhatsApp, WhatsApp-Anrufe und E-Mail funktionieren wie gewohnt. Für Anrufe und SMS bitte vorübergehend diese Rufnummer nutzen: 0152 037 330 18.";
+  const TEMPORARY_PHONE_ALERT_TITLE = "Technische Störung: Anrufe & SMS eingeschränkt";
+  const TEMPORARY_PHONE_ALERT_TEXT = [
+    "Anrufe und SMS sind aktuell über die gewohnte geschäftliche Telefonnummer nicht möglich.",
+    "WhatsApp, WhatsApp-Anrufe und E-Mail funktionieren wie gewohnt.",
+    "Anrufe und SMS vorübergehend bitte an: 0152 03733 018",
+  ];
   const TEMPORARY_PHONE_ALERT_NOTE =
     "Sobald die geschäftliche Telefonnummer wieder wie gewohnt erreichbar ist, geben wir Bescheid.";
+  const TEMPORARY_PHONE_ALERT_STORAGE_KEY = "luderbeinPhoneAlertState";
+  const TEMPORARY_PHONE_ALERT_STORAGE_TTL = 24 * 60 * 60 * 1000;
+
+  function readTemporaryPhoneAlertState() {
+    try {
+      const raw = window.localStorage.getItem(TEMPORARY_PHONE_ALERT_STORAGE_KEY);
+      if (!raw) return null;
+
+      const saved = JSON.parse(raw);
+      const state = saved?.state;
+      const savedAt = Number(saved?.savedAt);
+      const isValidState = state === "open" || state === "closed";
+      const isFresh = Number.isFinite(savedAt) && Date.now() - savedAt < TEMPORARY_PHONE_ALERT_STORAGE_TTL;
+
+      if (isValidState && isFresh) return state;
+      window.localStorage.removeItem(TEMPORARY_PHONE_ALERT_STORAGE_KEY);
+    } catch (_) {
+      // localStorage may be blocked; fall back to the default open state.
+    }
+    return null;
+  }
+
+  function saveTemporaryPhoneAlertState(isOpen) {
+    try {
+      window.localStorage.setItem(
+        TEMPORARY_PHONE_ALERT_STORAGE_KEY,
+        JSON.stringify({
+          state: isOpen ? "open" : "closed",
+          savedAt: Date.now(),
+        })
+      );
+    } catch (_) {
+      // localStorage may be blocked; the banner still works without persistence.
+    }
+  }
 
   function setHeaderHeight() {
     const h = document.querySelector("header");
@@ -127,8 +165,10 @@
     alert.setAttribute("data-temporary-phone-alert", "");
     alert.setAttribute("role", "note");
     alert.setAttribute("aria-label", "Hinweis zur telefonischen Erreichbarkeit");
+    const savedState = readTemporaryPhoneAlertState();
+    const isInitiallyOpen = savedState ? savedState === "open" : true;
     alert.innerHTML = `
-      <details class="temporary-phone-alert__inner wrap">
+      <details class="temporary-phone-alert__inner wrap"${isInitiallyOpen ? " open" : ""}>
         <summary class="temporary-phone-alert__summary">
           <span class="temporary-phone-alert__dot" aria-hidden="true"></span>
           <span class="temporary-phone-alert__title">${TEMPORARY_PHONE_ALERT_TITLE}</span>
@@ -139,7 +179,7 @@
           </span>
         </summary>
         <div class="temporary-phone-alert__body">
-          <p>${TEMPORARY_PHONE_ALERT_TEXT}</p>
+          ${TEMPORARY_PHONE_ALERT_TEXT.map((text) => `<p>${text}</p>`).join("")}
           <p class="temporary-phone-alert__note">${TEMPORARY_PHONE_ALERT_NOTE}</p>
         </div>
       </details>
@@ -155,7 +195,10 @@
     }
 
     updateAlertSpace();
-    alert.querySelector("details")?.addEventListener("toggle", updateAlertSpace);
+    alert.querySelector("details")?.addEventListener("toggle", function (event) {
+      saveTemporaryPhoneAlertState(event.currentTarget.open);
+      updateAlertSpace();
+    });
     window.addEventListener("resize", updateAlertSpace);
   }
 
