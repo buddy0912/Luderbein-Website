@@ -6,7 +6,6 @@
 // - Kontakt: Anfrage-Builder
 // - CTA Autofill (WhatsApp + Mail)
 // - Landingpage Banner
-// - Temporary Phone Alert
 // - Scroll Indicator
 // - Modal Cards
 // - Cloudflare Web Analytics (idle-load, safe)
@@ -29,6 +28,8 @@
   const LB_LIGHT_MODE_KEY = "lb-light-readable";
   const LB_LIGHT_MODE_CLASS = "light-readable";
   const LB_LIGHT_MODE_EXCLUDED_PATHS = [
+    "/tools/vorschau/",
+    "/tools/kalkulator/",
     "/tools/schwibbogen-konfigurator/",
   ];
 
@@ -66,52 +67,6 @@
   // ---------------------------------
   const CF_WEB_ANALYTICS_TOKEN = "0dfffdc44a97468d9f46712e66c46119";
 
-  // Temporary phone alert: remove after technical issue is resolved
-  const TEMPORARY_PHONE_ALERT_ENABLED = true;
-  const TEMPORARY_PHONE_ALERT_TITLE = "Technische Störung: Anrufe & SMS eingeschränkt";
-  const TEMPORARY_PHONE_ALERT_TEXT = [
-    "Anrufe und SMS sind aktuell über die gewohnte geschäftliche Telefonnummer nicht möglich.",
-    "WhatsApp, WhatsApp-Anrufe und E-Mail funktionieren wie gewohnt.",
-    "Anrufe und SMS vorübergehend bitte an: 0152 03733 018",
-  ];
-  const TEMPORARY_PHONE_ALERT_NOTE =
-    "Sobald die geschäftliche Telefonnummer wieder wie gewohnt erreichbar ist, geben wir Bescheid.";
-  const TEMPORARY_PHONE_ALERT_STORAGE_KEY = "luderbeinPhoneAlertState";
-  const TEMPORARY_PHONE_ALERT_STORAGE_TTL = 24 * 60 * 60 * 1000;
-
-  function readTemporaryPhoneAlertState() {
-    try {
-      const raw = window.localStorage.getItem(TEMPORARY_PHONE_ALERT_STORAGE_KEY);
-      if (!raw) return null;
-
-      const saved = JSON.parse(raw);
-      const state = saved?.state;
-      const savedAt = Number(saved?.savedAt);
-      const isValidState = state === "open" || state === "closed";
-      const isFresh = Number.isFinite(savedAt) && Date.now() - savedAt < TEMPORARY_PHONE_ALERT_STORAGE_TTL;
-
-      if (isValidState && isFresh) return state;
-      window.localStorage.removeItem(TEMPORARY_PHONE_ALERT_STORAGE_KEY);
-    } catch (_) {
-      // localStorage may be blocked; fall back to the default open state.
-    }
-    return null;
-  }
-
-  function saveTemporaryPhoneAlertState(isOpen) {
-    try {
-      window.localStorage.setItem(
-        TEMPORARY_PHONE_ALERT_STORAGE_KEY,
-        JSON.stringify({
-          state: isOpen ? "open" : "closed",
-          savedAt: Date.now(),
-        })
-      );
-    } catch (_) {
-      // localStorage may be blocked; the banner still works without persistence.
-    }
-  }
-
   function setHeaderHeight() {
     const h = document.querySelector("header");
     if (!h) return;
@@ -147,59 +102,6 @@
     } catch (_) {
       // Analytics darf niemals die Seite brechen → still fail
     }
-  }
-
-  // ---------------------------------
-  // Temporary Phone Alert
-  // ---------------------------------
-  function initTemporaryPhoneAlert() {
-    if (!TEMPORARY_PHONE_ALERT_ENABLED) return;
-    if (document.querySelector("[data-temporary-phone-alert]")) return;
-
-    const header = document.querySelector("body > header") || document.querySelector("header");
-    if (!header || !header.parentNode) return;
-
-    const comment = document.createComment(" Temporary phone alert: remove after technical issue is resolved ");
-    const alert = document.createElement("aside");
-    alert.className = "temporary-phone-alert site-alert-banner";
-    alert.setAttribute("data-temporary-phone-alert", "");
-    alert.setAttribute("role", "note");
-    alert.setAttribute("aria-label", "Hinweis zur telefonischen Erreichbarkeit");
-    const savedState = readTemporaryPhoneAlertState();
-    const isInitiallyOpen = savedState ? savedState === "open" : true;
-    alert.innerHTML = `
-      <details class="temporary-phone-alert__inner wrap"${isInitiallyOpen ? " open" : ""}>
-        <summary class="temporary-phone-alert__summary">
-          <span class="temporary-phone-alert__dot" aria-hidden="true"></span>
-          <span class="temporary-phone-alert__title">${TEMPORARY_PHONE_ALERT_TITLE}</span>
-          <span class="temporary-phone-alert__toggle" aria-hidden="true">
-            <span class="temporary-phone-alert__more">Mehr anzeigen</span>
-            <span class="temporary-phone-alert__less">Weniger anzeigen</span>
-            <span class="temporary-phone-alert__chevron"></span>
-          </span>
-        </summary>
-        <div class="temporary-phone-alert__body">
-          ${TEMPORARY_PHONE_ALERT_TEXT.map((text) => `<p>${text}</p>`).join("")}
-          <p class="temporary-phone-alert__note">${TEMPORARY_PHONE_ALERT_NOTE}</p>
-        </div>
-      </details>
-    `;
-
-    header.insertAdjacentElement("afterend", alert);
-    alert.parentNode.insertBefore(comment, alert);
-
-    function updateAlertSpace() {
-      const height = Math.ceil(alert.getBoundingClientRect().height || 0);
-      document.body.classList.toggle("has-temporary-phone-alert", height > 0);
-      document.documentElement.style.setProperty("--temporary-phone-alert-space", `${height + 18}px`);
-    }
-
-    updateAlertSpace();
-    alert.querySelector("details")?.addEventListener("toggle", function (event) {
-      saveTemporaryPhoneAlertState(event.currentTarget.open);
-      updateAlertSpace();
-    });
-    window.addEventListener("resize", updateAlertSpace);
   }
 
   // ---------------------------------
@@ -2240,8 +2142,7 @@
     initContactRequestBuilder();
     initB2BMailForm();
 
-    // Temporary Phone Alert / Landing Banner / Scroll Indicator / Modal Cards
-    initTemporaryPhoneAlert();
+    // Landing Banner / Scroll Indicator / Modal Cards
     initBanner();
     initVisitorPopup();
     initScrollIndicator();
