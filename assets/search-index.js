@@ -192,7 +192,7 @@
       url: "/leistungen/schwibboegen/",
       type: "Leistung",
       section: "Schwibbogen",
-      summary: "Schwibbögen mit Charakter, sauberer Verarbeitung und Anfrage-Kalkulator.",
+      summary: "Schwibbögen mit Charakter, sauberer Verarbeitung und direkter Anfrage.",
       keywords: ["schwibbogen", "schwibbögen", "erzgebirge", "lichtbogen", "geschenk", "dimmer", "geschenkset", "konfigurator"],
       imageTags: ["schwibbogen", "holz", "licht", "erzgebirge", "geschenk"],
       imageProjects: [
@@ -224,20 +224,7 @@
       imageProjects: [
         { project: "Epidemic Scorn", tags: ["schwibbogen", "bandmotiv", "licht", "geschenkset"] }
       ],
-      content: "Fertiger Schwibbogen mit Design-Vorgabe, Preispunkt, Anfrage-Kalkulator und optionalen Upgrades wie Dimmer oder Geschenkset."
-    },
-    {
-      title: "Schwibbogen-Konfigurator",
-      url: "/tools/schwibbogen-konfigurator/",
-      type: "Tool",
-      section: "Schwibbogen Anfrage",
-      summary: "Variante, Upgrades, Geschenkset und Deadline für Schwibbögen konfigurieren.",
-      keywords: ["konfigurator", "schwibbogen", "dimmer", "deadline", "geschenkset", "vorbestellung"],
-      imageTags: ["schwibbogen", "konfiguration", "upgrade", "geschenkset"],
-      imageProjects: [
-        { project: "Schwibbogen Konfigurator", tags: ["konfiguration", "upgrade", "geschenkset", "schwibbogen"] }
-      ],
-      content: "Tool zur Anfrage für Schwibbögen mit Varianten, Upgrades, Deadline und Geschenkset."
+      content: "Fertiger Schwibbogen mit Design-Vorgabe, Preispunkt, direkter Anfrage und optionalen Upgrades wie Dimmer oder Geschenkset."
     },
     {
       title: "B2B-Lösungen",
