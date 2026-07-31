@@ -1,0 +1,359 @@
+.release-shell {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 48px;
+}
+
+.release-card,
+.release-print-page {
+  border: 1px solid rgba(110, 104, 108, 0.55);
+  border-radius: 22px;
+  padding: clamp(18px, 3vw, 28px);
+  background:
+    radial-gradient(420px 220px at 12% 0%, rgba(219, 16, 33, 0.06), transparent 60%),
+    linear-gradient(180deg, rgba(31, 30, 35, 0.88), rgba(18, 12, 16, 0.92));
+  box-shadow:
+    0 20px 52px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.release-card h2,
+.release-print-page h2 {
+  margin: 0 0 10px;
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+}
+
+.release-card > :last-child,
+.release-print-page > :last-child {
+  margin-bottom: 0;
+}
+
+.release-draft {
+  border-color: rgba(244, 176, 0, 0.55);
+  background: rgba(244, 176, 0, 0.1);
+}
+
+.release-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.release-form,
+.release-withdrawal-form,
+.release-fields,
+.release-meta {
+  display: grid;
+  gap: 16px;
+}
+
+.release-field {
+  display: grid;
+  gap: 8px;
+}
+
+.release-field label,
+.release-checklist legend {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.release-field input,
+.release-field textarea {
+  width: 100%;
+  border: 1px solid rgba(110, 104, 108, 0.78);
+  border-radius: 14px;
+  background: rgba(16, 10, 14, 0.74);
+  color: var(--text);
+  padding: 12px 14px;
+  font: inherit;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.release-field textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.release-field input:focus,
+.release-field textarea:focus {
+  outline: 2px solid rgba(219, 16, 33, 0.35);
+  outline-offset: 2px;
+  border-color: rgba(219, 16, 33, 0.55);
+}
+
+.release-field input[readonly] {
+  color: var(--muted);
+  cursor: default;
+}
+
+.release-hint,
+.release-status {
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.release-checklist {
+  border: 1px solid rgba(110, 104, 108, 0.55);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(20, 13, 18, 0.72);
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.release-checklist legend {
+  padding: 0 8px;
+}
+
+.release-check {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  color: var(--text);
+}
+
+.release-check input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.release-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.release-status {
+  margin: 0;
+  min-height: 1.5em;
+}
+
+.release-status.is-error {
+  color: #ffb0b6;
+}
+
+.release-status.is-success {
+  color: #b7e7c2;
+}
+
+.release-download {
+  display: none;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid rgba(110, 104, 108, 0.55);
+  border-radius: 16px;
+  background: rgba(20, 13, 18, 0.72);
+}
+
+.release-download.is-visible {
+  display: grid;
+}
+
+.release-download p,
+.release-list {
+  margin: 0;
+  color: var(--muted);
+}
+
+.release-list {
+  padding-left: 18px;
+}
+
+.release-list li + li {
+  margin-top: 8px;
+}
+
+.release-project-summary {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.35fr) minmax(0, 1fr);
+  gap: 8px 16px;
+  margin: 0;
+}
+
+.release-project-summary dt {
+  color: var(--muted);
+}
+
+.release-project-summary dd {
+  margin: 0;
+  color: var(--text);
+}
+
+.release-signature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 36px;
+}
+
+.release-signature div {
+  border-top: 1px solid currentColor;
+  padding-top: 7px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.release-print-pages {
+  display: grid;
+  gap: 22px;
+}
+
+.release-print-title {
+  display: none;
+}
+
+@media (max-width: 780px) {
+  .release-grid,
+  .release-signature {
+    grid-template-columns: 1fr;
+  }
+
+  .release-project-summary {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .release-project-summary dd + dt {
+    margin-top: 8px;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm 13mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  header,
+  footer,
+  .release-online-only,
+  .release-draft,
+  .notice,
+  .badge {
+    display: none !important;
+  }
+
+  main.wrap {
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero {
+    padding: 0 0 8mm;
+  }
+
+  .project-release-page .hero {
+    display: none !important;
+  }
+
+  .release-print-title {
+    display: block;
+    color: #111 !important;
+    font-size: 19pt;
+    line-height: 1.2;
+    margin: 0 0 8mm;
+  }
+
+  .hero h1 {
+    color: #111 !important;
+    font-size: 19pt;
+    margin: 0;
+  }
+
+  .hero .lead {
+    color: #333 !important;
+    font-size: 10pt;
+  }
+
+  .release-shell,
+  .release-print-pages {
+    display: block;
+    margin: 0;
+  }
+
+  .release-grid {
+    display: block;
+  }
+
+  .release-card,
+  .release-print-page,
+  .release-checklist {
+    background: #fff !important;
+    color: #111 !important;
+    border-color: #777;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .release-card,
+  .release-print-page {
+    padding: 0;
+    border: 0;
+  }
+
+  .release-checklist {
+    padding: 4mm;
+    break-inside: avoid;
+  }
+
+  .release-check,
+  .release-card h2,
+  .release-print-page h2,
+  .release-field label,
+  .release-checklist legend,
+  .release-project-summary dd {
+    color: #111 !important;
+  }
+
+  .release-hint,
+  .release-list,
+  .release-project-summary dt,
+  .release-signature div,
+  .small,
+  .muted {
+    color: #333 !important;
+  }
+
+  .release-field input,
+  .release-field textarea {
+    background: #fff !important;
+    color: #111 !important;
+    border: 0;
+    border-bottom: 1px solid #555;
+    border-radius: 0;
+    padding: 2mm 0;
+  }
+
+  .release-field textarea {
+    min-height: 18mm;
+  }
+
+  .release-print-page {
+    min-height: 260mm;
+    break-after: page;
+  }
+
+  .release-print-page:last-child {
+    break-after: auto;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}

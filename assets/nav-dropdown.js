@@ -13,7 +13,6 @@
       href: "/tools/vorschau/",
       label: "Motiv-Vorschau",
       role: "menuitem",
-      beforeHref: "/service/",
       afterHref: "/tools/kalkulator/",
     },
   };

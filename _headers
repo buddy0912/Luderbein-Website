@@ -7,6 +7,18 @@
 /rechtliches/rechteerklaerung-intern.html
   X-Robots-Tag: noindex, nofollow, noarchive
 
+/rechtliches/veroeffentlichungsfreigabe.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/rechtliches/veroeffentlichungsfreigabe-nachtwaechter-luderboegen.html
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/service/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/service
+  X-Robots-Tag: noindex, nofollow, noarchive
+
 /gastro-qr
   X-Robots-Tag: noindex, nofollow, noarchive
 
