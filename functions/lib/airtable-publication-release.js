@@ -1,5 +1,6 @@
 const DEFAULT_BASE_ID = "appv7YqLyKbEqN87V";
 const DEFAULT_TABLE_ID = "tblTAzo5wBT1rQCew";
+const DEFAULT_NOTIFICATION_USER_ID = "usrynklT5tRc7chHf";
 
 const FIELD_IDS = {
   referenceCode: "fldUpsJGjQmF07ee5",
@@ -16,7 +17,8 @@ const FIELD_IDS = {
   note: "fldL0IW1yTU4qKc7b",
   declarationVersion: "fldAjCsmMdCSH3XBw",
   createdAt: "fldf2S0t9hcNftjPD",
-  d1Id: "fld4AG9P9uDn5D3qd"
+  d1Id: "fld4AG9P9uDn5D3qd",
+  notificationUser: "fldezxd27sSxuYUye"
 };
 
 const CHANNEL_VALUES = {
@@ -95,8 +97,35 @@ export async function syncPublicationReleaseToAirtable(env, payload) {
   const recordId = data?.records?.[0]?.id;
   if (!recordId) throw new Error("AIRTABLE_RESPONSE_INVALID");
 
+  const notificationUserId = String(
+    env.AIRTABLE_NOTIFICATION_USER_ID || DEFAULT_NOTIFICATION_USER_ID
+  ).trim();
+  let notificationStatus = "not_configured";
+
+  if (/^usr[a-zA-Z0-9]{14}$/.test(notificationUserId)) {
+    const notificationResponse = await fetch(
+      `https://api.airtable.com/v0/${baseId}/${tableId}/${recordId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fields: {
+            [FIELD_IDS.notificationUser]: { id: notificationUserId }
+          },
+          typecast: false
+        })
+      }
+    );
+
+    notificationStatus = notificationResponse.ok ? "assigned" : "failed";
+  }
+
   return {
     status: "synced",
-    recordId
+    recordId,
+    notificationStatus
   };
 }

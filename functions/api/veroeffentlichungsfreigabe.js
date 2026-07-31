@@ -361,6 +361,7 @@ async function handlePost(request, env, cors) {
       createdAt,
       declarationVersion: DECLARATION_VERSION,
       airtableSyncStatus: airtableSync.status,
+      airtableNotificationStatus: airtableSync.notificationStatus || "not_configured",
       notificationStatus: notification.status,
       download: {
         filename: document.filename,

@@ -25,19 +25,18 @@ Die nicht geheimen Base- und Table-IDs stehen in `wrangler.toml`.
 
 ## Kostenfreie Benachrichtigung in Airtable
 
-In der Tabelle `Veröffentlichungsfreigaben` eine Automation anlegen:
+Die Website weist jeden neu angelegten Datensatz nach dem Speichern im Benutzerfeld
+`Benachrichtigung an` dem Luderbein-Airtable-Konto zu. In den Feldeinstellungen muss
+`Benutzer*innen mit Base-Zugriff benachrichtigen, wenn sie hinzugefügt wurden` aktiviert
+bleiben. Airtable kann dadurch eine native Mitteilung in der App, im Benachrichtigungsbereich
+und abhängig von den persönlichen Airtable-Einstellungen per E-Mail auslösen.
 
-1. Auslöser: `When record created`
-2. Tabelle: `Veröffentlichungsfreigaben`
-3. Aktion: `Send email`
-4. Empfänger: die verifizierte E-Mail-Adresse des Airtable-Mitarbeiters
-5. Betreff: `Neue Veröffentlichungsfreigabe: {Freigabe}`
-6. Inhalt: Auftragsreferenz, Projekt, Kunde, Name, Kanäle, Darstellung, Personen und Bestätigt am
-7. Automation testen und auf `On` stellen
+Für diesen Weg ist keine Airtable-Automation erforderlich. Die nicht geheime Benutzer-ID
+steht als `AIRTABLE_NOTIFICATION_USER_ID` in `wrangler.toml`.
 
-Im kostenlosen Airtable-Tarif sind derzeit 100 Automationsläufe pro Monat enthalten. Der native E-Mail-Versand darf dort nur an verifizierte Mitarbeiter der Basis gehen.
-
-Unabhängig davon versucht die Website nach der D1-Speicherung eine kurze interne E-Mail über den bereits für die Pinnwand verwendeten Resend-Zugang zu senden. Dadurch steht eine sofortige Benachrichtigung zur Verfügung, auch solange die Airtable-Automation noch nicht aktiviert ist.
+Optional kann die Website nach der D1-Speicherung zusätzlich eine interne E-Mail über
+Resend senden. Dafür müssen `RESEND_API_KEY`, `PUBLICATION_RELEASE_NOTIFY_TO` und
+`PUBLICATION_RELEASE_EMAIL_FROM` in Cloudflare vollständig konfiguriert sein.
 
 ## Datenschutz vor produktiver Nutzung
 

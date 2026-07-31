@@ -10,6 +10,7 @@
   const downloadLink = document.getElementById("release-download-link");
   const channelValidation = document.getElementById("release-channel-validation");
   const previewBanner = document.getElementById("release-preview-mode");
+  const submitButton = form.querySelector('[type="submit"]');
   const isLocalPreview =
     window.location.protocol === "file:" ||
     /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname) ||
@@ -26,6 +27,7 @@
   };
 
   let downloadUrl = "";
+  let submissionInProgress = false;
 
   if (isLocalPreview && previewBanner) {
     previewBanner.classList.add("is-visible");
@@ -214,6 +216,8 @@
 
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
+    if (submissionInProgress) return;
+
     clearDownload();
     if (proof) proof.classList.remove("is-visible");
 
@@ -231,6 +235,12 @@
       return;
     }
 
+    submissionInProgress = true;
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.setAttribute("aria-busy", "true");
+    }
+
     const payload = buildPayload();
     setStatus(
       isLocalPreview
@@ -243,6 +253,11 @@
       window.setTimeout(function () {
         setStatus("Lokale Prüfung erfolgreich. Es wurden keine Daten gespeichert.", "is-success");
         showProof("VF-VORSCHAU", now, true);
+        submissionInProgress = false;
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.removeAttribute("aria-busy");
+        }
       }, 250);
       return;
     }
@@ -269,9 +284,15 @@
       }
 
       prepareDownload(data?.download);
+      if (submitButton) submitButton.removeAttribute("aria-busy");
       setStatus("Freigabe gespeichert. Der Bestätigungsnachweis steht bereit.", "is-success");
       showProof(data.referenceCode || "ohne Referenz", data.createdAt || new Date().toISOString(), false);
     } catch (error) {
+      submissionInProgress = false;
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.removeAttribute("aria-busy");
+      }
       setStatus(
         error instanceof Error
           ? error.message

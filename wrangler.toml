@@ -8,6 +8,7 @@ PINBOARD_NOTIFY_TO = "luderbein_gravur@icloud.com"
 PINBOARD_EMAIL_FROM = "Pinnwand <onboarding@resend.dev>"
 AIRTABLE_BASE_ID = "appv7YqLyKbEqN87V"
 AIRTABLE_TABLE_ID = "tblTAzo5wBT1rQCew"
+AIRTABLE_NOTIFICATION_USER_ID = "usrynklT5tRc7chHf"
 PUBLICATION_RELEASE_NOTIFY_TO = "luderbein_gravur@icloud.com"
 PUBLICATION_RELEASE_EMAIL_FROM = "Luderbein Freigaben <onboarding@resend.dev>"
 
