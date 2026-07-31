@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <title>Veröffentlichungsfreigabe für Kundenprojekte – Luderbein</title>
+  <meta name="description" content="Digitale Veröffentlichungsfreigabe für fertige Kundenprojekte sowie Einblicke in Entstehung, Entwicklung und Herstellung." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <link rel="stylesheet" href="/assets/veroeffentlichungsfreigabe.css" />
+</head>
+
+<body class="release-page" data-enablebot="0">
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+        <div class="navdrop" data-navdrop>
+          <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">
+            Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span>
+          </button>
+          <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
+            <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a>
+            <a href="/leistungen/metall/" role="menuitem">Metall</a>
+            <a href="/leistungen/holz/" role="menuitem">Holz</a>
+            <a href="/leistungen/acryl/" role="menuitem">Acryl</a>
+            <a href="/leistungen/glas/" role="menuitem">Glas</a>
+            <a href="/leistungen/custom/" role="menuitem">Custom</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a>
+            <div class="navdrop__sep" aria-hidden="true"></div>
+            <a href="/tools/kalkulator/" role="menuitem">Kalkulator</a>
+            <a href="/tools/vorschau/" role="menuitem">Motiv-Vorschau</a>
+          </div>
+        </div>
+        <a href="/ueber/">Über</a>
+        <a href="/kontakt/">Kontakt</a>
+        <a href="/rechtliches/" aria-current="page">Rechtliches</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="content">
+    <section class="hero release-hero">
+      <span class="badge"><i></i> Rechtliches · Kundenfreigabe</span>
+      <h1>Veröffentlichungs&shy;freigabe für Kundenprojekte auf Social Media &amp; more</h1>
+      <p class="lead">
+        Hier entscheidest du einzeln, ob und wo Luderbein dein fertiges Kundenprojekt sowie authentische Einblicke in Entstehung, Entwicklung und Herstellung zeigen darf.
+        Die Freigabe ist freiwillig und hat keinen Einfluss auf Angebot, Auftrag oder Preis.
+      </p>
+    </section>
+
+    <div class="release-preview-mode" id="release-preview-mode">
+      Lokaler Prüfmodus: Beim Bestätigen werden keine Daten gespeichert und keine E-Mail versendet.
+    </div>
+
+    <section class="release-process" aria-label="So funktioniert die digitale Bestätigung">
+      <article class="release-process__step">
+        <span class="release-process__number">1</span>
+        <div><strong>Einzeln auswählen</strong><span>Jeder Kanal bleibt leer, bis du ihn bewusst aktivierst.</span></div>
+      </article>
+      <article class="release-process__step">
+        <span class="release-process__number">2</span>
+        <div><strong>Freigabe per Klick abgeben</strong><span>Die Schaltfläche „Auswahl verbindlich bestätigen“ gibt die gewählten Punkte digital frei.</span></div>
+      </article>
+      <article class="release-process__step">
+        <span class="release-process__number">3</span>
+        <div><strong>Bei Luderbein speichern</strong><span>Die Freigabe wird dokumentiert; der PDF-Nachweis steht anschließend zum Download bereit.</span></div>
+      </article>
+    </section>
+
+    <div class="release-layout">
+      <form
+        class="release-form"
+        data-release-form
+        data-form-type="general"
+        action="/api/veroeffentlichungsfreigabe"
+        method="post"
+        novalidate
+      >
+        <section class="release-section" aria-labelledby="release-project-title">
+          <div class="release-section__head">
+            <span class="release-section__number">1</span>
+            <div>
+              <h2 id="release-project-title">Auftrag eindeutig zuordnen</h2>
+              <p>Trage bitte die mitgeteilte Rechnungs-, Angebots- oder Auftragsnummer und die Angaben zum Kundenprojekt ein.</p>
+            </div>
+          </div>
+
+          <div class="release-field-grid">
+            <div class="release-field release-field--wide">
+              <label for="release-reference">Rechnungsnummer oder Auftragsreferenz</label>
+              <input id="release-reference" name="reference" type="text" required maxlength="120" autocomplete="off" />
+              <span class="release-hint">Bitte die von Luderbein mitgeteilte Rechnungs-, Angebots- oder Auftragsnummer eintragen.</span>
+            </div>
+            <div class="release-field release-field--wide">
+              <label for="release-project">Auftrag / angefertigtes Projekt <span class="release-label-note">(z. B. Schwibbogen Motiv Skifahrer)</span></label>
+              <input id="release-project" name="projectTitle" type="text" required maxlength="180" autocomplete="off" />
+            </div>
+            <div class="release-field release-field--wide">
+              <label for="release-principal">Kunde / Auftraggeber <span class="release-label-note">(Name oder Organisation)</span></label>
+              <input id="release-principal" name="principalName" type="text" required maxlength="180" autocomplete="organization" />
+            </div>
+            <div class="release-field">
+              <label for="release-name">Mein Name</label>
+              <input id="release-name" name="contactName" type="text" required maxlength="120" autocomplete="name" />
+            </div>
+            <div class="release-field">
+              <label for="release-role">Funktion / Rolle (bei Organisationen)</label>
+              <input id="release-role" name="contactRole" type="text" maxlength="120" placeholder="optional, z. B. Projektleitung" autocomplete="organization-title" />
+            </div>
+            <div class="release-field release-field--wide">
+              <label for="release-email">E-Mail-Adresse</label>
+              <input id="release-email" name="email" type="email" required maxlength="200" autocomplete="email" />
+              <span class="release-hint">Dient der Zuordnung, Rückfrage und Dokumentation der Bestätigung.</span>
+            </div>
+            <div class="release-field">
+              <label for="release-note">Einschränkung / Hinweis optional</label>
+              <textarea id="release-note" name="note" maxlength="600" placeholder="z. B. bestimmte Motive oder Details ausnehmen"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="release-section" aria-labelledby="release-use-title">
+          <div class="release-section__head">
+            <span class="release-section__number">2</span>
+            <div>
+              <h2 id="release-use-title">Was darf veröffentlicht werden?</h2>
+              <p>Es ist nichts vorausgewählt. Mindestens ein Veröffentlichungskanal muss bewusst gewählt werden.</p>
+            </div>
+          </div>
+
+          <fieldset class="release-group">
+            <legend>Veröffentlichungskanäle</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="website" type="checkbox" />
+                <span><strong>Werkfotos auf der Luderbein-Website</strong><small>Darstellung des fertigen Projekts auf luderbein-gravur.pages.dev.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="socialMedia" type="checkbox" />
+                <span><strong>Social Media</strong><small>Beiträge oder Storys auf den von Luderbein betriebenen Social-Media-Kanälen.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="digitalPortfolio" type="checkbox" />
+                <span><strong>Digitales Portfolio</strong><small>Digitale Referenzdarstellung gegenüber Interessenten oder Geschäftskunden.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="printedMaterials" type="checkbox" />
+                <span><strong>Gedruckte Referenz- und Werbemittel</strong><small>Zum Beispiel Musterordner, Referenzblätter, Flyer oder Messedrucksachen.</small></span>
+              </label>
+            </div>
+            <p class="release-validation" id="release-channel-validation">Bitte mindestens einen Veröffentlichungskanal auswählen.</p>
+          </fieldset>
+
+          <fieldset class="release-group">
+            <legend>Wie darf der Auftraggeber dargestellt werden?</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="attribution" type="radio" value="named" required />
+                <span><strong>Nennung des Kunden oder Auftraggebers</strong><small>Der angegebene Name darf im Zusammenhang mit dem Projekt genannt werden.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="attribution" type="radio" value="anonymous" required />
+                <span><strong>Nur anonymisierte Veröffentlichung</strong><small>Es erfolgt keine namentliche Zuordnung des Projekts zum Auftraggeber.</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="release-group">
+            <legend>Zusätzliche Inhalte</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="projectStory" type="checkbox" />
+                <span><strong>Entstehung, Entwicklung und Herstellung</strong><small>Authentische Einblicke in Idee, Entwicklung, Fertigung und handwerkliche Umsetzung dürfen gezeigt und beschrieben werden.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="eventPhotos" type="checkbox" />
+                <span><strong>Fotos einer Übergabe oder Veranstaltung</strong><small>Diese Auswahl umfasst nur Aufnahmen, für die erforderliche Zustimmungen tatsächlich vorliegen.</small></span>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="release-section" aria-labelledby="release-rights-title">
+          <div class="release-section__head">
+            <span class="release-section__number">3</span>
+            <div>
+              <h2 id="release-rights-title">Rechte und erkennbare Personen</h2>
+              <p>Die Veröffentlichungsfreigabe bleibt von der Rechteerklärung für die reine Auftragsdurchführung getrennt.</p>
+            </div>
+          </div>
+
+          <div class="release-confirmations">
+            <label class="release-confirmation">
+              <input name="rightsAuthority" type="checkbox" required />
+              <span>Ich bestätige, dass die freigebende Stelle zur Einräumung der erforderlichen einfachen Nutzungsrechte an kundenseitig gelieferten Fotografien, Logos, Wappen, Texten und sonstigen Bestandteilen für die oben ausgewählten Nutzungsarten berechtigt ist.</span>
+            </label>
+          </div>
+
+          <fieldset class="release-group" style="margin-top:22px;">
+            <legend>Personen auf dem Produkt oder in begleitenden Aufnahmen</legend>
+            <p class="release-group__intro">Falls Personen erkennbar sind, lege bitte fest, ob sie im Original oder ausschließlich verpixelt beziehungsweise anonymisiert gezeigt werden dürfen.</p>
+            <div class="release-options release-options--persons">
+              <label class="release-option">
+                <input name="personStatus" type="radio" value="none-visible" required />
+                <span><strong>Keine Personen erkennbar</strong><small>Das freigegebene Material zeigt keine identifizierbaren Personen.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="personStatus" type="radio" value="original-authorized" required />
+                <span><strong>Personen dürfen im Original gezeigt werden</strong><small>Die erforderlichen Zustimmungen liegen vor und ich bin berechtigt, dies für die gewählten Veröffentlichungen zuzusichern.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="personStatus" type="radio" value="anonymized-only" required />
+                <span><strong>Personen nur verpixelt / anonymisiert zeigen</strong><small>Erkennbare Personen dürfen ausschließlich so bearbeitet veröffentlicht werden, dass sie nicht identifizierbar sind.</small></span>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="release-section" aria-labelledby="release-confirm-title">
+          <div class="release-section__head">
+            <span class="release-section__number">4</span>
+            <div>
+              <h2 id="release-confirm-title">Digital bestätigen</h2>
+              <p>Die aktive Bestätigung per Klick wird zusammen mit der gewählten Fassung dokumentiert.</p>
+            </div>
+          </div>
+
+          <div class="release-legal-copy">
+            <p><strong>Umfang:</strong> Luderbein erhält nur für die aktiv gewählten Nutzungsarten einfache, nicht ausschließliche und inhaltlich auf dieses Projekt begrenzte Nutzungsrechte. Eine Übertragung des Urheberrechts erfolgt nicht.</p>
+            <p><strong>Freiwilligkeit und Widerruf:</strong> Die Freigabe ist freiwillig und kann mit Wirkung für die Zukunft per E-Mail an <a href="mailto:luderbein_gravur@icloud.com">luderbein_gravur@icloud.com</a> widerrufen werden. Bis zum Widerruf erfolgte Nutzungen bleiben unberührt. Bereits hergestellte Drucksachen können nicht zurückgerufen werden; beherrschbare digitale Veröffentlichungen werden nach Prüfung für die Zukunft entfernt oder angepasst.</p>
+          </div>
+
+          <div class="release-confirmations">
+            <label class="release-confirmation">
+              <input name="voluntaryConfirmation" type="checkbox" required />
+              <span>Ich habe verstanden, dass diese Veröffentlichungsfreigabe freiwillig ist, nicht zur Auftragsbedingung gemacht wird und für die Zukunft widerrufen werden kann.</span>
+            </label>
+            <label class="release-confirmation">
+              <input name="accuracyConfirmation" type="checkbox" required />
+              <span>Ich bestätige, dass meine Angaben und Auswahl richtig sind und ich für mich selbst oder für den genannten Auftraggeber zur Abgabe dieser Freigabe berechtigt bin.</span>
+            </label>
+            <label class="release-confirmation">
+              <input name="privacyAcknowledgement" type="checkbox" required />
+              <span>Ich habe die Hinweise zur Verarbeitung und Dokumentation dieser Freigabe in der <a href="/rechtliches/datenschutz.html">Datenschutzerklärung</a> gelesen.</span>
+            </label>
+          </div>
+
+          <div class="release-honeypot" aria-hidden="true">
+            <label for="release-website-field">Website</label>
+            <input id="release-website-field" name="websiteField" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="release-actions">
+            <button class="btn primary" type="submit">Auswahl verbindlich bestätigen</button>
+            <p class="release-actions__note">Dabei werden Rechnungsnummer oder Auftragsreferenz, Name, gegebenenfalls Funktion, E-Mail, Projekt, Auswahl, Textversion, Datum, Uhrzeit und Referenzcode gespeichert. Eine handschriftliche Unterschrift ist nicht erforderlich.</p>
+            <p class="release-status" id="release-status" aria-live="polite"></p>
+          </div>
+        </section>
+
+        <section class="release-proof" id="release-proof" aria-live="polite">
+          <h2>Bestätigungsnachweis</h2>
+          <p data-proof-mode>Die Auswahl wurde dokumentiert.</p>
+          <div class="release-proof__meta">
+            <div><span>Referenzcode</span><strong id="release-proof-reference">–</strong></div>
+            <div><span>Bestätigt am</span><strong id="release-proof-date">–</strong></div>
+          </div>
+          <div id="release-download" hidden>
+            <a class="btn primary" id="release-download-link" href="#" download>Bestätigung als PDF herunterladen</a>
+          </div>
+          <button class="btn" id="release-print-button" type="button">Auswahlübersicht drucken</button>
+        </section>
+      </form>
+
+      <aside class="release-summary" aria-label="Aktuelle Auswahl">
+        <div class="release-summary__head">
+          <h2>Aktuelle Auswahl</h2>
+          <p>Diese Übersicht aktualisiert sich direkt.</p>
+        </div>
+        <div class="release-summary__body">
+          <div class="release-summary__group">
+            <h3>Rechnungsnummer / Referenz</h3>
+            <p class="release-summary__empty" id="release-summary-reference">Noch nicht eingetragen</p>
+          </div>
+          <div class="release-summary__group">
+            <h3>Projekt</h3>
+            <p class="release-summary__empty" id="release-summary-project">Projekt noch nicht eingetragen</p>
+          </div>
+          <div class="release-summary__group">
+            <h3>Bestätigung durch</h3>
+            <p class="release-summary__empty" id="release-summary-contact">Name noch nicht eingetragen</p>
+          </div>
+          <div class="release-summary__group">
+            <h3>Kanäle</h3>
+            <ul id="release-summary-channels"><li class="release-summary__empty">Noch kein Veröffentlichungskanal gewählt</li></ul>
+          </div>
+          <div class="release-summary__group">
+            <h3>Darstellung</h3>
+            <p class="release-summary__empty" id="release-summary-attribution">Noch keine Darstellungsform gewählt</p>
+          </div>
+          <div class="release-summary__group">
+            <h3>Zusätzliche Inhalte</h3>
+            <ul id="release-summary-additions"><li class="release-summary__empty">Keine zusätzlichen Inhalte gewählt</li></ul>
+          </div>
+          <div class="release-summary__group">
+            <h3>Erkennbare Personen</h3>
+            <p class="release-summary__empty" id="release-summary-persons">Status zu erkennbaren Personen noch offen</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="/assets/footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/veroeffentlichungsfreigabe.js"></script>
+</body>
+</html>

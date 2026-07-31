@@ -141,7 +141,6 @@
           <a href="/leistungen/schwibboegen/">Schwibbögen</a>
           <div class="sep"></div>
           <a href="/tools/kalkulator/">Kalkulator</a>
-          <a href="/service/">Downloads</a>
         </div>
       </div>
       <a href="/ueber/">Über</a>
@@ -713,9 +712,9 @@
       let created = 0;
 
       for(let k=start;k<=end;k++){
-        const src = "/assets/reel/reel-" + k + state.ext;
-        if(existing.has(src)) continue;
-        state.all.push({ src, alt:"", cap:"", tag:"", cat:"" });
+        const assetPath = "/assets/reel/reel-" + k + state.ext;
+        if(existing.has(assetPath)) continue;
+        state.all.push({ src:assetPath, alt:"", cap:"", tag:"", cat:"" });
         created++;
       }
 

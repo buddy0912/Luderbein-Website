@@ -223,6 +223,20 @@ export function buildReferenceCode(id, createdAt) {
   return `RE-${datePart}-${compactId.slice(0, 8)}`;
 }
 
+export function buildTextPdfDocument({ title, subtitle, lines, filename }) {
+  const textContent = [title, subtitle, "", ...lines].join("\n");
+  const pdfBytes = buildPdf(title, subtitle, lines);
+
+  return {
+    title,
+    filename,
+    mediaType: "application/pdf",
+    textContent,
+    pdfBytes,
+    pdfBase64: bytesToBase64(pdfBytes)
+  };
+}
+
 export function buildConfirmationDocument(payload) {
   const title = "Bestätigung Rechteerklärung für Kundenvorlagen";
   const displayDate = formatDisplayDate(payload.createdAt);
@@ -251,16 +265,15 @@ export function buildConfirmationDocument(payload) {
     "Hinweis: Diese Bestätigung bezieht sich ausschließlich auf den konkret betroffenen Auftrag."
   ];
 
-  const textContent = [title, subtitle, "", ...lines].join("\n");
-  const pdfBytes = buildPdf(title, subtitle, lines);
+  const document = buildTextPdfDocument({
+    title,
+    subtitle,
+    lines,
+    filename
+  });
 
   return {
-    title,
+    ...document,
     referenceCode,
-    filename,
-    mediaType: "application/pdf",
-    textContent,
-    pdfBytes,
-    pdfBase64: bytesToBase64(pdfBytes)
   };
 }

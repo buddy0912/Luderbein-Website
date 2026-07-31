@@ -6,6 +6,10 @@ ALLOWED_ORIGIN = "https://luderbein-gravur.pages.dev"
 PINBOARD_PUBLIC_REQUIRES_APPROVAL = "true"
 PINBOARD_NOTIFY_TO = "luderbein_gravur@icloud.com"
 PINBOARD_EMAIL_FROM = "Pinnwand <onboarding@resend.dev>"
+AIRTABLE_BASE_ID = "appv7YqLyKbEqN87V"
+AIRTABLE_TABLE_ID = "tblTAzo5wBT1rQCew"
+PUBLICATION_RELEASE_NOTIFY_TO = "luderbein_gravur@icloud.com"
+PUBLICATION_RELEASE_EMAIL_FROM = "Luderbein Freigaben <onboarding@resend.dev>"
 
 [[d1_databases]]
 binding = "PINBOARD_DB"
@@ -16,6 +20,8 @@ database_id = "43584731-7e0c-4e18-8dd8-ed0ac02076f9"
 # wrangler secret put PINBOARD_ADMIN_TOKEN
 # Optional separate token for Rechteerklaerung intern:
 # wrangler secret put RIGHTS_ADMIN_TOKEN
+# Airtable-Kopie der Veröffentlichungsfreigaben:
+# wrangler secret put AIRTABLE_TOKEN
 
 # Optional private R2 archive for Rechteerklaerung PDFs:
 # [[r2_buckets]]
