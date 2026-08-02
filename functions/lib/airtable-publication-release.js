@@ -1,6 +1,5 @@
 const DEFAULT_BASE_ID = "appv7YqLyKbEqN87V";
 const DEFAULT_TABLE_ID = "tblTAzo5wBT1rQCew";
-const DEFAULT_NOTIFICATION_USER_ID = "usrynklT5tRc7chHf";
 
 const FIELD_IDS = {
   referenceCode: "fldUpsJGjQmF07ee5",
@@ -18,7 +17,9 @@ const FIELD_IDS = {
   declarationVersion: "fldAjCsmMdCSH3XBw",
   createdAt: "fldf2S0t9hcNftjPD",
   d1Id: "fld4AG9P9uDn5D3qd",
-  notificationUser: "fldezxd27sSxuYUye"
+  status: "fldL2C45ryjkPRjG6",
+  confirmationChannel: "fldCCErHR56DTbhPQ",
+  confirmationText: "fld5ls2yhatEyf60o"
 };
 
 const CHANNEL_VALUES = {
@@ -44,6 +45,12 @@ const PERSON_VALUES = {
   "anonymized-only": "Nur verpixelt / anonymisiert"
 };
 
+const CONFIRMATION_CHANNEL_VALUES = {
+  website: "Website",
+  whatsapp: "WhatsApp",
+  email: "E-Mail"
+};
+
 function activeValues(selection, labels) {
   return Object.entries(labels)
     .filter(([key]) => selection[key] === true)
@@ -66,26 +73,34 @@ export async function syncPublicationReleaseToAirtable(env, payload) {
     [FIELD_IDS.projectTitle]: payload.projectTitle,
     [FIELD_IDS.principalName]: payload.principalName,
     [FIELD_IDS.contactName]: payload.contactName,
-    [FIELD_IDS.email]: payload.email,
     [FIELD_IDS.channels]: activeValues(payload.selection, CHANNEL_VALUES),
     [FIELD_IDS.attribution]: ATTRIBUTION_VALUES[payload.attribution],
     [FIELD_IDS.additions]: activeValues(payload.selection, ADDITION_VALUES),
     [FIELD_IDS.personStatus]: PERSON_VALUES[payload.personStatus],
     [FIELD_IDS.declarationVersion]: payload.declarationVersion,
-    [FIELD_IDS.createdAt]: payload.createdAt,
-    [FIELD_IDS.d1Id]: payload.id
+    [FIELD_IDS.createdAt]: payload.confirmedAt || payload.createdAt,
+    [FIELD_IDS.d1Id]: payload.id,
+    [FIELD_IDS.status]: "Bestätigt",
+    [FIELD_IDS.confirmationChannel]:
+      CONFIRMATION_CHANNEL_VALUES[payload.confirmationChannel] || "Website",
+    [FIELD_IDS.confirmationText]:
+      payload.confirmationText || "Aktive Bestätigung über das öffentliche Website-Formular."
   };
 
   if (payload.contactRole) fields[FIELD_IDS.contactRole] = payload.contactRole;
+  if (payload.email) fields[FIELD_IDS.email] = payload.email;
   if (payload.note) fields[FIELD_IDS.note] = payload.note;
 
   const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
-    method: "POST",
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
+      performUpsert: {
+        fieldsToMergeOn: [FIELD_IDS.referenceCode]
+      },
       records: [{ fields }],
       typecast: false
     })
@@ -97,35 +112,8 @@ export async function syncPublicationReleaseToAirtable(env, payload) {
   const recordId = data?.records?.[0]?.id;
   if (!recordId) throw new Error("AIRTABLE_RESPONSE_INVALID");
 
-  const notificationUserId = String(
-    env.AIRTABLE_NOTIFICATION_USER_ID || DEFAULT_NOTIFICATION_USER_ID
-  ).trim();
-  let notificationStatus = "not_configured";
-
-  if (/^usr[a-zA-Z0-9]{14}$/.test(notificationUserId)) {
-    const notificationResponse = await fetch(
-      `https://api.airtable.com/v0/${baseId}/${tableId}/${recordId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          fields: {
-            [FIELD_IDS.notificationUser]: { id: notificationUserId }
-          },
-          typecast: false
-        })
-      }
-    );
-
-    notificationStatus = notificationResponse.ok ? "assigned" : "failed";
-  }
-
   return {
     status: "synced",
-    recordId,
-    notificationStatus
+    recordId
   };
 }

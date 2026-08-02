@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("lb-light-readable") === "1") {
+          document.documentElement.classList.add("light-readable");
+        }
+      } catch (error) {}
+    })();
+  </script>
+  <title>Interne Vorbereitung von Veröffentlichungsfreigaben – Luderbein</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <link rel="stylesheet" href="/assets/veroeffentlichungsfreigabe.css" />
+  <link rel="stylesheet" href="/assets/veroeffentlichungsfreigabe-intern.css" />
+</head>
+
+<body class="release-page release-internal-page" data-enablebot="0">
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="logo" aria-hidden="true">
+          <img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" />
+        </div>
+        <div>
+          <strong>Luderbein</strong><br>
+          <span>Schwibbögen • Gravur • Sonderwünsche</span>
+        </div>
+      </a>
+
+      <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen">
+        <span class="navicon"><span></span></span>
+      </button>
+
+      <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+        <a href="/">Start</a>
+        <a href="/rechtliches/veroeffentlichungsfreigabe/">Öffentliche Freigabe</a>
+        <a href="/rechtliches/" aria-current="page">Rechtliches</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="content">
+    <section class="hero release-hero release-internal-hero">
+      <span class="badge"><i></i> Intern · Vorbereitung</span>
+      <h1>Kundenfreigabe vorbereiten und eindeutig dokumentieren</h1>
+      <p class="lead">
+        Du bereitest den konkreten Umfang vor. Der Kunde prüft das Projekt und kann im passenden
+        Nachrichtenkontext kurz und eindeutig zustimmen. Erst danach entsteht die bestätigte Fassung.
+      </p>
+    </section>
+
+    <div class="release-preview-mode" id="internal-preview-mode">
+      Lokaler Prüfmodus: Es werden keine Daten gespeichert und keine Airtable-Aufrufe ausgelöst.
+    </div>
+
+    <section class="internal-access" aria-labelledby="internal-access-title">
+      <div>
+        <span class="internal-eyebrow">Geschützter Bereich</span>
+        <h2 id="internal-access-title">Zugriff</h2>
+        <p>Das Token bleibt nur bis zum Schließen dieses Browser-Tabs gespeichert.</p>
+      </div>
+      <div class="internal-access__controls">
+        <label class="release-field">
+          <span>Admin-Token</span>
+          <input id="internal-token" type="password" autocomplete="off" placeholder="Admin-Token eingeben" />
+        </label>
+        <button class="btn primary" id="internal-connect" type="button">Verbinden</button>
+        <button class="btn ghost" id="internal-disconnect" type="button">Token löschen</button>
+      </div>
+      <p class="release-status" id="internal-status" aria-live="polite"></p>
+    </section>
+
+    <section class="internal-flow" aria-label="Interner Ablauf">
+      <article><span>1</span><strong>Vorbereiten</strong><small>Projekt und Umfang eindeutig festlegen.</small></article>
+      <article><span>2</span><strong>PDF senden</strong><small>Per WhatsApp oder E-Mail übermitteln.</small></article>
+      <article><span>3</span><strong>Antwort dokumentieren</strong><small>Ein klares „Ja“ im richtigen Kontext genügt.</small></article>
+      <article><span>4</span><strong>Abschließen</strong><small>Endgültige PDF und ein Airtable-Eintrag.</small></article>
+    </section>
+
+    <section class="internal-panel" aria-labelledby="prepare-title">
+      <div class="internal-panel__head">
+        <div>
+          <span class="internal-eyebrow">Schritt 1</span>
+          <h2 id="prepare-title">Freigabe vorbereiten</h2>
+        </div>
+        <p>Noch keine Kundenbestätigung und noch kein Airtable-Schreibvorgang.</p>
+      </div>
+
+      <form class="release-form internal-prepare-form" id="internal-prepare-form" novalidate>
+        <div class="release-field-grid">
+          <div class="release-field release-field--wide">
+            <label for="internal-reference">Rechnungsnummer oder Auftragsreferenz</label>
+            <input id="internal-reference" name="reference" type="text" required maxlength="120" autocomplete="off" />
+          </div>
+          <div class="release-field release-field--wide">
+            <label for="internal-project">Auftrag / angefertigtes Projekt <span class="release-label-note">(z. B. drei Nachtwächter-Schwibbögen)</span></label>
+            <input id="internal-project" name="projectTitle" type="text" required maxlength="180" autocomplete="off" />
+          </div>
+          <div class="release-field release-field--wide">
+            <label for="internal-principal">Kunde / Auftraggeber <span class="release-label-note">(Name oder Organisation)</span></label>
+            <input id="internal-principal" name="principalName" type="text" required maxlength="180" autocomplete="organization" />
+          </div>
+          <div class="release-field">
+            <label for="internal-contact">Bestätigende Person</label>
+            <input id="internal-contact" name="contactName" type="text" required maxlength="120" autocomplete="name" />
+          </div>
+          <div class="release-field">
+            <label for="internal-role">Funktion / Rolle</label>
+            <input id="internal-role" name="contactRole" type="text" maxlength="120" placeholder="optional" autocomplete="organization-title" />
+          </div>
+          <div class="release-field">
+            <label for="internal-email">E-Mail-Adresse</label>
+            <input id="internal-email" name="email" type="email" maxlength="200" placeholder="optional bei WhatsApp" autocomplete="email" />
+          </div>
+          <div class="release-field">
+            <label for="internal-note">Einschränkung / Hinweis</label>
+            <textarea id="internal-note" name="note" maxlength="600" placeholder="optional"></textarea>
+          </div>
+        </div>
+
+        <div class="internal-choice-grid">
+          <fieldset class="release-group">
+            <legend>Veröffentlichungskanäle</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="website" type="checkbox" />
+                <span><strong>Luderbein-Website</strong><small>Werkfotos auf der Website.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="socialMedia" type="checkbox" />
+                <span><strong>Social Media</strong><small>Beiträge und Storys.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="digitalPortfolio" type="checkbox" />
+                <span><strong>Digitales Portfolio</strong><small>Referenzdarstellung gegenüber Interessenten.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="printedMaterials" type="checkbox" />
+                <span><strong>Gedruckte Materialien</strong><small>Referenz- und Werbemittel.</small></span>
+              </label>
+            </div>
+            <p class="release-validation" id="internal-channel-validation">Bitte mindestens einen Kanal auswählen.</p>
+          </fieldset>
+
+          <fieldset class="release-group">
+            <legend>Darstellung des Auftraggebers</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="attribution" type="radio" value="named" required />
+                <span><strong>Kunde darf genannt werden</strong><small>Projekt und Auftraggeber dürfen zugeordnet werden.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="attribution" type="radio" value="anonymous" required />
+                <span><strong>Nur anonymisiert</strong><small>Keine namentliche Zuordnung.</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="release-group">
+            <legend>Zusätzliche Inhalte</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="projectStory" type="checkbox" />
+                <span><strong>Entstehung, Entwicklung und Herstellung</strong><small>Authentische Einblicke in den Projektverlauf.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="eventPhotos" type="checkbox" />
+                <span><strong>Übergabe oder Veranstaltung</strong><small>Aufnahmen aus diesem Zusammenhang.</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="release-group">
+            <legend>Erkennbare Personen</legend>
+            <div class="release-options">
+              <label class="release-option">
+                <input name="personStatus" type="radio" value="none-visible" required />
+                <span><strong>Keine Personen erkennbar</strong><small>Niemand ist identifizierbar.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="personStatus" type="radio" value="original-authorized" required />
+                <span><strong>Originaldarstellung erlaubt</strong><small>Erforderliche Zustimmungen werden mit bestätigt.</small></span>
+              </label>
+              <label class="release-option">
+                <input name="personStatus" type="radio" value="anonymized-only" required />
+                <span><strong>Nur verpixelt / anonymisiert</strong><small>Personen dürfen nicht identifizierbar sein.</small></span>
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="release-actions internal-actions">
+          <button class="btn primary" type="submit">Vorbereitete PDF erzeugen</button>
+          <p>Der Vorgang erhält zunächst ausschließlich den Status „Kundenbestätigung ausstehend“.</p>
+        </div>
+      </form>
+    </section>
+
+    <section class="internal-panel internal-prepared-result" id="internal-prepared-result" hidden aria-live="polite">
+      <div class="internal-panel__head">
+        <div>
+          <span class="internal-eyebrow">Vorbereitet</span>
+          <h2>PDF und kurze Kundenanfrage</h2>
+        </div>
+        <div class="internal-reference-chip" id="prepared-reference">–</div>
+      </div>
+      <div class="internal-result-grid">
+        <div>
+          <h3>Vorbereitete PDF</h3>
+          <p>Diese Fassung trägt sichtbar den Status „Kundenbestätigung ausstehend“.</p>
+          <a class="btn primary" id="prepared-download" href="#" download>PDF herunterladen</a>
+        </div>
+        <div>
+          <label for="prepared-request-text"><strong>Nachricht an den Kunden</strong></label>
+          <textarea id="prepared-request-text" rows="13" readonly></textarea>
+          <button class="btn secondary" id="prepared-copy" type="button">Anfrage kopieren</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="internal-panel" aria-labelledby="records-title">
+      <div class="internal-panel__head">
+        <div>
+          <span class="internal-eyebrow">Schritt 2 bis 4</span>
+          <h2 id="records-title">Vorbereitete und bestätigte Vorgänge</h2>
+        </div>
+        <button class="btn secondary" id="internal-refresh" type="button">Liste aktualisieren</button>
+      </div>
+
+      <div class="internal-record-layout">
+        <div class="internal-record-list-wrap">
+          <label class="release-field internal-search">
+            <span>Filtern</span>
+            <input id="internal-filter" type="search" placeholder="Projekt, Kunde oder Referenzcode" />
+          </label>
+          <div class="internal-table-wrap">
+            <table class="internal-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Projekt</th>
+                  <th>Kunde</th>
+                  <th>Referenz</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="internal-record-list"></tbody>
+            </table>
+          </div>
+          <p class="internal-empty" id="internal-empty">Noch keine Vorgänge geladen.</p>
+        </div>
+
+        <aside class="internal-detail" id="internal-detail" hidden>
+          <div class="internal-detail__head">
+            <div>
+              <span class="internal-status-pill" id="detail-status">–</span>
+              <h3 id="detail-project">–</h3>
+              <p id="detail-principal">–</p>
+            </div>
+            <strong id="detail-reference">–</strong>
+          </div>
+
+          <dl class="internal-detail-grid">
+            <div><dt>Auftragsreferenz</dt><dd id="detail-order-reference">–</dd></div>
+            <div><dt>Bestätigende Person</dt><dd id="detail-contact">–</dd></div>
+            <div><dt>Kanäle</dt><dd id="detail-channels">–</dd></div>
+            <div><dt>Personen</dt><dd id="detail-persons">–</dd></div>
+            <div><dt>Airtable</dt><dd id="detail-airtable">–</dd></div>
+          </dl>
+
+          <div class="internal-detail-actions">
+            <button class="btn secondary" id="detail-prepared-pdf" type="button">Vorbereitete PDF</button>
+            <button class="btn primary" id="detail-final-pdf" type="button" hidden>Bestätigte PDF</button>
+            <button class="btn ghost" id="detail-evidence" type="button" hidden>Zusatznachweis</button>
+          </div>
+
+          <div class="internal-confirmed-copy" id="confirmed-copy" hidden>
+            <h4>Dokumentierte Bestätigung</h4>
+            <p><strong>Weg und Zeitpunkt:</strong> <span id="confirmed-meta">–</span></p>
+            <blockquote id="confirmed-text">–</blockquote>
+          </div>
+
+          <form class="internal-confirm-form" id="internal-confirm-form" hidden>
+            <h4>Kundenantwort dokumentieren</h4>
+            <p class="internal-confirm-hint">
+              Der Kunde muss keinen vorgegebenen Satz wiederholen. Entscheidend ist eine eindeutige
+              Zustimmung im dokumentierten Zusammenhang.
+            </p>
+
+            <fieldset class="release-group">
+              <legend>Bestätigungsweg</legend>
+              <div class="internal-channel-choice">
+                <label><input name="confirmationChannel" type="radio" value="whatsapp" required /> WhatsApp</label>
+                <label><input name="confirmationChannel" type="radio" value="email" required /> E-Mail</label>
+              </div>
+            </fieldset>
+
+            <div class="release-field">
+              <label for="confirmation-date">Datum und Uhrzeit der Antwort</label>
+              <input id="confirmation-date" name="confirmedAt" type="datetime-local" required />
+            </div>
+
+            <div class="release-field">
+              <label for="confirmation-text">Kundenantwort im Wortlaut</label>
+              <textarea id="confirmation-text" name="confirmationText" required maxlength="2000" placeholder="z. B. Ja, das ist so in Ordnung."></textarea>
+            </div>
+
+            <div class="release-field">
+              <label for="confirmation-context">Dokumentierter Abfragekontext</label>
+              <textarea id="confirmation-context" name="confirmationContext" required maxlength="5000"></textarea>
+            </div>
+
+            <div class="release-field">
+              <label for="confirmation-evidence">Optionaler Screenshot oder PDF-Nachweis</label>
+              <input id="confirmation-evidence" name="evidence" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" />
+              <span class="release-hint">Optional, maximal 750 KB.</span>
+            </div>
+
+            <label class="release-confirmation internal-assessment">
+              <input name="confirmationAssessed" type="checkbox" required />
+              <span>Ich habe den Gesprächskontext geprüft. Die Antwort ist eindeutig zustimmend und kein unklarer Hinweis wie „Hm“.</span>
+            </label>
+
+            <div class="release-actions">
+              <button class="btn primary" type="submit">Bestätigung abschließen</button>
+              <p>Erst dieser Schritt erzeugt die endgültige PDF und den Airtable-Eintrag.</p>
+            </div>
+          </form>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="/assets/footer.js"></script>
+  <script src="/assets/nav-dropdown.js"></script>
+  <script src="/assets/site.js"></script>
+  <script src="/assets/veroeffentlichungsfreigabe-intern.js"></script>
+</body>
+</html>
