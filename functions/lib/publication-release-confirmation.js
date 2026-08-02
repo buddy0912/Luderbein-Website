@@ -29,7 +29,10 @@ export function buildPublicationReferenceCode(id, createdAt) {
 }
 
 export function buildPublicationReleaseDocument(payload) {
-  const title = "Bestätigung Veröffentlichungsfreigabe";
+  const isPrepared = payload.status === "prepared";
+  const title = isPrepared
+    ? "Vorbereitete Veröffentlichungsfreigabe"
+    : "Bestätigte Veröffentlichungsfreigabe";
   const subtitle = `Referenzcode ${payload.referenceCode}`;
   const selectedChannels = payload.selectedChannels.length
     ? payload.selectedChannels
@@ -39,8 +42,13 @@ export function buildPublicationReleaseDocument(payload) {
     : ["keine zusätzlichen Inhalte"];
 
   const lines = [
+    `Status: ${
+      isPrepared
+        ? "Von Luderbein vorbereitet - Kundenbestätigung ausstehend"
+        : "Bestätigt"
+    }`,
     `Referenzcode: ${payload.referenceCode}`,
-    `Datum/Uhrzeit: ${formatDisplayDate(payload.createdAt)} (Europe/Berlin)`,
+    `Vorbereitet am: ${formatDisplayDate(payload.createdAt)} (Europe/Berlin)`,
     `Textversion: ${payload.declarationVersion} / Stand ${payload.declarationStand}`,
     "",
     `Projekt: ${payload.projectTitle}`,
@@ -61,11 +69,12 @@ export function buildPublicationReleaseDocument(payload) {
     "",
     `Erkennbare Personen: ${payload.personStatusLabel}`,
     "",
-    "Bestätigungen:",
-    "- Berechtigung zu den erforderlichen Rechten an kundenseitig gelieferten Bestandteilen bestätigt.",
-    "- Freiwilligkeit und Widerrufsmöglichkeit für die Zukunft bestätigt.",
-    "- Richtigkeit der Angaben und Vertretungsberechtigung bestätigt.",
-    "- Datenschutzhinweise zur Dokumentation zur Kenntnis genommen.",
+    "\f",
+    isPrepared ? "Mit der Zustimmung werden bestätigt:" : "Bestätigt wurde:",
+    "- Berechtigung zu den erforderlichen Rechten an kundenseitig gelieferten Bestandteilen.",
+    "- Freiwilligkeit und Widerrufsmöglichkeit für die Zukunft.",
+    "- Richtigkeit der Angaben und Vertretungsberechtigung.",
+    "- Kenntnisnahme der Datenschutzhinweise zur Dokumentation.",
     "",
     "Rechteumfang:",
     "Einfache, nicht ausschließliche Nutzungsrechte ausschließlich für die aktiv gewählten Nutzungsarten",
@@ -76,12 +85,35 @@ export function buildPublicationReleaseDocument(payload) {
     "Bis zum Widerruf erfolgte Nutzungen bleiben unberührt. Bereits hergestellte Drucksachen können",
     "nicht zurückgerufen werden; beherrschbare digitale Veröffentlichungen werden nach Prüfung angepasst.",
     "",
-    "Diese Bestätigung wurde digital durch aktive Auswahl und Absenden des Online-Formulars abgegeben.",
-    "Eine handschriftliche Eingabe ist für diesen digitalen Bestätigungsvorgang nicht erforderlich."
+    isPrepared ? "Einfache Bestätigungsfrage:" : "Dokumentierte Kundenbestätigung:",
+    isPrepared
+      ? "Darf Luderbein das oben beschriebene Projekt im angegebenen Umfang veröffentlichen?"
+      : `Bestätigungsweg: ${payload.confirmationChannelLabel || "Website"}`,
+    isPrepared
+      ? "Eine eindeutige zustimmende Antwort im Zusammenhang mit dieser Anfrage genügt."
+      : `Bestätigt am: ${formatDisplayDate(payload.confirmedAt || payload.createdAt)} (Europe/Berlin)`,
+    isPrepared
+      ? "Ein unklarer Hinweis oder eine ausweichende Antwort gilt nicht als Bestätigung."
+      : `Antwort im Wortlaut: ${payload.confirmationText || "Aktive Bestätigung über das Website-Formular."}`,
+    !isPrepared && payload.confirmationContext
+      ? `Dokumentierter Abfragekontext: ${payload.confirmationContext}`
+      : "",
+    !isPrepared
+      ? "Luderbein hat die Antwort im dargestellten Zusammenhang als eindeutig zustimmend dokumentiert."
+      : "",
+    !isPrepared && payload.evidenceName
+      ? `Zusätzlicher Nachweis hinterlegt: ${payload.evidenceName}`
+      : "",
+    "",
+    isPrepared
+      ? "Dieses Dokument ist noch keine bestätigte Freigabe."
+      : "Eine handschriftliche Unterschrift ist für diesen dokumentierten Bestätigungsvorgang nicht erforderlich."
   ];
 
   const filenameProject = safeFilenamePart(payload.projectTitle) || "projekt";
-  const filename = `veroeffentlichungsfreigabe-${filenameProject}-${payload.referenceCode}.pdf`;
+  const filename = `${
+    isPrepared ? "veroeffentlichungsfreigabe-vorbereitet" : "veroeffentlichungsfreigabe-bestaetigt"
+  }-${filenameProject}-${payload.referenceCode}.pdf`;
 
   return {
     ...buildTextPdfDocument({

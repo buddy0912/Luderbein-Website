@@ -1,10 +1,10 @@
 # Airtable-Anbindung der Veröffentlichungsfreigabe
 
-Stand: 31.07.2026
+Stand: 02.08.2026
 
 ## Ziel
 
-Die Website speichert jede wirksame Veröffentlichungsfreigabe zuerst vollständig in Cloudflare D1. Anschließend wird eine Arbeitskopie nach Airtable übertragen. Ein Airtable-Fehler darf die bereits dokumentierte Kundenfreigabe nicht verwerfen.
+Die Website speichert vorbereitete und bestätigte Veröffentlichungsfreigaben vollständig in Cloudflare D1. Erst nach einer eindeutigen Kundenbestätigung wird eine Arbeitskopie nach Airtable übertragen. Ein Airtable-Fehler darf die bereits in D1 dokumentierte Kundenfreigabe nicht verwerfen.
 
 ## Airtable-Ziel
 
@@ -23,20 +23,32 @@ Den Token nicht in Dateien oder in den Chat kopieren, sondern als Cloudflare-Sec
 
 Die nicht geheimen Base- und Table-IDs stehen in `wrangler.toml`.
 
-## Kostenfreie Benachrichtigung in Airtable
+## Sparsamer Schreibvorgang
 
-Die Website weist jeden neu angelegten Datensatz nach dem Speichern im Benutzerfeld
-`Benachrichtigung an` dem Luderbein-Airtable-Konto zu. In den Feldeinstellungen muss
-`Benutzer*innen mit Base-Zugriff benachrichtigen, wenn sie hinzugefügt wurden` aktiviert
-bleiben. Airtable kann dadurch eine native Mitteilung in der App, im Benachrichtigungsbereich
-und abhängig von den persönlichen Airtable-Einstellungen per E-Mail auslösen.
+Pro bestätigter Freigabe sendet die Website genau eine `PATCH`-Anfrage an Airtable.
+Der Referenzcode dient dabei als eindeutiger Schlüssel. Existiert bereits ein Datensatz mit
+diesem Referenzcode, wird er aktualisiert; andernfalls wird er angelegt. Dadurch entstehen
+keine unnötigen Duplikate.
 
-Für diesen Weg ist keine Airtable-Automation erforderlich. Die nicht geheime Benutzer-ID
-steht als `AIRTABLE_NOTIFICATION_USER_ID` in `wrangler.toml`.
+Vorbereitete Freigaben mit ausstehender Kundenbestätigung werden nicht an Airtable
+übertragen. Es gibt weder einen zweiten Schreibvorgang für das Benutzerfeld
+`Benachrichtigung an` noch zusätzliche Lese- oder Abfragevorgänge.
 
-Optional kann die Website nach der D1-Speicherung zusätzlich eine interne E-Mail über
-Resend senden. Dafür müssen `RESEND_API_KEY`, `PUBLICATION_RELEASE_NOTIFY_TO` und
-`PUBLICATION_RELEASE_EMAIL_FROM` in Cloudflare vollständig konfiguriert sein.
+Zusätzlich zu den bisherigen Feldern werden in Airtable gespeichert:
+
+- Status
+- Bestätigungsweg
+- Bestätigungstext
+
+## Benachrichtigungsstrategie
+
+Für Veröffentlichungsfreigaben ist keine automatische Push- oder E-Mail-Benachrichtigung
+aktiv. Dadurch entstehen 0 Airtable-Automationsläufe pro Monat. Die Kontrolle erfolgt
+manuell in Airtable.
+
+Eine spätere wöchentliche Sammelmail wäre mit ungefähr 4 bis 5 geplanten
+Automationsläufen pro Monat möglich. Sie ist bewusst nicht Bestandteil dieser Fassung,
+damit die Freigabe selbst zuverlässig und kontingentsparend bleibt.
 
 ## Datenschutz vor produktiver Nutzung
 

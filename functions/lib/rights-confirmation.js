@@ -5,8 +5,9 @@ const PDF_HEADER_Y = 786;
 const PDF_BODY_START_Y = 742;
 const PDF_BODY_FONT_SIZE = 11;
 const PDF_BODY_LINE_HEIGHT = 14;
-const PDF_MAX_BODY_LINES = 43;
+const PDF_MAX_BODY_LINES = 48;
 const PDF_WRAP_WIDTH = 88;
+const PDF_PAGE_BREAK = "\f";
 
 function normalizePdfText(value) {
   return String(value || "")
@@ -100,6 +101,11 @@ function buildWrappedParagraphs(lines) {
   const wrapped = [];
 
   for (const line of lines) {
+    if (line === PDF_PAGE_BREAK) {
+      wrapped.push(PDF_PAGE_BREAK);
+      continue;
+    }
+
     if (!line) {
       wrapped.push("");
       continue;
@@ -112,12 +118,26 @@ function buildWrappedParagraphs(lines) {
   return wrapped;
 }
 
-function chunkLines(lines, size) {
-  const chunks = [];
-  for (let index = 0; index < lines.length; index += size) {
-    chunks.push(lines.slice(index, index + size));
+function paginateLines(lines, size) {
+  const pages = [];
+  let currentPage = [];
+
+  for (const line of lines) {
+    if (line === PDF_PAGE_BREAK) {
+      if (currentPage.length) pages.push(currentPage);
+      currentPage = [];
+      continue;
+    }
+
+    currentPage.push(line);
+    if (currentPage.length === size) {
+      pages.push(currentPage);
+      currentPage = [];
+    }
   }
-  return chunks.length ? chunks : [[]];
+
+  if (currentPage.length || !pages.length) pages.push(currentPage);
+  return pages;
 }
 
 function buildPdfContentStream(title, subtitle, pageLines, pageNumber, pageCount) {
@@ -161,7 +181,7 @@ function buildPdfContentStream(title, subtitle, pageLines, pageNumber, pageCount
 
 function buildPdf(title, subtitle, lines) {
   const wrappedLines = buildWrappedParagraphs(lines);
-  const pages = chunkLines(wrappedLines, PDF_MAX_BODY_LINES);
+  const pages = paginateLines(wrappedLines, PDF_MAX_BODY_LINES);
   const objects = [];
 
   const addObject = (content) => {
