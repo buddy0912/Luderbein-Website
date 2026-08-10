@@ -1,6 +1,6 @@
 # Airtable-Anbindung der Veröffentlichungsfreigabe
 
-Stand: 02.08.2026
+Stand: 09.08.2026 · Veröffentlichungsfreigabe Version 1.0
 
 ## Ziel
 
@@ -39,6 +39,14 @@ Zusätzlich zu den bisherigen Feldern werden in Airtable gespeichert:
 - Status
 - Bestätigungsweg
 - Bestätigungstext
+
+Die vollständige Auswahl nach PDF-Version 1.0 bleibt in Cloudflare D1 der maßgebliche
+Nachweis. Airtable erhält weiterhin nur eine kompakte Arbeitskopie. Die detaillierte
+Materialbeschreibung, die freigegebenen Inhalte, sichtbare Angaben, Personenregelungen
+und Einschränkungen werden dafür zusammengefasst im vorhandenen Notizfeld abgelegt.
+Die vorhandenen Mehrfachauswahlfelder werden weiterhin sparsam auf Website, Social
+Media, digitales Portfolio und gedruckte Materialien abgebildet. Es entstehen keine
+zusätzlichen Airtable-Schreibvorgänge.
 
 ## Benachrichtigungsstrategie
 
