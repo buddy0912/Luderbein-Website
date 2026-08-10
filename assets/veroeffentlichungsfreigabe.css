@@ -16,11 +16,71 @@
 }
 
 .release-page .release-hero h1 {
-  max-width: 19ch;
+  max-width: 22ch;
   margin-bottom: 0;
   overflow-wrap: normal;
   word-break: normal;
   hyphens: manual;
+}
+
+.release-form--v1 {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.release-pdf-alternative {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1040px;
+  margin: 0 auto 20px;
+  padding: 20px 22px;
+  border: 1px solid rgba(219, 16, 33, 0.3);
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(70, 18, 22, 0.3), rgba(20, 15, 19, 0.9));
+}
+
+.release-pdf-alternative h2,
+.release-pdf-alternative p {
+  margin: 0;
+}
+
+.release-pdf-alternative h2 {
+  margin-top: 4px;
+  font-size: 1.2rem;
+}
+
+.release-pdf-alternative p {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.release-kicker {
+  color: #ffb5bb;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.release-pdf-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.release-sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .release-draft-note {
@@ -193,6 +253,10 @@
   gap: 14px;
 }
 
+.release-field-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .release-field {
   display: grid;
   gap: 7px;
@@ -275,6 +339,57 @@
 
 .release-options--persons {
   grid-template-columns: 1fr;
+}
+
+.release-options--compact .release-option {
+  min-height: 58px;
+  align-items: center;
+  padding: 12px 14px;
+}
+
+.release-inline-field,
+.release-conditional {
+  margin-top: 14px;
+}
+
+.release-confirmation--compact {
+  margin-top: 14px;
+  padding: 12px 14px;
+}
+
+.release-confirmation--final {
+  border-color: rgba(219, 16, 33, 0.58);
+  background: rgba(70, 18, 22, 0.3);
+  font-weight: 700;
+}
+
+.release-legal-details {
+  margin-top: 14px;
+  padding: 13px 15px;
+  border: 1px solid rgba(110, 104, 108, 0.52);
+  border-radius: 14px;
+  background: rgba(20, 13, 18, 0.52);
+}
+
+.release-legal-details summary {
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.release-legal-details p,
+.release-short-note {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.release-legal-details p {
+  margin: 12px 0 0;
+}
+
+.release-short-note {
+  margin: 14px 0 0;
+  font-size: 0.92rem;
 }
 
 .release-option {
@@ -412,6 +527,36 @@
   position: sticky;
   top: 92px;
   overflow: hidden;
+}
+
+.release-summary--review {
+  position: static;
+  top: auto;
+  max-width: none;
+}
+
+.release-summary--review .release-summary__body {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.release-summary--review .release-summary__group {
+  padding: 12px 14px;
+  border: 1px solid rgba(110, 104, 108, 0.38);
+  border-radius: 13px;
+}
+
+.light-readable .release-pdf-alternative,
+.light-readable .release-section,
+.light-readable .release-summary,
+.light-readable .release-legal-details,
+.light-readable .release-confirmation {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.light-readable .release-preview-mode {
+  border-color: rgba(121, 82, 0, 0.42);
+  background: rgba(255, 235, 187, 0.76);
+  color: #6d4a00;
 }
 
 .release-summary__head {
@@ -555,6 +700,249 @@
   overflow: hidden;
 }
 
+/* Öffentliche Kundenfreigabe: bewusst kompakte Fassung. */
+.release-page:not(.release-internal-page) main {
+  padding-top: 16px;
+  padding-bottom: 36px;
+}
+
+.release-page:not(.release-internal-page) .release-hero {
+  grid-template-columns: minmax(220px, 0.6fr) minmax(0, 1.4fr);
+  align-items: center;
+  gap: 14px;
+  max-width: 1040px;
+  margin: 0 auto 10px;
+  padding: 12px 14px;
+}
+
+.release-page:not(.release-internal-page) .release-hero .badge {
+  display: none;
+}
+
+.release-page:not(.release-internal-page) .release-hero h1 {
+  max-width: none;
+  margin: 0;
+  font-size: clamp(1.4rem, 2.5vw, 1.7rem);
+  white-space: nowrap;
+}
+
+.release-page:not(.release-internal-page) .release-hero .lead {
+  margin: 0;
+  max-width: none;
+  font-size: 0.88rem;
+  line-height: 1.42;
+}
+
+.release-page:not(.release-internal-page) .release-preview-mode {
+  max-width: 1040px;
+  margin: 0 auto 8px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  font-size: 0.8rem;
+}
+
+.release-page:not(.release-internal-page) .release-pdf-alternative {
+  gap: 12px;
+  margin-bottom: 10px;
+  padding: 9px 11px;
+  border-radius: 11px;
+}
+
+.release-page:not(.release-internal-page) .release-pdf-alternative h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.release-page:not(.release-internal-page) .release-pdf-alternative p {
+  margin-top: 2px;
+  font-size: 0.78rem;
+}
+
+.release-page:not(.release-internal-page) .release-pdf-actions {
+  gap: 6px;
+}
+
+.release-page:not(.release-internal-page) .release-pdf-actions .btn {
+  min-height: 34px;
+  padding: 6px 9px;
+  border-radius: 9px;
+  font-size: 0.8rem;
+}
+
+.release-page:not(.release-internal-page) .release-form--v1 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.release-page:not(.release-internal-page) .release-form--v1 > :nth-child(1),
+.release-page:not(.release-internal-page) .release-form--v1 > :nth-child(2),
+.release-page:not(.release-internal-page) .release-form--v1 > .release-summary--review,
+.release-page:not(.release-internal-page) .release-form--v1 > .release-section--confirmation,
+.release-page:not(.release-internal-page) .release-form--v1 > .release-proof {
+  grid-column: 1 / -1;
+}
+
+.release-page:not(.release-internal-page) .release-section,
+.release-page:not(.release-internal-page) .release-summary,
+.release-page:not(.release-internal-page) .release-proof {
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.release-page:not(.release-internal-page) .release-section {
+  padding: 12px 13px;
+}
+
+.release-page:not(.release-internal-page) .release-section__head {
+  grid-template-columns: 25px 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.release-page:not(.release-internal-page) .release-section__number {
+  width: 24px;
+  height: 24px;
+  font-size: 0.76rem;
+}
+
+.release-page:not(.release-internal-page) .release-section__head h2 {
+  font-size: 0.96rem;
+  line-height: 1.3;
+}
+
+.release-page:not(.release-internal-page) .release-field-grid {
+  gap: 8px 10px;
+}
+
+.release-page:not(.release-internal-page) .release-field {
+  gap: 4px;
+}
+
+.release-page:not(.release-internal-page) .release-field label,
+.release-page:not(.release-internal-page) .release-group legend {
+  font-size: 0.82rem;
+}
+
+.release-page:not(.release-internal-page) .release-field input,
+.release-page:not(.release-internal-page) .release-field textarea {
+  min-height: 38px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  font-size: 0.88rem;
+}
+
+.release-page:not(.release-internal-page) .release-field textarea {
+  min-height: 60px;
+}
+
+.release-page:not(.release-internal-page) .release-options {
+  gap: 7px;
+}
+
+.release-page:not(.release-internal-page) .release-options--persons {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.release-page:not(.release-internal-page) .release-options--compact .release-option,
+.release-page:not(.release-internal-page) .release-option {
+  min-height: 38px;
+  grid-template-columns: 18px 1fr;
+  gap: 7px;
+  align-items: center;
+  padding: 7px 9px;
+  border-radius: 9px;
+  font-size: 0.84rem;
+  line-height: 1.25;
+}
+
+.release-page:not(.release-internal-page) .release-option input,
+.release-page:not(.release-internal-page) .release-confirmation input {
+  width: 16px;
+  height: 16px;
+  margin-top: 0;
+}
+
+.release-page:not(.release-internal-page) .release-inline-field,
+.release-page:not(.release-internal-page) .release-conditional {
+  margin-top: 8px;
+}
+
+.release-page:not(.release-internal-page) .release-confirmation--compact,
+.release-page:not(.release-internal-page) .release-confirmation--final {
+  margin-top: 8px;
+  grid-template-columns: 18px 1fr;
+  gap: 8px;
+  padding: 8px 9px;
+  border-radius: 9px;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.release-page:not(.release-internal-page) .release-legal-details {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 0.82rem;
+}
+
+.release-page:not(.release-internal-page) .release-short-note {
+  margin-top: 8px;
+  font-size: 0.8rem;
+}
+
+.release-page:not(.release-internal-page) .release-actions {
+  gap: 6px;
+}
+
+.release-page:not(.release-internal-page) .release-actions .btn {
+  min-height: 40px;
+  font-size: 0.9rem;
+}
+
+.release-page:not(.release-internal-page) .release-summary__head {
+  display: block;
+  padding: 9px 11px;
+  border-bottom: 0;
+  cursor: pointer;
+  font-size: 0.86rem;
+  list-style: none;
+}
+
+.release-page:not(.release-internal-page) .release-summary__head::-webkit-details-marker {
+  display: none;
+}
+
+.release-page:not(.release-internal-page) .release-summary__head::after {
+  content: "+";
+  float: right;
+  color: var(--muted);
+}
+
+.release-page:not(.release-internal-page) .release-summary[open] .release-summary__head::after {
+  content: "−";
+}
+
+.release-page:not(.release-internal-page) .release-summary[open] .release-summary__head {
+  border-bottom: 1px solid rgba(110, 104, 108, 0.48);
+}
+
+.release-page:not(.release-internal-page) .release-summary--review .release-summary__body {
+  gap: 7px;
+  padding: 9px;
+}
+
+.release-page:not(.release-internal-page) .release-summary--review .release-summary__group {
+  gap: 4px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+
+.release-page:not(.release-internal-page) .release-proof {
+  gap: 9px;
+  padding: 12px 13px;
+}
+
 @media (max-width: 860px) {
   .release-layout {
     grid-template-columns: 1fr;
@@ -563,6 +951,10 @@
   .release-summary {
     position: static;
     order: 0;
+  }
+
+  .release-field-grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -605,6 +997,20 @@
     grid-template-columns: 1fr;
   }
 
+  .release-pdf-alternative {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .release-pdf-actions .btn {
+    flex: 1 1 180px;
+    justify-content: center;
+  }
+
+  .release-summary--review .release-summary__body {
+    grid-template-columns: 1fr;
+  }
+
   .release-option--wide,
   .release-field--wide {
     grid-column: auto;
@@ -625,6 +1031,90 @@
 
   .release-proof__meta {
     grid-template-columns: 1fr;
+  }
+
+  .release-pdf-alternative {
+    padding: 18px 17px;
+  }
+
+  .release-pdf-actions {
+    flex-direction: column;
+  }
+
+  .release-pdf-actions .btn {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .release-page:not(.release-internal-page) main {
+    padding-top: 10px;
+    padding-bottom: 26px;
+  }
+
+  .release-page:not(.release-internal-page) .release-hero {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    padding: 10px 11px;
+  }
+
+  .release-page:not(.release-internal-page) .release-hero h1 {
+    font-size: 1.55rem;
+    white-space: normal;
+  }
+
+  .release-page:not(.release-internal-page) .release-hero .lead {
+    font-size: 0.82rem;
+  }
+
+  .release-page:not(.release-internal-page) .release-pdf-alternative {
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .release-page:not(.release-internal-page) .release-pdf-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .release-page:not(.release-internal-page) .release-pdf-actions .btn {
+    width: auto;
+    min-height: 38px;
+    flex: none;
+  }
+
+  .release-page:not(.release-internal-page) .release-form--v1 {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .release-page:not(.release-internal-page) .release-form--v1 > * {
+    grid-column: auto;
+  }
+
+  .release-page:not(.release-internal-page) .release-section,
+  .release-page:not(.release-internal-page) .release-summary__head,
+  .release-page:not(.release-internal-page) .release-summary__body {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .release-page:not(.release-internal-page) .release-options--persons,
+  .release-page:not(.release-internal-page) .release-summary--review .release-summary__body {
+    grid-template-columns: 1fr;
+  }
+
+  .release-page:not(.release-internal-page) .release-field input,
+  .release-page:not(.release-internal-page) .release-field textarea,
+  .release-page:not(.release-internal-page) .release-options--compact .release-option,
+  .release-page:not(.release-internal-page) .release-option,
+  .release-page:not(.release-internal-page) .release-actions .btn {
+    min-height: 44px;
+  }
+
+  .release-page:not(.release-internal-page) .release-section__head {
+    margin-bottom: 7px;
   }
 }
 

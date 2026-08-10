@@ -9,8 +9,17 @@
   const disconnectButton = document.getElementById("internal-disconnect");
   const refreshButton = document.getElementById("internal-refresh");
   const status = document.getElementById("internal-status");
+  const lockScreen = document.getElementById("internal-lock");
+  const adminShell = document.getElementById("internal-admin-shell");
+  const adminTabs = Array.from(document.querySelectorAll("[data-admin-target]"));
+  const adminViews = Array.from(document.querySelectorAll("[data-admin-view]"));
   const previewBanner = document.getElementById("internal-preview-mode");
+  const contentValidation = document.getElementById("internal-content-validation");
   const channelValidation = document.getElementById("internal-channel-validation");
+  const attributionNameWrap = document.getElementById("internal-attribution-name-wrap");
+  const attributionNameInput = document.getElementById("internal-attribution-name");
+  const visibleInfoDetailsWrap = document.getElementById("internal-visible-info-details-wrap");
+  const visibleInfoDetailsInput = document.getElementById("internal-visible-info-details");
   const preparedResult = document.getElementById("internal-prepared-result");
   const preparedReference = document.getElementById("prepared-reference");
   const preparedRequestText = document.getElementById("prepared-request-text");
@@ -26,7 +35,9 @@
   const detailReference = document.getElementById("detail-reference");
   const detailOrderReference = document.getElementById("detail-order-reference");
   const detailContact = document.getElementById("detail-contact");
+  const detailContent = document.getElementById("detail-content");
   const detailChannels = document.getElementById("detail-channels");
+  const detailVisibleInfo = document.getElementById("detail-visible-info");
   const detailPersons = document.getElementById("detail-persons");
   const detailAirtable = document.getElementById("detail-airtable");
   const preparedPdfButton = document.getElementById("detail-prepared-pdf");
@@ -41,10 +52,13 @@
   const confirmedMeta = document.getElementById("confirmed-meta");
   const confirmedText = document.getElementById("confirmed-text");
 
+  const previewParams = new URLSearchParams(window.location.search);
   const isLocalPreview =
     window.location.protocol === "file:" ||
-    /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname) ||
-    new URLSearchParams(window.location.search).get("visual") === "1";
+    /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+  const forceLockedPreview = isLocalPreview && previewParams.get("locked") === "1";
+  const showDemoRecords =
+    isLocalPreview && previewParams.get("demo") === "1";
 
   let entries = [];
   let selectedEntry = null;
@@ -64,24 +78,35 @@
     contactRole: "",
     email: "",
     reference: "Beispielauftrag",
+    materialDescription: "Fotos der fertigen Werkstücke und Werkstattaufnahmen vom 08.08.2026",
     note: "",
     selection: {
-      website: true,
-      socialMedia: true,
-      digitalPortfolio: true,
-      printedMaterials: false,
-      projectStory: true,
-      eventPhotos: true
+      finishedWork: true,
+      detailShots: true,
+      creationProcess: true,
+      handoverPresentation: true,
+      customerProvidedMedia: false,
+      websitePortfolio: true,
+      instagram: true,
+      facebook: true,
+      whatsappStatus: false,
+      digitalReference: true,
+      printedReferences: false
     },
-    selectedChannels: ["Werkfotos auf der Luderbein-Website", "Social Media", "Digitales Portfolio"],
-    selectedAdditions: ["Entstehung, Entwicklung und Herstellung", "Fotos einer Übergabe oder Veranstaltung"],
+    selectedContent: ["Fertiges Werkstück", "Detailaufnahmen", "Entstehung und Herstellung", "Übergabe oder Präsentation"],
+    selectedChannels: ["Website & Online-Portfolio", "Instagram: Beiträge, Storys, Reels", "Facebook: Beiträge, Storys, Videos", "Digitales Referenzportfolio / Präsentation"],
     attribution: "named",
-    attributionLabel: "Nennung des Kunden oder Auftraggebers",
+    attributionName: "Beispielkommune",
+    attributionLabel: "Mit Name / Bezeichnung: Beispielkommune",
+    projectDescriptionAllowed: true,
+    visibleInfoStatus: "none",
+    visibleInfoLabel: "Keine persönlichen Angaben sichtbar",
     personStatus: "original-authorized",
-    personStatusLabel: "Personen dürfen im Original gezeigt werden",
-    declarationVersion: "VF-VORSCHAU",
+    personStatusLabel: "Erkennbare Personen dürfen gezeigt werden; Zustimmungen liegen vor",
+    minorsAuthorized: false,
+    declarationVersion: "VF-1.0-VORSCHAU",
     requestText:
-      "Projekt: Drei Nachtwächter-Schwibbögen\nKunde: Beispielkommune\nReferenzcode: VF-VORSCHAU-INTERN\n\nDarf Luderbein das oben beschriebene Projekt im angegebenen Umfang veröffentlichen?\nEine eindeutige Antwort wie „Ja“ genügt.",
+      "Veröffentlichungsfreigabe Version 1.0\n\nProjekt: Drei Nachtwächter-Schwibbögen\nKunde: Beispielkommune\nFreigegebenes Material: Fotos der fertigen Werkstücke und Werkstattaufnahmen\nWas gezeigt werden darf: fertiges Werkstück, Detailaufnahmen, Entstehung und Herstellung, Übergabe oder Präsentation\nWo veröffentlicht werden darf: Website, Instagram, Facebook und digitales Referenzportfolio\nReferenzcode: VF-VORSCHAU-INTERN\n\nDarf Luderbein das oben beschriebene Projekt im angegebenen Umfang veröffentlichen?\nEine eindeutige zustimmende Antwort im Zusammenhang mit dieser Anfrage genügt.",
     confirmationText: "",
     confirmationContext: "",
     confirmationAssessed: false,
@@ -116,6 +141,32 @@
     if (type) status.classList.add(type);
   }
 
+  function switchAdminView(target) {
+    const activeTarget = target === "records" ? "records" : "prepare";
+    adminViews.forEach(function (view) {
+      view.hidden = view.dataset.adminView !== activeTarget;
+    });
+    adminTabs.forEach(function (button) {
+      button.setAttribute(
+        "aria-selected",
+        button.dataset.adminTarget === activeTarget ? "true" : "false"
+      );
+    });
+  }
+
+  function showAdmin(target) {
+    lockScreen.hidden = true;
+    adminShell.hidden = false;
+    switchAdminView(target || "prepare");
+  }
+
+  function showLocked() {
+    adminShell.hidden = true;
+    lockScreen.hidden = false;
+    preparedResult.hidden = true;
+    detail.hidden = true;
+  }
+
   function valueOf(name) {
     return String(form.elements[name]?.value || "").trim();
   }
@@ -128,8 +179,28 @@
     return form.querySelector('[name="' + name + '"]:checked')?.value || "";
   }
 
+  function hasSelectedContent() {
+    return (
+      ["finishedWork", "detailShots", "creationProcess", "handoverPresentation", "customerProvidedMedia"].some(checked) ||
+      !!valueOf("shownOtherText")
+    );
+  }
+
   function hasSelectedChannel() {
-    return ["website", "socialMedia", "digitalPortfolio", "printedMaterials"].some(checked);
+    return (
+      ["websitePortfolio", "instagram", "facebook", "whatsappStatus", "digitalReference", "printedReferences"].some(checked) ||
+      !!valueOf("destinationOtherText")
+    );
+  }
+
+  function updateConditionalFields() {
+    const named = selectedValue("attribution") === "named";
+    attributionNameWrap.hidden = !named;
+    attributionNameInput.required = named;
+
+    const specified = selectedValue("visibleInfoStatus") === "specified";
+    visibleInfoDetailsWrap.hidden = !specified;
+    visibleInfoDetailsInput.required = specified;
   }
 
   function buildPreparePayload() {
@@ -141,15 +212,30 @@
       contactRole: valueOf("contactRole"),
       email: valueOf("email"),
       reference: valueOf("reference"),
+      materialDescription: valueOf("materialDescription"),
       note: valueOf("note"),
-      website: checked("website"),
-      socialMedia: checked("socialMedia"),
-      digitalPortfolio: checked("digitalPortfolio"),
-      printedMaterials: checked("printedMaterials"),
+      finishedWork: checked("finishedWork"),
+      detailShots: checked("detailShots"),
+      creationProcess: checked("creationProcess"),
+      handoverPresentation: checked("handoverPresentation"),
+      customerProvidedMedia: checked("customerProvidedMedia"),
+      shownOtherText: valueOf("shownOtherText"),
+      websitePortfolio: checked("websitePortfolio"),
+      instagram: checked("instagram"),
+      facebook: checked("facebook"),
+      whatsappStatus: checked("whatsappStatus"),
+      digitalReference: checked("digitalReference"),
+      printedReferences: checked("printedReferences"),
+      destinationOtherText: valueOf("destinationOtherText"),
       attribution: selectedValue("attribution"),
-      projectStory: checked("projectStory"),
-      eventPhotos: checked("eventPhotos"),
-      personStatus: selectedValue("personStatus")
+      attributionName: valueOf("attributionName"),
+      projectDescriptionAllowed: checked("projectDescriptionAllowed"),
+      designationExclusions: valueOf("designationExclusions"),
+      visibleInfoStatus: selectedValue("visibleInfoStatus"),
+      visibleInfoDetails: valueOf("visibleInfoDetails"),
+      personStatus: selectedValue("personStatus"),
+      minorsAuthorized: checked("minorsAuthorized"),
+      personRestrictions: valueOf("personRestrictions")
     };
   }
 
@@ -254,7 +340,9 @@
     detailReference.textContent = entry.referenceCode;
     detailOrderReference.textContent = entry.reference || "nicht angegeben";
     detailContact.textContent = [entry.contactName, entry.contactRole].filter(Boolean).join(" · ");
+    detailContent.textContent = entry.selectedContent?.join(", ") || "nicht angegeben";
     detailChannels.textContent = entry.selectedChannels?.join(", ") || "nicht angegeben";
+    detailVisibleInfo.textContent = entry.visibleInfoLabel || "nicht angegeben";
     detailPersons.textContent = entry.personStatusLabel || "nicht angegeben";
     detailAirtable.textContent =
       entry.status === "prepared"
@@ -300,11 +388,12 @@
 
   async function loadEntries() {
     if (isLocalPreview) {
-      entries = [demoEntry];
+      entries = showDemoRecords ? [demoEntry] : [];
       renderList();
-      renderDetail(demoEntry);
-      setStatus("Lokale Vorschau geladen. Es wurden keine Daten abgerufen.", "is-success");
-      return;
+      if (showDemoRecords) renderDetail(demoEntry);
+      else detail.hidden = true;
+      setStatus("");
+      return true;
     }
 
     if (!getToken()) {
@@ -312,7 +401,7 @@
       renderList();
       detail.hidden = true;
       setStatus("Bitte zuerst das Admin-Token eingeben.", "is-error");
-      return;
+      return false;
     }
 
     setStatus("Vorgänge werden geladen …");
@@ -323,8 +412,10 @@
       entries = Array.isArray(data.entries) ? data.entries : [];
       renderList();
       setStatus(entries.length + " Vorgänge geladen.", "is-success");
+      return true;
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Liste konnte nicht geladen werden.", "is-error");
+      return false;
     }
   }
 
@@ -423,12 +514,15 @@
     event.preventDefault();
     if (submitInProgress) return;
 
+    const contentValid = hasSelectedContent();
     const channelsValid = hasSelectedChannel();
+    contentValidation.classList.toggle("is-visible", !contentValid);
     channelValidation.classList.toggle("is-visible", !channelsValid);
-    if (!channelsValid) {
-      setStatus("Bitte mindestens einen Veröffentlichungskanal auswählen.", "is-error");
+    if (!contentValid || !channelsValid) {
+      setStatus("Bitte in den Bereichen 3 und 4 jeweils mindestens eine Auswahl treffen.", "is-error");
       return;
     }
+    updateConditionalFields();
     if (!form.reportValidity()) {
       setStatus("Bitte alle Pflichtangaben und Entscheidungen ausfüllen.", "is-error");
       return;
@@ -527,14 +621,25 @@
     }
   });
 
-  connectButton.addEventListener("click", function () {
+  connectButton.addEventListener("click", async function () {
     const token = String(tokenInput.value || "").trim();
     if (!token && !isLocalPreview) {
       setStatus("Bitte das Admin-Token eingeben.", "is-error");
       return;
     }
     if (token) setToken(token);
-    loadEntries();
+    connectButton.disabled = true;
+    connectButton.setAttribute("aria-busy", "true");
+    const authenticated = await loadEntries();
+    connectButton.disabled = false;
+    connectButton.removeAttribute("aria-busy");
+    if (authenticated) {
+      showAdmin("prepare");
+      return;
+    }
+    setToken("");
+    tokenInput.value = "";
+    showLocked();
   });
 
   disconnectButton.addEventListener("click", function () {
@@ -543,10 +648,20 @@
     entries = [];
     renderList();
     detail.hidden = true;
-    setStatus("Token gelöscht.", "is-success");
+    showLocked();
+    setStatus("Abgemeldet. Es werden keine Verwaltungsdaten angezeigt.", "is-success");
   });
 
   refreshButton.addEventListener("click", loadEntries);
+  adminTabs.forEach(function (button) {
+    button.addEventListener("click", async function () {
+      const target = button.dataset.adminTarget || "prepare";
+      switchAdminView(target);
+      if (target === "records") await loadEntries();
+    });
+  });
+  form.addEventListener("input", updateConditionalFields);
+  form.addEventListener("change", updateConditionalFields);
   filterInput.addEventListener("input", renderList);
   list.addEventListener("click", function (event) {
     const button = event.target.closest("button[data-reference]");
@@ -573,21 +688,36 @@
     if (selectedEntry) downloadProtected(selectedEntry.referenceCode, "evidence", "");
   });
 
-  if (isLocalPreview) {
+  if (forceLockedPreview) {
+    setToken("");
+    tokenInput.value = "";
+    entries = [];
+    renderList();
+    showLocked();
+    setStatus("");
+  } else if (isLocalPreview) {
     previewBanner.classList.add("is-visible");
-    tokenInput.value = "Lokaler Prüfmodus";
-    tokenInput.disabled = true;
+    showAdmin("prepare");
     loadEntries();
   } else {
     const savedToken = getToken();
     if (savedToken) {
-      tokenInput.value = savedToken;
-      loadEntries();
+      loadEntries().then(function (authenticated) {
+        if (authenticated) {
+          showAdmin("prepare");
+          return;
+        }
+        setToken("");
+        tokenInput.value = "";
+        showLocked();
+      });
     } else {
       renderList();
-      setStatus("Bitte das Admin-Token eingeben.");
+      showLocked();
+      setStatus("");
     }
   }
 
   setDefaultConfirmationDate();
+  updateConditionalFields();
 })();

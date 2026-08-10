@@ -23,10 +23,12 @@ const FIELD_IDS = {
 };
 
 const CHANNEL_VALUES = {
-  website: "Website",
-  socialMedia: "Social Media",
-  digitalPortfolio: "Digitales Portfolio",
-  printedMaterials: "Gedruckte Materialien"
+  websitePortfolio: "Website",
+  instagram: "Social Media",
+  facebook: "Social Media",
+  whatsappStatus: "Social Media",
+  digitalReference: "Digitales Portfolio",
+  printedReferences: "Gedruckte Materialien"
 };
 
 const ATTRIBUTION_VALUES = {
@@ -35,8 +37,8 @@ const ATTRIBUTION_VALUES = {
 };
 
 const ADDITION_VALUES = {
-  projectStory: "Entstehung, Entwicklung und Herstellung",
-  eventPhotos: "Übergabe / Veranstaltung"
+  creationProcess: "Entstehung, Entwicklung und Herstellung",
+  handoverPresentation: "Übergabe / Veranstaltung"
 };
 
 const PERSON_VALUES = {
@@ -51,10 +53,48 @@ const CONFIRMATION_CHANNEL_VALUES = {
   email: "E-Mail"
 };
 
+const VISIBLE_INFO_NOTE_VALUES = {
+  none: "Keine persönlichen Angaben sichtbar",
+  all: "Alle sichtbaren Namen, Daten oder Widmungen dürfen gezeigt werden",
+  specified: "Nur bestimmte Angaben; Rest unkenntlich machen"
+};
+
+const PERSON_NOTE_VALUES = {
+  "none-visible": "Keine Personen erkennbar",
+  "not-publish": "Erkennbare Personen nicht veröffentlichen",
+  "original-authorized": "Erkennbare Personen dürfen gezeigt werden; Zustimmungen liegen vor",
+  "anonymized-only": "Erkennbare Personen unkenntlich machen"
+};
+
 function activeValues(selection, labels) {
-  return Object.entries(labels)
+  return [...new Set(Object.entries(labels)
     .filter(([key]) => selection[key] === true)
-    .map(([, label]) => label);
+    .map(([, label]) => label))];
+}
+
+function buildWorkingNote(payload) {
+  const selectedContent = [
+    payload.selection.finishedWork && "Fertiges Werkstück",
+    payload.selection.detailShots && "Detailaufnahmen",
+    payload.selection.creationProcess && "Entstehung und Herstellung",
+    payload.selection.handoverPresentation && "Übergabe oder Präsentation",
+    payload.selection.customerProvidedMedia && "Vom Kunden bereitgestellte Bilder / Videos",
+    payload.shownOtherText && `Sonstiges: ${payload.shownOtherText}`
+  ].filter(Boolean);
+  const lines = [
+    `Freigegebenes Material: ${payload.materialDescription}`,
+    `Was gezeigt werden darf: ${selectedContent.join(", ")}`,
+    `Bezeichnung: ${ATTRIBUTION_VALUES[payload.attribution]}${payload.attributionName ? ` (${payload.attributionName})` : ""}`,
+    `Kurze Projektbeschreibung: ${payload.projectDescriptionAllowed ? "erlaubt" : "nicht freigegeben"}`,
+    `Nicht nennen: ${payload.designationExclusions || "keine Angabe"}`,
+    `Sichtbare Angaben: ${VISIBLE_INFO_NOTE_VALUES[payload.visibleInfoStatus] || payload.visibleInfoStatus}${payload.visibleInfoDetails ? ` (${payload.visibleInfoDetails})` : ""}`,
+    `Personen: ${PERSON_NOTE_VALUES[payload.personStatus] || payload.personStatus}`,
+    `Minderjährige: ${payload.minorsAuthorized ? "Zustimmung liegt vor" : "nicht bestätigt / nicht zutreffend"}`,
+    `Zusatz Personen: ${payload.personRestrictions || "keine Angabe"}`,
+    `Weitere Nutzung: ${payload.destinationOtherText || "keine Angabe"}`,
+    `Besondere Wünsche: ${payload.note || "keine Angabe"}`
+  ];
+  return lines.join("\n").slice(0, 9000);
 }
 
 export async function syncPublicationReleaseToAirtable(env, payload) {
@@ -89,7 +129,7 @@ export async function syncPublicationReleaseToAirtable(env, payload) {
 
   if (payload.contactRole) fields[FIELD_IDS.contactRole] = payload.contactRole;
   if (payload.email) fields[FIELD_IDS.email] = payload.email;
-  if (payload.note) fields[FIELD_IDS.note] = payload.note;
+  fields[FIELD_IDS.note] = buildWorkingNote(payload);
 
   const response = await fetch(`https://api.airtable.com/v0/${baseId}/${tableId}`, {
     method: "PATCH",

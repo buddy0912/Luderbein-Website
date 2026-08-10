@@ -1,6 +1,6 @@
 # Quellen zur Veröffentlichungsfreigabe
 
-Abrufstand: 31.07.2026
+Umsetzungsstand: 09.08.2026 · Version 1.0
 
 ## Zweck und betroffene Seiten
 
@@ -9,6 +9,12 @@ Diese interne Dokumentation gehört zur allgemeinen Fassung:
 - `/rechtliches/veroeffentlichungsfreigabe/`
 - `/rechtliches/datenschutz.html`
 - `/rechtliches/index.html`
+- `/assets/downloads/Luderbein_Veroeffentlichungsfreigabe_Version_dark_1.0.pdf`
+- `/assets/downloads/Luderbein_Veroeffentlichungsfreigabe_Version_white_1.0.pdf`
+
+Die beiden von Buddy freigegebenen PDF-Fassungen Version 1.0 vom 08.08.2026 sind
+die verbindliche inhaltliche und gestalterische Referenz. Sie sind inhaltlich identisch;
+die weiße Fassung ist druckfreundlich gestaltet.
 
 Die allgemeine Veröffentlichungsfreigabe ist eine eigenständige Erklärung. Sie erweitert die bestehende Rechteerklärung für Kundenvorlagen nicht stillschweigend. Jene bleibt auf die Durchführung eines konkreten Kundenauftrags beschränkt. Die verpflichtende Rechnungsnummer oder Auftragsreferenz dient der eindeutigen Zuordnung zum Kundenauftrag.
 
@@ -117,7 +123,7 @@ Im Repository geprüft:
 
 Wiederverwendete technische Grundsätze:
 
-- aktive Pflichtbestätigungen;
+- eine aktive, eindeutige Abschlussbestätigung;
 - serverseitige Validierung;
 - eigene D1-Tabelle;
 - Versionskennung der Textfassung;
@@ -128,7 +134,7 @@ Wiederverwendete technische Grundsätze:
 
 1. Die Textfassung und insbesondere das Zusammenspiel von datenschutzrechtlicher Einwilligung, Bildnisfreigabe und urheberrechtlicher Nutzungsrechtseinräumung sollten anwaltlich geprüft werden.
 2. Bei Firmen, Behörden und anderen Organisationen ist zu prüfen, ob interne Vertretungs- oder Zeichnungsregeln gelten und wer die Freigabe wirksam abgeben darf.
-3. Zu klären ist, ob zusätzlich ein E-Mail-Bestätigungslink als stärkerer Identitätsnachweis eingerichtet werden soll. Die jetzige Fassung dokumentiert Rechnungsnummer oder Auftragsreferenz, Name, gegebenenfalls Funktion, E-Mail, Auswahl, Zeitstempel, Textversion und Referenzcode, verifiziert den Zugriff auf die angegebene E-Mail-Adresse aber noch nicht.
+3. Zu klären ist, ob später zusätzlich ein E-Mail-Bestätigungslink als stärkerer Identitätsnachweis eingerichtet werden soll. Die jetzige Fassung dokumentiert Auftrags- oder Rechnungsnummer, Projekt, freigegebenes Material, Name, optionale Funktion und E-Mail-Adresse, Auswahl, Zeitstempel, Textversion und Referenzcode. Die E-Mail-Adresse ist in Version 1.0 nicht verpflichtend und wird nicht verifiziert.
 4. Für erkennbare Personen muss organisatorisch nachvollziehbar sein, welche Einwilligungen vorliegen und welche Kanäle sie abdecken. Das Formular ersetzt diese Einwilligungen nicht.
 5. Der praktische Umgang mit einem Widerruf bei bereits gedruckten Materialien und bei Veröffentlichungen außerhalb direkt beherrschbarer Kanäle sollte verbindlich festgelegt werden.
 6. Vor Veröffentlichung ist zu prüfen, ob die Datenschutzhinweise nach Art. 13 DSGVO alle tatsächlichen Empfänger, Auftragsverarbeiter und Löschregeln vollständig abbilden.
