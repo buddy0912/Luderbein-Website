@@ -171,6 +171,10 @@
 
     .market-card__title { margin: 0; font-size: 1.05rem; }
     .market-card__text { margin: 6px 0 0; color: var(--muted); font-size: .94rem; }
+    .hero-welcome { display: grid; gap: 8px; max-width: 78ch; margin-top: 18px; }
+    .hero-welcome p { margin: 0; line-height: 1.6; }
+    .hero-welcome__hello { font-size: 1.08rem; }
+    .hero-welcome__closing { display: block; margin-top: 5px; color: var(--text); }
 
     @media (min-width: 760px) {
       .market-split { grid-template-columns: 1fr 1fr; }
@@ -303,11 +307,14 @@
     <p class="lead">Material kennt keine Gnade. Aber es kennt Gravur.</p>
     <div class="hero-copy">
       <h2>frech im Stil, sauber in der Ausführung</h2>
-      <p>
-        Kein Fake-Shop.<br>
-        Du fragst an, ich sag dir kurz, was sinnvoll ist.<br>
-        Dann machen wir’s ordentlich.
-      </p>
+      <div class="hero-welcome">
+        <p class="hero-welcome__hello"><strong>Hi und willkommen bei Luderbein.</strong></p>
+        <p>Hier dreht sich alles um die Marke Luderbein, meine Arbeiten, ihre Entstehung und darum, was sich mit einem Laser alles anstellen lässt: Gravuren, Schwibbögen, Wandbeleuchtung, Lampen, Schmuck und individuelle Sonderlösungen.</p>
+        <p>
+          Du hast eine Idee – oder erst mal nur ein Problem? Kein Ding, das kriegen wir hin. Schreib mir am besten kurz per WhatsApp oder E-Mail. Wenn ich im Atelier kreativ bin, darf das Handy auch mal schweigend in der Ecke liegen. 🤭
+          <strong class="hero-welcome__closing">Jedes Projekt verdient Aufmerksamkeit.</strong>
+        </p>
+      </div>
     </div>
 
     <div class="market-split" aria-label="Auswahl Privat oder Gewerbe">
