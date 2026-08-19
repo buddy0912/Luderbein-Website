@@ -37,8 +37,42 @@
     .lb-expand p, .lb-expand ul { margin: 10px 0 0; opacity: .92; }
     .lb-expand ul { padding-left: 18px; }
     .lb-card.is-open { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(0,0,0,.24); transition: transform .18s ease, box-shadow .18s ease; }
+    .lb-aiPrompt { border: 1px solid rgba(255,255,255,.12); border-radius: 16px; overflow: hidden; background: linear-gradient(145deg, rgba(255,255,255,.055), rgba(0,0,0,.20)); }
+    .lb-aiPrompt__summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: clamp(16px, 2.4vw, 24px); cursor: pointer; list-style: none; }
+    .lb-aiPrompt__summary::-webkit-details-marker { display: none; }
+    .lb-aiPrompt__summaryCopy { display: grid; gap: 5px; }
+    .lb-aiPrompt__eyebrow { color: var(--accent, #f0b44d); font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .lb-aiPrompt__title { font-size: clamp(1.08rem, 2.3vw, 1.35rem); }
+    .lb-aiPrompt__teaser { opacity: .78; line-height: 1.45; }
+    .lb-aiPrompt__chevron { flex: 0 0 auto; font-size: 1.4rem; opacity: .72; transform: rotate(90deg); transition: transform .18s ease; }
+    .lb-aiPrompt[open] .lb-aiPrompt__chevron { transform: rotate(-90deg); }
+    .lb-aiPrompt__body { display: grid; gap: 14px; padding: 0 clamp(16px, 2.4vw, 24px) clamp(18px, 2.6vw, 26px); border-top: 1px solid rgba(255,255,255,.09); }
+    .lb-aiPrompt__intro { margin: 16px 0 0; line-height: 1.6; }
+    .lb-aiPrompt__label { font-size: .86rem; font-weight: 800; }
+    .lb-aiPrompt__text { width: 100%; min-height: 430px; resize: vertical; padding: 14px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: rgba(0,0,0,.28); color: inherit; font: inherit; font-size: .9rem; line-height: 1.55; }
+    .lb-aiPrompt__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .lb-aiPrompt__status { min-height: 1.3em; font-size: .86rem; opacity: .82; }
+    .lb-aiPrompt__note { margin: 0; font-size: .84rem; line-height: 1.5; opacity: .7; }
+    .lb-aiExample { border: 1px solid rgba(255,255,255,.10); border-radius: 12px; overflow: hidden; background: rgba(255,255,255,.035); }
+    .lb-aiExample__summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 14px; cursor: pointer; list-style: none; font-weight: 800; }
+    .lb-aiExample__summary::-webkit-details-marker { display: none; }
+    .lb-aiExample__summary::after { content: "Beispiel ansehen ›"; flex: 0 0 auto; font-size: .76rem; font-weight: 700; opacity: .66; }
+    .lb-aiExample[open] .lb-aiExample__summary::after { content: "Schließen ×"; }
+    .lb-aiExample__body { display: grid; gap: 10px; padding: 0 14px 15px; border-top: 1px solid rgba(255,255,255,.08); }
+    .lb-aiExample__kicker { margin: 14px 0 0; color: var(--accent, #f0b44d); font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    .lb-aiExample__title { margin: 0; font-size: 1.02rem; }
+    .lb-aiExample__item { margin: 0; font-size: .88rem; line-height: 1.55; opacity: .86; }
+    html.light-readable .lb-aiPrompt { border-color: rgba(126,105,97,.18); background: linear-gradient(145deg, rgba(255,255,255,.98), rgba(244,237,230,.92)); }
+    html.light-readable .lb-aiPrompt__body { border-top-color: rgba(126,105,97,.15); }
+    html.light-readable .lb-aiPrompt__text { border-color: rgba(126,105,97,.22); background: rgba(255,255,255,.72); color: #241c1d; }
+    html.light-readable .lb-aiExample { border-color: rgba(126,105,97,.18); background: rgba(255,255,255,.52); }
+    html.light-readable .lb-aiExample__body { border-top-color: rgba(126,105,97,.14); }
     @media (max-width: 720px) {
       .lb-cardBtn { padding-right: 38px; }
+      .lb-aiPrompt__summary { align-items: flex-start; }
+      .lb-aiPrompt__text { min-height: 520px; font-size: .86rem; }
+      .lb-aiExample__summary::after { content: "Ansehen ›"; }
+      .lb-aiExample[open] .lb-aiExample__summary::after { content: "Schließen ×"; }
     }
   </style>
 </head>
@@ -162,6 +196,74 @@
       </div>
     </section>
 
+    <section class="section leistung-section leistung-card" id="ki-motivassistent" aria-label="KI-Motivassistent für Schwibbögen">
+      <details class="lb-aiPrompt">
+        <summary class="lb-aiPrompt__summary">
+          <span class="lb-aiPrompt__summaryCopy">
+            <span class="lb-aiPrompt__eyebrow">Kostenlose Ideenhilfe</span>
+            <strong class="lb-aiPrompt__title">Motiv mit KI entwickeln</strong>
+            <span class="lb-aiPrompt__teaser">Prompt kopieren, in ChatGPT, Gemini, Meta AI oder eine andere KI einfügen und die Idee gemeinsam konkret machen.</span>
+          </span>
+          <span class="lb-aiPrompt__chevron" aria-hidden="true">›</span>
+        </summary>
+
+        <div class="lb-aiPrompt__body">
+          <p class="lb-aiPrompt__intro">
+            Du brauchst noch keine fertige Beschreibung. Die KI fragt Anlass, Personen oder Tiere, Umgebung, Pflichtdetails, Stil und Stimmung nacheinander ab und entwickelt daraus eine klare Motividee.
+          </p>
+
+          <label class="lb-aiPrompt__label" for="lb-motif-prompt">Fertiger Prompt zum Kopieren</label>
+          <textarea class="lb-aiPrompt__text" id="lb-motif-prompt" readonly>Du bist mein kreativer Motivassistent für einen individuell gestalteten Schwibbogen beziehungsweise Luderbogen aus Holz.
+
+Ziel: Entwickle aus meiner zunächst noch vagen Idee eine klare visuelle Vorstellung, die ich zur Motivfindung und zur Abstimmung mit Luderbein verwenden kann.
+
+Führe mit mir ein kurzes, verständliches Gespräch:
+- Stelle deine Fragen nacheinander und nicht alle auf einmal.
+- Kläre den Anlass und für wen der Schwibbogen gedacht ist.
+- Frage nach wichtigen Personen, Tieren oder persönlichen Bezügen.
+- Kläre gewünschte Gebäude, Landschaften, Orte oder typische Erkennungsmerkmale.
+- Frage nach Pflichtdetails wie Namen, Datum, Symbolen oder Gegenständen, die unbedingt vorkommen sollen.
+- Kläre Stil, Stimmung und gewünschte Wirkung.
+- Wenn meine Angaben unklar oder widersprüchlich sind, frage sinnvoll nach.
+- Wenn ich keine genaue Vorstellung habe, biete mir zwei bis drei konkrete, leicht verständliche Möglichkeiten zur Auswahl an.
+
+Berücksichtige bei deinen Vorschlägen, dass das Motiv später als mehrlagiger Holz-Schwibbogen wirken soll: klare Silhouetten, gut erkennbare Konturen, eine sinnvolle Aufteilung in Vordergrund, Mitte und Hintergrund sowie eine schöne Lichtwirkung. Vermeide unnötig filigrane Kleinteile und reinen Fotorealismus.
+
+Sobald du genug Informationen hast:
+1. Fasse die Motividee in wenigen klaren Sätzen zusammen.
+2. Beschreibe den Bildaufbau mit Vordergrund, Mitte, Hintergrund und Hauptblickfang.
+3. Liste alle wichtigen Pflichtdetails übersichtlich auf.
+4. Formuliere einen vollständigen, kopierbaren Bild-Prompt für eine KI-Bildgenerierung.
+5. Ergänze eine vereinfachte Alternative, falls das erste Motiv für einen Schwibbogen zu kleinteilig sein könnte.
+6. Wenn du selbst Bilder erzeugen kannst, frage mich anschließend, ob du eine Konzeptvisualisierung erstellen sollst.
+
+Wichtig: Das Ergebnis ist nur eine Motividee und Abstimmungsgrundlage. Bezeichne es nicht als fertige Gravur-, Laser- oder Produktionsvorlage. Die technische Machbarkeit und endgültige Umsetzung prüft Luderbein.
+
+Beginne jetzt nur mit deiner ersten Frage.</textarea>
+
+          <div class="lb-aiPrompt__actions">
+            <button class="btn primary" type="button" data-copy-motif-prompt>Prompt kopieren</button>
+            <span class="lb-aiPrompt__status" data-copy-motif-status aria-live="polite"></span>
+          </div>
+
+          <p class="lb-aiPrompt__note">Du kannst dafür ChatGPT, Gemini, Meta AI oder eine andere KI deiner Wahl nutzen. Es werden keine Angaben über diese Website an einen KI-Dienst gesendet.</p>
+
+          <details class="lb-aiExample">
+            <summary class="lb-aiExample__summary">So könnte eine gute KI-Antwort aussehen</summary>
+            <div class="lb-aiExample__body">
+              <p class="lb-aiExample__kicker">Frei erfundenes Beispiel</p>
+              <h3 class="lb-aiExample__title">Wanderpaar mit Hund im Erzgebirge</h3>
+              <p class="lb-aiExample__item"><strong>Motividee:</strong> Zwei Personen wandern mit ihrem Hund auf eine kleine Berghütte zu. Tannen, eine ruhige Berglinie und ein einzelner Stern schaffen eine persönliche, warme Abendstimmung.</p>
+              <p class="lb-aiExample__item"><strong>Bildaufbau:</strong> Vorn Tannenzweige und Felsen, in der Mitte das Paar mit Hund als Hauptblickfang, hinten Hütte und Bergsilhouette. Die freien Flächen lassen das Licht klar wirken.</p>
+              <p class="lb-aiExample__item"><strong>Pflichtdetails:</strong> Der Hund soll eindeutig erkennbar sein. Die Initialen „M + L“ und ein Datum können dezent im Sockelbereich erscheinen.</p>
+              <p class="lb-aiExample__item"><strong>Stil:</strong> Klare, ruhige Silhouetten mit wenigen stabilen Formen statt fotorealistischer Kleinteile.</p>
+              <p class="lb-aiPrompt__note">Genau diese Art von Beschreibung oder Konzeptbild hilft bei der Motivabstimmung. Die technische Umsetzung wird anschließend separat geprüft.</p>
+            </div>
+          </details>
+        </div>
+      </details>
+    </section>
+
     <section class="section leistung-section leistung-card" id="schwibboegen-feed" aria-label="Schwibbögen-Feed">
       <div class="section-head leistung-section-head">
         <h2>Feed</h2>
@@ -250,6 +352,33 @@
         card.classList.toggle('is-open', !open);
       });
     });
+
+    const copyPromptButton = document.querySelector('[data-copy-motif-prompt]');
+    const motifPrompt = document.getElementById('lb-motif-prompt');
+    const copyPromptStatus = document.querySelector('[data-copy-motif-status]');
+
+    if (copyPromptButton && motifPrompt && copyPromptStatus) {
+      copyPromptButton.addEventListener('click', async () => {
+        const promptText = motifPrompt.value.trim();
+
+        try {
+          await navigator.clipboard.writeText(promptText);
+        } catch (error) {
+          motifPrompt.focus();
+          motifPrompt.select();
+          document.execCommand('copy');
+          window.getSelection()?.removeAllRanges();
+        }
+
+        copyPromptButton.textContent = 'Kopiert';
+        copyPromptStatus.textContent = 'Der Prompt liegt jetzt in deiner Zwischenablage.';
+
+        window.setTimeout(() => {
+          copyPromptButton.textContent = 'Prompt kopieren';
+          copyPromptStatus.textContent = '';
+        }, 3500);
+      });
+    }
   </script>
   <script>document.getElementById('y').textContent = new Date().getFullYear()</script>
 </body>

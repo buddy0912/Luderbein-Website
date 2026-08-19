@@ -1420,7 +1420,7 @@
 
     window.__lbSearchIndexPromise = new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "/assets/search-index.js?v=20260819b";
+      script.src = "/assets/search-index.js?v=20260819c";
       script.async = true;
       script.onload = () => resolve(Array.isArray(window.__lbSearchIndex) ? window.__lbSearchIndex : []);
       script.onerror = reject;

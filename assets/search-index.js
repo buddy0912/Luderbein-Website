@@ -234,7 +234,7 @@
       type: "Leistung",
       section: "Schwibbogen",
       summary: "Schwibbögen mit Charakter, sauberer Verarbeitung und direkter Anfrage.",
-      keywords: ["schwibbogen", "schwibbögen", "luderbogen", "luderbögen", "lichterbogen", "erzgebirge", "weihnachtsdeko", "fensterdeko", "lichtbogen", "geschenk", "dimmer", "geschenkset", "konfigurator"],
+      keywords: ["schwibbogen", "schwibbögen", "luderbogen", "luderbögen", "lichterbogen", "erzgebirge", "weihnachtsdeko", "fensterdeko", "lichtbogen", "geschenk", "dimmer", "geschenkset", "konfigurator", "ki motivassistent", "motivassistent", "ki prompt", "motiv prompt", "motiv entwickeln", "motividee"],
       imageTags: ["schwibbogen", "holz", "licht", "erzgebirge", "geschenk"],
       imageProjects: [
         { project: "Schwibbogen Übersicht", tags: ["schwibbogen", "licht", "erzgebirge", "geschenk"] }
