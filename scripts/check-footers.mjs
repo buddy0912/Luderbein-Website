@@ -57,9 +57,9 @@ const indexHash = hash(indexNorm);
 
 // “Must-have” Marker: die Rechtstext-Links (damit nix verschwindet)
 const requiredMarkers = [
-  "/rechtliches/impressum.html",
-  "/rechtliches/datenschutz.html",
-  "/rechtliches/agb.html",
+  "/rechtliches/impressum",
+  "/rechtliches/datenschutz",
+  "/rechtliches/agb",
 ];
 
 const htmlFiles = walk(repoRoot).filter((f) => {

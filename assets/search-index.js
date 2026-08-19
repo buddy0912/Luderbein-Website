@@ -333,19 +333,6 @@
       content: "Der Anfrage-Builder sammelt Material, Produktwunsch, Motiv, Größe und Deadline und bereitet eine Anfrage für WhatsApp oder E-Mail vor. Auch eine noch unfertige Idee reicht für den ersten Kontakt."
     },
     {
-      title: "Ideen- und Diskussionspinnwand",
-      url: "/ideenpinnwand/",
-      type: "Mitmachen",
-      section: "Ideen & Feedback",
-      summary: "Ideen, Wünsche, Vorschläge und Diskussionsbeiträge öffentlich oder intern einreichen.",
-      keywords: ["ideenpinnwand", "pinnwand", "idee einreichen", "idee teilen", "vorschlag", "wunsch", "feedback", "diskussion", "beitrag schreiben", "mitmachen", "produktidee", "motividee"],
-      imageTags: ["idee", "feedback", "pinnwand", "beitrag"],
-      imageProjects: [
-        { project: "Ideenpinnwand", tags: ["idee", "wunsch", "feedback", "diskussion"] }
-      ],
-      content: "Auf der Pinnwand können Besucher eigene Ideen, Wünsche, Feedback und Diskussionsbeiträge öffentlich oder nicht öffentlich einreichen."
-    },
-    {
       title: "Über Luderbein",
       url: "/ueber/",
       type: "Seite",

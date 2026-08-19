@@ -148,14 +148,21 @@ async function resolveTarget(htmlFile, rawUrl) {
   // 1) exact file exists
   if (await fileExists(abs)) return { ok: true, rel, abs };
 
-  // 2) directory URL -> accept index.html
+  // 2) Cloudflare Pages pretty URL -> accept the matching .html file
+  if (!hasExtension(normalizedUrl) && !normalizedUrl.endsWith("/")) {
+    const htmlRel = `${rel}.html`;
+    const htmlAbs = path.join(repoRoot, htmlRel);
+    if (await fileExists(htmlAbs)) return { ok: true, rel: htmlRel, abs: htmlAbs, prettyHtml: true };
+  }
+
+  // 3) directory URL -> accept index.html
   if (looksLikeDirUrl(normalizedUrl) || (!hasExtension(normalizedUrl) && !normalizedUrl.endsWith(".html"))) {
     const idxRel = path.posix.join(rel, "index.html");
     const idxAbs = path.join(repoRoot, idxRel);
     if (await fileExists(idxAbs)) return { ok: true, rel: idxRel, abs: idxAbs, dirIndex: true };
   }
 
-  // 3) try normalized-basename match inside same directory (unicode dash / similar)
+  // 4) try normalized-basename match inside same directory (unicode dash / similar)
   const dirAbs = path.dirname(abs);
   const dirList = await listDir(dirAbs);
   if (dirList && dirList.length) {
@@ -188,11 +195,13 @@ async function main() {
       if (!url) continue;
       const trimmed = url.trim();
 
-      // warn: directory-like links without trailing slash (only for root-style nav paths)
+      const res = await resolveTarget(htmlFile, trimmed);
+      if (res.skip) continue;
+      // warn only for actual directory URLs, not Cloudflare Pages pretty .html URLs
       if (
-        (kind === "href") &&
+        res.dirIndex &&
+        kind === "href" &&
         trimmed.startsWith("/") &&
-        !trimmed.includes(".") &&
         !trimmed.endsWith("/") &&
         !trimmed.includes("?") &&
         !trimmed.includes("#")
@@ -204,9 +213,6 @@ async function main() {
           suggestion: `${trimmed}/`,
         });
       }
-
-      const res = await resolveTarget(htmlFile, trimmed);
-      if (res.skip) continue;
       if (res.ok) continue;
 
       missing.push({

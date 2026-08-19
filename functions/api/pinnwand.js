@@ -73,6 +73,10 @@ function requiresApproval(env) {
   return String(env.PINBOARD_PUBLIC_REQUIRES_APPROVAL || "").trim().toLowerCase() === "true";
 }
 
+function isPublicPinboardEnabled(env) {
+  return String(env.PINBOARD_PUBLIC_ENABLED || "").trim().toLowerCase() === "true";
+}
+
 function getBearerToken(request) {
   const raw = request.headers.get(ADMIN_HEADER) || "";
   const prefix = "Bearer ";
@@ -191,6 +195,10 @@ async function handleGet(context, cors) {
     return json({ pending }, 200, cors);
   }
 
+  if (!isPublicPinboardEnabled(env)) {
+    return json({ error: "Pinnwand ist derzeit nicht öffentlich verfügbar." }, 410, cors);
+  }
+
   const posts = await loadPublishedPosts(env.PINBOARD_DB);
   return json({ posts }, 200, cors);
 }
@@ -199,6 +207,10 @@ async function handlePost(context, cors) {
   const { request, env } = context;
   if (!env.PINBOARD_DB) {
     return json({ error: "PINBOARD_DB fehlt." }, 500, cors);
+  }
+
+  if (!isPublicPinboardEnabled(env)) {
+    return json({ error: "Pinnwand ist derzeit nicht öffentlich verfügbar." }, 410, cors);
   }
 
   let raw = "";

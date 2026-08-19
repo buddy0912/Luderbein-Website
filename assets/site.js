@@ -1850,48 +1850,6 @@
       });
   }
 
-  function initIdeaWallNavLink() {
-    const nav = document.querySelector("header .nav");
-    if (!nav || document.getElementById("lb-idea-wall-link")) return;
-
-    let quick = nav.querySelector(".nav-quick");
-    if (!quick) {
-      quick = document.createElement("div");
-      quick.className = "nav-quick";
-      const navToggle = nav.querySelector("[data-nav-toggle]");
-      if (navToggle) {
-        nav.insertBefore(quick, navToggle);
-      } else {
-        nav.appendChild(quick);
-      }
-    }
-
-    const link = document.createElement("a");
-    link.className = "nav-symbol-link";
-    link.id = "lb-idea-wall-link";
-    link.href = "/ideenpinnwand/";
-    link.setAttribute("aria-label", "Ideen- und Diskussionspinnwand");
-    link.setAttribute("title", "Ideen- und Diskussionspinnwand");
-    link.innerHTML = `
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="5.5" y="4.75" width="13" height="13" rx="1.8" stroke="currentColor" stroke-width="1.6"></rect>
-        <path d="M8 8.25H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-        <path d="M8 12H14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-        <path d="M9 4.75V2.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-        <path d="M15 4.75V2.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-        <path d="M12 17.75V21.25" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-        <path d="M9.5 21.25H14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-      </svg>
-    `;
-
-    const path = window.location.pathname.replace(/index\.html$/, "");
-    if (path.startsWith("/ideenpinnwand/")) {
-      link.setAttribute("aria-current", "page");
-    }
-
-    quick.insertBefore(link, quick.firstChild);
-  }
-
   function initLightModeToggle() {
     if (!isLightModeFeatureEnabled()) return;
 
@@ -2044,7 +2002,6 @@
       if (path.startsWith(href)) a.setAttribute("aria-current", "page");
     });
 
-    initIdeaWallNavLink();
     initLightModeToggle();
 
     // CTA Autofill (a[data-lb-cta])
