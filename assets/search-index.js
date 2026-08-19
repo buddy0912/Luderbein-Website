@@ -54,7 +54,7 @@
       section: "Schiefer Foto",
       summary: "Portraits, Haustiere und Erinnerungen als Gravur auf Schiefer.",
       modalTarget: null,
-      keywords: ["schiefer foto", "fotogravur", "portrait", "haustier", "tier", "erinnerung", "foto check"],
+      keywords: ["schiefer foto", "fotogravur", "portrait", "portrait gravieren", "tierportrait", "haustier", "hund", "katze", "hundefoto", "tierfoto", "familienfoto", "erinnerungsfoto", "fotogeschenk", "tier", "erinnerung", "foto check"],
       imageTags: ["portrait", "haustier", "foto", "schiefer", "gravur"],
       imageProjects: [
         { project: "Schiefer Fotogravur", tags: ["portrait", "haustier", "foto", "schiefer"] }
@@ -62,13 +62,26 @@
       content: "Geeignet für Portraits, Tiermotive und Erinnerungsfotos mit kontrastreicher Vorbereitung und persönlicher Abstimmung."
     },
     {
+      title: "Schiefer mit Text & Symbol",
+      url: "/leistungen/schiefer-text/",
+      type: "Produktart",
+      section: "Schiefer Text & Symbol",
+      summary: "Widmung, Name, Datum, Koordinaten, Spruch oder kleines Symbol auf Schiefer.",
+      keywords: ["schiefer text", "textgravur", "schrift gravieren", "widmung", "name", "datum", "koordinaten", "gps koordinaten", "spruch", "zitat", "symbol", "icon", "schild", "namensschild"],
+      imageTags: ["schiefer", "text", "schrift", "widmung", "koordinaten", "symbol"],
+      imageProjects: [
+        { project: "Schiefer Text & Symbol", tags: ["schiefer", "textgravur", "widmung", "koordinaten", "symbol"] }
+      ],
+      content: "Schiefergestaltung mit Namen, Datum, kurzem Satz, Widmung, Koordinaten oder kleinem Icon in einem klaren, gut lesbaren Layout."
+    },
+    {
       title: "Schiefer-Gedenktafeln",
-      url: "/leistungen/schiefer/",
+      url: "/leistungen/schiefer/gedenktafeln/",
       type: "Produktart",
       section: "Schiefer Gedenken",
       summary: "Würdige kleine Ahnentafeln und Gedenkplatten auf Schiefer.",
       modalTarget: { product: "Schiefer", variant: "Gedenktafel" },
-      keywords: ["gedenktafel", "gedenkplatte", "ahnentafel", "ahnentafeln", "ahnen", "erinnerung", "trauer", "schiefer"],
+      keywords: ["gedenktafel", "gedenktafeln", "gedenkplatte", "gedenkschild", "ahnentafel", "ahnentafeln", "ahnen", "erinnerung", "trauergeschenk", "trauer", "andenken", "memorial", "name datum spruch", "schiefer"],
       imageTags: ["gedenken", "schiefer", "erinnerung", "tafel"],
       imageProjects: [
         { project: "Schiefer Gedenktafeln", tags: ["gedenken", "erinnerung", "tafel", "schiefer"] }
@@ -96,7 +109,7 @@
       section: "Metall Hundemarken",
       summary: "Personalisierte Hundemarken und Tags mit Name, Nummer oder QR.",
       modalTarget: { product: "Metall", variant: "Hundemarken & Tags" },
-      keywords: ["hundemarke", "hundemarken", "haustier", "tiermarke", "tag", "anhänger", "qr", "metall"],
+      keywords: ["hundemarke", "hundemarken", "hundeanhänger", "tieranhänger", "haustier", "tiermarke", "tag", "anhänger", "telefonnummer", "adresse", "name nummer", "qr", "metall"],
       imageTags: ["hundemarke", "metall", "haustier", "gravur", "anhänger"],
       imageProjects: [
         { project: "Hundemarken Projekt", tags: ["hundemarke", "haustier", "anhänger", "metall", "gravur"] }
@@ -110,7 +123,7 @@
       section: "Metall Business",
       summary: "Schilder, Plaketten, Visitenkarten und Branding-Elemente aus Metall.",
       modalTarget: { product: "Metall", variant: "Schilder & Plaketten" },
-      keywords: ["metallschild", "schild", "plakette", "business", "visitenkarte", "branding", "werkstatt", "qr", "b2b"],
+      keywords: ["metallschild", "schild", "plakette", "typenschild", "werkstatt label", "werkzeuglabel", "warnhinweis", "inventarschild", "metallvisitenkarte", "firmenlogo", "logo gravieren", "business", "visitenkarte", "branding", "werkstatt", "qr", "b2b"],
       imageTags: ["plakette", "schild", "branding", "metall", "visitenkarte"],
       imageProjects: [
         { project: "Business Plaketten", tags: ["plakette", "schild", "branding", "visitenkarte"] }
@@ -118,12 +131,40 @@
       content: "Metall-Schilder und Business-Plaketten für Werkstatt, Unternehmen, Branding, QR-Codes, Kennzeichnung und professionelle Anwendungen."
     },
     {
+      title: "Metall-Schlüsselanhänger",
+      url: "/leistungen/metall/",
+      type: "Produktart",
+      section: "Metall Schlüsselanhänger",
+      summary: "Schlüsselanhänger aus Metall mit Text, Icon oder Koordinaten.",
+      modalTarget: { product: "Metall", variant: "Schlüsselanhänger" },
+      keywords: ["schlüsselanhänger", "metallanhänger", "anhänger gravieren", "schlüsselbund", "name", "initialen", "koordinaten", "icon", "geschenk"],
+      imageTags: ["schlüsselanhänger", "metall", "gravur", "geschenk", "koordinaten"],
+      imageProjects: [
+        { project: "Metall-Schlüsselanhänger", tags: ["schlüsselanhänger", "metall", "gravur", "anhänger"] }
+      ],
+      content: "Personalisierte Metall-Schlüsselanhänger mit Name, kurzem Text, Icon oder Koordinaten."
+    },
+    {
+      title: "Schmuck & Anhänger aus Metall",
+      url: "/leistungen/metall/",
+      type: "Produktart",
+      section: "Metall Schmuck",
+      summary: "Initialen, Symbole und kleine Motive auf Schmuck und Metallanhängern.",
+      modalTarget: { product: "Metall", variant: "Schmuck" },
+      keywords: ["schmuck", "schmuck gravieren", "anhänger", "kette", "kettenanhänger", "initialen", "symbol", "partneranhänger", "unikat", "kleine serie"],
+      imageTags: ["schmuck", "anhänger", "metall", "initialen", "symbol"],
+      imageProjects: [
+        { project: "Metall-Schmuck", tags: ["schmuck", "anhänger", "metall", "gravur"] }
+      ],
+      content: "Feine Gravuren für Schmuck, Anhänger, Initialen, Symbole, Unikate und kleine Serien."
+    },
+    {
       title: "Holzgravur",
       url: "/leistungen/holz/",
       type: "Leistung",
       section: "Material Holz",
       summary: "Schilder, Deko, Schlüsselanhänger und kleine Serien aus Holz.",
-      keywords: ["holz", "holzgravur", "schild", "deko", "schlüsselanhänger", "serie", "geschenk", "laser"],
+      keywords: ["holz", "holzgravur", "holz gravieren", "holzschild", "schild", "holzdeko", "deko", "schlüsselanhänger", "kleinzeug", "namensanhänger", "koordinaten", "qr code", "serie", "kleinserie", "geschenk", "laser"],
       imageTags: ["holz", "deko", "schild", "geschenk", "schlüsselanhänger"],
       imageProjects: [
         { project: "Holz Übersicht", tags: ["holz", "deko", "schild"] },
@@ -137,7 +178,7 @@
       type: "Leistung",
       section: "Material Acryl",
       summary: "Acryl für Schilder, Labels, Beschriftung und kleine Serien.",
-      keywords: ["acryl", "acrylgravur", "schild", "label", "beschriftung", "serie", "qr"],
+      keywords: ["acryl", "acrylgravur", "acryl gravieren", "acrylschild", "schild", "türschild", "hinweisschild", "werkstattschild", "namensschild", "logo", "label", "tag", "beschriftung", "serie", "kleinserie", "qr", "qr schild"],
       imageTags: ["acryl", "schild", "label", "beschriftung"],
       imageProjects: [
         { project: "Acryl Schilder", tags: ["acryl", "schild", "label", "beschriftung"] }
@@ -150,7 +191,7 @@
       type: "Leistung",
       section: "Material Glas",
       summary: "Glas auf Anfrage, zum Beispiel Weingläser und Erinnerungsgläser.",
-      keywords: ["glas", "glasgravur", "weinglas", "weingläser", "glasgeschenk", "erinnerungsglas", "datum", "anlass"],
+      keywords: ["glas", "glasgravur", "glas gravieren", "weinglas", "weingläser", "glasgeschenk", "erinnerungsglas", "gedenkglas", "grabglas", "name", "datum", "anlass"],
       imageTags: ["glas", "weinglas", "geschenk", "gravur", "anlass"],
       imageProjects: [
         { project: "Glas Übersicht", tags: ["glas", "gravur", "anlass"] },
@@ -165,7 +206,7 @@
       section: "Glas Anlass",
       summary: "Weingläser mit Namen, Datum oder Anlass als Geschenk oder Event-Detail.",
       modalTarget: { product: "Weingläser", variant: "Weingläser" },
-      keywords: ["weinglas", "weingläser", "hochzeit", "geschenk", "datum", "name", "anlass", "glas"],
+      keywords: ["weinglas", "weingläser", "weinglas gravieren", "hochzeit", "geburtstag", "jubiläum", "firmenevent", "geschenk", "datum", "name", "anlass", "glas"],
       imageTags: ["weinglas", "glas", "geschenk", "hochzeit", "gravur"],
       imageProjects: [
         { project: "Weingläser", tags: ["weinglas", "glas", "geschenk", "hochzeit"] }
@@ -178,7 +219,7 @@
       type: "Leistung",
       section: "Custom",
       summary: "Sonderwünsche, Mischmaterial, Prototypen und freie Ideen.",
-      keywords: ["custom", "sonderanfertigung", "sonderwunsch", "prototyp", "mischmaterial", "lampe", "schmuck", "freie idee"],
+      keywords: ["custom", "sonderanfertigung", "sonderanfertigungen", "sonderwunsch", "einzelanfertigung", "unikat", "prototyp", "mischmaterial", "lampe", "lampenbau", "laserschnitt", "laser schneiden", "dickes holz", "schmuck", "kleinzeug", "freie idee", "verrückte idee"],
       imageTags: ["custom", "prototyp", "schmuck", "lampe", "sonderbau"],
       imageProjects: [
         { project: "Custom Lampenbau", tags: ["lampe", "sonderbau"] },
@@ -193,7 +234,7 @@
       type: "Leistung",
       section: "Schwibbogen",
       summary: "Schwibbögen mit Charakter, sauberer Verarbeitung und direkter Anfrage.",
-      keywords: ["schwibbogen", "schwibbögen", "erzgebirge", "lichtbogen", "geschenk", "dimmer", "geschenkset", "konfigurator"],
+      keywords: ["schwibbogen", "schwibbögen", "luderbogen", "luderbögen", "lichterbogen", "erzgebirge", "weihnachtsdeko", "fensterdeko", "lichtbogen", "geschenk", "dimmer", "geschenkset", "konfigurator"],
       imageTags: ["schwibbogen", "holz", "licht", "erzgebirge", "geschenk"],
       imageProjects: [
         { project: "Schwibbogen Übersicht", tags: ["schwibbogen", "licht", "erzgebirge", "geschenk"] }
@@ -232,7 +273,7 @@
       type: "B2B",
       section: "Geschäftskunden",
       summary: "B2B für Industrie, Handwerk, Gastronomie und Werkstätten.",
-      keywords: ["b2b", "geschäftskunden", "business", "industrie", "handwerk", "gastronomie", "werkstatt", "branding"],
+      keywords: ["b2b", "geschäftskunden", "firmenkunden", "unternehmen", "business", "industrie", "handwerk", "gastronomie", "werkstatt", "branding", "firmenlogo", "logo gravieren", "firmengeschenk", "werbegeschenk", "seriengravur", "kleinserie", "angebot"],
       imageTags: ["b2b", "industrie", "werkstatt", "branding"],
       imageProjects: [
         { project: "B2B Übersicht", tags: ["b2b", "industrie", "werkstatt", "branding"] }
@@ -279,12 +320,90 @@
       content: "Download-Bereich für Bestellformular, PDF-Hinweise, Vorbestellungen und perspektivisch Foto-Checks oder Material-Guides."
     },
     {
+      title: "Kontakt & Anfrage",
+      url: "/kontakt/",
+      type: "Kontakt",
+      section: "Anfrage stellen",
+      summary: "Gravuridee mit Material, Motiv, Größe und Termin per WhatsApp oder E-Mail anfragen.",
+      keywords: ["kontakt", "anfrage", "anfragen", "bestellen", "bestellung", "angebot", "angebot anfragen", "preis anfragen", "whatsapp", "email", "e-mail", "nachricht", "telefon", "motividee", "wunschmotiv", "sonderwunsch", "deadline", "termin", "datei senden", "foto senden"],
+      imageTags: ["kontakt", "anfrage", "whatsapp", "email", "motividee"],
+      imageProjects: [
+        { project: "Anfrage-Builder", tags: ["kontakt", "anfrage", "material", "motiv", "termin"] }
+      ],
+      content: "Der Anfrage-Builder sammelt Material, Produktwunsch, Motiv, Größe und Deadline und bereitet eine Anfrage für WhatsApp oder E-Mail vor. Auch eine noch unfertige Idee reicht für den ersten Kontakt."
+    },
+    {
+      title: "Ideen- und Diskussionspinnwand",
+      url: "/ideenpinnwand/",
+      type: "Mitmachen",
+      section: "Ideen & Feedback",
+      summary: "Ideen, Wünsche, Vorschläge und Diskussionsbeiträge öffentlich oder intern einreichen.",
+      keywords: ["ideenpinnwand", "pinnwand", "idee einreichen", "idee teilen", "vorschlag", "wunsch", "feedback", "diskussion", "beitrag schreiben", "mitmachen", "produktidee", "motividee"],
+      imageTags: ["idee", "feedback", "pinnwand", "beitrag"],
+      imageProjects: [
+        { project: "Ideenpinnwand", tags: ["idee", "wunsch", "feedback", "diskussion"] }
+      ],
+      content: "Auf der Pinnwand können Besucher eigene Ideen, Wünsche, Feedback und Diskussionsbeiträge öffentlich oder nicht öffentlich einreichen."
+    },
+    {
+      title: "Über Luderbein",
+      url: "/ueber/",
+      type: "Seite",
+      section: "Über uns",
+      summary: "Handwerk, Haltung und die Geschichte hinter Luderbein Gravur.",
+      keywords: ["über", "über uns", "über luderbein", "wer ist luderbein", "luderbein gravur", "werkstatt", "erzgebirge", "handwerk", "geschichte", "haltung"],
+      imageTags: ["luderbein", "werkstatt", "handwerk", "erzgebirge"],
+      imageProjects: [
+        { project: "Über Luderbein", tags: ["luderbein", "werkstatt", "handwerk"] }
+      ],
+      content: "Informationen über Luderbein, die Werkstatt, den handwerklichen Anspruch und die Haltung hinter Gravur und Fertigung."
+    },
+    {
+      title: "Motiv-Vorschau & Konfigurator",
+      url: "/tools/vorschau/",
+      type: "Tool",
+      section: "Gestaltung & Preisvorschau",
+      summary: "Material, Produkt, Motiv und Text auswählen und vor der Anfrage als unverbindliche Vorschau ansehen.",
+      keywords: [
+        "motiv",
+        "motive",
+        "motivvorschau",
+        "motiv-vorschau",
+        "vorschau",
+        "vorschautool",
+        "vorschau tool",
+        "produktvorschau",
+        "gravurvorschau",
+        "konfigurator",
+        "produkt konfigurieren",
+        "produkt gestalten",
+        "gestaltung",
+        "design",
+        "eigene datei",
+        "bild hochladen",
+        "foto hochladen",
+        "motiv hochladen",
+        "vorlage",
+        "monogramm",
+        "qr code",
+        "text",
+        "preisvorschau",
+        "preis prüfen",
+        "anfrage senden"
+      ],
+      imageTags: ["motiv", "vorschau", "gestaltung", "foto", "symbol", "monogramm", "qr code", "text"],
+      imageProjects: [
+        { project: "Motiv-Vorschau", tags: ["motiv", "vorschau", "konfigurator", "gestaltung", "produkt"] }
+      ],
+      content: "Im Vorschautool lassen sich Material, Produkt, Größe und Gestaltungsart wählen. Eigene Bilder, Motive, Vorlagen, Monogramme, QR-Codes oder kurze Texte können platziert, als unverbindliche Vorschau gespeichert und für eine Anfrage verwendet werden."
+    },
+    {
       title: "Kalkulator",
       url: "/tools/kalkulator/",
       type: "Tool",
       section: "Preis & Anfrage",
       summary: "Schiefer und Metall kalkulieren, Staffelpreise prüfen und Sammelanfrage starten.",
-      keywords: ["kalkulator", "preis", "schiefer", "metall", "staffelpreis", "anfrage", "gravur"],
+      keywords: ["kalkulator", "rechner", "preisrechner", "kostenrechner", "preis berechnen", "kosten berechnen", "kalkulieren", "preis", "schiefer", "metall", "staffelpreis", "anfrage", "gravur"],
       imageTags: ["preis", "kalkulation", "metall", "schiefer"],
       imageProjects: [
         { project: "Kalkulator", tags: ["preis", "kalkulation", "metall", "schiefer"] }

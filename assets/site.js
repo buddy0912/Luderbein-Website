@@ -362,8 +362,9 @@
       const lightboxPanel = img.closest(".lightbox__panel");
       if (modalPanel || lightboxPanel) {
         const panel = modalPanel || lightboxPanel;
-        let wrapper = img.parentElement?.classList.contains("has-wm") ? img.parentElement : null;
-        if (!wrapper || wrapper === panel) {
+        let wrapper = img.parentElement;
+        if (!wrapper) return;
+        if (wrapper === panel) {
           wrapper = wrapImageForOverlay(img, panel);
         }
         if (seen.has(wrapper)) return;
@@ -1419,7 +1420,7 @@
 
     window.__lbSearchIndexPromise = new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "/assets/search-index.js";
+      script.src = "/assets/search-index.js?v=20260819b";
       script.async = true;
       script.onload = () => resolve(Array.isArray(window.__lbSearchIndex) ? window.__lbSearchIndex : []);
       script.onerror = reject;
@@ -2062,8 +2063,8 @@
     initBanner();
     initScrollIndicator();
     initModalCards();
-    initImageWatermarks();
     initSiteSearch();
+    initImageWatermarks();
     // initChatWidget wird absichtlich NICHT aufgerufen, um den Bot auszublenden.
 
     // Analytics: möglichst ruhig laden (bricht nie die Seite)
