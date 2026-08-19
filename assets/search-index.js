@@ -16,9 +16,9 @@
       keywords: ["start", "leistungen", "gravur", "geschenk", "b2b", "privatkunden", "werkstatt"],
       imageTags: ["gravur", "werkstatt", "material", "laser", "beispiele"],
       imageProjects: [
-        { project: "Werkstatt-Feed", tags: ["gravur", "werkstatt", "laser", "beispiele"] }
+        { project: "Atelier-Feed", tags: ["gravur", "atelier", "laser", "beispiele"] }
       ],
-      content: "Schneller Überblick über Materialien, Leistungen, Werkstatt-Feed, Einzelstücke, Geschenke und Business-Anfragen."
+      content: "Schneller Überblick über Materialien, Leistungen, Atelier-Feed, Einzelstücke, Geschenke und Business-Anfragen."
     },
     {
       title: "Leistungen",
@@ -343,7 +343,7 @@
       imageProjects: [
         { project: "Über Luderbein", tags: ["luderbein", "werkstatt", "handwerk"] }
       ],
-      content: "Informationen über Luderbein, die Werkstatt, den handwerklichen Anspruch und die Haltung hinter Gravur und Fertigung."
+      content: "Informationen über Luderbein, das Atelier, den handwerklichen Anspruch und die Haltung hinter Gravur und Fertigung."
     },
     {
       title: "Motiv-Vorschau & Konfigurator",

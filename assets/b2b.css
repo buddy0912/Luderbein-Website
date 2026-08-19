@@ -267,6 +267,147 @@ body.page-b2b .btn:hover {
   color: var(--muted);
 }
 
+.b2b-compact-panel {
+  padding: 30px;
+}
+
+.b2b-accordion {
+  display: grid;
+  gap: 10px;
+}
+
+.b2b-disclosure,
+.b2b-form-disclosure {
+  border: 1px solid rgba(104, 129, 156, 0.36);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0)),
+    rgba(10, 14, 19, 0.72);
+  overflow: hidden;
+}
+
+.b2b-disclosure summary,
+.b2b-form-disclosure summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 76px;
+  padding: 16px 52px 16px 18px;
+  cursor: pointer;
+  position: relative;
+  list-style: none;
+}
+
+.b2b-disclosure summary::-webkit-details-marker,
+.b2b-form-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.b2b-disclosure summary::after,
+.b2b-form-disclosure summary::after {
+  content: "+";
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  translate: 0 -50%;
+  color: rgba(214, 224, 234, 0.86);
+  font-size: 1.45rem;
+  font-weight: 400;
+  transition: rotate 0.18s ease;
+}
+
+.b2b-disclosure[open] summary::after,
+.b2b-form-disclosure[open] summary::after {
+  rotate: 45deg;
+}
+
+.b2b-disclosure summary > span:last-child,
+.b2b-form-disclosure summary > span:first-of-type {
+  display: grid;
+  gap: 3px;
+}
+
+.b2b-disclosure summary strong,
+.b2b-form-disclosure summary strong {
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.b2b-disclosure summary small,
+.b2b-form-disclosure summary span {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.b2b-disclosure__number {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(148, 181, 212, 0.4);
+  border-radius: 12px;
+  color: rgba(214, 224, 234, 0.84);
+  background: rgba(29, 37, 46, 0.54);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+}
+
+.b2b-disclosure__body {
+  padding: 0 20px 20px 70px;
+  color: var(--muted);
+}
+
+.b2b-disclosure__body p {
+  margin: 0;
+  line-height: 1.58;
+}
+
+.b2b-disclosure__body--split {
+  display: grid;
+  gap: 14px;
+}
+
+.b2b-disclosure__body--split > div {
+  padding: 14px;
+  border: 1px solid rgba(104, 129, 156, 0.28);
+  border-radius: 14px;
+  background: rgba(12, 16, 21, 0.64);
+}
+
+.b2b-disclosure__body--split strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text);
+}
+
+.b2b-contact-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.b2b-form-disclosure {
+  margin-top: 16px;
+}
+
+.b2b-form-disclosure summary {
+  min-height: 68px;
+}
+
+.b2b-form-disclosure summary {
+  display: grid;
+  gap: 3px;
+}
+
+.b2b-form-disclosure .b2b-form {
+  border: 0;
+  border-top: 1px solid rgba(104, 129, 156, 0.3);
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .b2b-grid,
 .b2b-trust-grid,
 .b2b-process-layout {
@@ -750,6 +891,36 @@ html.light-readable body.page-b2b .b2b-section-head {
   border-bottom-color: rgba(153, 169, 184, 0.9);
 }
 
+html.light-readable body.page-b2b .b2b-disclosure,
+html.light-readable body.page-b2b .b2b-form-disclosure {
+  border-color: rgba(146, 165, 184, 0.94);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0)),
+    rgba(236, 242, 248, 0.98);
+}
+
+html.light-readable body.page-b2b .b2b-disclosure summary::after,
+html.light-readable body.page-b2b .b2b-form-disclosure summary::after,
+html.light-readable body.page-b2b .b2b-disclosure__number {
+  color: rgba(63, 83, 103, 0.94);
+}
+
+html.light-readable body.page-b2b .b2b-disclosure__number {
+  border-color: rgba(145, 164, 183, 0.96);
+  background: rgba(228, 238, 248, 0.96);
+}
+
+html.light-readable body.page-b2b .b2b-disclosure__body,
+html.light-readable body.page-b2b .b2b-disclosure summary small,
+html.light-readable body.page-b2b .b2b-form-disclosure summary span {
+  color: rgba(84, 90, 97, 0.9);
+}
+
+html.light-readable body.page-b2b .b2b-disclosure__body--split > div {
+  border-color: rgba(149, 167, 185, 0.9);
+  background: rgba(243, 248, 253, 0.96);
+}
+
 html.light-readable body.page-b2b .b2b-trust-card::before {
   background: linear-gradient(180deg, rgba(188, 25, 41, 0.88), rgba(44, 38, 41, 0.54));
   box-shadow: 0 0 0 4px rgba(188, 25, 41, 0.08);
@@ -834,6 +1005,14 @@ html.light-readable body.page-b2b .btn:hover {
     align-items: stretch;
   }
 
+  .b2b-hero__grid--compact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .b2b-disclosure__body--split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .b2b-hero__meta {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -873,6 +1052,7 @@ html.light-readable body.page-b2b .btn:hover {
 @media (max-width: 819px) {
   .b2b-hero,
   .b2b-band,
+  .b2b-compact-panel,
   .b2b-trust,
   .b2b-tech,
   .b2b-proof,
@@ -892,6 +1072,15 @@ html.light-readable body.page-b2b .btn:hover {
 
   .b2b-form {
     padding: 20px;
+  }
+
+  .b2b-disclosure summary,
+  .b2b-form-disclosure summary {
+    padding-right: 46px;
+  }
+
+  .b2b-disclosure__body {
+    padding: 0 18px 18px;
   }
 
   .b2b-cta-box__button,
