@@ -76,9 +76,9 @@
 
   const legalLinks = `
     <div class="foot__stack small" aria-label="Rechtstexte">
-      <a href="/rechtliches/impressum.html">Impressum</a>
-      <a href="/rechtliches/datenschutz.html">Datenschutz</a>
-      <a href="/rechtliches/agb.html">AGB</a>
+      <a href="/rechtliches/impressum">Impressum</a>
+      <a href="/rechtliches/datenschutz">Datenschutz</a>
+      <a href="/rechtliches/agb">AGB</a>
     </div>
   `;
 

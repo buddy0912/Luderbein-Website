@@ -16,9 +16,9 @@
       keywords: ["start", "leistungen", "gravur", "geschenk", "b2b", "privatkunden", "werkstatt"],
       imageTags: ["gravur", "werkstatt", "material", "laser", "beispiele"],
       imageProjects: [
-        { project: "Werkstatt-Feed", tags: ["gravur", "werkstatt", "laser", "beispiele"] }
+        { project: "Atelier-Feed", tags: ["gravur", "atelier", "laser", "beispiele"] }
       ],
-      content: "Schneller Überblick über Materialien, Leistungen, Werkstatt-Feed, Einzelstücke, Geschenke und Business-Anfragen."
+      content: "Schneller Überblick über Materialien, Leistungen, Atelier-Feed, Einzelstücke, Geschenke und Business-Anfragen."
     },
     {
       title: "Leistungen",
@@ -333,19 +333,6 @@
       content: "Der Anfrage-Builder sammelt Material, Produktwunsch, Motiv, Größe und Deadline und bereitet eine Anfrage für WhatsApp oder E-Mail vor. Auch eine noch unfertige Idee reicht für den ersten Kontakt."
     },
     {
-      title: "Ideen- und Diskussionspinnwand",
-      url: "/ideenpinnwand/",
-      type: "Mitmachen",
-      section: "Ideen & Feedback",
-      summary: "Ideen, Wünsche, Vorschläge und Diskussionsbeiträge öffentlich oder intern einreichen.",
-      keywords: ["ideenpinnwand", "pinnwand", "idee einreichen", "idee teilen", "vorschlag", "wunsch", "feedback", "diskussion", "beitrag schreiben", "mitmachen", "produktidee", "motividee"],
-      imageTags: ["idee", "feedback", "pinnwand", "beitrag"],
-      imageProjects: [
-        { project: "Ideenpinnwand", tags: ["idee", "wunsch", "feedback", "diskussion"] }
-      ],
-      content: "Auf der Pinnwand können Besucher eigene Ideen, Wünsche, Feedback und Diskussionsbeiträge öffentlich oder nicht öffentlich einreichen."
-    },
-    {
       title: "Über Luderbein",
       url: "/ueber/",
       type: "Seite",
@@ -356,7 +343,7 @@
       imageProjects: [
         { project: "Über Luderbein", tags: ["luderbein", "werkstatt", "handwerk"] }
       ],
-      content: "Informationen über Luderbein, die Werkstatt, den handwerklichen Anspruch und die Haltung hinter Gravur und Fertigung."
+      content: "Informationen über Luderbein, das Atelier, den handwerklichen Anspruch und die Haltung hinter Gravur und Fertigung."
     },
     {
       title: "Motiv-Vorschau & Konfigurator",
