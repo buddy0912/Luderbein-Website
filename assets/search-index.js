@@ -396,19 +396,6 @@
         { project: "Motiv-Vorschau", tags: ["motiv", "vorschau", "konfigurator", "gestaltung", "produkt"] }
       ],
       content: "Im Vorschautool lassen sich Material, Produkt, Größe und Gestaltungsart wählen. Eigene Bilder, Motive, Vorlagen, Monogramme, QR-Codes oder kurze Texte können platziert, als unverbindliche Vorschau gespeichert und für eine Anfrage verwendet werden."
-    },
-    {
-      title: "Kalkulator",
-      url: "/tools/kalkulator/",
-      type: "Tool",
-      section: "Preis & Anfrage",
-      summary: "Schiefer und Metall kalkulieren, Staffelpreise prüfen und Sammelanfrage starten.",
-      keywords: ["kalkulator", "rechner", "preisrechner", "kostenrechner", "preis berechnen", "kosten berechnen", "kalkulieren", "preis", "schiefer", "metall", "staffelpreis", "anfrage", "gravur"],
-      imageTags: ["preis", "kalkulation", "metall", "schiefer"],
-      imageProjects: [
-        { project: "Kalkulator", tags: ["preis", "kalkulation", "metall", "schiefer"] }
-      ],
-      content: "Hilft bei Preisrichtung, Staffelpreisen, Metall-Optionen und Sammelanfragen für Schiefer- und Metallprodukte."
     }
   ];
 })();
