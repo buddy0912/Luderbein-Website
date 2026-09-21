@@ -70,6 +70,7 @@
     <div class="foot__stack small">
       <div><strong>E-Mail:</strong> <a href="mailto:${MAIL_toggle}">${MAIL_toggle}</a></div>
       <div><strong>Telefon:</strong> <a href="tel:${PHONE_TEL}">${PHONE_DISPLAY}</a></div>
+      <div class="muted" style="max-width:38ch;">Bitte nennen Sie Ihren Namen und Ihr Anliegen. Danach werden Sie weitergeleitet.</div>
       <div><strong>Instagram:</strong> <a href="${INSTA_URL}" rel="me noopener">@Luderbein_Gravur</a></div>
     </div>
   `;
