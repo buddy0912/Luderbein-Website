@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>(function(){try{if(localStorage.getItem('lb-light-readable')==='1'){document.documentElement.classList.add('light-readable');}}catch(e){}})();</script>
+  <title>Master-Kalkulator – Luderbein intern</title>
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <meta name="description" content="Interner Master-Kalkulator für Luderbein." />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <link rel="stylesheet" href="/assets/nav-dropdown.css" />
+  <link rel="stylesheet" href="/tools/master-kalkulator/master-kalkulator.css" />
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="/"><div class="logo" aria-hidden="true"><img src="/assets/img/mark.svg" alt="" aria-hidden="true" class="brand-mark" /></div><div><strong>Luderbein</strong><br><span>Schwibbögen • Gravur • Sonderwünsche</span></div></a>
+    <button class="navbtn" type="button" data-nav-toggle aria-expanded="false" aria-controls="nav-main" aria-label="Menü öffnen"><span class="navicon"><span></span></span></button>
+    <nav class="menu" id="nav-main" data-nav aria-label="Hauptmenü" data-open="0">
+      <a href="/">Start</a>
+      <div class="navdrop" data-navdrop>
+        <button class="navdrop__sum" id="navdrop-leistungen-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navdrop-leistungen-panel">Leistungen <span class="navdrop__chev" aria-hidden="true">▾</span></button>
+        <div class="navdrop__panel" id="navdrop-leistungen-panel" role="menu" aria-labelledby="navdrop-leistungen-btn">
+          <a href="/leistungen/schiefer/" role="menuitem">Schiefer</a><a href="/leistungen/metall/" role="menuitem">Metall</a><a href="/leistungen/holz/" role="menuitem">Holz</a><a href="/leistungen/acryl/" role="menuitem">Acryl</a><a href="/leistungen/glas/" role="menuitem">Glas</a><a href="/leistungen/custom/" role="menuitem">Custom</a>
+          <div class="navdrop__sep" aria-hidden="true"></div><a href="/leistungen/schwibboegen/" role="menuitem">Schwibbögen</a><div class="navdrop__sep" aria-hidden="true"></div><a href="/tools/kalkulator/" role="menuitem">Kalkulator</a><a href="/tools/vorschau/" role="menuitem">Motiv-Vorschau</a><a href="/service/" role="menuitem">Downloads</a>
+        </div>
+      </div>
+      <a href="/b2b/">B2B</a><a href="/ueber/">Über</a><a href="/kontakt/">Kontakt</a><a href="/rechtliches/">Rechtliches</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap master-tool" id="content">
+  <section class="hero">
+    <span class="badge"><i></i> Internes Werkzeug</span>
+    <h1>Master-Kalkulator</h1>
+    <p class="lead">Schnelle Richtwerte mit synchronen Reglern, Sofortberechnung sowie Import und Export.</p>
+  </section>
+  <section class="tool-grid" aria-label="Master-Kalkulator Eingaben und Ergebnis">
+    <form class="panel" onsubmit="return false;">
+      <h2>Eingaben</h2><p class="hint">Regler und Zahlenfeld bleiben gekoppelt. Jede Änderung rechnet sofort neu.</p>
+      <div class="controls">
+        <div class="control"><div class="control-head"><span class="label">Stückzahl</span><strong>Auflage</strong></div><div class="value-row"><input data-field="quantity" type="range" min="1" max="500" step="1" value="25"><input data-field="quantity" type="number" min="1" max="500" step="1" value="25"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Material je Stück (€)</span><strong>Material</strong></div><div class="value-row"><input data-field="material" type="range" min="0" max="60" step="0.1" value="4.2"><input data-field="material" type="number" min="0" max="60" step="0.1" value="4.2"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Maschinenstundensatz (€)</span><strong>Maschine</strong></div><div class="value-row"><input data-field="machine" type="range" min="0" max="120" step="1" value="28"><input data-field="machine" type="number" min="0" max="120" step="1" value="28"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Bearbeitungszeit je Stück (Min.)</span><strong>Zeit</strong></div><div class="value-row"><input data-field="minutes" type="range" min="0" max="90" step="1" value="8"><input data-field="minutes" type="number" min="0" max="90" step="1" value="8"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Einrichtung einmalig (€)</span><strong>Setup</strong></div><div class="value-row"><input data-field="setup" type="range" min="0" max="250" step="1" value="18"><input data-field="setup" type="number" min="0" max="250" step="1" value="18"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Datei-/Artwork-Aufwand (€)</span><strong>Datei</strong></div><div class="value-row"><input data-field="artwork" type="range" min="0" max="250" step="1" value="12"><input data-field="artwork" type="number" min="0" max="250" step="1" value="12"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Verpackung je Stück (€)</span><strong>Handling</strong></div><div class="value-row"><input data-field="packaging" type="range" min="0" max="20" step="0.05" value="1.25"><input data-field="packaging" type="number" min="0" max="20" step="0.05" value="1.25"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Ausschuss / Puffer (%)</span><strong>Puffer</strong></div><div class="value-row"><input data-field="waste" type="range" min="0" max="50" step="1" value="8"><input data-field="waste" type="number" min="0" max="50" step="1" value="8"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Marge (%)</span><strong>Marge</strong></div><div class="value-row"><input data-field="margin" type="range" min="0" max="200" step="1" value="35"><input data-field="margin" type="number" min="0" max="200" step="1" value="35"></div></div>
+        <div class="control"><div class="control-head"><span class="label">Umsatzsteuer (%)</span><strong>Steuer</strong></div><div class="value-row"><input data-field="tax" type="range" min="0" max="25" step="1" value="19"><input data-field="tax" type="number" min="0" max="25" step="1" value="19"></div></div>
+      </div>
+      <div class="switches" aria-label="Optionen"><label class="check"><input data-field="rush" type="checkbox"> Expressaufschlag 20 %</label><label class="check"><input data-field="shipping" type="checkbox" checked> Versand berücksichtigen</label></div>
+      <div class="actions"><button class="btn" type="button" data-export>Export</button><button class="btn" type="button" data-import>Import</button><button class="btn" type="button" data-reset>Reset</button></div>
+      <label for="master-json">Import / Export JSON</label><textarea id="master-json" data-json spellcheck="false"></textarea><p class="import-status" data-import-status aria-live="polite"></p>
+    </form>
+    <aside class="panel" aria-live="polite">
+      <h2>Ergebnis</h2><p class="hint">Automatisch berechnete Kalkulation inklusive Versandlogik und Steuer.</p>
+      <div class="summary"><div class="metric"><span>Gesamt brutto</span><b data-total>–</b></div><div class="metric"><span>Stück brutto</span><b data-unit>–</b></div><div class="metric"><span>Netto inkl. Marge</span><b data-net>–</b></div><div class="metric"><span>USt.</span><b data-tax>–</b></div></div>
+      <div class="table-wrap"><table><thead><tr><th>Position</th><th>Betrag</th></tr></thead><tbody data-result-rows></tbody></table></div>
+    </aside>
+  </section>
+</main>
+<footer id="site-footer"></footer>
+<script src="/assets/footer.js"></script>
+<script src="/assets/nav-dropdown.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/tools/master-kalkulator/master-kalkulator.js" defer></script>
+</body>
+</html>
