@@ -1,6 +1,7 @@
 [
   {
     "src": "/assets/reel/roxy-wandbild.webp",
+    "featured": true,
     "alt": "Wandbild mit einem Boxer vor türkisfarbenen Strahlen und einer gelben Sonne",
     "cap": "Roxy – Wandbild in Originalgröße",
     "cats": [
@@ -13,6 +14,7 @@
   },
   {
     "src": "/assets/reel/bruno-wandbild.webp",
+    "featured": true,
     "alt": "Mehrlagiges Wandbild mit graviertem Mops und einem Pfotenornament",
     "cap": "Bruno – Mops als Wandbild",
     "cats": [
@@ -45,6 +47,7 @@
   },
   {
     "src": "/assets/reel/drachenglas.webp",
+    "featured": true,
     "alt": "Zylindrisches Glas mit Holzdeckel und einem umlaufend gravierten Drachen",
     "cap": "Glasgravur mit Drachenmotiv",
     "cats": [
@@ -55,6 +58,7 @@
   },
   {
     "src": "/assets/reel/karabinerbecher.webp",
+    "featured": true,
     "alt": "Zwei gravierte Metallbecher mit roten und grünen Karabinergriffen",
     "cap": "Gravierte Becher mit Karabinergriff",
     "cats": [
@@ -65,6 +69,7 @@
   },
   {
     "src": "/assets/reel/luderbein-schiefer.webp",
+    "featured": true,
     "alt": "Runde Schieferplatte mit graviertem Luderbein-Schriftzug und Werkstattmotiven",
     "cap": "Luderbein-Motiv auf rundem Schiefer",
     "cats": [
@@ -106,6 +111,7 @@
   },
   {
     "src": "/assets/reel/holzbox-mit-schiebedeckel.webp",
+    "featured": true,
     "alt": "Lasergeschnittene Holzbox mit verzahnten Ecken und einem Griffloch im Schiebedeckel",
     "cap": "Holzbox mit Schiebedeckel",
     "cats": [
@@ -214,6 +220,7 @@
   },
   {
     "src": "/assets/reel/schwibbogen-buchholzer-waldzwerge.webp",
+    "featured": true,
     "alt": "Beleuchteter Holzschwibbogen mit Waldszene, Hütte und gravierten Zwergen",
     "cap": "Schwibbogen „Buchholzer Waldzwerge“",
     "cats": [
@@ -234,6 +241,7 @@
   },
   {
     "src": "/assets/reel/schwibbogen-sonnenblumen.webp",
+    "featured": true,
     "alt": "Holzschwibbogen mit Sonnenblumen und verpixelten Schriftzügen",
     "cap": "Sonnenblumen-Schwibbogen mit Namen",
     "cats": [

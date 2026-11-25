@@ -759,18 +759,16 @@
 
     if (!els.mats.length || !els.wa || !els.mail) return;
 
-    const MAT_ALIAS = {
-      "Acryl-Schilder": "Acryl",
-      "Acrylschilder": "Acryl",
-      "Acryl_Schilder": "Acryl",
-      "Acryl Schilder": "Acryl",
+    const prefillAliases = {
+      "acryl schilder": { material: "Acryl" },
+      acrylschilder: { material: "Acryl" },
+      weinglaser: { material: "Glas", variant: "Weingläser" },
+      erinnerungsglas: { material: "Glas", variant: "Grab- & Erinnerungsgläser" },
+      schwibbogen: { material: "Schwibbögen" },
+      "epidemic scorn schwibbogen": { material: "Schwibbögen", variant: "Epidemic Scorn Schwibbogen" },
+      "schwibbogen vorbestellung": { material: "Schwibbögen", variant: "Vorbestellung" },
+      wunschmotiv: { material: "Custom", variant: "Wunschmotiv" },
     };
-
-    function resolveMaterialName(m) {
-      const t = safeText(m);
-      if (!t) return "";
-      return MAT_ALIAS[t] || t;
-    }
 
     const DATA = {
       Schiefer: {
@@ -803,9 +801,24 @@
         variants: [{ value: "Allgemein", label: "Allgemein" }],
         formats: [{ value: "custom", label: "Nach Maß" }],
       },
-      "Acryl-Schilder": {
-        variants: [{ value: "Allgemein", label: "Allgemein" }],
-        formats: [{ value: "custom", label: "Nach Maß" }],
+      Glas: {
+        variants: [
+          { value: "Drachenglas mit Holzdeckel", label: "Drachenglas mit Holzdeckel" },
+          { value: "Weingläser", label: "Weingläser" },
+          { value: "Grab- & Erinnerungsgläser", label: "Grab- & Erinnerungsgläser" },
+          { value: "Glas", label: "Andere Glasgravur" },
+        ],
+        formats: [{ value: "custom", label: "Glasart / Größe angeben" }],
+      },
+      "Schwibbögen": {
+        variants: [
+          { value: "Schul-Schwibbogen nach Vorlage", label: "Schul-Schwibbogen nach Vorlage" },
+          { value: "Schwibbogen „Buchholzer Waldzwerge“", label: "Buchholzer Waldzwerge" },
+          { value: "Bärensteiner Mini-Schwibbogen", label: "Bärensteiner Mini-Schwibbogen" },
+          { value: "Sonnenblumen-Schwibbogen mit Namen", label: "Sonnenblumen-Schwibbogen mit Namen" },
+          { value: "Epidemic Scorn Schwibbogen", label: "Epidemic Scorn Schwibbogen" },
+        ],
+        formats: [{ value: "custom", label: "Wunschgröße angeben" }],
       },
       Custom: {
         variants: [{ value: "Sonderwunsch", label: "Sonderwunsch" }],
@@ -815,8 +828,10 @@
 
     const params = new URLSearchParams(window.location.search);
     const preMatRaw = safeText(params.get("p"));
-    const preMat = resolveMaterialName(preMatRaw);
-    const preVar = safeText(params.get("v"));
+    const prefillKey = normalizeSearchText(preMatRaw);
+    const prefill = Object.hasOwn(prefillAliases, prefillKey) ? prefillAliases[prefillKey] : null;
+    const preMat = prefill?.material || els.mats.find((radio) => normalizeSearchText(radio.value) === prefillKey)?.value;
+    const preVar = safeText(params.get("v")) || prefill?.variant || "";
     const preFmt = safeText(params.get("f"));
     const preNote = safeText(params.get("note"));
 
@@ -1420,7 +1435,7 @@
 
     window.__lbSearchIndexPromise = new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "/assets/search-index.js?v=20260822a";
+      script.src = "/assets/search-index.js?v=20261125a";
       script.async = true;
       script.onload = () => resolve(Array.isArray(window.__lbSearchIndex) ? window.__lbSearchIndex : []);
       script.onerror = reject;
@@ -1976,14 +1991,14 @@
 
       nav.querySelectorAll("a[href]").forEach((link) => {
         link.addEventListener("click", () => {
-          if (window.matchMedia("(max-width: 480px)").matches) {
+          if (getComputedStyle(navBtn).display !== "none") {
             closeNav();
           }
         });
       });
 
       window.addEventListener("resize", () => {
-        if (!window.matchMedia("(max-width: 480px)").matches) {
+        if (getComputedStyle(navBtn).display === "none") {
           closeNav();
         }
       });

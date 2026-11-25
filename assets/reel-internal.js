@@ -311,7 +311,10 @@
       const raw = await r.json();
       if (!Array.isArray(raw)) throw new Error("JSON ist kein Array");
 
-      let items = raw.map((it) => normalizeItem(it, defaultTag)).filter(Boolean);
+      const sourceItems = container.hasAttribute("data-reel-featured")
+        ? raw.filter((item) => item?.featured === true)
+        : raw;
+      let items = sourceItems.map((it) => normalizeItem(it, defaultTag)).filter(Boolean);
 
       if (feedCat) {
         items = items.filter((it) => entryBelongsToCategory(it, feedCat));

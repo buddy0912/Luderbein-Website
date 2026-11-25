@@ -107,11 +107,6 @@
   const emblemUploadHint = document.getElementById("emblemUploadHint");
   const priceSummaryBox = document.getElementById("priceSummaryBox");
   const priceBreakdown = document.getElementById("priceBreakdown");
-  const priceSubtotalLabel = document.getElementById("priceSubtotalLabel");
-  const priceSubtotal = document.getElementById("priceSubtotal");
-  const priceDiscountRow = document.getElementById("priceDiscountRow");
-  const priceDiscountLabel = document.getElementById("priceDiscountLabel");
-  const priceDiscount = document.getElementById("priceDiscount");
   const priceTotalLabel = document.getElementById("priceTotalLabel");
   const priceTotal = document.getElementById("priceTotal");
   const priceSummaryHint = document.getElementById("priceSummaryHint");
@@ -189,8 +184,7 @@
   const ACTIVE_STEP_SEQUENCE = ["material", "product", "finish", "set", "size", "designMode"];
   const SIDE_IDS = ["front", "back"];
   const PHOTO_SIZE_12_HINT = "Foto bei 12 mm nur unter Vorbehalt: Ergebnis hängt stark von der Vorlage ab (Kontrast/Details).";
-  const PHOTO_DISCOUNT_HINT = "Foto wird händisch optimiert (Zufriedenheitsgarantie). Der Rabatt gilt nur bei identischem Foto (keine Neuaufbereitung).";
-  const HEART_TAG_SINGLE_PRICE_CENTS = 1295;
+  const PHOTO_REVIEW_HINT = "Bei Fotogravuren prüfe ich die Vorlage individuell.";
   const FEEDBACK_REASON_LABELS = {
     orientation: "Ich finde mich nicht zurecht",
     broken: "Die Seite funktioniert nicht richtig",
@@ -198,32 +192,10 @@
     unexpected: "Nicht das, was ich erwartet habe",
     other: "Sonstiges"
   };
-  const PRICE_BY_SIZE_GROUP_CENTS = {
-    S: 995,
-    M: 1195,
-    L: 1395
-  };
-  const JEWELRY_SET_BASE_PRICES_CENTS = {
-    1: 995,
-    2: 1795,
-    3: 2595,
-    4: 3295,
-    5: 3795
-  };
-  const BACK_SIDE_STANDARD_CENTS = 495;
   const DOGTAG_BACK_SIDE_FALLBACK_CENTS = 300;
-  const PHOTO_NEW_PREP_CENTS = 3495;
-  const PHOTO_REPEAT_FRONT_CENTS = 2495;
-  const PHOTO_REPEAT_BACK_CENTS = 995;
-  const BOTTLE_OPENER_FALLBACK_START_CENTS = 299;
-  const SET_DISCOUNT_RATES = {
-    2: 0.10,
-    3: 0.12,
-    4: 0.14,
-    5: 0.15
-  };
+  const BOTTLE_OPENER_FALLBACK_START_CENTS = 895;
   const WOOD_BOARD_START_PRICE_FALLBACK_CENTS = 795;
-  const DOGTAG_START_PRICE_FALLBACK_CENTS = 695;
+  const DOGTAG_START_PRICE_FALLBACK_CENTS = 895;
   const EXTERNAL_PRICING = window.LUDERBEIN_PRICING || null;
   const mobileThumbCropCache = new Map();
   let mobileThumbCropFrame = 0;
@@ -2060,11 +2032,7 @@
       if (hasDesignModeSelection()) {
         configurationParts.push(getSummaryModeLabel());
       }
-      const bottlePriceCents = getBottleOpenerSinglePriceCents();
-      if (bottlePriceCents != null) {
-        priceLabel = formatPreviewStartPrice(bottlePriceCents, " / Stk.");
-        priceHint = getCustomerPriceStandHint(priceState);
-      }
+      priceLabel = formatEuro(priceState.totalCents) + " / Stk.";
     } else if (isWoodBoardProduct()) {
       configurationParts.push(productName);
       if (hasDesignModeSelection()) {
@@ -2095,7 +2063,7 @@
         configurationParts.push(getSummaryModeLabel());
       }
       if (priceState.isReady) {
-        priceLabel = formatPreviewStartPrice(priceState.totalCents);
+        priceLabel = formatEuro(priceState.totalCents);
         priceHint = getCustomerPriceStandHint(priceState);
       }
     } else {
@@ -2115,14 +2083,8 @@
       }
     }
 
-    if (!isSingleSurfaceProduct() && priceState.items.length && priceState.isReady) {
-      priceLabel = formatPreviewStartPrice(priceState.totalCents);
-      priceHint = getCustomerPriceStandHint(priceState);
-    } else if (!isSingleSurfaceProduct() && priceState.items.length && !priceState.isReady) {
-      priceLabel = priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen" : "Noch offen";
-      priceHint = getCustomerPriceStandHint(priceState);
-    } else if (!isBottleOpenerProduct() && priceState.invalidReason) {
-      priceHint = getCustomerPriceStandHint(priceState);
+    if (priceState.onRequest) {
+      priceLabel = "Auf Anfrage";
     }
 
     return {
@@ -2137,8 +2099,8 @@
     const reviewHint = "Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach.";
     const pendingSetHint = "Endpreis erscheint, sobald alle ausgewählten Produkte vollständig konfiguriert sind.";
     if (!priceState || !priceState.isReady) {
-      if (priceState && priceState.invalidReason === "Preis offen / auf Anfrage.") {
-        return "Preis offen / auf Anfrage. " + reviewHint;
+      if (priceState?.onRequest) {
+        return reviewHint;
       }
       return pendingSetHint + " " + reviewHint;
     }
@@ -2877,74 +2839,6 @@
     });
   }
 
-  function getSizeGroup(size) {
-    if (!size) return null;
-    if (size.diameterMm <= 12) return "S";
-    if (size.diameterMm === 15) return "M";
-    return "L";
-  }
-
-  function getBasePriceForSize(size) {
-    const sizeGroup = getSizeGroup(size);
-    return sizeGroup ? PRICE_BY_SIZE_GROUP_CENTS[sizeGroup] : 0;
-  }
-
-  function isGoldHeartPendantSelection(product, finish) {
-    const activeProduct = product || getActiveProduct();
-    const activeFinish = finish || getActiveFinish();
-    return Boolean(
-      activeProduct &&
-      activeProduct.id === "heart-tag" &&
-      activeFinish &&
-      activeFinish.id === "gold"
-    );
-  }
-
-  function getSetDiscountRate(pendantCount) {
-    return SET_DISCOUNT_RATES[pendantCount] || 0;
-  }
-
-  function getJewelrySetBasePriceCents(count, product, finish) {
-    if (Number(count) === 1 && isGoldHeartPendantSelection(product, finish)) {
-      return HEART_TAG_SINGLE_PRICE_CENTS;
-    }
-    return JEWELRY_SET_BASE_PRICES_CENTS[count] || JEWELRY_SET_BASE_PRICES_CENTS[1];
-  }
-
-  function roundCentsToFive(cents) {
-    return Math.round(cents / 5) * 5;
-  }
-
-  function getSelectedSideType(sideId, pendantIndex) {
-    const sideState = getSideState(sideId, pendantIndex);
-    if (!sideState.designMode) return null;
-
-    if (sideState.designMode === "text") {
-      return "text";
-    }
-
-    if (sideState.designMode === "qr") {
-      return "qr";
-    }
-
-    const template = getActiveTemplate(sideId, pendantIndex);
-    if (!template) return null;
-
-    if (template.category === "photo") {
-      return "photo";
-    }
-
-    if (template.category === "monogram") {
-      return "motif";
-    }
-
-    if (template.category === "emblem" && getSideState(sideId, pendantIndex).emblemVariantId === "qr") {
-      return "qr";
-    }
-
-    return "motif";
-  }
-
   function getSideContentType(sideId, pendantIndex) {
     const sideState = getSideState(sideId, pendantIndex);
     if (!sideState.designMode) return null;
@@ -3013,11 +2907,6 @@
       return !canUsePhotoOnPendant(pendantIndex);
     }
     return false;
-  }
-
-  function getPhotoIdentityKey(sideId, pendantIndex) {
-    const sideState = getSideState(sideId, pendantIndex);
-    return sideState.uploadedImageSrc || "";
   }
 
   function hasAnyPhotoSelection() {
@@ -3153,126 +3042,30 @@
 
   function getBottleOpenerSinglePriceCents() {
     const pricingVariant = getBottleOpenerPricingVariant();
-    return pricingVariant ? priceEuroToCents(pricingVariant.singlePrice) : null;
-  }
-
-  function getBottleOpenerLowestTierPriceCents() {
-    const pricingVariant = getBottleOpenerPricingVariant();
-    if (!pricingVariant || !Array.isArray(pricingVariant.tiers)) return null;
-
-    const tierPrices = pricingVariant.tiers.map(function (tier) {
-      return priceEuroToCents(tier.price);
-    }).filter(function (priceCents) {
-      return priceCents != null;
-    });
-
-    if (!tierPrices.length) return null;
-    return Math.min.apply(Math, tierPrices);
-  }
-
-  function formatBottleOpenerTierLabel(tier) {
-    if (!tier) return "Staffel";
-    const min = Number.isFinite(Number(tier.min)) ? Number(tier.min) : null;
-    const max = Number.isFinite(Number(tier.max)) ? Number(tier.max) : null;
-
-    if (min != null && max != null) {
-      return min + "–" + max + " Stk.";
-    }
-    if (min != null) {
-      return "ab " + min + " Stk.";
-    }
-    if (max != null) {
-      return "bis " + max + " Stk.";
-    }
-    return "Staffel";
-  }
-
-  function getBottleOpenerPriceItems() {
-    const pricingVariant = getBottleOpenerPricingVariant();
-    const singlePriceCents = getBottleOpenerSinglePriceCents();
-    const items = [];
-
-    if (singlePriceCents != null) {
-      items.push({
-        label: "Einzelstück",
-        sizeLabel: "",
-        totalCents: singlePriceCents,
-        displayPrice: formatEuro(singlePriceCents) + " / Stk.",
-        metaParts: ["Privatkundenpreis"],
-        isOnRequest: false,
-        isSinglePrice: true
-      });
-    }
-
-    if (pricingVariant && Array.isArray(pricingVariant.tiers) && pricingVariant.tiers.length) {
-      return items.concat(pricingVariant.tiers.map(function (tier) {
-        const cents = priceEuroToCents(tier.price);
-        return {
-          label: formatBottleOpenerTierLabel(tier),
-          sizeLabel: "",
-          totalCents: cents || 0,
-          displayPrice: cents != null ? formatEuro(cents) + " / Stk." : (tier.note || "Auf Anfrage"),
-          metaParts: cents != null ? ["Basispreis pro Stück"] : [tier.note || "Preis auf Anfrage"],
-          isOnRequest: cents == null
-        };
-      }));
-    }
-
-    return items.length ? items : [
-      {
-        label: "Startpreis",
-        sizeLabel: "",
-        totalCents: BOTTLE_OPENER_FALLBACK_START_CENTS,
-        displayPrice: formatEuro(BOTTLE_OPENER_FALLBACK_START_CENTS) + " / Stk.",
-        metaParts: ["Aktuell nur oberste Gravurfläche berücksichtigt."],
-        isOnRequest: false
-      }
-    ];
+    return priceEuroToCents(pricingVariant?.singlePrice) ?? BOTTLE_OPENER_FALLBACK_START_CENTS;
   }
 
   function calculatePriceSummary() {
     const result = {
       isReady: false,
-      subtotalCents: 0,
-      discountCents: 0,
       totalCents: 0,
-      discountRate: getSetDiscountRate(getPendantCount()),
-      pendantCount: getPendantCount(),
-      hasPhoto: false,
-      hasPhotoAt12mm: false,
+      onRequest: false,
       invalidReason: "",
       items: []
     };
 
     if (isBottleOpenerProduct()) {
-      const pricingVariant = getBottleOpenerPricingVariant();
-      const priceItems = getBottleOpenerPriceItems();
-      const firstPricedItem = priceItems.find(function (item) {
-        return !item.isOnRequest && item.totalCents > 0;
-      }) || null;
-
-      result.pricingMode = "bottle-opener";
-      result.discountRate = 0;
-      result.minQty = pricingVariant && pricingVariant.minQty ? pricingVariant.minQty : 1;
-      result.items = priceItems;
-      result.subtotalCents = firstPricedItem ? firstPricedItem.totalCents : 0;
-      result.totalCents = result.subtotalCents;
-      result.discountCents = 0;
+      result.totalCents = getBottleOpenerSinglePriceCents();
+      result.items = [{ label: "Serien", displayPrice: "Auf Anfrage" }];
       result.isReady = true;
-      result.invalidReason = pricingVariant && Array.isArray(pricingVariant.tiers) && pricingVariant.tiers.length
-        ? "Preis pro Stück laut bestehender Staffel im Kalkulator. Aktuell berücksichtigt ist die oberste Gravurfläche."
-        : "Startpreis für die aktuell programmierte Gravurfläche.";
       return result;
     }
 
     if (isWoodBoardProduct()) {
       const woodBoardStartPriceCents = getWoodBoardStartPriceCents();
-      result.pricingMode = "wood-board";
-      result.discountRate = 0;
-      result.pendantCount = 1;
-      result.subtotalCents = woodBoardStartPriceCents;
+
       result.totalCents = woodBoardStartPriceCents;
-      result.discountCents = 0;
+
       result.isReady = true;
       result.invalidReason = "Startpreis laut Preisquelle.";
       result.items.push({
@@ -3290,13 +3083,9 @@
     if (isSlateProduct()) {
       const slatePriceMode = getActiveSlatePriceMode();
       const slateStartPriceCents = getSlatePlatePriceCents(state.productFamilyId, slatePriceMode);
-      result.pricingMode = "slate";
-      result.discountRate = 0;
-      result.pendantCount = 1;
       if (slateStartPriceCents != null) {
-        result.subtotalCents = slateStartPriceCents;
         result.totalCents = slateStartPriceCents;
-        result.discountCents = 0;
+
         result.isReady = true;
         result.invalidReason = "Startpreis laut Preisquelle.";
         result.items.push({
@@ -3310,20 +3099,17 @@
         });
         return result;
       }
-      result.isReady = false;
-      result.invalidReason = "Preis offen / auf Anfrage.";
+      result.onRequest = true;
+      result.invalidReason = "Auf Anfrage";
       return result;
     }
 
     if (isDogtagProduct()) {
       const dogtagStartPriceCents = getDogtagStartPriceCents();
       const dogtagBackCents = isBackSideEnabled(0) ? getDogtagBackSideCents() : 0;
-      result.pricingMode = "dogtag";
-      result.discountRate = 0;
-      result.pendantCount = 1;
-      result.subtotalCents = dogtagStartPriceCents;
+
       result.totalCents = dogtagStartPriceCents + dogtagBackCents;
-      result.discountCents = 0;
+
       result.isReady = true;
       result.invalidReason = "Startpreis laut Preisquelle.";
       result.items.push({
@@ -3333,10 +3119,9 @@
         backCents: 0,
         totalCents: dogtagStartPriceCents,
         displayPrice: formatEuro(dogtagStartPriceCents),
-        metaParts: ["Startpreis"]
+        metaParts: ["Basispreis"]
       });
       if (dogtagBackCents) {
-        result.subtotalCents += dogtagBackCents;
         result.items.push({
           label: "Dogtag",
           sizeLabel: getSideLabel("back"),
@@ -3350,142 +3135,9 @@
       return result;
     }
 
-    if (!hasMaterialSelection() || !hasProductSelection() || !hasSetSelection()) {
-      result.invalidReason = "Preis wird berechnet, sobald Material, Produkt und Set gewählt sind.";
-      return result;
-    }
-
-    const hasAnyPhotoInPendantSet = getPendantIndices().some(function (pendantIndex) {
-      return SIDE_IDS.some(function (sideId) {
-        if (sideId === "back" && !isBackSideEnabled(pendantIndex)) {
-          return false;
-        }
-        return getSelectedSideType(sideId, pendantIndex) === "photo";
-      });
-    });
-
-    if (!hasAnyPhotoInPendantSet) {
-      const baseSetPriceCents = getJewelrySetBasePriceCents(
-        getPendantCount(),
-        getActiveProduct(),
-        getActiveFinish()
-      );
-      result.discountRate = 0;
-      result.subtotalCents = baseSetPriceCents;
-      result.items.push({
-        label: getActiveSetOption().name,
-        sizeLabel: "",
-        baseCents: baseSetPriceCents,
-        backCents: 0,
-        totalCents: baseSetPriceCents,
-        displayPrice: formatEuro(baseSetPriceCents),
-        metaParts: ["Basispreis"]
-      });
-
-      for (let pendantIndex = 0; pendantIndex < getPendantCount(); pendantIndex += 1) {
-        const size = getActiveSize(pendantIndex);
-        if (!size) {
-          result.invalidReason = "Preis wird berechnet, sobald alle Anhänger eine Größe haben.";
-          return result;
-        }
-
-        if (!isBackSideEnabled(pendantIndex)) {
-          continue;
-        }
-
-        result.subtotalCents += BACK_SIDE_STANDARD_CENTS;
-        result.items.push({
-          pendantIndex: pendantIndex,
-          label: getPendantLabel(pendantIndex),
-          sizeLabel: getSideLabel("back"),
-          baseCents: 0,
-          backCents: BACK_SIDE_STANDARD_CENTS,
-          totalCents: BACK_SIDE_STANDARD_CENTS,
-          displayPrice: formatEuro(BACK_SIDE_STANDARD_CENTS),
-          metaParts: ["Rückseite +" + formatEuro(BACK_SIDE_STANDARD_CENTS)]
-        });
-      }
-
-      result.totalCents = result.subtotalCents;
-      result.discountCents = 0;
-      result.isReady = true;
-      result.invalidReason = "Preis basiert auf dem Setpreis und optional aktivierten Rückseiten.";
-      return result;
-    }
-
-    const preparedPhotoKeys = new Set();
-
-    function getChargeForPhotoSide(sideId, pendantIndex) {
-      const size = getActiveSize(pendantIndex);
-      if (!canUsePhotoOnPendant(pendantIndex)) {
-        result.invalidReason = "Foto ist erst ab 12 mm möglich.";
-        return 0;
-      }
-
-      result.hasPhoto = true;
-      if (size && size.diameterMm === 12) {
-        result.hasPhotoAt12mm = true;
-      }
-
-      const sideType = getSideContentType(sideId, pendantIndex);
-      const photoKey = sideType === "photo"
-        ? getPhotoIdentityKey(sideId, pendantIndex)
-        : "pending-photo-" + pendantIndex + "-" + sideId;
-
-      if (!preparedPhotoKeys.has(photoKey)) {
-        preparedPhotoKeys.add(photoKey);
-        return PHOTO_NEW_PREP_CENTS;
-      }
-
-      return sideId === "front" ? PHOTO_REPEAT_FRONT_CENTS : PHOTO_REPEAT_BACK_CENTS;
-    }
-
-    for (let pendantIndex = 0; pendantIndex < getPendantCount(); pendantIndex += 1) {
-      const size = getActiveSize(pendantIndex);
-      if (!size) {
-        result.invalidReason = "Preis wird berechnet, sobald alle Anhänger eine Größe haben.";
-        return result;
-      }
-
-      const frontSelectedType = getSelectedSideType("front", pendantIndex);
-      const backSelectedType = isBackSideEnabled(pendantIndex) ? getSelectedSideType("back", pendantIndex) : null;
-      const item = {
-        pendantIndex: pendantIndex,
-        label: getPendantLabel(pendantIndex),
-        sizeLabel: size.label,
-        baseCents: 0,
-        backCents: 0,
-        totalCents: 0,
-        metaParts: []
-      };
-
-      item.baseCents = frontSelectedType === "photo"
-        ? getChargeForPhotoSide("front", pendantIndex)
-        : getBasePriceForSize(size);
-      item.metaParts.push((frontSelectedType === "photo" ? "Foto Vorderseite " : "Basis ") + formatEuro(item.baseCents));
-
-      if (isBackSideEnabled(pendantIndex)) {
-        item.backCents = backSelectedType === "photo"
-          ? getChargeForPhotoSide("back", pendantIndex)
-          : BACK_SIDE_STANDARD_CENTS;
-        item.metaParts.push((backSelectedType === "photo" ? "Foto Rückseite " : "Rückseite +") + formatEuro(item.backCents));
-      }
-
-      item.totalCents = item.baseCents + item.backCents;
-      result.subtotalCents += item.totalCents;
-      result.items.push(item);
-    }
-
-    const discountMultiplier = 1 - result.discountRate;
-    const discountedCents = Math.round(result.subtotalCents * discountMultiplier);
-    result.totalCents = roundCentsToFive(discountedCents);
-    result.discountCents = Math.max(0, result.subtotalCents - result.totalCents);
-    result.isReady = true;
-
-    if (!result.invalidReason) {
-      result.invalidReason = result.hasPhoto
-        ? "Foto wird bei identischem Bild automatisch rabattiert. Ohne identische Bilddatei wird zunächst neue Aufbereitung gerechnet."
-        : "Preis basiert auf Größenwahl, aktivierten Rückseiten und Set-Rabatt.";
+    if (state.productFamilyId === "jewelry-pendant") {
+      result.onRequest = true;
+      result.invalidReason = "Auf Anfrage";
     }
 
     return result;
@@ -3914,8 +3566,8 @@
         (isSlateFamily ? buildSlateProductThumbMarkup(productFamily) : "") +
         '<span class="preview-option__title">' + escapeHtml(productFamily.name) + "</span>" +
         (startingPriceCents != null
-          ? '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
-          : "") +
+          ? '<span class="preview-option__price">' + (["bottle-opener", "dogtag"].includes(productFamily.id) ? "" : "ab ") + '<strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
+          : productFamily.id === "jewelry-pendant" ? '<span class="preview-option__price">Auf Anfrage</span>' : "") +
         '<span class="preview-option__meta">' + escapeHtml(productFamily.description) + "</span>";
 
       button.addEventListener("click", function () {
@@ -3969,7 +3621,7 @@
         (isDogtagFinish ? buildDogtagFinishThumbMarkup(finish) : buildFinishThumbMarkup(finish)) +
         '<span class="preview-option__title">' + escapeHtml(finish.name) + "</span>" +
         (startingPriceCents != null
-          ? '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
+          ? '<span class="preview-option__price"><strong>' + escapeHtml(formatEuro(startingPriceCents)) + "</strong></span>"
           : "") +
         '<span class="preview-option__meta">' + escapeHtml(finish.description) + "</span>";
 
@@ -4053,7 +3705,7 @@
       button.innerHTML =
         buildSetThumbMarkup(setOption.count) +
         '<span class="preview-option__title">' + escapeHtml(setOption.name) + "</span>" +
-        '<span class="preview-option__price">ab <strong>' + escapeHtml(formatEuro(getSetStartingPriceCents(setOption.count))) + "</strong></span>" +
+        '<span class="preview-option__price">Auf Anfrage</span>' +
         '<span class="preview-option__meta">' + escapeHtml(setOption.description) + "</span>";
 
       button.addEventListener("click", function () {
@@ -4087,19 +3739,11 @@
     return '<span class="preview-option__thumb preview-option__thumb--set" aria-hidden="true">' + buildSetThumbSvg(count) + "</span>";
   }
 
-  function getSetStartingPriceCents(count) {
-    return getJewelrySetBasePriceCents(count, getActiveProduct(), getActiveFinish());
-  }
-
   function getProductFamilyStartingPriceCents(productFamily) {
     if (!productFamily) return null;
 
-    if (productFamily.id === "jewelry-pendant") {
-      return getJewelrySetBasePriceCents(1);
-    }
-
     if (productFamily.id === "bottle-opener") {
-      return getBottleOpenerLowestTierPriceCents();
+      return getBottleOpenerSinglePriceCents();
     }
 
     if (productFamily.id === "dogtag") {
@@ -6476,9 +6120,9 @@
     const motifHint = getMotifSizeHint();
     motifSizeHint.hidden = !motifHint;
     motifSizeHint.textContent = motifHint;
-    const shouldShowPhotoPricingHint = !isSlateProduct() && (priceState.hasPhoto || hasAnyPhotoSelection());
+    const shouldShowPhotoPricingHint = !isSlateProduct() && hasAnyPhotoSelection();
     photoPricingHint.hidden = !shouldShowPhotoPricingHint;
-    photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_DISCOUNT_HINT;
+    photoPricingHint.textContent = photoPricingHint.hidden ? "" : PHOTO_REVIEW_HINT;
 
     const shouldShowPriceBox = hasMaterialSelection() && hasProductSelection() && (isBottleOpenerProduct() || isWoodBoardProduct() || isSlateProduct() || isDogtagProduct() || hasSetSelection());
     priceSummaryBox.hidden = !shouldShowPriceBox;
@@ -6505,52 +6149,17 @@
         priceBreakdown.innerHTML = "";
       }
 
-      if (isBottleOpenerProduct()) {
-        const singlePriceCents = getBottleOpenerSinglePriceCents();
-        if (priceSubtotalLabel) priceSubtotalLabel.textContent = "";
-        priceSubtotal.textContent = "";
-        priceDiscountRow.hidden = true;
-        if (priceTotalLabel) priceTotalLabel.textContent = "Einzelpreis";
-        priceTotal.textContent = singlePriceCents != null
-          ? formatPreviewStartPrice(singlePriceCents, " / Stk.")
-          : "—";
-        priceSummaryHint.textContent = priceState.minQty
-          ? "Staffelpreise ab " + priceState.minQty + " Stück."
-          : "";
-        priceSummaryHint.hidden = !priceSummaryHint.textContent;
-        if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = singlePriceCents != null
-            ? "Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach."
-            : "";
-          priceSummarySubhint.hidden = !priceSummarySubhint.textContent;
-        }
-      } else {
-        const reviewHint = "Ich prüfe Motiv und Datei individuell. Finale Freigabe und Preiszusage erfolgen danach.";
-        const pendingSetHint = "Endpreis erscheint, sobald alle ausgewählten Produkte vollständig konfiguriert sind.";
-        const usesStartPriceLabel = isWoodBoardProduct() || isSlateProduct() || isDogtagProduct();
-        if (priceSubtotalLabel) priceSubtotalLabel.textContent = (isWoodBoardProduct() || isSlateProduct() || isDogtagProduct()) ? "Startpreis" : "Zwischensumme";
-        priceSubtotal.textContent = priceState.isReady && priceState.items.length ? formatEuro(priceState.subtotalCents) : "—";
-        priceDiscountLabel.textContent = "Set-Rabatt" + (priceState.discountRate ? " (" + Math.round(priceState.discountRate * 100) + "%)" : "");
-        priceDiscount.textContent = priceState.isReady && priceState.items.length ? "-" + formatEuro(priceState.discountCents) : "—";
-        priceDiscountRow.hidden = !priceState.isReady || !priceState.items.length || !priceState.discountRate;
-        if (priceTotalLabel) priceTotalLabel.textContent = priceState.isReady
-          ? (usesStartPriceLabel ? "Startpreis" : "Preis")
-          : "Endpreis";
-        priceTotal.textContent = priceState.isReady && priceState.items.length
-          ? formatPreviewStartPrice(priceState.totalCents)
-          : (priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen" : "Noch offen");
-        priceSummaryHint.textContent = priceState.hasPhotoAt12mm
-          ? PHOTO_SIZE_12_HINT
-          : (
-            priceState.isReady
-              ? ""
-              : (priceState.invalidReason === "Preis offen / auf Anfrage." ? "Preis offen / auf Anfrage." : pendingSetHint)
-          );
-        priceSummaryHint.hidden = !priceSummaryHint.textContent;
-        if (priceSummarySubhint) {
-          priceSummarySubhint.textContent = reviewHint;
-          priceSummarySubhint.hidden = !priceSummarySubhint.textContent;
-        }
+      const isFixedPriceProduct = isBottleOpenerProduct() || isDogtagProduct();
+      priceTotalLabel.textContent = priceState.onRequest
+        ? "Preis"
+        : (isFixedPriceProduct ? "Stückpreis" : "Startpreis");
+      priceTotal.textContent = priceState.onRequest
+        ? "Auf Anfrage"
+        : isFixedPriceProduct ? formatEuro(priceState.totalCents) : formatPreviewStartPrice(priceState.totalCents);
+      priceSummaryHint.textContent = isBottleOpenerProduct() ? "Sonderformen auf Anfrage." : "";
+      priceSummaryHint.hidden = !priceSummaryHint.textContent;
+      if (priceSummarySubhint) {
+        priceSummarySubhint.hidden = false;
       }
     }
 
@@ -10847,34 +10456,9 @@
       "Rückseite: " + buildSideSummaryText("back")
     ];
 
-    if (priceState.isReady) {
-      lines.push("Zwischensumme: " + formatEuro(priceState.subtotalCents));
-      if (priceState.discountRate) {
-        lines.push("Set-Rabatt (" + Math.round(priceState.discountRate * 100) + "%): -" + formatEuro(priceState.discountCents));
-      }
-      lines.push("Gesamtpreis: " + formatEuro(priceState.totalCents));
-    } else if (priceState.invalidReason) {
-      lines.push("Preisstatus: " + priceState.invalidReason);
-    }
-
-    lines.push("");
-    lines.push("Viele Grüße");
+    lines.push("Preisstatus: Auf Anfrage", "", "Viele Grüße");
 
     return lines.join("\n");
-  }
-
-  function getPricingHint() {
-    const priceState = calculatePriceSummary();
-    if (!priceState.isReady) {
-      return "";
-    }
-
-    const parts = ["Zwischensumme " + formatEuro(priceState.subtotalCents)];
-    if (priceState.discountRate) {
-      parts.push("Set-Rabatt " + Math.round(priceState.discountRate * 100) + "%");
-    }
-    parts.push("Gesamtpreis " + formatEuro(priceState.totalCents));
-    return parts.join(" · ");
   }
 
   function buildExportFilename() {
@@ -10969,7 +10553,7 @@
   function getBackSideSurchargeHint() {
     return isDogtagProduct()
       ? "Rückseite: +" + formatEuro(getDogtagBackSideCents()) + "."
-      : "Rückseite je Anhänger: +" + formatEuro(BACK_SIDE_STANDARD_CENTS) + ".";
+      : "";
   }
 
   function hasMaterialSelection() {
@@ -11036,7 +10620,6 @@
         (!isBackSideEnabled(0) || isSideConfigured("back", 0));
     }
 
-    const priceState = calculatePriceSummary();
     return hasMaterialSelection() &&
       hasProductSelection() &&
       hasSetSelection() &&
@@ -11049,8 +10632,7 @@
           return false;
         }
         return true;
-      }) &&
-      priceState.isReady;
+      });
   }
 
   function hasActiveMotifContent(sideId) {

@@ -1,6 +1,6 @@
 /*
  * Luderbein Preisliste / Kalkulator
- * V1.6 – Stand Januar 2026
+ * V1.7 – Stand November 2026
  * Kleinunternehmer gem. §19 UStG – keine MwSt. ausgewiesen
  *
  * Aktiv: Schiefer + Metall
@@ -8,8 +8,8 @@
 
 window.LUDERBEIN_PRICING = {
   meta: {
-    version: "1.6",
-    updated: "01/2026",
+    version: "1.7",
+    updated: "11/2026",
     note: "Schiefer + Metall aktiv. Weitere Materialien folgen."
   },
 
@@ -91,15 +91,14 @@ window.LUDERBEIN_PRICING = {
         /* --------------------------------------------------------------------------
          * Metall – Flaschenöffner Schlüsselanhänger (Gravur)
          * Regeln:
-         * - Mindestmenge: 10 Stück
          * - 1 Motiv pro Auftrag
          * - fertiges Logo (SVG/PDF/PNG/JPG) 1-farbig
          * -------------------------------------------------------------------------- */
         flaschenoeffner: {
           label: "Flaschenöffner Schlüsselanhänger",
-          note: "Mindestmenge 10 · 1 Motiv pro Auftrag · fertiges Logo (SVG/PDF/PNG/JPG) 1-farbig",
-          minQty: 10,
-          singlePrice: 3.95,
+          note: "1 Motiv pro Auftrag · fertiges Logo (SVG/PDF/PNG/JPG) 1-farbig · Serien auf Anfrage",
+          minQty: 1,
+          singlePrice: 8.95,
 
           // Muss existieren, weil der Kalkulator ein Format verlangt
           formats: [
@@ -107,11 +106,8 @@ window.LUDERBEIN_PRICING = {
           ],
 
           tiers: [
-            { min: 10,  max: 24,  price: 3.45 },
-            { min: 25,  max: 49,  price: 2.99 },
-            { min: 50,  max: 99,  price: 2.45 },
-            { min: 100, max: 249, price: 1.79 },
-            { min: 250, max: null, price: null, note: "Auf Anfrage" }
+            { min: 1,  max: 9,    price: 8.95 },
+            { min: 10, max: null, price: null, note: "Auf Anfrage" }
           ],
 
           options: {
@@ -204,12 +200,7 @@ window.LUDERBEIN_PRICING = {
           ],
 
           tiers: [
-            { min: 1,   max: 4,    price: 7.95 },
-            { min: 5,   max: 9,    price: 6.49 },
-            { min: 10,  max: 24,   price: 5.95 },
-            { min: 25,  max: 49,   price: 4.95 },
-            { min: 50,  max: 99,   price: 3.95 },
-            { min: 100, max: 249,  price: 3.29 },
+            { min: 1,   max: 249,  price: 8.95 },
             { min: 250, max: null, price: null, note: "Auf Anfrage" }
           ],
 
@@ -275,11 +266,7 @@ window.LUDERBEIN_PRICING = {
           ],
 
           tiers: [
-            { min: 1,  max: 1,    price: 6.95 },
-            { min: 2,  max: 4,    price: 6.95 },
-            { min: 5,  max: 9,    price: 6.95 },
-            { min: 10, max: 24,   price: 6.95 },
-            { min: 25, max: 49,   price: 6.95 },
+            { min: 1,   max: 49,  price: 8.95 },
             { min: 50, max: null, price: null, note: "Auf Anfrage" }
           ],
 

@@ -375,27 +375,6 @@
   <div class="hr"></div>
 
   <!-- Atelier Feed -->
-  <section class="section" aria-label="Atelier Feed">
-    <div class="section-head">
-      <h2>Gravur, die nicht nach „Standard-Katalog“ schreit.</h2>
-      <p class="small muted">Ein kurzer Blick in den Feed.</p>
-    </div>
-
-    <div class="reelwrap">
-      <div
-        class="reel"
-        aria-label="Atelier Reel"
-        data-reel
-        data-reel-src="/assets/reel-werkstatt.json"
-        data-random="0"
-        data-interval="4500"
-        data-reel-default-tag="Atelier"
-      ></div>
-    </div>
-  </section>
-
-  <div class="hr"></div>
-
   <!-- Leistungen Preview -->
   <section class="section" aria-label="Leistungen Preview">
     <div class="section-head">
@@ -553,15 +532,38 @@
     </div>
   </section>
 
+  <div class="hr"></div>
+
+  <section class="section" aria-labelledby="atelier-title">
+    <div class="section-head">
+      <h2 id="atelier-title">Aus der Werkstatt</h2>
+    </div>
+
+    <div class="reelwrap">
+      <div
+        class="reel"
+        aria-label="Ausgewählte Arbeiten"
+        data-reel
+        data-reel-src="/assets/reel-werkstatt.json"
+        data-reel-featured
+        data-random="0"
+        data-interval="4500"
+        data-reel-default-tag="Atelier"
+      ></div>
+    </div>
+    <p><a class="btn" href="/leistungen/">Weitere Arbeiten nach Kategorie</a></p>
+  </section>
+
+
 </main>
 
 <footer id="site-footer"></footer>
 
 <script src="/assets/footer.js"></script>
 <script src="/assets/nav-dropdown.js"></script>
-<script src="/assets/site.js?v=20260822a"></script>
+<script src="/assets/site.js?v=20261125a"></script>
   <script src="/assets/luderbot-enhancements.js" defer></script>
-<script src="/assets/reel-internal.js"></script>
+<script src="/assets/reel-internal.js?v=20261125a"></script>
 
 <script>
   const y = document.getElementById("y");

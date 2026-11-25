@@ -34,6 +34,132 @@
       content: "Zentraler Einstieg für Materialien, Gravurarten, Schilder, Deko, Serien, Schwibbögen und Sonderanfertigungen."
     },
     {
+      title: "Drachenglas mit Holzdeckel",
+      url: "/leistungen/glas/",
+      type: "Produkt",
+      section: "Glas",
+      summary: "Glas mit umlaufender Drachen-Gravur und Holzdeckel.",
+      modalTarget: { product: "Glas", variant: "Drachenglas mit Holzdeckel" },
+      keywords: ["drache", "drachenmotiv", "glasgravur"]
+    },
+    {
+      title: "Grab- & Erinnerungsgläser",
+      url: "/leistungen/glas/",
+      type: "Produkt",
+      section: "Glas",
+      summary: "Gravierte Gläser zum Gedenken.",
+      modalTarget: { product: "Erinnerungsglas", variant: "Grab- & Erinnerungsgläser" },
+      keywords: ["grabglas", "gedenkglas", "erinnerungsglas"]
+    },
+    {
+      title: "Schul-Schwibbogen nach Vorlage",
+      url: "/leistungen/schwibboegen/",
+      type: "Produkt",
+      section: "Schwibbögen",
+      summary: "Schwibbogen mit einem Schulgebäude als Motiv.",
+      modalTarget: { product: "Schwibbögen", variant: "Schul-Schwibbogen nach Vorlage" },
+      keywords: ["schulschwibbogen", "schule", "grundschule"]
+    },
+    {
+      title: "Schwibbogen „Buchholzer Waldzwerge“",
+      url: "/leistungen/schwibboegen/",
+      type: "Produkt",
+      section: "Schwibbögen",
+      summary: "Schwibbogen mit dem Motiv der Buchholzer Waldzwerge.",
+      modalTarget: { product: "Schwibbögen", variant: "Schwibbogen „Buchholzer Waldzwerge“" },
+      keywords: ["waldzwerge", "buchholz"]
+    },
+    {
+      title: "Bärensteiner Mini-Schwibbogen",
+      url: "/leistungen/schwibboegen/",
+      type: "Produkt",
+      section: "Schwibbögen",
+      summary: "Kleiner Schwibbogen mit Bärenstein-Motiv.",
+      modalTarget: { product: "Schwibbögen", variant: "Bärensteiner Mini-Schwibbogen" },
+      keywords: ["mini schwibbogen", "bärenstein", "erzgebirge"]
+    },
+    {
+      title: "Sonnenblumen-Schwibbogen mit Namen",
+      url: "/leistungen/schwibboegen/",
+      type: "Produkt",
+      section: "Schwibbögen",
+      summary: "Schwibbogen mit Sonnenblumenmotiv und Namensgravur.",
+      modalTarget: { product: "Schwibbögen", variant: "Sonnenblumen-Schwibbogen mit Namen" },
+      keywords: ["sonnenblume", "namensgravur", "personalisierung"]
+    },
+    {
+      title: "Roxy – Wandbild in Originalgröße",
+      url: "/leistungen/custom/",
+      type: "Produkt",
+      section: "Custom",
+      summary: "Wandbild mit Boxerporträt im Format 80 × 85 cm.",
+      modalTarget: { product: "Custom", variant: "Roxy – Wandbild in Originalgröße" },
+      keywords: ["roxy", "boxer", "hundeporträt", "tierportrait"]
+    },
+    {
+      title: "Bruno – Mops als Wandbild",
+      url: "/leistungen/custom/",
+      type: "Produkt",
+      section: "Custom",
+      summary: "Mehrlagiges Wandbild mit Mops und Pfotenornament.",
+      modalTarget: { product: "Custom", variant: "Bruno – Mops als Wandbild" },
+      keywords: ["bruno", "mops", "hundeporträt", "tierportrait"]
+    },
+    {
+      title: "Gravierter Karabinerbecher",
+      url: "/leistungen/metall/",
+      type: "Produkt",
+      section: "Metall",
+      summary: "Becher mit Karabinergriff und persönlicher Gravur.",
+      modalTarget: { product: "Metall", variant: "Gravierter Karabinerbecher" },
+      keywords: ["karabiner becher", "metallbecher", "tasse"]
+    },
+    {
+      title: "Flaschenöffner mit Gravur",
+      url: "/leistungen/metall/",
+      type: "Produkt",
+      section: "Metall",
+      summary: "Schwarzer Standard-Flaschenöffner mit Schlüsselring und Gravur.",
+      modalTarget: { product: "Metall", variant: "Flaschenöffner" },
+      keywords: ["standard flaschenöffner", "kapselheber", "bieröffner"]
+    },
+    {
+      title: "Eloxierte Alu-Visitenkarten",
+      url: "/leistungen/metall/",
+      type: "Produkt",
+      section: "Metall",
+      summary: "Gravierte Visitenkarten aus eloxiertem Aluminium.",
+      modalTarget: { product: "Metall", variant: "Business" },
+      keywords: ["visitenkarte", "alu karte", "metallvisitenkarte"]
+    },
+    {
+      title: "Holzbox mit Schiebedeckel",
+      url: "/leistungen/holz/",
+      type: "Produkt",
+      section: "Holz",
+      summary: "Gravierbare Holzbox mit Schiebedeckel.",
+      modalTarget: { product: "Holz", variant: "Holzbox mit Schiebedeckel" },
+      keywords: ["holzschachtel", "holzkiste", "box"]
+    },
+    {
+      title: "Holz-Schlüsselanhänger",
+      url: "/leistungen/holz/",
+      type: "Produkt",
+      section: "Holz",
+      summary: "Personalisierbare Schlüsselanhänger aus Holz.",
+      modalTarget: { product: "Holz", variant: "Schlüsselanhänger & Kleinzeug" },
+      keywords: ["anhänger", "schlüsselanhänger holz", "kleinzeug"]
+    },
+    {
+      title: "Gravur auf rundem Schiefer",
+      url: "/leistungen/schiefer/",
+      type: "Produkt",
+      section: "Schiefer",
+      summary: "Runde Schieferplatte mit Gravur, Ø 20 cm.",
+      modalTarget: { product: "Schiefer", variant: "Gravur auf rundem Schiefer" },
+      keywords: ["schiefer rund", "runde schieferplatte", "20 cm"]
+    },
+    {
       title: "Schiefergravur",
       url: "/leistungen/schiefer/",
       type: "Leistung",

@@ -115,7 +115,8 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
+  max-width: 1160px;
+  padding: 12px clamp(16px, 3vw, 28px);
   gap: 14px;
 }
 
@@ -125,11 +126,21 @@ header {
   gap: 10px;
   text-decoration: none;
   min-width: 0;
+  flex: 1 1 auto;
+}
+
+.brand > div {
+  min-width: 0;
+}
+
+.brand br {
+  display: none;
 }
 
 .logo{
   width: 48px;
   height: 48px;
+  flex: 0 0 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -183,15 +194,15 @@ header {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 52vw;
+  display: block;
 }
 
 .menu {
   display: flex;
   gap: 8px;
   align-items: center;
-  flex-wrap: wrap;
-  margin-left: auto;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .menu a {
@@ -1036,6 +1047,9 @@ footer a:hover { color: var(--text); }
   }
 
   .productcard { grid-column: span 12; }
+}
+
+@media (max-width: 960px) {
   .navbtn {
     display: inline-flex;
     align-self: center;
@@ -1044,7 +1058,7 @@ footer a:hover { color: var(--text); }
   .nav {
     position: relative;
     gap: 10px;
-    padding: 6px 0;
+    padding-block: 6px;
     align-items: center;
     flex-wrap: nowrap;
   }
@@ -1053,7 +1067,6 @@ footer a:hover { color: var(--text); }
     flex: 1 1 auto;
     min-width: 0;
     gap: 10px;
-    max-width: calc(100% - 146px);
     align-items: center;
   }
 
@@ -1104,11 +1117,11 @@ footer a:hover { color: var(--text); }
     display: none;
     position: absolute;
     top: calc(100% + 7px);
-    left: 0;
-    right: 0;
-    width: 100%;
+    right: clamp(16px, 3vw, 28px);
+    width: min(440px, calc(100% - 32px));
     margin: 0;
     flex-direction: column;
+    white-space: normal;
     align-items: stretch;
     gap: 2px;
     border: 1px solid rgba(86,82,88,.56);
@@ -1201,7 +1214,9 @@ footer a:hover { color: var(--text); }
       inset 0 1px 0 rgba(255,255,255,.03),
       0 8px 18px rgba(0,0,0,.16);
   }
+}
 
+@media (max-width: 480px) {
   .lb-search__panel {
     width: calc(100vw - 20px);
     max-height: calc(100dvh - var(--header-h) - 18px);
@@ -2237,62 +2252,6 @@ html.light-readable body.page-b2b header {
   box-shadow: 0 10px 26px rgba(74,48,39,.05);
 }
 
-@media (min-width: 761px) {
-  html.light-readable .nav {
-    display: grid;
-    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 22px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
-  html.light-readable .brand {
-    align-items: flex-start;
-    min-width: 0;
-    max-width: none;
-  }
-
-  html.light-readable .brand > div {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  html.light-readable .brand strong {
-    line-height: 1.04;
-  }
-
-  html.light-readable .brand br {
-    display: none;
-  }
-
-  html.light-readable .brand span {
-    display: block;
-    max-width: none;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    line-height: 1.22;
-  }
-
-  html.light-readable .menu {
-    justify-content: flex-end;
-    align-self: start;
-    align-content: start;
-    row-gap: 6px;
-    padding-top: 2px;
-    min-width: 0;
-  }
-
-  html.light-readable .nav-quick {
-    margin-left: 0;
-    align-self: start;
-    padding-top: 1px;
-  }
-}
-
 html.light-readable .brand strong,
 html.light-readable .menu a[aria-current="page"],
 html.light-readable .menu a:hover,
@@ -2749,7 +2708,7 @@ html.light-readable .reel__cap {
   text-shadow: 0 1px 10px rgba(0,0,0,.28);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 960px) {
   .lb-lightmode-toggle {
     display: none;
   }
@@ -2791,7 +2750,9 @@ html.light-readable .reel__cap {
     background: rgba(143,112,95,.10);
     color: #241c1d;
   }
+}
 
+@media (max-width: 480px) {
   html.light-readable .lb-modal {
     padding: 12px;
   }

@@ -94,7 +94,7 @@
   margin: 8px 6px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 960px) {
   .navdrop {
     display: flex;
     flex-direction: column;
@@ -167,7 +167,7 @@ html.light-readable .navdrop__sep {
   background: rgba(126, 105, 97, 0.14);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 960px) {
   html.light-readable .navdrop__panel {
     border: 1px solid rgba(126, 105, 97, 0.12);
     background: linear-gradient(180deg, rgba(251, 246, 241, 0.99), rgba(243, 236, 229, 0.95));
