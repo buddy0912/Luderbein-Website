@@ -110,8 +110,8 @@
       "holz",
       "custom"
     ],
-    "price": "ab 34,95 €",
-    "priceNote": "Preisbeispiel für die Holzbox mit Schiebedeckel. Maße, Gravur und passgenauer Einsatz nach Aufwand."
+    "price": "19,95 €",
+    "priceNote": "Holzbox mit Schiebedeckel. Sondermaße, Gravur und passgenauer Einsatz nach Aufwand."
   },
   {
     "src": "/assets/reel/osterhasen-aus-holz.webp",
@@ -120,7 +120,7 @@
     "cats": [
       "holz"
     ],
-    "price": "ab 6,95 € / Stück",
+    "price": "auf Anfrage",
     "priceNote": "Ein Holzaufsteller mit vorhandenem Ostermotiv."
   },
   {
@@ -194,8 +194,8 @@
       "holz",
       "custom"
     ],
-    "price": "ab 34,95 €",
-    "priceNote": "Preisbeispiel für die Holzbox mit Schiebedeckel. Maße, Gravur und passgenauer Einsatz nach Aufwand."
+    "price": "19,95 €",
+    "priceNote": "Holzbox mit Schiebedeckel. Sondermaße, Gravur und passgenauer Einsatz nach Aufwand."
   },
   {
     "src": "/assets/reel/schwibbogen-grundschule-riesenburg.webp",
@@ -309,11 +309,13 @@
   },
   {
     "src": "/assets/reel/reel-06.webp",
-    "alt": "Atelier – Einblick",
-    "cap": "Atelier – Einblick",
+    "alt": "Gravierter Schlüsselanhänger aus Holz",
+    "cap": "Holz-Schlüsselanhänger",
     "cats": [
       "holz"
-    ]
+    ],
+    "price": "8,95 € / Stück",
+    "priceNote": "Schlüsselanhänger aus Holz mit Wunschgravur."
   },
   {
     "src": "/assets/reel/reel-07.webp",
