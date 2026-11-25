@@ -48,7 +48,7 @@
     "cats": [
       "glas"
     ],
-    "price": "ab 29,95 €",
+    "price": "ab 39,95 €",
     "priceNote": "Ein Glas mit Holzdeckel und vorhandenem Drachenmotiv. Individuelle Motive werden separat kalkuliert."
   },
   {
@@ -163,7 +163,7 @@
     "cats": [
       "glas"
     ],
-    "price": "ab 29,95 €",
+    "price": "ab 39,95 €",
     "priceNote": "Ein Glas mit Holzdeckel und vorhandenem Drachenmotiv. Individuelle Motive werden separat kalkuliert."
   },
   {
@@ -828,7 +828,8 @@
     "tag": "Material",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 8,95 €"
   },
   {
     "src": "/assets/reel/reel-70.jpeg",
@@ -837,7 +838,8 @@
     "tag": "Material",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 8,95 €"
   },
   {
     "src": "/assets/reel/reel-71.jpeg",
@@ -846,7 +848,8 @@
     "tag": "Material",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 8,95 €"
   },
   {
     "src": "/assets/reel/reel-72.jpeg",
@@ -855,7 +858,8 @@
     "tag": "Material",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 8,95 €"
   },
   {
     "src": "/assets/reel/reel-73.jpeg",
@@ -927,7 +931,8 @@
     "tag": "Erinnerungsglas",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 8,95 €"
   },
   {
     "src": "/assets/reel/reel-81.jpeg",
@@ -936,6 +941,7 @@
     "tag": "Erinnerungsglas",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 8,95 €"
   }
 ]
