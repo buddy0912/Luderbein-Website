@@ -28,8 +28,18 @@
     "cats": [
       "metall"
     ],
-    "price": "ab 2,20 € / Stück bei 300 Stück",
-    "priceNote": "Preisbeispiel inklusive Einrichtung für die Gravur auf bereitgestellten Rohlingen in einer Serie von 300 Stück. Die gezeigte Form ist eine Referenz."
+    "price": "auf Anfrage",
+    "priceNote": "Referenz für eine Vereinsserie in Sonderform. Standard-Flaschenöffner gibt es für 8,95 € pro Stück."
+  },
+  {
+    "src": "/assets/tools/flaschenoeffner/flaschenoeffner-schwarz-perspektive-2.png",
+    "alt": "Schwarzer Metall-Flaschenöffner mit Schlüsselring",
+    "cap": "Flaschenöffner mit Gravur",
+    "cats": [
+      "metall"
+    ],
+    "price": "8,95 € / Stück",
+    "priceNote": "Schwarzer Flaschenöffner mit Schlüsselring und Platz für eine persönliche Gravur. Sonderformen und Serien auf Anfrage."
   },
   {
     "src": "/assets/reel/drachenglas.webp",
@@ -48,7 +58,7 @@
     "cats": [
       "metall"
     ],
-    "price": "ab 19,95 €",
+    "price": "8,95 € / Stück",
     "priceNote": "Ein Becher inklusive einseitiger Gravur. Weitere Gravurseiten nach Aufwand."
   },
   {
@@ -79,7 +89,7 @@
       "metall",
       "custom"
     ],
-    "price": "ab 24,95 €",
+    "price": "auf Anfrage",
     "priceNote": "Ein Armband mit einfacher Schriftgravur auf der Schließe."
   },
   {
@@ -89,7 +99,7 @@
     "cats": [
       "metall"
     ],
-    "price": "ab 12,95 €",
+    "price": "auf Anfrage",
     "priceNote": "Ein Metallanhänger mit Kette und einseitiger Gravur."
   },
   {
@@ -163,7 +173,7 @@
     "cats": [
       "metall"
     ],
-    "price": "ab 19,95 €",
+    "price": "8,95 € / Stück",
     "priceNote": "Ein Becher inklusive einseitiger Gravur. Weitere Gravurseiten nach Aufwand."
   },
   {

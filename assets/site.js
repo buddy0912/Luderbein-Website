@@ -559,10 +559,10 @@
       modalTitle.textContent = title;
       modalText.textContent = text;
       const metaInfo = getCardMetaInfo(infoCard);
-      if (metaInfo.hasStartPrice) {
+      if (metaInfo.priceText) {
         modalInfo.hidden = false;
         modalPrice.hidden = false;
-        modalNote.hidden = false;
+        modalNote.hidden = !metaInfo.hasStartPrice;
         modalPriceValue.textContent = metaInfo.priceText;
       } else {
         modalInfo.hidden = true;
