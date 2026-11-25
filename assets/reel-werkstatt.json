@@ -218,6 +218,16 @@
     "priceNote": "Ein Mini-Schwibbogen aus Holz mit vorhandenem Bärenstein-Motiv."
   },
   {
+    "src": "/assets/reel/schwibbogen-sonnenblumen.webp",
+    "alt": "Holzschwibbogen mit Sonnenblumen und verpixelten Schriftzügen",
+    "cap": "Sonnenblumen-Schwibbogen mit Namen",
+    "cats": [
+      "schwibboegen"
+    ],
+    "price": "69,95 €",
+    "priceNote": "Die gewünschten Namen werden in die Sonnenblumen graviert. Die Namensgravur ist im Preis von 69,95 € enthalten."
+  },
+  {
     "src": "/assets/reel/schwibbogen-grundschule-riesenburg-seite.webp",
     "alt": "Schrägansicht des beleuchteten Schwibbogens mit Blick auf die Tiefe des Holzrahmens",
     "cap": "Schul-Schwibbogen nach Vorlage – Seitenansicht",
