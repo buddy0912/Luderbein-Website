@@ -8,7 +8,8 @@
       "custom"
     ],
     "price": "ab 299,95 €",
-    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Großformat, nach Fotovorlage."
+    "priceNote": "Das gezeigte Wandbild misst 80 × 85 cm. Der Preis ist ein Beispiel für ein mehrlagiges Tierporträt in diesem Format.",
+    "tag": "80 × 85 cm"
   },
   {
     "src": "/assets/reel/bruno-wandbild.webp",
@@ -18,8 +19,9 @@
       "holz",
       "custom"
     ],
-    "price": "ab 119,95 €",
-    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Format A3, nach Fotovorlage."
+    "price": "ab 119,95 € für DIN A3",
+    "priceNote": "Das gezeigte Wandbild misst ca. 20 × 30 cm. Der Ab-Preis gilt für die Ausführung in DIN A3 (29,7 × 42 cm).",
+    "tag": "Bild ca. 20 × 30 cm"
   },
   {
     "src": "/assets/reel/seiffen-jubilaeums-flaschenoeffner.webp",
@@ -132,7 +134,8 @@
       "custom"
     ],
     "price": "ab 299,95 €",
-    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Großformat, nach Fotovorlage."
+    "priceNote": "Das gezeigte Wandbild misst 80 × 85 cm. Der Preis ist ein Beispiel für ein mehrlagiges Tierporträt in diesem Format.",
+    "tag": "80 × 85 cm"
   },
   {
     "src": "/assets/reel/roxy-wandbild-pfote.webp",
@@ -143,7 +146,8 @@
       "custom"
     ],
     "price": "ab 299,95 €",
-    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Großformat, nach Fotovorlage."
+    "priceNote": "Das gezeigte Wandbild misst 80 × 85 cm. Der Preis ist ein Beispiel für ein mehrlagiges Tierporträt in diesem Format.",
+    "tag": "80 × 85 cm"
   },
   {
     "src": "/assets/reel/bruno-wandbild-pfote.webp",
@@ -153,8 +157,9 @@
       "holz",
       "custom"
     ],
-    "price": "ab 119,95 €",
-    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Format A3, nach Fotovorlage."
+    "price": "ab 119,95 € für DIN A3",
+    "priceNote": "Das gezeigte Wandbild misst ca. 20 × 30 cm. Der Ab-Preis gilt für die Ausführung in DIN A3 (29,7 × 42 cm).",
+    "tag": "Bild ca. 20 × 30 cm"
   },
   {
     "src": "/assets/reel/drachenglas-gravurdetail.webp",
