@@ -155,6 +155,8 @@
       src,
       alt: it.alt || it.title || "Beispiel",
       cap: it.cap || it.caption || it.text || "",
+      price: typeof it.price === "string" ? it.price.trim() : "",
+      priceNote: typeof it.priceNote === "string" ? it.priceNote.trim() : "",
       href: explicitHref || autoHref || null,
       tag: finalTag,
       cats
@@ -178,7 +180,8 @@
       "data-modal-img": isModalCard ? item.src : null,
       "data-modal-alt": isModalCard ? item.alt : null,
       "data-modal-title": isModalCard ? (item.cap || item.alt || "") : null,
-      "data-modal-text": isModalCard ? "" : null,
+      "data-modal-text": isModalCard ? item.priceNote : null,
+      "data-modal-price": isModalCard && item.price ? item.price : null,
       role: isModalCard ? "button" : null,
       tabindex: isModalCard ? "0" : null
     });
@@ -186,7 +189,8 @@
     if (item.href && !isModalCard) {
       // Sauber klickbar
       card.setAttribute("role", "link");
-      card.setAttribute("aria-label", (item.cap || item.alt || "Zum Eintrag").trim());
+      const label = (item.cap || item.alt || "Zum Eintrag").trim();
+      card.setAttribute("aria-label", [label, item.price].filter(Boolean).join(" · "));
     }
 
     if (item.tag) {
@@ -210,8 +214,13 @@
 
     card.appendChild(img);
 
-    if (item.cap) {
-      card.appendChild($("div", { class: "reel__cap", text: item.cap }));
+    if (item.cap || item.price) {
+      const caption = $("div", { class: "reel__cap", text: item.cap });
+      if (item.price) {
+        if (item.cap) caption.appendChild(document.createTextNode(" · "));
+        caption.appendChild($("strong", { text: item.price }));
+      }
+      card.appendChild(caption);
     }
 
     return card;

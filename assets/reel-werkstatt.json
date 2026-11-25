@@ -6,7 +6,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 299,95 €",
+    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Großformat, nach Fotovorlage."
   },
   {
     "src": "/assets/reel/bruno-wandbild.webp",
@@ -15,7 +17,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 119,95 €",
+    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Format A3, nach Fotovorlage."
   },
   {
     "src": "/assets/reel/seiffen-jubilaeums-flaschenoeffner.webp",
@@ -23,7 +27,9 @@
     "cap": "Jubiläums-Flaschenöffner für die Knappschaft Seiffen",
     "cats": [
       "metall"
-    ]
+    ],
+    "price": "ab 2,20 € / Stück bei 300 Stück",
+    "priceNote": "Preisbeispiel inklusive Einrichtung für die Gravur auf bereitgestellten Rohlingen in einer Serie von 300 Stück. Die gezeigte Form ist eine Referenz."
   },
   {
     "src": "/assets/reel/drachenglas.webp",
@@ -31,7 +37,9 @@
     "cap": "Glasgravur mit Drachenmotiv",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 29,95 €",
+    "priceNote": "Ein Glas mit Holzdeckel und vorhandenem Drachenmotiv. Individuelle Motive werden separat kalkuliert."
   },
   {
     "src": "/assets/reel/karabinerbecher.webp",
@@ -39,7 +47,9 @@
     "cap": "Gravierte Becher mit Karabinergriff",
     "cats": [
       "metall"
-    ]
+    ],
+    "price": "ab 19,95 €",
+    "priceNote": "Ein Becher inklusive einseitiger Gravur. Weitere Gravurseiten nach Aufwand."
   },
   {
     "src": "/assets/reel/luderbein-schiefer.webp",
@@ -47,7 +57,9 @@
     "cap": "Luderbein-Motiv auf rundem Schiefer",
     "cats": [
       "schiefer"
-    ]
+    ],
+    "price": "ab 19,95 € bei Ø 20 cm",
+    "priceNote": "Preisbeispiel für eine runde Schieferplatte mit 20 cm Durchmesser und Standardmotiv."
   },
   {
     "src": "/assets/reel/gravur-besteck.webp",
@@ -55,7 +67,9 @@
     "cap": "Lasergravuren auf Besteck",
     "cats": [
       "metall"
-    ]
+    ],
+    "price": "ab 9,95 € / Teil",
+    "priceNote": "Preis für eine einfache Gravur auf einem bereitgestellten Besteckteil. Flächige Muster nach Aufwand."
   },
   {
     "src": "/assets/reel/luderbein-armband.webp",
@@ -64,7 +78,9 @@
     "cats": [
       "metall",
       "custom"
-    ]
+    ],
+    "price": "ab 24,95 €",
+    "priceNote": "Ein Armband mit einfacher Schriftgravur auf der Schließe."
   },
   {
     "src": "/assets/reel/luderbein-metallanhaenger.webp",
@@ -72,7 +88,9 @@
     "cap": "Metallanhänger mit LB-Logo",
     "cats": [
       "metall"
-    ]
+    ],
+    "price": "ab 12,95 €",
+    "priceNote": "Ein Metallanhänger mit Kette und einseitiger Gravur."
   },
   {
     "src": "/assets/reel/holzbox-mit-schiebedeckel.webp",
@@ -81,7 +99,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 34,95 €",
+    "priceNote": "Preisbeispiel für die Holzbox mit Schiebedeckel. Maße, Gravur und passgenauer Einsatz nach Aufwand."
   },
   {
     "src": "/assets/reel/osterhasen-aus-holz.webp",
@@ -89,7 +109,9 @@
     "cap": "Osterhasen aus Holz",
     "cats": [
       "holz"
-    ]
+    ],
+    "price": "ab 6,95 € / Stück",
+    "priceNote": "Ein Holzaufsteller mit vorhandenem Ostermotiv."
   },
   {
     "src": "/assets/reel/roxy-wandbild-gravur.webp",
@@ -98,7 +120,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 299,95 €",
+    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Großformat, nach Fotovorlage."
   },
   {
     "src": "/assets/reel/roxy-wandbild-pfote.webp",
@@ -107,7 +131,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 299,95 €",
+    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Großformat, nach Fotovorlage."
   },
   {
     "src": "/assets/reel/bruno-wandbild-pfote.webp",
@@ -116,7 +142,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 119,95 €",
+    "priceNote": "Preisbeispiel für ein mehrlagiges Tierporträt im Format A3, nach Fotovorlage."
   },
   {
     "src": "/assets/reel/drachenglas-gravurdetail.webp",
@@ -124,7 +152,9 @@
     "cap": "Drachenglas – Gravur im Detail",
     "cats": [
       "glas"
-    ]
+    ],
+    "price": "ab 29,95 €",
+    "priceNote": "Ein Glas mit Holzdeckel und vorhandenem Drachenmotiv. Individuelle Motive werden separat kalkuliert."
   },
   {
     "src": "/assets/reel/karabinerbecher-luderbein.webp",
@@ -132,7 +162,9 @@
     "cap": "Karabinerbecher mit Luderbein-Gravur",
     "cats": [
       "metall"
-    ]
+    ],
+    "price": "ab 19,95 €",
+    "priceNote": "Ein Becher inklusive einseitiger Gravur. Weitere Gravurseiten nach Aufwand."
   },
   {
     "src": "/assets/reel/gravur-besteck-detail.webp",
@@ -140,7 +172,9 @@
     "cap": "Besteckgravur im Detail",
     "cats": [
       "metall"
-    ]
+    ],
+    "price": "ab 9,95 € / Teil",
+    "priceNote": "Preis für eine einfache Gravur auf einem bereitgestellten Besteckteil. Flächige Muster nach Aufwand."
   },
   {
     "src": "/assets/reel/holzbox-mit-einsatz.webp",
@@ -149,7 +183,9 @@
     "cats": [
       "holz",
       "custom"
-    ]
+    ],
+    "price": "ab 34,95 €",
+    "priceNote": "Preisbeispiel für die Holzbox mit Schiebedeckel. Maße, Gravur und passgenauer Einsatz nach Aufwand."
   },
   {
     "src": "/assets/reel/schwibbogen-grundschule-riesenburg.webp",
@@ -157,7 +193,9 @@
     "cap": "Schul-Schwibbogen nach Vorlage",
     "cats": [
       "schwibboegen"
-    ]
+    ],
+    "price": "ab 299,95 €",
+    "priceNote": "Preisbeispiel für einen beleuchteten Schwibbogen mit Schulmotiv nach Foto. Größe und zusätzlicher Entwurf nach Aufwand."
   },
   {
     "src": "/assets/reel/schwibbogen-buchholzer-waldzwerge.webp",
@@ -165,7 +203,9 @@
     "cap": "Schwibbogen „Buchholzer Waldzwerge“",
     "cats": [
       "schwibboegen"
-    ]
+    ],
+    "price": "ab 189,95 €",
+    "priceNote": "Beleuchteter, mehrlagiger Holzschwibbogen mit vorhandenem Waldmotiv. Änderungen nach Aufwand."
   },
   {
     "src": "/assets/reel/mini-schwibbogen-baerenstein.webp",
@@ -173,7 +213,9 @@
     "cap": "Mini-Schwibbögen aus Bärenstein",
     "cats": [
       "schwibboegen"
-    ]
+    ],
+    "price": "ab 14,95 € / Stück",
+    "priceNote": "Ein Mini-Schwibbogen aus Holz mit vorhandenem Bärenstein-Motiv."
   },
   {
     "src": "/assets/reel/schwibbogen-grundschule-riesenburg-seite.webp",
@@ -181,7 +223,9 @@
     "cap": "Schul-Schwibbogen nach Vorlage – Seitenansicht",
     "cats": [
       "schwibboegen"
-    ]
+    ],
+    "price": "ab 299,95 €",
+    "priceNote": "Preisbeispiel für einen beleuchteten Schwibbogen mit Schulmotiv nach Foto. Größe und zusätzlicher Entwurf nach Aufwand."
   },
   {
     "src": "/assets/reel/schwibbogen-buchholzer-waldzwerge-detail.webp",
@@ -189,7 +233,9 @@
     "cap": "Buchholzer Waldzwerge – Motivdetail",
     "cats": [
       "schwibboegen"
-    ]
+    ],
+    "price": "ab 189,95 €",
+    "priceNote": "Beleuchteter, mehrlagiger Holzschwibbogen mit vorhandenem Waldmotiv. Änderungen nach Aufwand."
   },
   {
     "src": "/assets/reel/mini-schwibbogen-baerenstein-detail.webp",
@@ -197,7 +243,9 @@
     "cap": "Mini-Schwibbogen „I ♥ Bärenstein“",
     "cats": [
       "schwibboegen"
-    ]
+    ],
+    "price": "ab 14,95 € / Stück",
+    "priceNote": "Ein Mini-Schwibbogen aus Holz mit vorhandenem Bärenstein-Motiv."
   },
   {
     "src": "/assets/reel/reel-01.webp",
