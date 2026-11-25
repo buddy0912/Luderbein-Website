@@ -1,5 +1,157 @@
 [
   {
+    "src": "/assets/reel/roxy-wandbild.webp",
+    "alt": "Wandbild mit einem Boxer vor türkisfarbenen Strahlen und einer gelben Sonne",
+    "cap": "Roxy – Wandbild in Originalgröße",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/bruno-wandbild.webp",
+    "alt": "Mehrlagiges Wandbild mit graviertem Mops und einem Pfotenornament",
+    "cap": "Bruno – Mops als Wandbild",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/seiffen-jubilaeums-flaschenoeffner.webp",
+    "alt": "Fertiger Flaschenöffner in Form von Schlägel und Eisen mit Jubiläumsgravur der Berg- und Hüttenknappschaft Seiffen",
+    "cap": "Jubiläums-Flaschenöffner für die Knappschaft Seiffen",
+    "cats": [
+      "metall"
+    ]
+  },
+  {
+    "src": "/assets/reel/drachenglas.webp",
+    "alt": "Zylindrisches Glas mit Holzdeckel und einem umlaufend gravierten Drachen",
+    "cap": "Glasgravur mit Drachenmotiv",
+    "cats": [
+      "glas"
+    ]
+  },
+  {
+    "src": "/assets/reel/karabinerbecher.webp",
+    "alt": "Zwei gravierte Metallbecher mit roten und grünen Karabinergriffen",
+    "cap": "Gravierte Becher mit Karabinergriff",
+    "cats": [
+      "metall"
+    ]
+  },
+  {
+    "src": "/assets/reel/luderbein-schiefer.webp",
+    "alt": "Runde Schieferplatte mit graviertem Luderbein-Schriftzug und Werkstattmotiven",
+    "cap": "Luderbein-Motiv auf rundem Schiefer",
+    "cats": [
+      "schiefer"
+    ]
+  },
+  {
+    "src": "/assets/reel/gravur-besteck.webp",
+    "alt": "Nebeneinanderliegende Messer, Gabeln und Löffel mit unterschiedlichen Gravurmustern",
+    "cap": "Lasergravuren auf Besteck",
+    "cats": [
+      "metall"
+    ]
+  },
+  {
+    "src": "/assets/reel/luderbein-armband.webp",
+    "alt": "Schwarzes geflochtenes Armband mit graviertem Luderbein-Schriftzug auf der Schließe",
+    "cap": "Armband mit Luderbein-Gravur",
+    "cats": [
+      "metall",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/luderbein-metallanhaenger.webp",
+    "alt": "Dunkler Metallanhänger mit graviertem LB-Logo an einer Kugelkette",
+    "cap": "Metallanhänger mit LB-Logo",
+    "cats": [
+      "metall"
+    ]
+  },
+  {
+    "src": "/assets/reel/holzbox-mit-schiebedeckel.webp",
+    "alt": "Lasergeschnittene Holzbox mit verzahnten Ecken und einem Griffloch im Schiebedeckel",
+    "cap": "Holzbox mit Schiebedeckel",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/osterhasen-aus-holz.webp",
+    "alt": "Sechs lasergeschnittene Holzhasen zum Aufstellen mit dem Schriftzug Frohe Ostern",
+    "cap": "Osterhasen aus Holz",
+    "cats": [
+      "holz"
+    ]
+  },
+  {
+    "src": "/assets/reel/roxy-wandbild-gravur.webp",
+    "alt": "Detail des Roxy-Wandbilds mit gravierter Fellstruktur und einem angesetzten Herzanhänger",
+    "cap": "Roxy – Gravur und Kettenanhänger",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/roxy-wandbild-pfote.webp",
+    "alt": "Mehrlagige Holzpfote mit kleinem Herz auf türkisfarbenem Hintergrund",
+    "cap": "Roxy – Pfotenornament",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/bruno-wandbild-pfote.webp",
+    "alt": "Pfotenornament aus Holz mit dem gravierten Namen Bruno",
+    "cap": "Bruno – Pfotenornament",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
+    "src": "/assets/reel/drachenglas-gravurdetail.webp",
+    "alt": "Drachenkopf mit fein gravierten Linien auf dem Glas direkt unter dem Holzdeckel",
+    "cap": "Drachenglas – Gravur im Detail",
+    "cats": [
+      "glas"
+    ]
+  },
+  {
+    "src": "/assets/reel/karabinerbecher-luderbein.webp",
+    "alt": "Metallbecher mit rotem Karabinergriff und längs graviertem Luderbein-Schriftzug",
+    "cap": "Karabinerbecher mit Luderbein-Gravur",
+    "cats": [
+      "metall"
+    ]
+  },
+  {
+    "src": "/assets/reel/gravur-besteck-detail.webp",
+    "alt": "Gabeln mit unterschiedlichen flächig gravierten Mustern auf den Griffen",
+    "cap": "Besteckgravur im Detail",
+    "cats": [
+      "metall"
+    ]
+  },
+  {
+    "src": "/assets/reel/holzbox-mit-einsatz.webp",
+    "alt": "Blick von oben in die geöffnete Holzbox mit einem runden Einsatz",
+    "cap": "Holzbox mit passendem Einsatz",
+    "cats": [
+      "holz",
+      "custom"
+    ]
+  },
+  {
     "src": "/assets/reel/reel-01.webp",
     "alt": "Atelier – Einblick",
     "cap": "Atelier – Einblick",
